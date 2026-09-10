@@ -1,0 +1,607 @@
+{
+  "$comment": [
+    "Label taxonomy for the FREAK-lang-dev organisation.",
+    "JSON rather than YAML on purpose: tools/sync_labels.py then needs no",
+    "third-party dependency. Colours are drawn from the FREAK CLI banner",
+    "gradient in src/cli/version.fk, one hue per namespace.",
+    "Edit here, then run: python tools/sync_labels.py --repo <owner/name>",
+    "The 'bible-sections' set is defined but assigned to no repo by default. Add it to Freak-lang when per-section conformance tracking is worth the 17 extra labels."
+  ],
+  "version": 1,
+  "palette": {
+    "gen": "8c50ff",
+    "stratum": "6478ff",
+    "area": "3cb4ff",
+    "kind": "2ea043",
+    "bible": "ff64c8",
+    "status": "9aa0a6",
+    "prio": "d73a4a",
+    "platform": "6e7781",
+    "backend": "dc50dc",
+    "flag": "b60205"
+  },
+  "sets": {
+    "core": [
+      {
+        "name": "gen/v3",
+        "color": "8c50ff",
+        "description": "Shipping self-hosted compiler. Maintenance only: correctness, diagnostics, ABI, perf, release"
+      },
+      {
+        "name": "gen/v4",
+        "color": "8c50ff",
+        "description": "Maverick / 00-Unit. Destination for all new semantics"
+      },
+      {
+        "name": "gen/lite",
+        "color": "b48cff",
+        "description": "V1 Python bootstrap (freakc/) or the V2 self_hosted/ milestone"
+      },
+      {
+        "name": "gen/all",
+        "color": "b48cff",
+        "description": "Spans generations, or is generation-independent"
+      },
+      {
+        "name": "kind/bug",
+        "color": "2ea043",
+        "description": "Behaviour is wrong"
+      },
+      {
+        "name": "kind/feature",
+        "color": "2ea043",
+        "description": "New capability"
+      },
+      {
+        "name": "kind/conformance",
+        "color": "2ea043",
+        "description": "Implementation and freak-full-bible.md disagree"
+      },
+      {
+        "name": "kind/diagnostics",
+        "color": "2ea043",
+        "description": "Error message wording, spans, or voice routing"
+      },
+      {
+        "name": "kind/perf",
+        "color": "2ea043",
+        "description": "Speed, memory, or pathological input"
+      },
+      {
+        "name": "kind/refactor",
+        "color": "2ea043",
+        "description": "Internal change, no behaviour change"
+      },
+      {
+        "name": "kind/docs",
+        "color": "2ea043",
+        "description": "Documentation"
+      },
+      {
+        "name": "kind/test",
+        "color": "2ea043",
+        "description": "Test coverage or harness work"
+      },
+      {
+        "name": "kind/build",
+        "color": "2ea043",
+        "description": "Build system, bootstrap, reproducibility, fixed point"
+      },
+      {
+        "name": "kind/security",
+        "color": "2ea043",
+        "description": "Security or supply-chain concern"
+      },
+      {
+        "name": "kind/question",
+        "color": "2ea043",
+        "description": "Needs an answer, not a change"
+      },
+      {
+        "name": "kind/tracking",
+        "color": "0e7a3a",
+        "description": "Umbrella issue tracking several others"
+      },
+      {
+        "name": "status/needs-triage",
+        "color": "fbca04",
+        "description": "Not yet sorted"
+      },
+      {
+        "name": "status/needs-repro",
+        "color": "fbca04",
+        "description": "Cannot act until it reproduces"
+      },
+      {
+        "name": "status/confirmed",
+        "color": "9aa0a6",
+        "description": "Reproduced and accepted"
+      },
+      {
+        "name": "status/blocked",
+        "color": "9aa0a6",
+        "description": "Waiting on something else"
+      },
+      {
+        "name": "status/in-progress",
+        "color": "9aa0a6",
+        "description": "Actively being worked"
+      },
+      {
+        "name": "status/needs-review",
+        "color": "9aa0a6",
+        "description": "Waiting on review"
+      },
+      {
+        "name": "status/stale",
+        "color": "d4d4d8",
+        "description": "No activity, may be closed"
+      },
+      {
+        "name": "status/duplicate",
+        "color": "d4d4d8",
+        "description": "Already tracked elsewhere"
+      },
+      {
+        "name": "status/wontfix",
+        "color": "d4d4d8",
+        "description": "Deliberately not doing this"
+      },
+      {
+        "name": "prio/critical",
+        "color": "b60205",
+        "description": "Drop other work"
+      },
+      {
+        "name": "prio/high",
+        "color": "d73a4a",
+        "description": "Next up"
+      },
+      {
+        "name": "prio/normal",
+        "color": "e99695",
+        "description": "Scheduled normally"
+      },
+      {
+        "name": "prio/low",
+        "color": "f4cccc",
+        "description": "Nice to have"
+      },
+      {
+        "name": "breaking-change",
+        "color": "b60205",
+        "description": "Changes behaviour existing code depends on"
+      },
+      {
+        "name": "regression",
+        "color": "b60205",
+        "description": "Used to work, now does not"
+      },
+      {
+        "name": "release",
+        "color": "5319e7",
+        "description": "Release process, tagging, or distribution"
+      },
+      {
+        "name": "good first issue",
+        "color": "7057ff",
+        "description": "Good for newcomers"
+      },
+      {
+        "name": "help wanted",
+        "color": "008672",
+        "description": "Extra attention is needed"
+      }
+    ],
+    "compiler": [
+      {
+        "name": "stratum/1-semantic-core",
+        "color": "6478ff",
+        "description": "V4 stratum 1: value shapes, variants, aliases, tuples, generics"
+      },
+      {
+        "name": "stratum/2-borrowck",
+        "color": "6478ff",
+        "description": "V4 stratum 2: Meiya ownership analysis"
+      },
+      {
+        "name": "stratum/3-ffi-systems",
+        "color": "6478ff",
+        "description": "V4 stratum 3: ABI, layout, raw pointers, LLVM carriage"
+      },
+      {
+        "name": "stratum/4-concurrency",
+        "color": "6478ff",
+        "description": "V4 stratum 4: xm3, sortie, formation, briefing room, wingman"
+      },
+      {
+        "name": "stratum/5-advanced",
+        "color": "6478ff",
+        "description": "V4 stratum 5: mood, prob, power, causality, narrative strictness"
+      },
+      {
+        "name": "area/lexer",
+        "color": "3cb4ff",
+        "description": "Tokenisation, keywords, escapes"
+      },
+      {
+        "name": "area/parser",
+        "color": "3cb4ff",
+        "description": "Grammar, AST construction, recovery"
+      },
+      {
+        "name": "area/hir",
+        "color": "3cb4ff",
+        "description": "V4 HIR and the expanded-AST boundary"
+      },
+      {
+        "name": "area/types",
+        "color": "3cb4ff",
+        "description": "Type checking, inference, TY queries"
+      },
+      {
+        "name": "area/mir",
+        "color": "3cb4ff",
+        "description": "V4 MIR lowering and consumers"
+      },
+      {
+        "name": "area/borrowck",
+        "color": "3cb4ff",
+        "description": "Ownership, loans, lifetimes, Meiya"
+      },
+      {
+        "name": "area/codegen",
+        "color": "3cb4ff",
+        "description": "Backend emission and generated output"
+      },
+      {
+        "name": "area/runtime",
+        "color": "3cb4ff",
+        "description": "freak_runtime.c, freak_llvm_runtime.c, the ABI marker"
+      },
+      {
+        "name": "area/query",
+        "color": "3cb4ff",
+        "description": "V4 query graph, incrementality, invalidation"
+      },
+      {
+        "name": "area/snapshot",
+        "color": "3cb4ff",
+        "description": "V4 snapshots, manifests, diffs, restore"
+      },
+      {
+        "name": "area/lsp",
+        "color": "3cb4ff",
+        "description": "Editor protocols, semantic facts, Sortie"
+      },
+      {
+        "name": "area/cli",
+        "color": "3cb4ff",
+        "description": "freak build/run/check/transpile/doctor/upgrade"
+      },
+      {
+        "name": "area/hangar",
+        "color": "3cb4ff",
+        "description": "Package manager, manifests, lockfile, registry"
+      },
+      {
+        "name": "area/stdlib",
+        "color": "3cb4ff",
+        "description": "std/*.fk and the builtin surface"
+      },
+      {
+        "name": "area/ffi",
+        "color": "3cb4ff",
+        "description": "extern, layout, calling conventions, callbacks"
+      },
+      {
+        "name": "area/ui",
+        "color": "3cb4ff",
+        "description": "std::ui, the Win32/GDI floor, COCKPIT"
+      },
+      {
+        "name": "area/anime-layer",
+        "color": "3cb4ff",
+        "description": "Annotations, training arc, foreshadow, routes, miracles"
+      },
+      {
+        "name": "area/packaging",
+        "color": "3cb4ff",
+        "description": "Installers, Homebrew, Scoop, Winget, release archives"
+      },
+      {
+        "name": "area/editors",
+        "color": "3cb4ff",
+        "description": "VS Code, Zed, tree-sitter grammar"
+      },
+      {
+        "name": "area/docs",
+        "color": "3cb4ff",
+        "description": "Documentation sources and the docs site"
+      },
+      {
+        "name": "area/tests",
+        "color": "3cb4ff",
+        "description": "Test suites, golden corpus, conformance harness"
+      },
+      {
+        "name": "area/ci",
+        "color": "3cb4ff",
+        "description": "GitHub Actions, workflows, release automation"
+      },
+      {
+        "name": "backend/llvm",
+        "color": "dc50dc",
+        "description": "LLVM IR backend, the shipping default"
+      },
+      {
+        "name": "backend/c",
+        "color": "dc50dc",
+        "description": "Portable C backend"
+      },
+      {
+        "name": "platform/windows",
+        "color": "6e7781",
+        "description": "Windows-specific"
+      },
+      {
+        "name": "platform/macos",
+        "color": "6e7781",
+        "description": "macOS-specific"
+      },
+      {
+        "name": "platform/linux",
+        "color": "6e7781",
+        "description": "Linux-specific"
+      },
+      {
+        "name": "bible/implemented",
+        "color": "ff64c8",
+        "description": "Spec contract works end to end (the bible's ✅)"
+      },
+      {
+        "name": "bible/partial",
+        "color": "ff64c8",
+        "description": "Parsed or recognised, guarantee incomplete (the bible's ⚠️)"
+      },
+      {
+        "name": "bible/v4",
+        "color": "ff64c8",
+        "description": "Specified, not in the shipping compiler (the bible's 🔜)"
+      },
+      {
+        "name": "bible/divergence",
+        "color": "d4308f",
+        "description": "Implementation contradicts the spec rather than lagging it"
+      },
+      {
+        "name": "bible/spec-bug",
+        "color": "d4308f",
+        "description": "The bible itself is wrong, ambiguous, or self-contradictory"
+      }
+    ],
+    "docs": [
+      {
+        "name": "area/docs",
+        "color": "3cb4ff",
+        "description": "Documentation sources and the docs site"
+      },
+      {
+        "name": "area/tests",
+        "color": "3cb4ff",
+        "description": "Verification harness and example checks"
+      },
+      {
+        "name": "area/ci",
+        "color": "3cb4ff",
+        "description": "GitHub Actions, workflows, deployment"
+      },
+      {
+        "name": "area/site",
+        "color": "3cb4ff",
+        "description": "Generator, styling, search, navigation"
+      },
+      {
+        "name": "bible/divergence",
+        "color": "d4308f",
+        "description": "Docs must record where the implementation contradicts the spec"
+      },
+      {
+        "name": "bible/spec-bug",
+        "color": "d4308f",
+        "description": "The bible itself is wrong, ambiguous, or self-contradictory"
+      },
+      {
+        "name": "docs/stale",
+        "color": "fbca04",
+        "description": "Out of date against the current compiler"
+      },
+      {
+        "name": "docs/unverified",
+        "color": "fbca04",
+        "description": "Claim is not backed by a compiled example"
+      }
+    ],
+    "editors": [
+      {
+        "name": "area/editors",
+        "color": "3cb4ff",
+        "description": "Extension packaging and editor integration"
+      },
+      {
+        "name": "area/lsp",
+        "color": "3cb4ff",
+        "description": "Language server behaviour"
+      },
+      {
+        "name": "area/grammar",
+        "color": "3cb4ff",
+        "description": "tree-sitter grammar and highlight queries"
+      },
+      {
+        "name": "editor/vscode",
+        "color": "6e7781",
+        "description": "VS Code"
+      },
+      {
+        "name": "editor/zed",
+        "color": "6e7781",
+        "description": "Zed"
+      },
+      {
+        "name": "editor/other",
+        "color": "6e7781",
+        "description": "Any other editor"
+      }
+    ],
+    "bible-sections": [
+      {
+        "name": "bible/s1-syntax",
+        "color": "ffa7d8",
+        "description": "Bible §1 Syntax"
+      },
+      {
+        "name": "bible/s2-advanced-types",
+        "color": "ffa7d8",
+        "description": "Bible §2 power/prob/causality/mood"
+      },
+      {
+        "name": "bible/s3-concurrency",
+        "color": "ffa7d8",
+        "description": "Bible §3 Concurrency"
+      },
+      {
+        "name": "bible/s4-borrow-checker",
+        "color": "ffa7d8",
+        "description": "Bible §4 Borrow checker"
+      },
+      {
+        "name": "bible/s5-anime-layer",
+        "color": "ffa7d8",
+        "description": "Bible §5 Anime layer"
+      },
+      {
+        "name": "bible/s6-modules-hangar",
+        "color": "ffa7d8",
+        "description": "Bible §6 Modules and Hangar"
+      },
+      {
+        "name": "bible/s7-stdlib",
+        "color": "ffa7d8",
+        "description": "Bible §7 Standard library"
+      },
+      {
+        "name": "bible/s8-lexer",
+        "color": "ffa7d8",
+        "description": "Bible §8 Lexer"
+      },
+      {
+        "name": "bible/s9-parser",
+        "color": "ffa7d8",
+        "description": "Bible §9 Parser and AST nodes"
+      },
+      {
+        "name": "bible/s10-type-checker",
+        "color": "ffa7d8",
+        "description": "Bible §10 Type checker"
+      },
+      {
+        "name": "bible/s11-codegen",
+        "color": "ffa7d8",
+        "description": "Bible §11 Code generation"
+      },
+      {
+        "name": "bible/s12-build-modes",
+        "color": "ffa7d8",
+        "description": "Bible §12 Build modes"
+      },
+      {
+        "name": "bible/s13-cli",
+        "color": "ffa7d8",
+        "description": "Bible §13 Compiler CLI"
+      },
+      {
+        "name": "bible/s14-error-voices",
+        "color": "ffa7d8",
+        "description": "Bible §14 Error voice cast"
+      },
+      {
+        "name": "bible/s15-cheatsheet",
+        "color": "ffa7d8",
+        "description": "Bible §15 Cheatsheet"
+      },
+      {
+        "name": "bible/s16-ffi",
+        "color": "ffa7d8",
+        "description": "Bible §16 FFI, ABI, OS interop"
+      },
+      {
+        "name": "bible/s17-internals",
+        "color": "ffa7d8",
+        "description": "Bible §17 Compiler internals and IDE support"
+      }
+    ]
+  },
+  "repos": {
+    "FREAK-lang-dev/Freak-lang": [
+      "core",
+      "compiler"
+    ],
+    "FREAK-lang-dev/Freak-docs": [
+      "core",
+      "docs"
+    ],
+    "FREAK-lang-dev/FreakDocs": [
+      "core",
+      "docs"
+    ],
+    "FREAK-lang-dev/FREAK-Website": [
+      "core",
+      "docs"
+    ],
+    "FREAK-lang-dev/freak-editors": [
+      "core",
+      "editors"
+    ],
+    "FREAK-lang-dev/tree-sitter-freak": [
+      "core",
+      "editors"
+    ],
+    "FREAK-lang-dev/freak-apps": [
+      "core"
+    ],
+    "FREAK-lang-dev/.github": [
+      "core"
+    ]
+  },
+  "retire": [
+    {
+      "name": "bug",
+      "replaced_by": "kind/bug"
+    },
+    {
+      "name": "documentation",
+      "replaced_by": "kind/docs"
+    },
+    {
+      "name": "duplicate",
+      "replaced_by": "status/duplicate"
+    },
+    {
+      "name": "enhancement",
+      "replaced_by": "kind/feature"
+    },
+    {
+      "name": "invalid",
+      "replaced_by": "status/wontfix"
+    },
+    {
+      "name": "question",
+      "replaced_by": "kind/question"
+    },
+    {
+      "name": "wontfix",
+      "replaced_by": "status/wontfix"
+    }
+  ]
+}
