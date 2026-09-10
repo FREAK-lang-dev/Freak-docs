@@ -25,6 +25,7 @@
 <li><a href="index.html">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
 <li><a href="cli.html" class="active">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
 </ul></div>
 <div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
 <li><a href="tutorial-first-program.html">1 · Your first program</a></li>
@@ -76,18 +77,16 @@ freak build game.fk --strict-borrow</code></pre></div>
 <p>The rule of thumb: if your program declares a <code>shape</code>, build it with the default LLVM backend.</p>
 <h2 id="hangar">Hangar<a class="anchor" href="#hangar" aria-label="Link to this section">#</a></h2>
 <p><code>hangar</code> is the package manager, reachable as <code>freak hangar &lt;cmd&gt;</code> or as a standalone binary.</p>
-<div class="tablewrap"><table><thead><tr><th>Subcommand</th><th>Status</th></tr></thead><tbody><tr><td><code>hangar init</code></td><td>works</td></tr><tr><td><code>hangar add &lt;unit&gt;</code></td><td>works</td></tr><tr><td><code>hangar remove &lt;unit&gt;</code></td><td>works</td></tr><tr><td><code>hangar install</code></td><td>works</td></tr><tr><td><code>hangar update</code></td><td>works</td></tr><tr><td><code>hangar search &lt;query&gt;</code></td><td>V4 — needs a live registry</td></tr></tbody></table></div>
-<p>A <code>hangar.toml</code> looks like this:</p>
-<div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[unit]
-name    = &quot;my-project&quot;
-version = &quot;1.0.0&quot;
-author  = &quot;Shirogane Takeru&quot;
-entry   = &quot;src/main.fk&quot;
-edition = &quot;alternative-4&quot;
+<div class="tablewrap"><table><thead><tr><th>Subcommand</th><th>Status</th></tr></thead><tbody><tr><td><code>hangar init [name]</code></td><td>works</td></tr><tr><td><code>hangar add &lt;name&gt; [constraint]</code></td><td>works</td></tr><tr><td><code>hangar add &lt;name&gt; &lt;repo&gt; [version]</code></td><td>works</td></tr><tr><td><code>hangar remove &lt;name&gt;</code></td><td>works</td></tr><tr><td><code>hangar install</code></td><td>works</td></tr><tr><td><code>hangar install freak</code></td><td>works</td></tr><tr><td><code>hangar update [package]</code></td><td>works</td></tr><tr><td><code>hangar outdated</code></td><td>works</td></tr><tr><td><code>hangar version [patch|minor|major]</code></td><td>works</td></tr><tr><td><code>hangar audit [--fix]</code></td><td>works</td></tr><tr><td><code>hangar login</code>, <code>hangar publish [--dry-run]</code></td><td>works</td></tr><tr><td><code>hangar search &lt;query&gt;</code></td><td>not in this build</td></tr></tbody></table></div>
+<p>A <code>hangar.toml</code> as the tool actually writes it:</p>
+<div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[project]
+name = &quot;demo&quot;
+version = &quot;0.1.0&quot;
 
 [dependencies]
-muvluv = &quot;2.0.0&quot;</code></pre></div>
+muvluv = &quot;^2.0&quot;</code></pre></div>
 <p>Dependency constraints are matched by <code>std/version.fk</code>, whose semver comparison and <code>^</code>-constraint logic you can call directly — see <a href="stdlib.html#stdversion">Standard library</a>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p><strong>Installing a package does not make it usable.</strong> <code>freak build</code> never reads <code>hangar_modules/</code> or <code>[dependencies]</code>, and <code>use pkg::{…}</code> is stripped to a comment before parsing. Dependencies have to be concatenated into your source by hand. See <a href="hangar.html">Hangar &amp; packages</a> for the full picture and the working pattern.</p></div>
 <h2 id="environment">Environment<a class="anchor" href="#environment" aria-label="Link to this section">#</a></h2>
 <div class="tablewrap"><table><thead><tr><th>Variable</th><th>Meaning</th></tr></thead><tbody><tr><td><code>FREAK_HOME</code></td><td>Authoritative payload root. Overrides checkout-relative and executable-adjacent discovery</td></tr></tbody></table></div>
 <p>Discovery order for <code>runtime/</code> and <code>std/</code>:</p>
@@ -104,7 +103,7 @@ hello.pdb       debug info, Windows</code></pre></div>
     <footer class="pagefoot">
       <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      43/43 examples compile; regenerate with
+      44/44 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>

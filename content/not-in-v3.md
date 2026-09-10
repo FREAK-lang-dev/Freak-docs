@@ -228,9 +228,12 @@ every linked standard-library file.
 Consequences worth planning around:
 
 - Name collisions with `std/` tasks are real. Prefix your tasks.
-- Multi-file projects are handled by the Hangar/CLI build, not by the language.
 - `use std::math3d`, `use std::zip`, `use std::ui` and `use cockpit` still
   matter as **build triggers** — the text switches on linking that module.
+- **Hangar packages cannot be consumed.** `hangar install` downloads into
+  `hangar_modules/`, but the build never reads it. Concatenate the source
+  instead: `cat lib/thing.fk src/app.fk > combined.fk && freak build
+  combined.fk`. See [Hangar & packages](hangar.html).
 
 ## Advanced types
 

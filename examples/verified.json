@@ -1,8 +1,8 @@
 {
   "compiler": "freak 0.14.1 (Maverick)",
-  "generated_utc": "2026-09-10T21:32:59Z",
-  "total": 43,
-  "compiled": 43,
+  "generated_utc": "2026-09-10T21:44:45Z",
+  "total": 44,
+  "compiled": 44,
   "examples": {
     "anime_operators": {
       "name": "anime_operators",
@@ -14,7 +14,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8488
+      "elapsed_ms": 8022
     },
     "annotations": {
       "name": "annotations",
@@ -26,7 +26,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8534
+      "elapsed_ms": 8026
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -38,7 +38,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8488
+      "elapsed_ms": 8236
     },
     "array_literal": {
       "name": "array_literal",
@@ -50,7 +50,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8686
+      "elapsed_ms": 8128
     },
     "arrays": {
       "name": "arrays",
@@ -62,7 +62,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8626
+      "elapsed_ms": 8061
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -74,7 +74,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8533
+      "elapsed_ms": 8123
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -86,7 +86,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8811
+      "elapsed_ms": 7937
     },
     "colour": {
       "name": "colour",
@@ -98,7 +98,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8566
+      "elapsed_ms": 8028
     },
     "control_if": {
       "name": "control_if",
@@ -110,7 +110,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8618
+      "elapsed_ms": 7858
     },
     "control_loops": {
       "name": "control_loops",
@@ -122,7 +122,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8511
+      "elapsed_ms": 7976
     },
     "control_when": {
       "name": "control_when",
@@ -134,7 +134,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8450
+      "elapsed_ms": 7912
     },
     "eventually": {
       "name": "eventually",
@@ -146,7 +146,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8357
+      "elapsed_ms": 7919
     },
     "extern": {
       "name": "extern",
@@ -158,7 +158,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8585
+      "elapsed_ms": 8211
     },
     "files": {
       "name": "files",
@@ -170,7 +170,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8674
+      "elapsed_ms": 8346
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -182,7 +182,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8576
+      "elapsed_ms": 8344
     },
     "hello": {
       "name": "hello",
@@ -194,7 +194,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8546
+      "elapsed_ms": 8252
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -206,7 +206,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8681
+      "elapsed_ms": 8175
     },
     "inference": {
       "name": "inference",
@@ -218,7 +218,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8564
+      "elapsed_ms": 8066
     },
     "interpolation": {
       "name": "interpolation",
@@ -230,7 +230,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8464
+      "elapsed_ms": 8367
     },
     "lists": {
       "name": "lists",
@@ -242,7 +242,19 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8523
+      "elapsed_ms": 8239
+    },
+    "module_pattern": {
+      "name": "module_pattern",
+      "file": "module_pattern.fk",
+      "source": "-- Reusing code across files in V3.\n--\n-- The compiler takes exactly one source file, and Hangar packages are\n-- never linked into it, so a \"library\" is just source you concatenate\n-- ahead of your program:\n--\n--     cat lib/text.fk src/app.fk > build/combined.fk\n--     freak build build/combined.fk\n--\n-- This file is what that produces. Everything lands in one flat global\n-- namespace, so a library must prefix its names to avoid collisions --\n-- with your code, and with the std/ tasks the build already links.\n\n-- ===================================================================\n-- lib/text.fk  -- the \"package\"\n-- ===================================================================\n\nshape TextStats {\n    words: int\n    longest: word\n}\n\ntask text_is_blank(c: word) -> bool {\n    give back c == \" \" or c == \"\\n\" or c == \"\\t\" or c == \"\\r\"\n}\n\ntask text_count_words(source: word) -> int {\n    pilot mut total: int = 0\n    pilot mut in_word: bool = false\n    pilot mut i: int = 0\n\n    repeat source.length() times {\n        if text_is_blank(source.char_at(i)) {\n            in_word = false\n        } else {\n            if not in_word { total += 1 }\n            in_word = true\n        }\n        i += 1\n    }\n    give back total\n}\n\ntask text_longest_word(source: word) -> word {\n    pilot mut best: word = \"\"\n    pilot mut current: word = \"\"\n    pilot mut i: int = 0\n\n    repeat source.length() times {\n        pilot c: word = source.char_at(i)\n        if text_is_blank(c) {\n            if current.length() > best.length() { best = current }\n            current = \"\"\n        } else {\n            current = current + c\n        }\n        i += 1\n    }\n    if current.length() > best.length() { best = current }\n    give back best\n}\n\ntask text_analyse(source: word) -> TextStats {\n    give back TextStats {\n        words: text_count_words(source),\n        longest: text_longest_word(source)\n    }\n}\n\n-- ===================================================================\n-- src/app.fk  -- your program\n-- ===================================================================\n\ntask main() -> void {\n    pilot report: TextStats = text_analyse(\"the beta will not negotiate with humanity\")\n\n    say word_from_int(report.words)\n    say report.longest\n\n    -- `use` lines are stripped before parsing, so leaving one in a\n    -- concatenated build is harmless -- and equally, it imports nothing.\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "7\nnegotiate",
+      "errors": [],
+      "backend": "llvm",
+      "exit_code": 0,
+      "elapsed_ms": 8184
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -254,7 +266,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8373
+      "elapsed_ms": 8112
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -266,7 +278,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8562
+      "elapsed_ms": 8078
     },
     "operators": {
       "name": "operators",
@@ -278,7 +290,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8267
+      "elapsed_ms": 8000
     },
     "pipe": {
       "name": "pipe",
@@ -290,7 +302,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8320
+      "elapsed_ms": 8035
     },
     "process_time": {
       "name": "process_time",
@@ -298,11 +310,11 @@
       "source": "-- Process and clock builtins.\n-- Note: `process::args()` is deliberately rejected by V3. Use the\n-- indexed pair `process::args_count()` / `process::arg(i)` instead.\ntask main() -> void {\n    pilot argc: int = process::args_count()\n    say word_from_int(argc)\n\n    pilot mut i: int = 0\n    repeat argc times {\n        say \"arg {i}: \" + process::arg(i)\n        i += 1\n    }\n\n    pilot started: int = time::now_ms()\n    pilot mut spin: int = 0\n    repeat 1000 times {\n        spin += 1\n    }\n    pilot elapsed: int = time::now_ms() - started\n    say word_from_bool(elapsed >= 0)\n    say word_from_bool(process::env(\"PATH\").length() > 0)\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "3\narg 0: C:\\Users\\cozor\\AppData\\Local\\Temp\\fkdocs_d1d_096_\\process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
+      "stdout": "3\narg 0: C:\\Users\\cozor\\AppData\\Local\\Temp\\fkdocs_eggu039s\\process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8739
+      "elapsed_ms": 8061
     },
     "recursion": {
       "name": "recursion",
@@ -314,7 +326,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8379
+      "elapsed_ms": 8019
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -326,7 +338,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8400
+      "elapsed_ms": 8072
     },
     "shapes": {
       "name": "shapes",
@@ -338,7 +350,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8423
+      "elapsed_ms": 8019
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -350,7 +362,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8386
+      "elapsed_ms": 8128
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -362,7 +374,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8245
+      "elapsed_ms": 8070
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -374,7 +386,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8799
+      "elapsed_ms": 8050
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -386,7 +398,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8558
+      "elapsed_ms": 8019
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -398,7 +410,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8564
+      "elapsed_ms": 7998
     },
     "strings": {
       "name": "strings",
@@ -410,7 +422,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8479
+      "elapsed_ms": 8062
     },
     "tasks": {
       "name": "tasks",
@@ -422,7 +434,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8459
+      "elapsed_ms": 7884
     },
     "toplevel": {
       "name": "toplevel",
@@ -434,7 +446,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8366
+      "elapsed_ms": 8040
     },
     "training_arc": {
       "name": "training_arc",
@@ -446,7 +458,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8579
+      "elapsed_ms": 8028
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -458,7 +470,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8731
+      "elapsed_ms": 8073
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -470,7 +482,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8558
+      "elapsed_ms": 8097
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -482,7 +494,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8522
+      "elapsed_ms": 8010
     },
     "variables": {
       "name": "variables",
@@ -494,7 +506,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8489
+      "elapsed_ms": 8044
     },
     "word_builder": {
       "name": "word_builder",
@@ -506,7 +518,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8399
+      "elapsed_ms": 5901
     },
     "wordcount": {
       "name": "wordcount",
@@ -518,7 +530,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 5558
+      "elapsed_ms": 6073
     }
   }
 }

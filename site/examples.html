@@ -25,6 +25,7 @@
 <li><a href="index.html">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
 <li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
 </ul></div>
 <div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
 <li><a href="tutorial-first-program.html">1 · Your first program</a></li>
@@ -55,7 +56,7 @@
     <article class="prose">
 <h1 id="verified-examples">Verified examples<a class="anchor" href="#verified-examples" aria-label="Link to this section">#</a></h1>
 <p>&gt; Every program on this site, compiled and executed by a real V3 binary.</p>
-<div class="summary-card"><div class="sc-num">43/43</div><div class="sc-body"><strong>documentation examples compile</strong><span>Verified with freak 0.14.1 (Maverick) on 2026-09-10T21:32:59Z. Every code block on this site marked <em>compiles</em> was built by that compiler and, where it produces output, executed.</span></div></div>
+<div class="summary-card"><div class="sc-num">44/44</div><div class="sc-body"><strong>documentation examples compile</strong><span>Verified with freak 0.14.1 (Maverick) on 2026-09-10T21:44:45Z. Every code block on this site marked <em>compiles</em> was built by that compiler and, where it produces output, executed.</span></div></div>
 <p>Each card below shows the exact source file under <code>examples/</code>, a badge for whether it compiled and ran, and the program&#x27;s captured output. Reproduce the whole set with:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python tools/verify.py --freak /path/to/freak
 python tools/build_docs.py</code></pre></div>
@@ -1457,7 +1458,7 @@ hi
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_d1d_096_\process_time.exe
+arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_eggu039s\process_time.exe
 arg 1: alpha
 arg 2: bravo
 true
@@ -1835,6 +1836,100 @@ sorted sorties: 8, 24, 31
 busiest pilot flew 31</code></pre>
   </div>
 </figure>
+<h2 id="project-structure">Project structure<a class="anchor" href="#project-structure" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/module_pattern.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Reusing code across files in V3.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- The compiler takes exactly one source file, and Hangar packages are</span>
+<span class="c-com">-- never linked into it, so a &quot;library&quot; is just source you concatenate</span>
+<span class="c-com">-- ahead of your program:</span>
+<span class="c-com">--</span>
+<span class="c-com">--     cat lib/text.fk src/app.fk &gt; build/combined.fk</span>
+<span class="c-com">--     freak build build/combined.fk</span>
+<span class="c-com">--</span>
+<span class="c-com">-- This file is what that produces. Everything lands in one flat global</span>
+<span class="c-com">-- namespace, so a library must prefix its names to avoid collisions --</span>
+<span class="c-com">-- with your code, and with the std/ tasks the build already links.</span>
+
+<span class="c-com">-- ===================================================================</span>
+<span class="c-com">-- lib/text.fk  -- the &quot;package&quot;</span>
+<span class="c-com">-- ===================================================================</span>
+
+<span class="c-kw">shape</span> <span class="c-type">TextStats</span> {
+    words<span class="c-op">:</span> <span class="c-type">int</span>
+    longest<span class="c-op">:</span> <span class="c-type">word</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_is_blank</span>(c<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+    <span class="c-kw">give back</span> c <span class="c-op">==</span> <span class="c-str">&quot; &quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\t&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\r&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_count_words</span>(source<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> in_word<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">false</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> source.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">if</span> <span class="c-fn">text_is_blank</span>(source.<span class="c-fn">char_at</span>(i)) {
+            in_word <span class="c-op">=</span> <span class="c-lit">false</span>
+        } <span class="c-kw">else</span> {
+            <span class="c-kw">if</span> <span class="c-kw">not</span> in_word { total <span class="c-op">+=</span> <span class="c-num">1</span> }
+            in_word <span class="c-op">=</span> <span class="c-lit">true</span>
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> total
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_longest_word</span>(source<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> best<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> current<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> source.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> source.<span class="c-fn">char_at</span>(i)
+        <span class="c-kw">if</span> <span class="c-fn">text_is_blank</span>(c) {
+            <span class="c-kw">if</span> current.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> best.<span class="c-fn">length</span>() { best <span class="c-op">=</span> current }
+            current <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        } <span class="c-kw">else</span> {
+            current <span class="c-op">=</span> current <span class="c-op">+</span> c
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">if</span> current.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> best.<span class="c-fn">length</span>() { best <span class="c-op">=</span> current }
+    <span class="c-kw">give back</span> best
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_analyse</span>(source<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">TextStats</span> {
+    <span class="c-kw">give back</span> <span class="c-type">TextStats</span> {
+        words<span class="c-op">:</span> <span class="c-fn">text_count_words</span>(source),
+        longest<span class="c-op">:</span> <span class="c-fn">text_longest_word</span>(source)
+    }
+}
+
+<span class="c-com">-- ===================================================================</span>
+<span class="c-com">-- src/app.fk  -- your program</span>
+<span class="c-com">-- ===================================================================</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> report<span class="c-op">:</span> <span class="c-type">TextStats</span> <span class="c-op">=</span> <span class="c-fn">text_analyse</span>(<span class="c-str">&quot;the beta will not negotiate with humanity&quot;</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(report.words)
+    <span class="c-kw">say</span> report.longest
+
+    <span class="c-com">-- `use` lines are stripped before parsing, so leaving one in a</span>
+    <span class="c-com">-- concatenated build is harmless -- and equally, it imports nothing.</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>7
+negotiate</code></pre>
+  </div>
+</figure>
 <h2 id="complete-programs">Complete programs<a class="anchor" href="#complete-programs" aria-label="Link to this section">#</a></h2>
 <figure class="example">
   <figcaption>
@@ -1954,11 +2049,11 @@ NEGOTIATE</code></pre>
     <footer class="pagefoot">
       <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      43/43 examples compile; regenerate with
+      44/44 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>
-  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#basics">Basics</a></li><li><a href="#tasks">Tasks</a></li><li><a href="#control-flow">Control flow</a></li><li><a href="#operators">Operators</a></li><li><a href="#words">Words</a></li><li><a href="#shapes">Shapes</a></li><li><a href="#lists-arrays">Lists &amp; arrays</a></li><li><a href="#standard-library">Standard library</a></li><li><a href="#console">Console</a></li><li><a href="#system">System</a></li><li><a href="#anime-layer">Anime layer</a></li><li><a href="#tutorials">Tutorials</a></li><li><a href="#complete-programs">Complete programs</a></li></ul></aside>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#basics">Basics</a></li><li><a href="#tasks">Tasks</a></li><li><a href="#control-flow">Control flow</a></li><li><a href="#operators">Operators</a></li><li><a href="#words">Words</a></li><li><a href="#shapes">Shapes</a></li><li><a href="#lists-arrays">Lists &amp; arrays</a></li><li><a href="#standard-library">Standard library</a></li><li><a href="#console">Console</a></li><li><a href="#system">System</a></li><li><a href="#anime-layer">Anime layer</a></li><li><a href="#tutorials">Tutorials</a></li><li><a href="#project-structure">Project structure</a></li><li><a href="#complete-programs">Complete programs</a></li></ul></aside>
 </div>
 <script src="assets/search-index.js"></script>
 <script src="assets/app.js"></script>

@@ -1,0 +1,82 @@
+-- Reusing code across files in V3.
+--
+-- The compiler takes exactly one source file, and Hangar packages are
+-- never linked into it, so a "library" is just source you concatenate
+-- ahead of your program:
+--
+--     cat lib/text.fk src/app.fk > build/combined.fk
+--     freak build build/combined.fk
+--
+-- This file is what that produces. Everything lands in one flat global
+-- namespace, so a library must prefix its names to avoid collisions --
+-- with your code, and with the std/ tasks the build already links.
+
+-- ===================================================================
+-- lib/text.fk  -- the "package"
+-- ===================================================================
+
+shape TextStats {
+    words: int
+    longest: word
+}
+
+task text_is_blank(c: word) -> bool {
+    give back c == " " or c == "\n" or c == "\t" or c == "\r"
+}
+
+task text_count_words(source: word) -> int {
+    pilot mut total: int = 0
+    pilot mut in_word: bool = false
+    pilot mut i: int = 0
+
+    repeat source.length() times {
+        if text_is_blank(source.char_at(i)) {
+            in_word = false
+        } else {
+            if not in_word { total += 1 }
+            in_word = true
+        }
+        i += 1
+    }
+    give back total
+}
+
+task text_longest_word(source: word) -> word {
+    pilot mut best: word = ""
+    pilot mut current: word = ""
+    pilot mut i: int = 0
+
+    repeat source.length() times {
+        pilot c: word = source.char_at(i)
+        if text_is_blank(c) {
+            if current.length() > best.length() { best = current }
+            current = ""
+        } else {
+            current = current + c
+        }
+        i += 1
+    }
+    if current.length() > best.length() { best = current }
+    give back best
+}
+
+task text_analyse(source: word) -> TextStats {
+    give back TextStats {
+        words: text_count_words(source),
+        longest: text_longest_word(source)
+    }
+}
+
+-- ===================================================================
+-- src/app.fk  -- your program
+-- ===================================================================
+
+task main() -> void {
+    pilot report: TextStats = text_analyse("the beta will not negotiate with humanity")
+
+    say word_from_int(report.words)
+    say report.longest
+
+    -- `use` lines are stripped before parsing, so leaving one in a
+    -- concatenated build is harmless -- and equally, it imports nothing.
+}

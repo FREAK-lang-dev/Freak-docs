@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hangar &amp; packages &middot; FREAK V3</title>
+<meta name="description" content="Hangar manages dependencies. V3 cannot consume them. This page explains the gap and what to do instead.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html" class="active">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="hangar-packages">Hangar &amp; packages<a class="anchor" href="#hangar-packages" aria-label="Link to this section">#</a></h1>
+<p>&gt; Hangar manages dependencies. V3 cannot consume them. This page explains the gap and what to do instead.</p>
+<p>Hangar is FREAK&#x27;s package manager, shipping as <code>freak hangar &lt;cmd&gt;</code> and as a standalone <code>hangar</code> binary. It initialises projects, edits manifests, resolves semver constraints, downloads packages and publishes them.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p><strong>An installed package is not visible to the compiler.</strong> <code>freak build</code> never reads <code>hangar_modules/</code> and never reads <code>[dependencies]</code>. A <code>use pkg::{…}</code> line is rewritten to a comment before parsing, so nothing is imported and the first call into the package fails with <code>unknown callable</code>. Hangar today is a manifest and download tool. The link step that would make a dependency usable does not exist in V3.</p></div>
+<p>Verified against the shipping compiler:</p>
+<div class="codeblock"><pre class="code"><code>$ freak hangar init demo
+  INITIALIZED demo
+    hangar.toml
+    src/main.fk
+    hangar_modules/
+
+$ cat hangar_modules/greeter/greeter.fk
+task greeter_hello(name: word) -&gt; word { give back &quot;hello, &quot; + name }
+
+$ cat src/main.fk
+use greeter::{greeter_hello}
+task main() -&gt; void { say greeter_hello(&quot;Takeru&quot;) }
+
+$ freak build src/main.fk
+type error: unknown callable &#x27;greeter_hello&#x27; (line 4)
+  X BUILD FAILED</code></pre></div>
+<h2 id="what-does-get-linked">What does get linked<a class="anchor" href="#what-does-get-linked" aria-label="Link to this section">#</a></h2>
+<p><code>cli_load_std</code> in <code>src/cli/build.fk</code> is the whole of the build&#x27;s source resolution. It concatenates a fixed list ahead of your file:</p>
+<div class="tablewrap"><table><thead><tr><th>Source</th><th>When</th></tr></thead><tbody><tr><td><code>std/math.fk</code>, <code>std/string.fk</code>, <code>std/convert.fk</code>, <code>std/algorithm.fk</code>, <code>std/json.fk</code>, <code>std/version.fk</code></td><td>Always</td></tr><tr><td><code>std/runtime.fk</code>, <code>std/http.fk</code></td><td>Always, LLVM backend only</td></tr><tr><td><code>std/math3d.fk</code></td><td>The source text contains <code>use std::math3d</code></td></tr><tr><td><code>std/zip.fk</code></td><td>The source text contains <code>use std::zip</code></td></tr><tr><td><code>std/ui/window.fk</code></td><td>The source text contains <code>use std::ui</code></td></tr><tr><td><code>packages/cockpit/src/*.fk</code></td><td>The source text contains <code>use cockpit</code></td></tr></tbody></table></div>
+<p>Those four <code>use</code> forms are <strong>textual triggers</strong>, not imports — the build greps your source for the string and links a hard-coded path. Everything else already in that list is in scope whether you write <code>use</code> or not.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>The <code>cockpit</code> trigger resolves <code>packages/cockpit/src</code>, a <strong>repository-relative path</strong>. It only works when you build from inside a Freak-lang checkout, not from an installed toolchain — and it is the only package-shaped thing the build can link at all.</p></div>
+<h2 id="commands">Commands<a class="anchor" href="#commands" aria-label="Link to this section">#</a></h2>
+<p>All of these work. What they cannot do is make a package compile.</p>
+<div class="tablewrap"><table><thead><tr><th>Command</th><th>Effect</th></tr></thead><tbody><tr><td><code>hangar init [name]</code></td><td>Scaffold <code>hangar.toml</code>, <code>src/main.fk</code>, <code>hangar_modules/</code></td></tr><tr><td><code>hangar add &lt;name&gt; [constraint]</code></td><td>Add a dependency to the manifest</td></tr><tr><td><code>hangar add &lt;name&gt; &lt;repo&gt; [version]</code></td><td>Add a dependency from a git repo</td></tr><tr><td><code>hangar remove &lt;name&gt;</code></td><td>Remove it</td></tr><tr><td><code>hangar install</code></td><td>Download all dependencies into <code>hangar_modules/</code></td></tr><tr><td><code>hangar install freak</code></td><td>Install or update the FREAK toolchain itself</td></tr><tr><td><code>hangar update [package]</code></td><td>Re-resolve and update <code>hangar.lock</code></td></tr><tr><td><code>hangar outdated</code></td><td>Report packages behind their constraint</td></tr><tr><td><code>hangar version</code></td><td>Print the project version</td></tr><tr><td><code>hangar version patch|minor|major</code></td><td>Bump it in the manifest</td></tr><tr><td><code>hangar audit</code> / <code>hangar audit --fix</code></td><td>Verify or repair package integrity</td></tr><tr><td><code>hangar login</code></td><td>Authenticate with the registry</td></tr><tr><td><code>hangar publish [--dry-run]</code></td><td>Publish to the registry</td></tr></tbody></table></div>
+<p><code>hangar search</code> from the specification does not exist in this build.</p>
+<h2 id="hangartoml">hangar.toml<a class="anchor" href="#hangartoml" aria-label="Link to this section">#</a></h2>
+<p>What <code>hangar init</code> actually writes:</p>
+<div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[project]
+name = &quot;demo&quot;
+version = &quot;0.1.0&quot;</code></pre></div>
+<p>And after <code>hangar add muvluv &quot;^2.0&quot;</code>:</p>
+<div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[project]
+name = &quot;demo&quot;
+version = &quot;0.1.0&quot;
+
+[dependencies]
+muvluv = &quot;^2.0&quot;</code></pre></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>The specification&#x27;s §6.2 shows a different, larger manifest — <code>[unit]</code> rather than <code>[project]</code>, plus <code>author</code>, <code>entry</code>, <code>edition</code>, a <code>[build]</code> table with <code>mode</code>/<code>target</code>/<code>voice</code>, and <code>[profile.*]</code> sections. None of that is written or read by the shipping tool. Only <code>[project]</code> and <code>[dependencies]</code> matter.</p></div>
+<p>Version constraints are resolved by <code>std/version.fk</code>, which is real, working semver: <code>ver_satisfies(&quot;1.4.2&quot;, &quot;^1.4&quot;)</code> is <code>true</code>. You can call that machinery directly — see <a href="stdlib.html#stdversion">Standard library</a>.</p>
+<p><code>hangar.lock</code> records resolved versions.</p>
+<h2 id="reusing-code-for-real">Reusing code, for real<a class="anchor" href="#reusing-code-for-real" aria-label="Link to this section">#</a></h2>
+<p>Because the compiler takes exactly one file and everything lands in one flat global namespace, a &quot;library&quot; is just source you concatenate ahead of your program:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>cat lib/text.fk src/app.fk &gt; build/combined.fk
+freak build build/combined.fk</code></pre></div>
+<p>Verified working, including against a file downloaded into <code>hangar_modules/</code>:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>cat hangar_modules/greeter/greeter.fk src/app.fk &gt; combined.fk
+freak build combined.fk     # BUILD SUCCESSFUL</code></pre></div>
+<p>Order matters only for <code>shape</code> declarations: a shape must be registered before a constructor for it is parsed, so put library shapes first. Tasks can be in any order — every task is indexed before any body is checked.</p>
+<p>This is exactly how the compiler builds itself. The eight V3 sources and the CLI sources are <code>cat</code>-ed into one translation unit; the file split is a maintenance convention, not a module system. See <a href="getting-started.html#build-the-compiler-from-source">Getting started</a>.</p>
+<h2 id="the-concatenated-pattern">The concatenated pattern<a class="anchor" href="#the-concatenated-pattern" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/module_pattern.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Reusing code across files in V3.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- The compiler takes exactly one source file, and Hangar packages are</span>
+<span class="c-com">-- never linked into it, so a &quot;library&quot; is just source you concatenate</span>
+<span class="c-com">-- ahead of your program:</span>
+<span class="c-com">--</span>
+<span class="c-com">--     cat lib/text.fk src/app.fk &gt; build/combined.fk</span>
+<span class="c-com">--     freak build build/combined.fk</span>
+<span class="c-com">--</span>
+<span class="c-com">-- This file is what that produces. Everything lands in one flat global</span>
+<span class="c-com">-- namespace, so a library must prefix its names to avoid collisions --</span>
+<span class="c-com">-- with your code, and with the std/ tasks the build already links.</span>
+
+<span class="c-com">-- ===================================================================</span>
+<span class="c-com">-- lib/text.fk  -- the &quot;package&quot;</span>
+<span class="c-com">-- ===================================================================</span>
+
+<span class="c-kw">shape</span> <span class="c-type">TextStats</span> {
+    words<span class="c-op">:</span> <span class="c-type">int</span>
+    longest<span class="c-op">:</span> <span class="c-type">word</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_is_blank</span>(c<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+    <span class="c-kw">give back</span> c <span class="c-op">==</span> <span class="c-str">&quot; &quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\t&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\r&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_count_words</span>(source<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> in_word<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">false</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> source.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">if</span> <span class="c-fn">text_is_blank</span>(source.<span class="c-fn">char_at</span>(i)) {
+            in_word <span class="c-op">=</span> <span class="c-lit">false</span>
+        } <span class="c-kw">else</span> {
+            <span class="c-kw">if</span> <span class="c-kw">not</span> in_word { total <span class="c-op">+=</span> <span class="c-num">1</span> }
+            in_word <span class="c-op">=</span> <span class="c-lit">true</span>
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> total
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_longest_word</span>(source<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> best<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> current<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> source.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> source.<span class="c-fn">char_at</span>(i)
+        <span class="c-kw">if</span> <span class="c-fn">text_is_blank</span>(c) {
+            <span class="c-kw">if</span> current.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> best.<span class="c-fn">length</span>() { best <span class="c-op">=</span> current }
+            current <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        } <span class="c-kw">else</span> {
+            current <span class="c-op">=</span> current <span class="c-op">+</span> c
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">if</span> current.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> best.<span class="c-fn">length</span>() { best <span class="c-op">=</span> current }
+    <span class="c-kw">give back</span> best
+}
+
+<span class="c-kw">task</span> <span class="c-fn">text_analyse</span>(source<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">TextStats</span> {
+    <span class="c-kw">give back</span> <span class="c-type">TextStats</span> {
+        words<span class="c-op">:</span> <span class="c-fn">text_count_words</span>(source),
+        longest<span class="c-op">:</span> <span class="c-fn">text_longest_word</span>(source)
+    }
+}
+
+<span class="c-com">-- ===================================================================</span>
+<span class="c-com">-- src/app.fk  -- your program</span>
+<span class="c-com">-- ===================================================================</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> report<span class="c-op">:</span> <span class="c-type">TextStats</span> <span class="c-op">=</span> <span class="c-fn">text_analyse</span>(<span class="c-str">&quot;the beta will not negotiate with humanity&quot;</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(report.words)
+    <span class="c-kw">say</span> report.longest
+
+    <span class="c-com">-- `use` lines are stripped before parsing, so leaving one in a</span>
+    <span class="c-com">-- concatenated build is harmless -- and equally, it imports nothing.</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>7
+negotiate</code></pre>
+  </div>
+</figure>
+<h2 id="conventions-that-make-it-survivable">Conventions that make it survivable<a class="anchor" href="#conventions-that-make-it-survivable" aria-label="Link to this section">#</a></h2>
+<p>One flat namespace across your code, every linked <code>std/</code> file, and every library you concatenate. Collisions are silent until they are a redefinition error, so:</p>
+<ul><li><strong>Prefix everything a library exports.</strong> <code>text_count_words</code>, not <code>count_words</code>. The standard library already does this — <code>string_*</code>, <code>std_*</code>, <code>ver_*</code>, <code>json_*</code>, <code>array_*</code>.</li><li>**Watch for <code>std/</code> collisions.** Defining your own <code>array_find</code> or <code>string_trim</code> clashes with a task the build already linked.</li><li><strong>Remember reserved words are case-insensitive.</strong> A library cannot export anything named <code>Result</code>, <code>Max</code>, <code>Route</code> or <code>Check</code> in any casing. See <a href="language-basics.html#reserved-words-are-case-insensitive">reserved words</a>.</li><li><strong>Keep a build script.</strong> A one-line <code>cat</code> in a <code>.sh</code>/<code>.bat</code> is your build system. Regenerate the combined file every time.</li></ul>
+<h2 id="a-makefile-shaped-example">A Makefile-shaped example<a class="anchor" href="#a-makefile-shaped-example" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>#!/bin/sh
+set -e
+mkdir -p build
+cat lib/text.fk lib/report.fk src/app.fk &gt; build/combined.fk
+freak build build/combined.fk
+mv build/combined.exe build/app.exe</code></pre></div>
+<p>Line numbers in diagnostics refer to the combined file. The compiler maintains a source map for the std prefix it adds itself, but it cannot know about your <code>cat</code>, so keep the concatenation order stable if you want stable offsets.</p>
+<h2 id="what-ships-when-this-is-fixed">What ships when this is fixed<a class="anchor" href="#what-ships-when-this-is-fixed" aria-label="Link to this section">#</a></h2>
+<p>Real imports need the module system from §6 and §17 of the specification — <code>launch</code> visibility, <code>use module::{names}</code>, <code>launch(package)</code>, glob imports, namespace collision rules. All of that is V4 work; <code>launch</code> does not currently parse at all. Until then, Hangar is useful for versioning and distributing source, and <code>cat</code> is the linker.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      44/44 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#what-does-get-linked">What does get linked</a></li><li><a href="#commands">Commands</a></li><li><a href="#hangartoml">hangar.toml</a></li><li><a href="#reusing-code-for-real">Reusing code, for real</a></li><li><a href="#the-concatenated-pattern">The concatenated pattern</a></li><li><a href="#conventions-that-make-it-survivable">Conventions that make it survivable</a></li><li><a href="#a-makefile-shaped-example">A Makefile-shaped example</a></li><li><a href="#what-ships-when-this-is-fixed">What ships when this is fixed</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

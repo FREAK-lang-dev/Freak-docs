@@ -28,6 +28,7 @@ NAV = [
         ("index", "Overview"),
         ("getting-started", "Getting started"),
         ("cli", "Compiler CLI"),
+        ("hangar", "Hangar & packages"),
     ]),
     ("Tutorials", [
         ("tutorial-first-program", "1 · Your first program"),

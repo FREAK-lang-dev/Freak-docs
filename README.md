@@ -9,7 +9,7 @@ specification promises. Every FREAK snippet on the site is a real file in
 [`examples/`](examples/), compiled by a real V3 binary and — where it produces
 output — executed, with stdout captured verbatim into the page.
 
-**43 / 43 examples compile and run** under `freak 0.14.1 (Maverick)`, built
+**44 / 44 examples compile and run** under `freak 0.14.1 (Maverick)`, built
 from source with a verified self-host fixed point.
 
 ---
@@ -18,8 +18,9 @@ from source with a verified self-host fixed point.
 
 | | |
 |---|---|
+| **4 getting-started pages** | Overview, building the compiler, the CLI, Hangar & packages |
 | **3 tutorials** | First program · A command-line tool · Modelling data |
-| **9 language pages** | Bindings, tasks, control flow, operators, words, shapes, lists, colour, FFI |
+| **10 language pages** | Bindings, tasks, control flow, operators, words, shapes, lists, colour, anime layer, FFI |
 | **5 reference pages** | Standard library, grammar, bible-vs-V3 conformance, what's missing, the example gallery |
 | **Full-text search** | Client-side, no server, `/` or `Ctrl`/`Cmd`+`K` |
 
@@ -30,6 +31,8 @@ The two pages worth reading even if you know FREAK:
   a fifth of the specification compiles today.
 - **[Not in V3](content/not-in-v3.md)** — a working substitute for each missing
   feature.
+- **[Hangar & packages](content/hangar.md)** — Hangar installs dependencies the
+  compiler cannot link. What to do instead.
 
 ## Repository layout
 

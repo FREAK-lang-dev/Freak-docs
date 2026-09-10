@@ -100,30 +100,40 @@ standalone binary.
 
 | Subcommand | Status |
 |---|---|
-| `hangar init` | works |
-| `hangar add <unit>` | works |
-| `hangar remove <unit>` | works |
+| `hangar init [name]` | works |
+| `hangar add <name> [constraint]` | works |
+| `hangar add <name> <repo> [version]` | works |
+| `hangar remove <name>` | works |
 | `hangar install` | works |
-| `hangar update` | works |
-| `hangar search <query>` | V4 — needs a live registry |
+| `hangar install freak` | works |
+| `hangar update [package]` | works |
+| `hangar outdated` | works |
+| `hangar version [patch\|minor\|major]` | works |
+| `hangar audit [--fix]` | works |
+| `hangar login`, `hangar publish [--dry-run]` | works |
+| `hangar search <query>` | not in this build |
 
-A `hangar.toml` looks like this:
+A `hangar.toml` as the tool actually writes it:
 
 ```toml
-[unit]
-name    = "my-project"
-version = "1.0.0"
-author  = "Shirogane Takeru"
-entry   = "src/main.fk"
-edition = "alternative-4"
+[project]
+name = "demo"
+version = "0.1.0"
 
 [dependencies]
-muvluv = "2.0.0"
+muvluv = "^2.0"
 ```
 
 Dependency constraints are matched by `std/version.fk`, whose semver
 comparison and `^`-constraint logic you can call directly — see
 [Standard library](stdlib.html#stdversion).
+
+> [!warn]
+> **Installing a package does not make it usable.** `freak build` never reads
+> `hangar_modules/` or `[dependencies]`, and `use pkg::{…}` is stripped to a
+> comment before parsing. Dependencies have to be concatenated into your source
+> by hand. See [Hangar & packages](hangar.html) for the full picture and the
+> working pattern.
 
 ## Environment
 

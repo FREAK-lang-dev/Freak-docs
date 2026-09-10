@@ -95,6 +95,10 @@ hidden.
 {{example:tut_cli}}
 {{example:tut_roster}}
 
+## Project structure
+
+{{example:module_pattern}}
+
 ## Complete programs
 
 {{example:fizzbuzz}}

@@ -159,9 +159,10 @@ The four anime operators also diverge in form, not just in enforcement:
 | `use module::*` | V4 | Same — stripped |
 | `launch` / `launch(package)` | ⚠️ | **Rejected** |
 | Module-private visibility | ⚠️ | **No visibility system at all** |
-| `hangar.toml` | ⚠️ | Works |
-| `hangar init/add/remove/install/update` | ⚠️ | Work |
+| `hangar.toml` | ⚠️ | Works, but as `[project]` + `[dependencies]` only — not the bible's `[unit]`/`[build]`/`[profile.*]` |
+| `hangar init/add/remove/install/update` | ⚠️ | Work, plus `outdated`, `version`, `audit`, `login`, `publish` |
 | `hangar search` | V4 | Absent |
+| **Consuming an installed package** | ⚠️ | **Impossible** — the build never reads `hangar_modules/` or `[dependencies]` |
 
 > [!warn]
 > V3 has **no module system**. Everything — your file, and every standard
@@ -169,6 +170,11 @@ The four anime operators also diverge in form, not just in enforcement:
 > `use` line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
 > `std/ui/window.fk` or the cockpit package. Every other module is already in
 > scope without it.
+>
+> That also means Hangar can install a dependency it cannot then link.
+> `use pkg::{…}` is stripped, the package source is never concatenated, and
+> the first call fails with `unknown callable`. Verified against the shipping
+> compiler — see [Hangar & packages](hangar.html).
 
 ## Section 7 — Standard library
 
