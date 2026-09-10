@@ -1,0 +1,62 @@
+-- A tour of the SGR (Select Graphic Rendition) code space, to confirm
+-- every family survives the V3 lexer, both backends and the runtime.
+--
+-- Form: ESC [ params m     where ESC is \x1b
+pilot RESET = "\x1b[0m"
+
+task sgr(code: word) -> word {
+    give back "\x1b[" + code + "m"
+}
+
+task swatch(label: word, code: word) -> void {
+    say sgr(code) + label + RESET
+}
+
+task main() -> void {
+    -- Attributes
+    swatch("bold", "1")
+    swatch("dim", "2")
+    swatch("italic", "3")
+    swatch("underline", "4")
+    swatch("blink", "5")
+    swatch("reverse", "7")
+    swatch("hidden", "8")
+    swatch("strike", "9")
+
+    -- Standard foreground 30-37
+    swatch("black", "30")
+    swatch("red", "31")
+    swatch("green", "32")
+    swatch("yellow", "33")
+    swatch("blue", "34")
+    swatch("magenta", "35")
+    swatch("cyan", "36")
+    swatch("white", "37")
+
+    -- Bright foreground 90-97
+    swatch("bright red", "91")
+    swatch("bright green", "92")
+    swatch("bright cyan", "96")
+
+    -- Background 40-47 and bright 100-107
+    swatch("on red", "41")
+    swatch("on blue", "44")
+    swatch("on bright yellow", "103")
+
+    -- Combined parameters in one sequence
+    swatch("bold + underline + red", "1;4;31")
+    swatch("white on magenta", "37;45")
+
+    -- 256-colour: 38;5;N foreground, 48;5;N background
+    swatch("256 fg 208", "38;5;208")
+    swatch("256 bg 22", "48;5;22")
+
+    -- 24-bit truecolour: 38;2;R;G;B and 48;2;R;G;B
+    swatch("rgb fg", "38;2;255;100;200")
+    swatch("rgb bg", "48;2;20;20;90")
+
+    -- Selective reset: 22 clears bold/dim, 24 clears underline,
+    -- 39 resets foreground, 49 resets background.
+    say sgr("1") + "bold " + sgr("22") + "normal again" + RESET
+    say sgr("31") + "red " + sgr("39") + "default again" + RESET
+}

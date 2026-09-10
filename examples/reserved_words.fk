@@ -1,0 +1,25 @@
+-- V3 matches keywords CASE-INSENSITIVELY. `pilot`, `Pilot` and `PILOT`
+-- are all the same keyword token, so none of them can be used as a name.
+--
+-- This bites most often on: Pilot, Result, Max, Route, Check, Move,
+-- Copy, Some, Ok, Err, Got, Use, In, As, Each, Times, Done, Max.
+--
+-- Pick a synonym instead. These all compile:
+shape Aviator {
+    tag: word
+}
+
+task outcome(value: int) -> word {
+    if value > 0 { give back "positive" }
+    give back "non-positive"
+}
+
+task main() -> void {
+    pilot a: Aviator = Aviator { tag: "V-1" }
+    pilot verdict: word = outcome(3)
+    pilot upper_bound: int = 100
+
+    say a.tag
+    say verdict
+    say word_from_int(upper_bound)
+}

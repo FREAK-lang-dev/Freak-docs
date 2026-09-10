@@ -1,0 +1,25 @@
+-- Two numeric surfaces exist side by side:
+--   `math::*` are compiler builtins over `num` (floating point).
+--   `std_*` come from std/math.fk and work on `int`.
+task main() -> void {
+    -- builtins, num
+    say format_num(math::sqrt(144.0))
+    say format_num(math::pow(2.0, 10.0))
+    say format_num(math::floor(3.9))
+    say format_num(math::ceil(3.1))
+    say format_num(math::sin(0.0))
+    say format_num(math::cos(0.0))
+
+    -- std/math.fk, int
+    say word_from_int(std_abs(0 - 9))
+    say word_from_int(std_max(3, 8))
+    say word_from_int(std_min(3, 8))
+    say word_from_int(std_clamp(42, 0, 10))
+    say word_from_int(std_pow(2, 8))
+    say word_from_int(std_gcd(84, 30))
+    say word_from_int(std_lcm(4, 6))
+    say word_from_int(std_factorial(6))
+    say word_from_int(std_fibonacci(12))
+    say word_from_bool(std_is_even(4))
+    say word_from_int(std_sign(0 - 3))
+}

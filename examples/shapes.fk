@@ -1,0 +1,27 @@
+-- `shape` declares a record type. Each field is `name: type`,
+-- where the type is a single identifier.
+shape Vector2 {
+    x: int
+    y: int
+}
+
+shape Squad {
+    callsign: word
+    members: int
+    ready: bool
+}
+
+task main() -> void {
+    pilot v: Vector2 = Vector2 { x: 3, y: 4 }
+    say word_from_int(v.x)
+    say word_from_int(v.y)
+
+    -- Fields are assignable.
+    v.x = 10
+    say word_from_int(v.x)
+
+    pilot s: Squad = Squad { callsign: "Valkyries", members: 4, ready: true }
+    say s.callsign
+    say word_from_int(s.members)
+    say word_from_bool(s.ready)
+}

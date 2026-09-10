@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compiler CLI &middot; FREAK V3</title>
+<meta name="description" content="Every subcommand and flag the shipping V3 `freak` binary actually recognises.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html" class="active">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="compiler-cli">Compiler CLI<a class="anchor" href="#compiler-cli" aria-label="Link to this section">#</a></h1>
+<p>&gt; Every subcommand and flag the shipping V3 <code>freak</code> binary actually recognises.</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak &lt;command&gt; [file.fk] [options]</code></pre></div>
+<h2 id="commands">Commands<a class="anchor" href="#commands" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody><tr><td><code>freak build &lt;file.fk&gt;</code></td><td>Compile to a native binary beside the source</td></tr><tr><td><code>freak run &lt;file.fk&gt;</code></td><td>Build, then execute</td></tr><tr><td><code>freak check &lt;file.fk&gt;</code></td><td>Lex, parse and type-check only — <strong>no standard library</strong></td></tr><tr><td><code>freak transpile &lt;file.fk&gt;</code></td><td>Emit <code>.c</code> or <code>.ll</code> and stop</td></tr><tr><td><code>freak init</code></td><td>Scaffold a new project</td></tr><tr><td><code>freak doctor</code></td><td>Validate the toolchain and payload</td></tr><tr><td><code>freak upgrade</code></td><td>Download and stage a newer FREAK</td></tr><tr><td><code>freak hangar &lt;cmd&gt;</code></td><td>Package manager (also a standalone <code>hangar</code> binary)</td></tr><tr><td><code>freak version</code>, <code>freak --version</code>, <code>freak -V</code></td><td>Print the version</td></tr><tr><td><code>freak help</code>, <code>freak --help</code>, <code>freak -h</code></td><td>Print the help screen</td></tr><tr><td><code>freak flex</code></td><td>Print the banner</td></tr><tr><td><code>freak test</code></td><td>Source-checkout shim around <code>python tests/suite/run_tests.py</code></td></tr><tr><td><code>freak audit-science</code></td><td>List every <code>for science,</code> call site</td></tr><tr><td><code>freak audit-trust</code></td><td>List every <code>trust me</code> block with its honor level</td></tr><tr><td><code>freak audit-miracles</code></td><td>List every <code>deus_ex_machina</code> block</td></tr><tr><td><code>freak foreshadow-audit</code></td><td>Report unpaid <code>foreshadow</code> bindings</td></tr><tr><td><code>freak audit-conformance</code></td><td>Verify the implementation status table against the code</td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>**<code>freak check</code> is not a fast <code>freak build</code>.** It compiles your file <em>alone</em>. It does not strip <code>use</code> lines and it does not link the standard library, so anything from <code>std/</code> — <code>string_reverse</code>, <code>std_gcd</code>, <code>ver_parse</code>, <code>json_parse</code> — reports <code>unknown callable</code>. Use <code>check</code> for pure-builtin code; use <code>build</code> or <code>run</code> for everything else.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p>The audit subcommands shell out to <code>python -m freakc</code>. They need the Python bootstrap package and the repository&#x27;s audit inputs; the native V3 binary does not contain that auditor. The same is true of <code>freak test</code>.</p></div>
+<h2 id="options">Options<a class="anchor" href="#options" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Flag</th><th>Effect</th></tr></thead><tbody><tr><td><code>--llvm</code></td><td>LLVM IR backend. <strong>Default.</strong> Full language surface</td></tr><tr><td><code>--c</code></td><td>Portable C backend. No claimed executable shape storage</td></tr><tr><td><code>--opt=N</code></td><td>Optimisation level, <code>0</code>–<code>3</code>. Default <code>2</code></td></tr><tr><td><code>--target=TRIPLE</code></td><td>Cross-compile target triple</td></tr><tr><td><code>--strict-borrow</code></td><td>Enable the opt-in Phase-1 ownership checker</td></tr></tbody></table></div>
+<p>Flags may appear in any order after the file:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run game.fk --c --opt=3
+freak build game.fk --target=x86_64-linux-gnu
+freak build game.fk --strict-borrow</code></pre></div>
+<div class="callout v4"><div class="callout-title">Not in V3</div><p><code>-o output_path</code> does not exist. The output name is always the source basename plus <code>.exe</code> (Windows) or no extension elsewhere. <code>--voice=</code>, <code>--clearance=</code> and <code>--build-mode=</code> are also V4-only.</p></div>
+<h2 id="--strict-borrow"><code>--strict-borrow</code><a class="anchor" href="#--strict-borrow" aria-label="Link to this section">#</a></h2>
+<p>Without this flag V3 does no ownership checking at all. With it, a Phase-1 checker runs after type checking and enforces three rules:</p>
+<ul><li><strong>Immutable bindings.</strong> <code>pilot x = ...</code> cannot be reassigned; <code>pilot mut x = ...</code> can. Reassigning without <code>mut</code> reports <em>&quot;This binding was sworn to silence.&quot;</em></li><li><strong>Single-owner moves</strong> for <code>word</code>, arrays and user shapes. Use after move reports <em>&quot;Shirogane. You gave this away.&quot;</em></li><li><strong>Copy primitives.</strong> <code>int</code>, <code>num</code> and <code>bool</code> are copied on assignment; both bindings stay valid.</li></ul>
+<p>Nominal member validation — checking that a field or method you name actually exists on the shape — always runs, flag or not.</p>
+<h2 id="backends-compared">Backends compared<a class="anchor" href="#backends-compared" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th></th><th>LLVM (<code>--llvm</code>)</th><th>C (<code>--c</code>)</th></tr></thead><tbody><tr><td>Scalars, control flow, words</td><td>yes</td><td>yes</td></tr><tr><td>Arrays and native calls</td><td>yes</td><td>yes</td></tr><tr><td><code>shape</code> construction, fields, methods</td><td>yes</td><td><strong>not a claimed executable path</strong></td></tr><tr><td>Dotted <code>{shape.field}</code> interpolation</td><td>yes</td><td>not claimed</td></tr><tr><td><code>std::ui</code> windows</td><td>Windows only, Win32/GDI</td><td>no</td></tr><tr><td><code>std::http</code></td><td>yes</td><td>not linked</td></tr><tr><td>Debug info</td><td>LineTablesOnly DWARF</td><td>via Clang</td></tr></tbody></table></div>
+<p>The rule of thumb: if your program declares a <code>shape</code>, build it with the default LLVM backend.</p>
+<h2 id="hangar">Hangar<a class="anchor" href="#hangar" aria-label="Link to this section">#</a></h2>
+<p><code>hangar</code> is the package manager, reachable as <code>freak hangar &lt;cmd&gt;</code> or as a standalone binary.</p>
+<div class="tablewrap"><table><thead><tr><th>Subcommand</th><th>Status</th></tr></thead><tbody><tr><td><code>hangar init</code></td><td>works</td></tr><tr><td><code>hangar add &lt;unit&gt;</code></td><td>works</td></tr><tr><td><code>hangar remove &lt;unit&gt;</code></td><td>works</td></tr><tr><td><code>hangar install</code></td><td>works</td></tr><tr><td><code>hangar update</code></td><td>works</td></tr><tr><td><code>hangar search &lt;query&gt;</code></td><td>V4 — needs a live registry</td></tr></tbody></table></div>
+<p>A <code>hangar.toml</code> looks like this:</p>
+<div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[unit]
+name    = &quot;my-project&quot;
+version = &quot;1.0.0&quot;
+author  = &quot;Shirogane Takeru&quot;
+entry   = &quot;src/main.fk&quot;
+edition = &quot;alternative-4&quot;
+
+[dependencies]
+muvluv = &quot;2.0.0&quot;</code></pre></div>
+<p>Dependency constraints are matched by <code>std/version.fk</code>, whose semver comparison and <code>^</code>-constraint logic you can call directly — see <a href="stdlib.html#stdversion">Standard library</a>.</p>
+<h2 id="environment">Environment<a class="anchor" href="#environment" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Variable</th><th>Meaning</th></tr></thead><tbody><tr><td><code>FREAK_HOME</code></td><td>Authoritative payload root. Overrides checkout-relative and executable-adjacent discovery</td></tr></tbody></table></div>
+<p>Discovery order for <code>runtime/</code> and <code>std/</code>:</p>
+<ol><li><code>$FREAK_HOME</code></li><li>the repository root, if the executable sits inside a checkout</li><li>the directory beside the executable</li><li>the default installed home</li></ol>
+<p>Both <code>runtime/freak_abi</code> and <code>std/freak_abi</code> must carry the marker the compiler expects, or the build stops before parsing.</p>
+<h2 id="generated-files">Generated files<a class="anchor" href="#generated-files" aria-label="Link to this section">#</a></h2>
+<p><code>freak build hello.fk</code> leaves behind:</p>
+<div class="codeblock"><pre class="code"><code>hello.fk        your source
+hello.fk.ll     LLVM IR   (or hello.fk.c with --c)
+hello.exe       the binary
+hello.pdb       debug info, Windows</code></pre></div>
+<p><code>freak transpile</code> produces only the <code>.ll</code> or <code>.c</code>.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#commands">Commands</a></li><li><a href="#options">Options</a></li><li><a href="#--strict-borrow">`--strict-borrow`</a></li><li><a href="#backends-compared">Backends compared</a></li><li><a href="#hangar">Hangar</a></li><li><a href="#environment">Environment</a></li><li><a href="#generated-files">Generated files</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

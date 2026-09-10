@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorial 3: Modelling data &middot; FREAK V3</title>
+<meta name="description" content="Shapes, nested shapes, methods, and both of V3&#x27;s collection surfaces — including the restriction that catches everyone. About 25 minutes.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html" class="active">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="tutorial-3-modelling-data">Tutorial 3: Modelling data<a class="anchor" href="#tutorial-3-modelling-data" aria-label="Link to this section">#</a></h1>
+<p>&gt; Shapes, nested shapes, methods, and both of V3&#x27;s collection surfaces — including the restriction that catches everyone. About 25 minutes.</p>
+<p>V3 gives you one user-defined type (<code>shape</code>) and two ways to hold a sequence. This tutorial builds a squadron roster and shows where each tool fits.</p>
+<h2 id="step-1-a-shape-with-behaviour">Step 1 — A shape with behaviour<a class="anchor" href="#step-1-a-shape-with-behaviour" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Member</span> {
+    callsign<span class="c-op">:</span> <span class="c-type">word</span>
+    sorties<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Member</span> {
+    <span class="c-kw">task</span> <span class="c-fn">enlist</span>(callsign<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">Member</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Member</span> { callsign<span class="c-op">:</span> callsign, sorties<span class="c-op">:</span> <span class="c-num">0</span> }
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">veteran</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+        <span class="c-kw">give back</span> <span class="c-type">self</span>.sorties <span class="c-op">&gt;=</span> <span class="c-num">20</span>
+    }
+}</code></pre></div>
+<p><code>enlist</code> has no <code>self</code>, so it is an associated method: <code>Member::enlist(&quot;V-1&quot;)</code>. <code>veteran</code> takes <code>self</code>, so it is an instance method: <code>m.veteran()</code>.</p>
+<p>Constructor-style associated methods are the idiomatic way to build a shape with defaults, since fields have no default values.</p>
+<h2 id="step-2-nesting">Step 2 — Nesting<a class="anchor" href="#step-2-nesting" aria-label="Link to this section">#</a></h2>
+<p>Shapes hold shapes, and access chains:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Airframe</span> {
+    model<span class="c-op">:</span> <span class="c-type">word</span>
+    thrust<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">shape</span> <span class="c-type">Member</span> {
+    callsign<span class="c-op">:</span> <span class="c-type">word</span>
+    sorties<span class="c-op">:</span> <span class="c-type">int</span>
+    frame<span class="c-op">:</span> <span class="c-type">Airframe</span>
+}</code></pre></div>
+<p>Construct inline:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> m<span class="c-op">:</span> <span class="c-type">Member</span> <span class="c-op">=</span> <span class="c-type">Member</span> {
+    callsign<span class="c-op">:</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>,
+    sorties<span class="c-op">:</span> <span class="c-num">0</span>,
+    frame<span class="c-op">:</span> <span class="c-type">Airframe</span> { model<span class="c-op">:</span> <span class="c-str">&quot;Takemikazuchi&quot;</span>, thrust<span class="c-op">:</span> <span class="c-num">880</span> }
+}
+
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(m.frame.thrust)
+<span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{m.callsign}</span> flies a <span class="c-interp">{m.frame.model}</span>&quot;</span></code></pre></div>
+<p>Dotted paths work inside interpolation, including <code>{self.frame.thrust}</code> from within a method.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>Shapes are handles into runtime storage, not values. Passing one to a task and mutating a field is visible to the caller, and assigning one binding to another aliases the same storage. To get an independent copy, construct a new shape.</p></div>
+<h2 id="step-3-lists">Step 3 — Lists<a class="anchor" href="#step-3-lists" aria-label="Link to this section">#</a></h2>
+<p><code>List&lt;T&gt;</code> is the typed sequence. The element is a scalar or a shape name:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-str">&quot;Valkyrie-1&quot;</span>, <span class="c-str">&quot;Valkyrie-2&quot;</span>, <span class="c-str">&quot;Valkyrie-3&quot;</span>]
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
+<span class="c-kw">say</span> names[<span class="c-num">1</span>]</code></pre></div>
+<p>Three rules to internalise:</p>
+<ul><li>**<code>.length()</code> is a method**, not a field. <code>names.length</code> reports <em>&quot;non-shape value has no fields&quot;</em>.</li><li>**Indexed assignment needs <code>pilot mut</code>**, otherwise <em>&quot;indexed assignment requires a mutable list binding&quot;</em>.</li><li><strong>The literal infers the type.</strong> <code>[1, 2, 3]</code> is a <code>List&lt;int&gt;</code>; all elements must share one type.</li></ul>
+<p><code>List::filled(value, count)</code> builds a pre-populated list, which is the way to size one up front:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> tally<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">filled</span>(<span class="c-num">0</span>, <span class="c-num">3</span>)
+tally[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">24</span></code></pre></div>
+<p>There is no <code>push</code>, <code>pop</code>, <code>sort</code> or iterator. It is an indexable sequence, nothing more.</p>
+<h2 id="step-4-the-restriction">Step 4 — The restriction<a class="anchor" href="#step-4-the-restriction" aria-label="Link to this section">#</a></h2>
+<p>This is the one that catches people:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Roster</span> {
+    members<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">Member</span><span class="c-op">&gt;</span>     <span class="c-com">-- does not compile</span>
+}</code></pre></div>
+<div class="codeblock"><pre class="code"><code>type error: V3 owned shape fields do not yet support List values</code></pre></div>
+<p>A <code>List&lt;T&gt;</code> may be a binding, a task parameter and a return type — but <strong>not a shape field</strong>. So the &quot;container shape holding a list of children&quot; pattern is unavailable.</p>
+<p>Work around it one of three ways:</p>
+<ol><li>Keep the list beside the shape rather than inside it.</li><li>Store a legacy <code>int</code> array handle in the field.</li><li>Pass lists through tasks, which is allowed:</li></ol>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">total_sorties</span>(counts<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> sum<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> counts.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        sum <span class="c-op">+=</span> counts[i]
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> sum
+}</code></pre></div>
+<h2 id="step-5-the-legacy-handle">Step 5 — The legacy handle<a class="anchor" href="#step-5-the-legacy-handle" aria-label="Link to this section">#</a></h2>
+<p>Alongside <code>List&lt;T&gt;</code> there is an older untyped array: <code>array_new()</code> returns an <code>int</code> handle, and every element is a <code>word</code>.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> h<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_new</span>()
+<span class="c-fn">array_push</span>(h, <span class="c-str">&quot;alpha&quot;</span>)
+<span class="c-fn">array_push</span>(h, <span class="c-str">&quot;bravo&quot;</span>)
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_len</span>(h))
+<span class="c-kw">say</span> <span class="c-fn">array_get</span>(h, <span class="c-num">0</span>)
+<span class="c-fn">array_release</span>(h)</code></pre></div>
+<p>It is worth keeping around for two reasons: it can <strong>grow</strong> (<code>array_push</code>), and it is the only thing the <code>std/algorithm.fk</code> helpers accept.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-fn">array_sort_int</span>(h)
+<span class="c-kw">say</span> <span class="c-fn">array_join</span>(h, <span class="c-str">&quot;, &quot;</span>)
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_max_int</span>(h))</code></pre></div>
+<p>Those helpers are declared <code>handle: int</code>, so passing a <code>List&lt;word&gt;</code> fails:</p>
+<div class="codeblock"><pre class="code"><code>type error: call to &#x27;array_join&#x27; argument 1 expects int, got List&lt;word&gt;</code></pre></div>
+<p>The <code>array_*</code> <strong>builtins</strong> are more forgiving — <code>array_len</code>, <code>array_get</code>, <code>array_set</code>, <code>array_push</code> accept either. Builtins bridge; library tasks do not.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Two helpers are broken in the shipping compiler: <code>array_sort_word()</code> segfaults, and <code>array_unique()</code> returns an empty array. Use <code>array_sort_int</code>, and deduplicate by hand.</p></div>
+<h2 id="step-6-choosing-between-them">Step 6 — Choosing between them<a class="anchor" href="#step-6-choosing-between-them" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Need</th><th>Use</th></tr></thead><tbody><tr><td>Typed elements, fixed size</td><td><code>List&lt;T&gt;</code></td></tr><tr><td>Numbers without converting to <code>word</code></td><td><code>List&lt;int&gt;</code> / <code>List&lt;num&gt;</code></td></tr><tr><td>Growing a collection</td><td>Legacy handle + <code>array_push</code></td></tr><tr><td>Sorting, joining, searching</td><td>Legacy handle + <code>std/algorithm.fk</code></td></tr><tr><td>A field inside a shape</td><td>Legacy handle — <code>List</code> is rejected</td></tr><tr><td>Returning a collection from a task</td><td>Either; or mutate a handle passed in</td></tr></tbody></table></div>
+<p><code>array_release(h)</code> frees a legacy array. V3 has no garbage collector, so a long-running program that allocates in a loop must release.</p>
+<h2 id="the-finished-program">The finished program<a class="anchor" href="#the-finished-program" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/tut_roster.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Tutorial 3, finished program.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- Model a squadron with shapes, keep the members in a List, and compute</span>
+<span class="c-com">-- a summary. Shows the two collection surfaces working side by side and</span>
+<span class="c-com">-- the one restriction that catches people: a shape cannot hold a List.</span>
+
+<span class="c-kw">shape</span> <span class="c-type">Airframe</span> {
+    model<span class="c-op">:</span> <span class="c-type">word</span>
+    thrust<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">shape</span> <span class="c-type">Member</span> {
+    callsign<span class="c-op">:</span> <span class="c-type">word</span>
+    sorties<span class="c-op">:</span> <span class="c-type">int</span>
+    frame<span class="c-op">:</span> <span class="c-type">Airframe</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Member</span> {
+    <span class="c-kw">task</span> <span class="c-fn">enlist</span>(callsign<span class="c-op">:</span> <span class="c-type">word</span>, model<span class="c-op">:</span> <span class="c-type">word</span>, thrust<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">Member</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Member</span> {
+            callsign<span class="c-op">:</span> callsign,
+            sorties<span class="c-op">:</span> <span class="c-num">0</span>,
+            frame<span class="c-op">:</span> <span class="c-type">Airframe</span> { model<span class="c-op">:</span> model, thrust<span class="c-op">:</span> thrust }
+        }
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">veteran</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+        <span class="c-kw">give back</span> <span class="c-type">self</span>.sorties <span class="c-op">&gt;=</span> <span class="c-num">20</span>
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">line</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.callsign}</span>  <span class="c-interp">{self.frame.model}</span>  thrust <span class="c-interp">{self.frame.thrust}</span>  sorties <span class="c-interp">{self.sorties}</span>&quot;</span>
+    }
+}
+
+<span class="c-com">-- A List may be a parameter and a return type. It may NOT be a field on</span>
+<span class="c-com">-- a shape: that reports</span>
+<span class="c-com">--   &quot;V3 owned shape fields do not yet support List values&quot;</span>
+<span class="c-kw">task</span> <span class="c-fn">total_sorties</span>(counts<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> sum<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> counts.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        sum <span class="c-op">+=</span> counts[i]
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> sum
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> ichi<span class="c-op">:</span> <span class="c-type">Member</span> <span class="c-op">=</span> <span class="c-type">Member</span><span class="c-op">::</span><span class="c-fn">enlist</span>(<span class="c-str">&quot;Valkyrie-1&quot;</span>, <span class="c-str">&quot;Takemikazuchi&quot;</span>, <span class="c-num">880</span>)
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> ni<span class="c-op">:</span> <span class="c-type">Member</span> <span class="c-op">=</span> <span class="c-type">Member</span><span class="c-op">::</span><span class="c-fn">enlist</span>(<span class="c-str">&quot;Valkyrie-2&quot;</span>, <span class="c-str">&quot;Shiranui&quot;</span>, <span class="c-num">640</span>)
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> san<span class="c-op">:</span> <span class="c-type">Member</span> <span class="c-op">=</span> <span class="c-type">Member</span><span class="c-op">::</span><span class="c-fn">enlist</span>(<span class="c-str">&quot;Valkyrie-3&quot;</span>, <span class="c-str">&quot;Gekishin&quot;</span>, <span class="c-num">520</span>)
+
+    <span class="c-kw">repeat</span> <span class="c-num">24</span> <span class="c-kw">times</span> { ichi.sorties <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">repeat</span> <span class="c-num">8</span> <span class="c-kw">times</span> { ni.sorties <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">repeat</span> <span class="c-num">31</span> <span class="c-kw">times</span> { san.sorties <span class="c-op">+=</span> <span class="c-num">1</span> }
+
+    <span class="c-kw">say</span> ichi.<span class="c-fn">line</span>()
+    <span class="c-kw">say</span> ni.<span class="c-fn">line</span>()
+    <span class="c-kw">say</span> san.<span class="c-fn">line</span>()
+
+    <span class="c-com">-- A typed List holds the numbers we want to aggregate.</span>
+    <span class="c-kw">pilot</span> counts<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [ichi.sorties, ni.sorties, san.sorties]
+    <span class="c-kw">say</span> <span class="c-str">&quot;total sorties: &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">total_sorties</span>(counts))
+    <span class="c-kw">say</span> <span class="c-str">&quot;squadron size: &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(counts.<span class="c-fn">length</span>())
+
+    <span class="c-com">-- Names in a List&lt;word&gt;, indexed like any other list.</span>
+    <span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [ichi.callsign, ni.callsign, san.callsign]
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> names.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;  member &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(i) <span class="c-op">+</span> <span class="c-str">&quot;: &quot;</span> <span class="c-op">+</span> names[i]
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-com">-- Counting veterans needs the shapes themselves, so loop over them</span>
+    <span class="c-com">-- directly rather than trying to put Members in a List.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> veterans<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">if</span> ichi.<span class="c-fn">veteran</span>() { veterans <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">if</span> ni.<span class="c-fn">veteran</span>() { veterans <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">if</span> san.<span class="c-fn">veteran</span>() { veterans <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">say</span> <span class="c-str">&quot;veterans: &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(veterans)
+
+    <span class="c-com">-- The legacy handle is still the right tool when you need the</span>
+    <span class="c-com">-- std/algorithm.fk helpers, which are declared with `handle: int`.</span>
+    <span class="c-kw">pilot</span> ranking<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_new</span>()
+    <span class="c-fn">array_push</span>(ranking, <span class="c-fn">word_from_int</span>(ichi.sorties))
+    <span class="c-fn">array_push</span>(ranking, <span class="c-fn">word_from_int</span>(ni.sorties))
+    <span class="c-fn">array_push</span>(ranking, <span class="c-fn">word_from_int</span>(san.sorties))
+
+    <span class="c-fn">array_sort_int</span>(ranking)
+    <span class="c-kw">say</span> <span class="c-str">&quot;sorted sorties: &quot;</span> <span class="c-op">+</span> <span class="c-fn">array_join</span>(ranking, <span class="c-str">&quot;, &quot;</span>)
+    <span class="c-kw">say</span> <span class="c-str">&quot;busiest pilot flew &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_max_int</span>(ranking))
+    <span class="c-fn">array_release</span>(ranking)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyrie-1  Takemikazuchi  thrust 880  sorties 24
+Valkyrie-2  Shiranui  thrust 640  sorties 8
+Valkyrie-3  Gekishin  thrust 520  sorties 31
+total sorties: 63
+squadron size: 3
+  member 0: Valkyrie-1
+  member 1: Valkyrie-2
+  member 2: Valkyrie-3
+veterans: 2
+sorted sorties: 8, 24, 31
+busiest pilot flew 31</code></pre>
+  </div>
+</figure>
+<h2 id="where-to-go-next">Where to go next<a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a></h2>
+<ul><li><a href="arrays.html">Lists &amp; arrays</a> — the full reference for both surfaces</li><li><a href="shapes.html">Shapes &amp; impl</a> — operator doctrines and backend caveats</li><li><a href="stdlib.html">Standard library</a> — <code>ByteBuffer</code>, <code>word_builder</code>, JSON, semver</li><li><a href="conformance.html">Bible vs V3</a> — how far this is from the specification</li></ul>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#step-1-a-shape-with-behaviour">Step 1 — A shape with behaviour</a></li><li><a href="#step-2-nesting">Step 2 — Nesting</a></li><li><a href="#step-3-lists">Step 3 — Lists</a></li><li><a href="#step-4-the-restriction">Step 4 — The restriction</a></li><li><a href="#step-5-the-legacy-handle">Step 5 — The legacy handle</a></li><li><a href="#step-6-choosing-between-them">Step 6 — Choosing between them</a></li><li><a href="#the-finished-program">The finished program</a></li><li><a href="#where-to-go-next">Where to go next</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

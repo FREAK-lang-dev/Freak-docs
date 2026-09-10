@@ -1,0 +1,19 @@
+-- `if` / `else if` / `else`. Conditions take no parentheses.
+task describe(power: int) -> word {
+    if power > 9000 {
+        give back "over nine thousand"
+    } else if power > 5000 {
+        give back "high"
+    } else if power > 1000 {
+        give back "moderate"
+    } else {
+        give back "low"
+    }
+}
+
+task main() -> void {
+    say describe(9001)
+    say describe(6000)
+    say describe(2000)
+    say describe(10)
+}

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>extern &amp; FFI &middot; FREAK V3</title>
+<meta name="description" content="V3&#x27;s foreign-function interface is one line long, and that is the whole of it.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html" class="active">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="extern-ffi">extern &amp; FFI<a class="anchor" href="#extern-ffi" aria-label="Link to this section">#</a></h1>
+<p>&gt; V3&#x27;s foreign-function interface is one line long, and that is the whole of it.</p>
+<h2 id="the-declaration-form">The declaration form<a class="anchor" href="#the-declaration-form" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">name</span>(param<span class="c-op">:</span> type, param<span class="c-op">:</span> type) <span class="c-op">-&gt;</span> returntype</code></pre></div>
+<p>One line, no body, no block, no attributes. Parameter and return types use the usual <a href="language-basics.html#the-type-annotation-grammar">type grammar</a>, but only a small set makes sense at a C boundary: <code>int</code>, <code>num</code>, <code>bool</code>, <code>void</code>. See <a href="#type-mapping">type mapping</a> below before reaching for <code>word</code> — and never for <code>List&lt;T&gt;</code> or <code>ByteBuffer</code>, which have no C representation.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/extern.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3&#x27;s `extern` is a single flat declaration -- no `extern [C] { ... }`</span>
+<span class="c-com">-- block, no calling convention, no `link=`. Parameter and return types</span>
+<span class="c-com">-- are single identifiers.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- The declared symbol must exist at link time and must not start with</span>
+<span class="c-com">-- the reserved `__freak_` prefix.</span>
+<span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">abs</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">abs</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">41</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">abs</span>(<span class="c-num">41</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>41
+41</code></pre>
+  </div>
+</figure>
+<p>The declared symbol must be resolvable by the linker when Clang links the program. Because V3 already links the C runtime and the platform C library, ordinary libc symbols are available with no extra flags — <code>abs</code> above is <code>abs(3)</code> from the C library.</p>
+<h2 id="the-reserved-symbol-namespace">The reserved symbol namespace<a class="anchor" href="#the-reserved-symbol-namespace" aria-label="Link to this section">#</a></h2>
+<p>V3 mangles source task symbols into a reserved <code>__freak_</code> namespace so generated code can never be shadowed by user names. Two rules follow:</p>
+<ul><li>An <code>extern task</code> whose native name begins with <code>__freak_</code> is a <strong>hard type error</strong>. This stops a raw ABI symbol from being captured by generated locals, parameters, globals or task symbols.</li><li>A source task cannot redeclare a compiler builtin call name. Declaring <code>task say(...)</code> or <code>extern task fs::read(...)</code> is rejected before either backend emits code.</li></ul>
+<h2 id="type-mapping">Type mapping<a class="anchor" href="#type-mapping" aria-label="Link to this section">#</a></h2>
+<p>There are no <code>std::ffi</code> aliases in V3 — no <code>c_int</code>, <code>c_size</code>, <code>usize</code>, <code>wchar</code>. You declare the FREAK type and the backend picks the representation.</p>
+<div class="tablewrap"><table><thead><tr><th>FREAK type</th><th>LLVM representation</th></tr></thead><tbody><tr><td><code>int</code></td><td><code>i64</code></td></tr><tr><td><code>num</code></td><td><code>double</code></td></tr><tr><td><code>bool</code></td><td><code>i64</code> (0 / 1)</td></tr><tr><td><code>word</code></td><td><code>i64</code> handle into the runtime&#x27;s word table</td></tr><tr><td><code>void</code></td><td><code>void</code></td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>**<code>word</code> is not <code>char*</code>.** On the LLVM backend a <code>word</code> is an <code>i64</code> handle managed by the FREAK runtime, not a pointer to bytes. Declaring <code>extern task puts(s: word) -&gt; int</code> will compile and then pass a handle where C expects a pointer. This is not hypothetical: <code>std/algorithm.fk</code> declares <code>extern task freak_word_compare(a: word, b: word) -&gt; int</code> and the resulting <code>array_sort_word</code> <strong>segfaults</strong>. Treat <code>word</code> across <code>extern</code> as unsafe until you have checked the specific runtime function&#x27;s real C signature.</p></div>
+<p>The safe subset is <code>int</code>, <code>num</code>, <code>bool</code> and <code>void</code>. For string work, prefer the builtin <code>word</code> methods and the runtime functions FREAK already exposes.</p>
+<h2 id="calling">Calling<a class="anchor" href="#calling" aria-label="Link to this section">#</a></h2>
+<p>An extern task is called exactly like a FREAK task, and its arguments are type-checked against the declaration:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">abs</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">abs</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">41</span>))
+}</code></pre></div>
+<h2 id="backend-differences">Backend differences<a class="anchor" href="#backend-differences" aria-label="Link to this section">#</a></h2>
+<p>The C backend emits a plain C call and relies on the symbol being declared by an included header or implicitly. The LLVM backend emits a <code>declare</code> for the symbol with the mapped signature. A signature that disagrees with the real C function is undefined behaviour on both — there is no cross-check.</p>
+<h2 id="what-the-bible-specifies-and-v3-does-not-have">What the bible specifies and V3 does not have<a class="anchor" href="#what-the-bible-specifies-and-v3-does-not-have" aria-label="Link to this section">#</a></h2>
+<p>Section 16 of the bible describes a full FFI contract. Essentially none of it is in V3:</p>
+<div class="tablewrap"><table><thead><tr><th>Feature</th><th>Status</th></tr></thead><tbody><tr><td><code>extern [C] { ... }</code> blocks</td><td>V4 — V3 takes exactly one <code>extern task</code> per declaration</td></tr><tr><td>Calling conventions (<code>cdecl</code>, <code>stdcall</code>, <code>system</code>, …)</td><td>V4</td></tr><tr><td><code>link=&quot;user32&quot;</code> library binding</td><td>V4</td></tr><tr><td><code>@link_name(&quot;symbol&quot;)</code></td><td>V4</td></tr><tr><td>Variadics <code>args: ...</code></td><td>V4</td></tr><tr><td><code>std::ffi</code> type aliases</td><td>V4</td></tr><tr><td>Raw pointers <code>*T</code>, <code>*const T</code>, <code>*mut T</code></td><td>V4</td></tr><tr><td><code>*ptr</code>, <code>.read()</code>, <code>.write()</code>, <code>.offset()</code>, <code>.cast&lt;U&gt;()</code>, <code>.is_null()</code></td><td>V4</td></tr><tr><td><code>@layout(C)</code>, <code>@layout(C, packed=N)</code>, <code>@layout(transparent)</code></td><td>V4</td></tr><tr><td><code>@repr(u32)</code> on fieldless variants</td><td>V4</td></tr><tr><td><code>@extern_callback(&quot;C&quot;)</code> and panic-abort trampolines</td><td>V4</td></tr><tr><td><code>@allow_unwinder</code></td><td>V4</td></tr><tr><td><code>trust me &quot;...&quot; on my honor as .level { }</code></td><td>V4 — does not parse</td></tr><tr><td><code>alloc</code>, <code>free</code>, <code>size_of&lt;T&gt;()</code>, <code>align_of&lt;T&gt;()</code></td><td>V4</td></tr><tr><td><code>std::os::windows</code> / <code>macos</code> / <code>linux</code></td><td>V4</td></tr><tr><td>Conditional imports <code>use[target_os=&quot;windows&quot;] ...</code></td><td>V4</td></tr></tbody></table></div>
+<p>There is no <code>trust me</code> block in V3, which means there is no unsafe boundary to gate — and equally, no honour-level audit trail on the code you actually compile. <code>freak audit-trust</code> scans source text for <code>trust me</code> blocks that the compiler itself would reject.</p>
+<h2 id="practical-guidance">Practical guidance<a class="anchor" href="#practical-guidance" aria-label="Link to this section">#</a></h2>
+<p>Keep the FFI surface to scalars:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">abs</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span>
+<span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">labs</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">abs</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">7</span>))
+}</code></pre></div>
+<p>If you need to hand a string to C, do it from the C side instead: add your function to <code>freakc/runtime/freak_runtime.c</code>, expose it the way the existing runtime bridges do, and call it through the builtin table rather than through <code>extern</code>. That is how <code>fs::read</code>, <code>tcp::send</code> and the <code>ui::*</code> family are wired, and it is the only path that handles the <code>word</code> representation correctly.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#the-declaration-form">The declaration form</a></li><li><a href="#the-reserved-symbol-namespace">The reserved symbol namespace</a></li><li><a href="#type-mapping">Type mapping</a></li><li><a href="#calling">Calling</a></li><li><a href="#backend-differences">Backend differences</a></li><li><a href="#what-the-bible-specifies-and-v3-does-not-have">What the bible specifies and V3 does not have</a></li><li><a href="#practical-guidance">Practical guidance</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

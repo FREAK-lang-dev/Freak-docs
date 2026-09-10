@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lists &amp; arrays &middot; FREAK V3</title>
+<meta name="description" content="V3 has two collection surfaces: a typed `List&lt;T&gt;`, and an older untyped handle. Know which one you are holding.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html" class="active">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="lists-arrays">Lists &amp; arrays<a class="anchor" href="#lists-arrays" aria-label="Link to this section">#</a></h1>
+<p>&gt; V3 has two collection surfaces: a typed <code>List&lt;T&gt;</code>, and an older untyped handle. Know which one you are holding.</p>
+<p>This is the one part of V3 with genuine overlap, because <code>List&lt;T&gt;</code> was added on top of a pre-existing untyped array. Both still work, and they are not interchangeable everywhere.</p>
+<div class="tablewrap"><table><thead><tr><th></th><th><code>List&lt;T&gt;</code></th><th>Legacy handle</th></tr></thead><tbody><tr><td>Type</td><td><code>List&lt;int&gt;</code>, <code>List&lt;word&gt;</code>, <code>List&lt;Shape&gt;</code>, …</td><td><code>int</code></td></tr><tr><td>Created by</td><td><code>[a, b, c]</code>, <code>List::filled(v, n)</code></td><td><code>array_new()</code></td></tr><tr><td>Element type</td><td>Checked</td><td>Always <code>word</code></td></tr><tr><td>Length</td><td><code>list.length()</code></td><td><code>array_len(h)</code></td></tr><tr><td>Read</td><td><code>list[i]</code></td><td><code>array_get(h, i)</code></td></tr><tr><td>Write</td><td><code>list[i] = v</code> (needs <code>pilot mut</code>)</td><td><code>array_set(h, i, v)</code></td></tr><tr><td>Append</td><td>—</td><td><code>array_push(h, v)</code></td></tr><tr><td>Accepted by <code>array_*</code> builtins</td><td>yes, when <code>List&lt;word&gt;</code></td><td>yes</td></tr><tr><td>Accepted by <code>std/algorithm.fk</code> tasks</td><td><strong>no</strong></td><td>yes</td></tr></tbody></table></div>
+<h2 id="the-list-type">The List type<a class="anchor" href="#the-list-type" aria-label="Link to this section">#</a></h2>
+<p>The element type must be a scalar — <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code> — or the name of a shape. There is no nesting: <code>List&lt;List&lt;int&gt;&gt;</code> does not parse.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/lists.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `List&lt;T&gt;` is V3&#x27;s typed sequence. The element type must be a scalar</span>
+<span class="c-com">-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not</span>
+<span class="c-com">-- allowed: there is no `List&lt;List&lt;int&gt;&gt;`.</span>
+<span class="c-kw">shape</span> <span class="c-type">Contact</span> {
+    tag<span class="c-op">:</span> <span class="c-type">word</span>
+}
+
+<span class="c-com">-- A List may be a parameter and a return type. It may NOT be a shape</span>
+<span class="c-com">-- field: that reports &quot;V3 owned shape fields do not yet support List</span>
+<span class="c-com">-- values&quot;.</span>
+<span class="c-kw">task</span> <span class="c-fn">count_all</span>(items<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> items.<span class="c-fn">length</span>()
+}
+
+<span class="c-kw">task</span> <span class="c-fn">first_three</span>() <span class="c-op">-&gt;</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> {
+    <span class="c-kw">give back</span> [<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">3</span>]
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-com">-- An array literal infers List&lt;T&gt; from its elements.</span>
+    <span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-str">&quot;Takeru&quot;</span>, <span class="c-str">&quot;Meiya&quot;</span>, <span class="c-str">&quot;Sumika&quot;</span>]
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> names[<span class="c-num">1</span>]
+
+    <span class="c-com">-- Indexed assignment requires `pilot mut`.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> scores<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">10</span>, <span class="c-num">20</span>, <span class="c-num">30</span>]
+    scores[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">99</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(scores[<span class="c-num">0</span>])
+
+    <span class="c-com">-- Every scalar element type works.</span>
+    <span class="c-kw">pilot</span> ratios<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">num</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">1.5</span>, <span class="c-num">2.5</span>]
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(ratios[<span class="c-num">1</span>])
+
+    <span class="c-kw">pilot</span> flags<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">bool</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-lit">true</span>, <span class="c-lit">false</span>]
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(flags[<span class="c-num">0</span>])
+
+    <span class="c-com">-- Shapes too, and field access chains off the element.</span>
+    <span class="c-kw">pilot</span> contacts<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">Contact</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-type">Contact</span> { tag<span class="c-op">:</span> <span class="c-str">&quot;BETA-1&quot;</span> }]
+    <span class="c-kw">say</span> contacts[<span class="c-num">0</span>].tag
+
+    <span class="c-com">-- List::filled(value, count) builds a pre-populated list.</span>
+    <span class="c-kw">pilot</span> zeros<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">filled</span>(<span class="c-num">0</span>, <span class="c-num">4</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(zeros.<span class="c-fn">length</span>())
+
+    <span class="c-com">-- Passed to a task, and returned from one.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">count_all</span>(names))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">first_three</span>()[<span class="c-num">2</span>])
+
+    <span class="c-com">-- Iterate with an index; there is no `for each`.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> names.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> names[i]
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>3
+Meiya
+99
+2.5
+true
+BETA-1
+4
+3
+3
+Takeru
+Meiya
+Sumika</code></pre>
+  </div>
+</figure>
+<p>Rules worth pinning down:</p>
+<ul><li>**<code>[a, b, c]</code> infers <code>List&lt;T&gt;</code>** from its elements, all of which must share one type. Numbers stay numbers; no conversion to <code>word</code> is needed.</li><li>**<code>.length()</code> is a method**, not a field. <code>list.length</code> reports <em>&quot;non-shape value has no fields&quot;</em>.</li><li>**Indexed assignment needs <code>pilot mut</code>.** Otherwise you get <em>&quot;indexed assignment requires a mutable list binding; declare it with pilot mut&quot;</em>.</li><li>**<code>List::filled(value, count)</code>** builds a pre-populated list and takes its element type from <code>value</code>.</li><li>Indexing a shape element chains: <code>contacts[0].tag</code>.</li></ul>
+<p>There is still no <code>push</code>, <code>pop</code>, <code>insert</code>, <code>remove</code>, <code>sort</code> or iterator on <code>List&lt;T&gt;</code>. It is a fixed-shape, indexable sequence. To build one incrementally, use the legacy handle, or size it with <code>List::filled</code> and assign by index.</p>
+<h3 id="where-a-list-may-appear">Where a List may appear<a class="anchor" href="#where-a-list-may-appear" aria-label="Link to this section">#</a></h3>
+<div class="tablewrap"><table><thead><tr><th>Position</th><th>Allowed</th></tr></thead><tbody><tr><td><code>pilot</code> / <code>fixed pilot</code> binding</td><td>yes</td></tr><tr><td>Task parameter</td><td>yes</td></tr><tr><td>Task return type</td><td>yes</td></tr><tr><td><strong>Shape field</strong></td><td><strong>no</strong></td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>A shape field cannot hold a list: ``<code>text type error: V3 owned shape fields do not yet support List values </code>`<code> Store a legacy </code>int` array handle in the field instead, or keep the list in a separate binding beside the shape.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>List&lt;T&gt;</code> is newer than most of V3 and the surface is thin. Treat it as the right choice for <em>holding</em> typed data, and the legacy handle as the right choice for <em>building</em> and for reaching the <code>std/algorithm.fk</code> helpers.</p></div>
+<h2 id="the-legacy-handle">The legacy handle<a class="anchor" href="#the-legacy-handle" aria-label="Link to this section">#</a></h2>
+<p><code>array_new()</code> returns an <code>int</code> handle to a runtime array whose elements are always <code>word</code>. Store other types by converting them in and out.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/arrays.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 arrays are runtime handles of `word` elements, addressed by an</span>
+<span class="c-com">-- `int` handle. Store other types by converting them to `word`.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> xs<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_new</span>()
+
+    <span class="c-fn">array_push</span>(xs, <span class="c-str">&quot;alpha&quot;</span>)
+    <span class="c-fn">array_push</span>(xs, <span class="c-str">&quot;bravo&quot;</span>)
+    <span class="c-fn">array_push</span>(xs, <span class="c-str">&quot;charlie&quot;</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_len</span>(xs))
+    <span class="c-kw">say</span> <span class="c-fn">array_get</span>(xs, <span class="c-num">0</span>)
+    <span class="c-kw">say</span> <span class="c-fn">array_get</span>(xs, <span class="c-num">2</span>)
+
+    <span class="c-fn">array_set</span>(xs, <span class="c-num">1</span>, <span class="c-str">&quot;BRAVO&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">array_get</span>(xs, <span class="c-num">1</span>)
+
+    <span class="c-com">-- Iterate with an index and a counted loop.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(xs) <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-fn">array_get</span>(xs, i)
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-fn">array_release</span>(xs)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>3
+alpha
+charlie
+BRAVO
+alpha
+BRAVO
+charlie</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>array_new()</code></td><td><code>-&gt; int</code></td></tr><tr><td><code>array_push(h, value)</code></td><td><code>word-array, word -&gt; void</code></td></tr><tr><td><code>array_get(h, i)</code></td><td><code>word-array, int -&gt; word</code></td></tr><tr><td><code>array_set(h, i, value)</code></td><td><code>word-array, int, word -&gt; void</code></td></tr><tr><td><code>array_len(h)</code></td><td><code>word-array -&gt; int</code></td></tr><tr><td><code>array_release(h)</code></td><td><code>word-array -&gt; void</code></td></tr><tr><td><code>word_join(h)</code></td><td><code>int -&gt; word</code></td></tr></tbody></table></div>
+<p><code>word-array</code> is a checker-internal marker meaning &quot;either an <code>int</code> handle or a <code>List&lt;word&gt;</code>&quot; — it is not a type you can write in source. That is why the <code>array_*</code> builtins accept both, while a user-declared task with <code>handle: int</code> accepts only the handle.</p>
+<h2 id="mixing-the-two">Mixing the two<a class="anchor" href="#mixing-the-two" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/array_literal.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- An array literal infers `List&lt;T&gt;` from its elements. Numbers stay</span>
+<span class="c-com">-- numbers -- there is no need to convert them to `word` any more.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- The older untyped `array_*` handle still exists alongside it; see</span>
+<span class="c-com">-- arrays.html for when each one applies.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-str">&quot;Takeru&quot;</span>, <span class="c-str">&quot;Meiya&quot;</span>, <span class="c-str">&quot;Sumika&quot;</span>]
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> names[<span class="c-num">1</span>]
+
+    <span class="c-kw">pilot</span> numbers<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">3</span>, <span class="c-num">1</span>, <span class="c-num">2</span>]
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(numbers.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(numbers[<span class="c-num">0</span>])
+
+    <span class="c-com">-- The array_* builtins accept a List&lt;word&gt; as well as a raw handle.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_len</span>(names))
+    <span class="c-kw">say</span> <span class="c-fn">array_get</span>(names, <span class="c-num">2</span>)
+
+    <span class="c-com">-- std/algorithm.fk tasks are declared with `handle: int`, so they take</span>
+    <span class="c-com">-- only the legacy handle. Build one with array_new() to use them.</span>
+    <span class="c-kw">pilot</span> h<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_new</span>()
+    <span class="c-fn">array_push</span>(h, <span class="c-fn">word_from_int</span>(<span class="c-num">3</span>))
+    <span class="c-fn">array_push</span>(h, <span class="c-fn">word_from_int</span>(<span class="c-num">1</span>))
+    <span class="c-fn">array_push</span>(h, <span class="c-fn">word_from_int</span>(<span class="c-num">2</span>))
+
+    <span class="c-fn">array_sort_int</span>(h)
+    <span class="c-kw">say</span> <span class="c-fn">array_join</span>(h, <span class="c-str">&quot;,&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_sum_int</span>(h))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_max_int</span>(h))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_binary_search_int</span>(h, <span class="c-num">3</span>))
+
+    <span class="c-fn">array_reverse</span>(h)
+    <span class="c-kw">say</span> <span class="c-fn">array_join</span>(h, <span class="c-str">&quot;|&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">array_contains</span>(h, <span class="c-str">&quot;2&quot;</span>))
+
+    <span class="c-fn">array_release</span>(h)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>3
+Meiya
+3
+3
+3
+Sumika
+1,2,3
+6
+3
+2
+3|2|1
+true</code></pre>
+  </div>
+</figure>
+<p>The rule that follows from the table above: <strong>builtins bridge, library tasks do not.</strong></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-str">&quot;b&quot;</span>, <span class="c-str">&quot;a&quot;</span>]
+
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_len</span>(names))   <span class="c-com">-- fine: builtin, accepts word-array</span>
+<span class="c-kw">say</span> <span class="c-fn">array_get</span>(names, <span class="c-num">0</span>)               <span class="c-com">-- fine</span>
+
+<span class="c-com">-- array_join is a task in std/algorithm.fk declared `handle: int`:</span>
+<span class="c-com">-- say array_join(names, &quot;,&quot;)</span>
+<span class="c-com">--   type error: call to &#x27;array_join&#x27; argument 1 expects int, got List&lt;word&gt;</span></code></pre></div>
+<p>If you need the library helpers, build a legacy handle with <code>array_new()</code>.</p>
+<h2 id="iterating">Iterating<a class="anchor" href="#iterating" aria-label="Link to this section">#</a></h2>
+<p>There is no <code>for each</code> in either surface. Keep an index and use a counted loop:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+<span class="c-kw">repeat</span> items.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+    <span class="c-kw">say</span> items[i]
+    i <span class="c-op">+=</span> <span class="c-num">1</span>
+}</code></pre></div>
+<p><code>repeat N times</code> evaluates its count once, so growing the collection inside the loop will not extend the iteration.</p>
+<h2 id="stdalgorithmfk-helpers">std/algorithm.fk helpers<a class="anchor" href="#stdalgorithmfk-helpers" aria-label="Link to this section">#</a></h2>
+<p>Plain FREAK source, linked by <code>freak build</code> and <code>freak run</code> (not <code>freak check</code>). Every helper takes a **legacy <code>int</code> handle**.</p>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>array_sort_int(h)</code></td><td><code>int -&gt; void</code></td><td>In-place insertion sort, numeric order</td></tr><tr><td><code>array_binary_search_int(h, target)</code></td><td><code>int, int -&gt; int</code></td><td>Index or <code>-1</code>; needs a sorted array</td></tr><tr><td><code>array_reverse(h)</code></td><td><code>int -&gt; void</code></td><td>In place</td></tr><tr><td><code>array_find(h, target)</code></td><td><code>int, word -&gt; int</code></td><td>Index or <code>-1</code></td></tr><tr><td><code>array_contains(h, target)</code></td><td><code>int, word -&gt; bool</code></td><td></td></tr><tr><td><code>array_count(h, target)</code></td><td><code>int, word -&gt; int</code></td><td></td></tr><tr><td><code>array_copy(h)</code></td><td><code>int -&gt; int</code></td><td>New handle, shallow copy</td></tr><tr><td><code>array_join(h, sep)</code></td><td><code>int, word -&gt; word</code></td><td></td></tr><tr><td><code>array_sum_int(h)</code></td><td><code>int -&gt; int</code></td><td></td></tr><tr><td><code>array_max_int(h)</code> / <code>array_min_int(h)</code></td><td><code>int -&gt; int</code></td><td></td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p><strong>Two of these are broken</strong>, re-confirmed against the compiler that verified this site: - <code>array_sort_word(h)</code> <strong>segfaults</strong>. It routes through <code>extern task freak_word_compare(a: word, b: word) -&gt; int</code>, and that declaration does not bridge the LLVM backend&#x27;s <code>word</code> handle representation. See <a href="ffi.html#type-mapping">extern &amp; FFI</a>. - <code>array_unique(h)</code> <strong>returns an empty array</strong>. To sort words, keep a parallel <code>int</code> key array and sort that, or write an insertion sort in your own code comparing with <code>.char_at()</code>.</p></div>
+<h2 id="memory">Memory<a class="anchor" href="#memory" aria-label="Link to this section">#</a></h2>
+<p><code>array_release(h)</code> frees a legacy array. V3 has no garbage collector and no automatic drop, so a long-running program that allocates in a loop must release. Do not use a handle after releasing it, and do not release twice.</p>
+<p><code>List&lt;T&gt;</code> values have no explicit release call.</p>
+<h2 id="passing-collections-to-tasks">Passing collections to tasks<a class="anchor" href="#passing-collections-to-tasks" aria-label="Link to this section">#</a></h2>
+<p>A legacy handle is just an <code>int</code>, so it passes freely and the callee mutates the caller&#x27;s array — the standard way to return a collection:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">fill</span>(out<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-fn">array_push</span>(out, <span class="c-str">&quot;alpha&quot;</span>)
+    <span class="c-fn">array_push</span>(out, <span class="c-str">&quot;bravo&quot;</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> items<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_new</span>()
+    <span class="c-fn">fill</span>(items)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_len</span>(items))
+    <span class="c-fn">array_release</span>(items)
+}</code></pre></div>
+<p>A <code>List&lt;T&gt;</code> can also be a parameter or return type, since <code>parser_take_type</code> accepts the annotation in both positions.</p>
+<h2 id="maps-and-sets">Maps and sets<a class="anchor" href="#maps-and-sets" aria-label="Link to this section">#</a></h2>
+<p>Still none. <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code> and <code>Lineup&lt;T&gt;</code> do not exist, and the <code>{ &quot;k&quot;: v }</code> map literal does not parse. For small lookups, use two parallel collections and <code>array_find</code>.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#the-list-type">The List type</a></li><li><a href="#the-legacy-handle">The legacy handle</a></li><li><a href="#mixing-the-two">Mixing the two</a></li><li><a href="#iterating">Iterating</a></li><li><a href="#stdalgorithmfk-helpers">std/algorithm.fk helpers</a></li><li><a href="#memory">Memory</a></li><li><a href="#passing-collections-to-tasks">Passing collections to tasks</a></li><li><a href="#maps-and-sets">Maps and sets</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

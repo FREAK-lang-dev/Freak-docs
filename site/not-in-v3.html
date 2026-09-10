@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not in V3 &middot; FREAK V3</title>
+<meta name="description" content="Every major bible feature the shipping compiler rejects, with the diagnostic you will see and what to write instead.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html" class="active">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="not-in-v3">Not in V3<a class="anchor" href="#not-in-v3" aria-label="Link to this section">#</a></h1>
+<p>&gt; Every major bible feature the shipping compiler rejects, with the diagnostic you will see and what to write instead.</p>
+<p>Use this page when something from <code>freak-full-bible.md</code> will not compile. Each entry gives the exact error and a working V3 substitute.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>Some things on the bible&#x27;s missing list have quietly arrived. V3 now has a typed [<code>List&lt;T&gt;</code>](arrays.html), a builtin [<code>ByteBuffer</code>](stdlib.html#bytebuffer), a [<code>word_builder::*</code>](words.html#building-words-incrementally) accumulator, and a <code>tcp::socket_*</code> family that can listen and accept. Check <a href="conformance.html">Bible vs V3</a> before assuming something is absent.</p></div>
+<h2 id="optional-and-fallible-values">Optional and fallible values<a class="anchor" href="#optional-and-fallible-values" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: expected &#x27;{&#x27;, found &#x27;&lt;&#x27;          -- maybe&lt;T&gt;, result&lt;T,E&gt;
+error: unexpected &#x27;check&#x27;
+error: unexpected &#x27;?&#x27;
+error: unexpected &#x27;or else&#x27;</code></pre></div>
+<p>There is no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>some</code>, <code>nobody</code>, <code>ok</code>, <code>err</code>, <code>?</code> or <code>or else</code>. Signal absence and failure with sentinel values, the way the compiler&#x27;s own source does.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- A word task returns &quot;&quot; for &quot;no value&quot;.</span>
+<span class="c-kw">task</span> <span class="c-fn">find_name</span>(id<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> id <span class="c-op">==</span> <span class="c-num">1</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Takeru&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;&quot;</span>
+}
+
+<span class="c-com">-- An int task returns -1 for &quot;not found&quot;.</span>
+<span class="c-kw">task</span> <span class="c-fn">index_of_flag</span>(flags<span class="c-op">:</span> <span class="c-type">int</span>, needle<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(flags) <span class="c-kw">times</span> {
+        <span class="c-kw">if</span> <span class="c-fn">array_get</span>(flags, i) <span class="c-op">==</span> needle { <span class="c-kw">give back</span> i }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">1</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> name<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-fn">find_name</span>(<span class="c-num">2</span>)
+    <span class="c-kw">if</span> name.<span class="c-fn">length</span>() <span class="c-op">==</span> <span class="c-num">0</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;not found&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">say</span> name
+    }
+}</code></pre></div>
+<p>For richer errors, return a shape with a status field:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Outcome</span> {
+    <span class="c-kw">ok</span><span class="c-op">:</span> <span class="c-type">bool</span>
+    value<span class="c-op">:</span> <span class="c-type">int</span>
+    message<span class="c-op">:</span> <span class="c-type">word</span>
+}</code></pre></div>
+<h2 id="collections">Collections<a class="anchor" href="#collections" aria-label="Link to this section">#</a></h2>
+<p><code>List&lt;T&gt;</code> <strong>does</strong> exist now — typed, indexable, with <code>List::filled</code> — but it has no <code>push</code>, <code>pop</code>, <code>insert</code>, <code>remove</code>, <code>sort</code> or iterators, and it does not nest. See <a href="arrays.html">Lists &amp; arrays</a>.</p>
+<p>Still absent: <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code>, <code>Lineup&lt;T&gt;</code>, and the <code>{ &quot;k&quot;: v }</code> map literal.</p>
+<p>For a map, keep two parallel collections:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">map_get</span>(keys<span class="c-op">:</span> <span class="c-type">int</span>, values<span class="c-op">:</span> <span class="c-type">int</span>, key<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">pilot</span> at<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_find</span>(keys, key)
+    <span class="c-kw">if</span> at <span class="c-op">&lt;</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-fn">array_get</span>(values, at)
+}</code></pre></div>
+<h2 id="iteration">Iteration<a class="anchor" href="#iteration" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;for each&#x27; — this token cannot start an expression</code></pre></div>
+<p>Use an index and a counted loop:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+<span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
+    <span class="c-kw">say</span> <span class="c-fn">array_get</span>(items, i)
+    i <span class="c-op">+=</span> <span class="c-num">1</span>
+}</code></pre></div>
+<p>There is no <code>std::iter</code> either — no <code>.map</code>, <code>.filter</code>, <code>.fold</code>, <code>.any</code>, <code>.collect</code>. Write the loop.</p>
+<h2 id="closures">Closures<a class="anchor" href="#closures" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;|&#x27; — this token cannot start an expression</code></pre></div>
+<p>No lambdas, no capture modes, no <code>Callable</code> / <code>MutCallable</code> / <code>OneShot</code>. Since tasks cannot be passed as values, the substitute is a named task plus a dispatch <code>when</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">apply</span>(op<span class="c-op">:</span> <span class="c-type">word</span>, value<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">when</span> op {
+        <span class="c-str">&quot;double&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> value <span class="c-op">*</span> <span class="c-num">2</span>
+        <span class="c-str">&quot;square&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> value <span class="c-op">*</span> value
+        _        <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> value
+    }
+    <span class="c-kw">give back</span> value
+}</code></pre></div>
+<h2 id="generics">Generics<a class="anchor" href="#generics" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: expected &#x27;(&#x27;, found &#x27;&lt;&#x27;          -- task first&lt;T&gt;(...)</code></pre></div>
+<p>No type parameters, no doctrine bounds, no monomorphisation. Write one task per concrete type.</p>
+<p><code>List&lt;T&gt;</code> is the sole exception, and it is not a general mechanism — the annotation is a hard-coded special case in <code>parser_take_type</code>, so <code>List&lt;T&gt;</code> works while <code>List&lt;List&lt;int&gt;&gt;</code> and every other composed type do not.</p>
+<h2 id="doctrines-and-dynamic-dispatch">Doctrines and dynamic dispatch<a class="anchor" href="#doctrines-and-dynamic-dispatch" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;doctrine&#x27; — this token cannot start an expression
+type error: operator &#x27;+&#x27; does not accept Vec2 and Vec2</code></pre></div>
+<p><code>doctrine</code> declarations do not parse. <code>impl D for S { }</code> <strong>does</strong> parse, but <code>D</code> is never validated and the operator token is not rewritten — call the method by name.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">impl</span> <span class="c-type">Add</span> <span class="c-kw">for</span> <span class="c-type">Vec2</span> {
+    <span class="c-kw">task</span> <span class="c-fn">add</span>(<span class="c-type">self</span>, other<span class="c-op">:</span> <span class="c-type">Vec2</span>) <span class="c-op">-&gt;</span> <span class="c-type">Vec2</span> { ... }
+}
+
+<span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> a.<span class="c-fn">add</span>(b)     <span class="c-com">-- not a + b</span></code></pre></div>
+<p>No <code>dyn Doctrine</code>, no vtables, no heterogeneous collections.</p>
+<h2 id="variants-and-aliases">Variants and aliases<a class="anchor" href="#variants-and-aliases" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>type error: unknown binding &#x27;variant&#x27;
+type error: unknown binding &#x27;alias&#x27;</code></pre></div>
+<p>Neither <code>variant</code> nor <code>alias</code> is even a keyword in V3&#x27;s lexer, so they parse as identifiers and fail in the checker. Model a sum type as a shape with a tag:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Contact</span> {
+    kind<span class="c-op">:</span> <span class="c-type">word</span>        <span class="c-com">-- &quot;soldier&quot; | &quot;laser&quot; | &quot;fort&quot;</span>
+    id<span class="c-op">:</span> <span class="c-type">int</span>
+    armor<span class="c-op">:</span> <span class="c-type">int</span>
+    hive<span class="c-op">:</span> <span class="c-type">word</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">engage</span>(c<span class="c-op">:</span> <span class="c-type">Contact</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">when</span> c.kind {
+        <span class="c-str">&quot;soldier&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;engaging soldier <span class="c-interp">{c.id}</span>&quot;</span>
+        <span class="c-str">&quot;laser&quot;</span>   <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;smoke now&quot;</span>
+        <span class="c-str">&quot;fort&quot;</span>    <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;requesting strike on <span class="c-interp">{c.hive}</span>&quot;</span>
+        _         <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;unknown contact&quot;</span>
+    }
+}</code></pre></div>
+<p>For an alias, just repeat the underlying type — a type annotation is one identifier (or <code>List&lt;T&gt;</code>) anyway, so there is little to abbreviate.</p>
+<h2 id="borrowing-lifetimes-and-shared-ownership">Borrowing, lifetimes and shared ownership<a class="anchor" href="#borrowing-lifetimes-and-shared-ownership" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: expected an identifier for parameter name, found &#x27;lend&#x27;</code></pre></div>
+<p>No <code>lend</code> / <code>lend mut</code> parameters, no <code>&#x27;a</code> lifetimes, no outlives bounds, no <code>Shared&lt;T&gt;</code> / <code>Weak&lt;T&gt;</code>, no <code>.clone()</code>, no <code>trust me</code>.</p>
+<p>Every parameter is by value, and shapes are handles into runtime storage — so a task that mutates a shape parameter&#x27;s field affects the caller. Return a fresh shape when you want isolation.</p>
+<p><code>--strict-borrow</code> enables a Phase-1 checker for immutability and single-owner moves; that is the whole of V3&#x27;s ownership story.</p>
+<h2 id="concurrency">Concurrency<a class="anchor" href="#concurrency" aria-label="Link to this section">#</a></h2>
+<p>Nothing at all. No <code>xm3</code>, <code>sortie</code>, <code>debrief</code>, <code>formation</code>, <code>BriefingRoom</code>, <code>wingman</code>, <code>Comms</code>, <code>std::thread</code>, atomics or channels. None of those words are keywords. <code>||</code> lexes as one token and has no grammar rule.</p>
+<p>Shell out if you must:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> code<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> process<span class="c-op">::</span><span class="c-fn">exec</span>(<span class="c-str">&quot;some-command --flag&quot;</span>)</code></pre></div>
+<h2 id="modules-and-visibility">Modules and visibility<a class="anchor" href="#modules-and-visibility" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;launch&#x27; — this token cannot start an expression</code></pre></div>
+<p><code>use</code> lines are replaced with comments before parsing. There is no import system and no visibility system — one flat global namespace holds your file and every linked standard-library file.</p>
+<p>Consequences worth planning around:</p>
+<ul><li>Name collisions with <code>std/</code> tasks are real. Prefix your tasks.</li><li>Multi-file projects are handled by the Hangar/CLI build, not by the language.</li><li><code>use std::math3d</code>, <code>use std::zip</code>, <code>use std::ui</code> and <code>use cockpit</code> still matter as <strong>build triggers</strong> — the text switches on linking that module.</li></ul>
+<h2 id="advanced-types">Advanced types<a class="anchor" href="#advanced-types" aria-label="Link to this section">#</a></h2>
+<p><code>power&lt;N&gt;</code>, <code>prob[lo..hi]</code>, <code>causality&lt;T&gt;</code> and <code>mood</code> do not lex. Model the same intent with ordinary values and runtime checks:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">engage_fort</span>(power_level<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> power_level <span class="c-op">&lt;</span> <span class="c-num">7000</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;insufficient power&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;engaging&quot;</span>
+}</code></pre></div>
+<h2 id="anime-layer">Anime layer<a class="anchor" href="#anime-layer" aria-label="Link to this section">#</a></h2>
+<p>Rejected: <code>foreshadow</code>, <code>payoff</code>, <code>route</code>, <code>check route</code>, <code>only on</code>, <code>deus_ex_machina</code>, <code>isekai</code>, <code>bringing back</code>, <code>trust me</code>, <code>direct_order</code>, <code>sadly</code>, <code>for science,</code>, <code>knowing this will hurt,</code>, <code>training arc ... with growth</code>, <code>eventually if</code>, <code>prob[...] chance</code>, <code>prob_when</code>, <code>declare was</code>.</p>
+<p>Accepted: <code>training arc</code>, plain <code>eventually</code>, single bare <code>@annotation</code>, and the four anime operators. See <a href="anime-layer.html">Anime layer</a>.</p>
+<h2 id="ffi">FFI<a class="anchor" href="#ffi" aria-label="Link to this section">#</a></h2>
+<p>Only <code>extern task name(p: T) -&gt; R</code>, one per line. No <code>extern [C] { }</code> blocks, calling conventions, <code>link=</code>, <code>@link_name</code>, variadics, <code>std::ffi</code> aliases, raw pointers, <code>@layout(C)</code>, <code>@repr(...)</code>, <code>@extern_callback</code> or <code>trust me</code>.</p>
+<p>Stick to <code>int</code>, <code>num</code>, <code>bool</code> and <code>void</code> across the boundary — <code>word</code> is an <code>i64</code> runtime handle, not a <code>char*</code>. See <a href="ffi.html">extern &amp; FFI</a>.</p>
+<h2 id="syntax-shorthands">Syntax shorthands<a class="anchor" href="#syntax-shorthands" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Bible form</th><th>V3</th></tr></thead><tbody><tr><td><code>task f(x) =&gt; expr</code></td><td>Use a braced body with <code>give back</code></td></tr><tr><td><code>done</code> closing a block</td><td>Use <code>}</code></td></tr><tr><td><code>**</code> exponent</td><td><code>math::pow(a, b)</code> or <code>std_pow(a, b)</code></td></tr><tr><td><code>-5</code> as a literal</td><td><code>0 - 5</code></td></tr><tr><td><code>42u</code>, <code>3.14f</code>, <code>42t</code>, <code>999b</code></td><td>No suffixes</td></tr><tr><td><code>[0; 100]</code> repeat-fill</td><td><code>List::filled(0, 100)</code></td></tr><tr><td><code>[T; N]</code> fixed arrays</td><td><code>List&lt;T&gt;</code>, or a legacy array handle</td></tr><tr><td><code>(a, b)</code> tuples</td><td>A shape</td></tr><tr><td>Named call arguments</td><td>Positional only</td></tr><tr><td>Stacked <code>@a @b</code> annotations</td><td>One per statement</td></tr><tr><td><code>@rival(meiya)</code> annotation arguments</td><td>Bare <code>@name</code> only</td></tr></tbody></table></div>
+<h2 id="build-modes-voices-output-paths">Build modes, voices, output paths<a class="anchor" href="#build-modes-voices-output-paths" aria-label="Link to this section">#</a></h2>
+<p><code>slice_of_life</code>, <code>mecha</code>, <code>shonen_jump</code>, <code>final_form</code> and <code>alternative</code> build modes do not exist; nor do <code>--voice=</code>, <code>--clearance=</code>, <code>--build-mode=</code> or <code>-o output_path</code>. The knobs are <code>--opt=0..3</code>, <code>--c</code> / <code>--llvm</code>, <code>--target=</code> and <code>--strict-borrow</code>.</p>
+<h2 id="tooling">Tooling<a class="anchor" href="#tooling" aria-label="Link to this section">#</a></h2>
+<p>No language server, no incremental parsing, no tolerant AST, no autocomplete, no <code>test &quot;name&quot; { expect ... }</code> framework, no JIT. Parse errors abort the build. <code>freak test</code> is a shim around a Python regression runner in the source checkout.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#optional-and-fallible-values">Optional and fallible values</a></li><li><a href="#collections">Collections</a></li><li><a href="#iteration">Iteration</a></li><li><a href="#closures">Closures</a></li><li><a href="#generics">Generics</a></li><li><a href="#doctrines-and-dynamic-dispatch">Doctrines and dynamic dispatch</a></li><li><a href="#variants-and-aliases">Variants and aliases</a></li><li><a href="#borrowing-lifetimes-and-shared-ownership">Borrowing, lifetimes and shared ownership</a></li><li><a href="#concurrency">Concurrency</a></li><li><a href="#modules-and-visibility">Modules and visibility</a></li><li><a href="#advanced-types">Advanced types</a></li><li><a href="#anime-layer">Anime layer</a></li><li><a href="#ffi">FFI</a></li><li><a href="#syntax-shorthands">Syntax shorthands</a></li><li><a href="#build-modes-voices-output-paths">Build modes, voices, output paths</a></li><li><a href="#tooling">Tooling</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

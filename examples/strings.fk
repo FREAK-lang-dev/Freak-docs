@@ -1,0 +1,25 @@
+-- `word` is FREAK's string type. These methods are compiler builtins,
+-- available with no import.
+task main() -> void {
+    pilot s: word = "  Muv-Luv Alternative  "
+
+    say s.trim()
+    say word_from_int(s.length())
+    say s.trim().to_upper()
+    say s.trim().to_lower()
+    say word_from_bool(s.contains("Luv"))
+    say word_from_bool(s.trim().starts_with("Muv"))
+    say word_from_bool(s.trim().ends_with("ive"))
+    say s.trim().replace("Luv", "Love")
+    say s.trim().substring(0, 3)
+    say s.trim().char_at(0)
+
+    -- Concatenation with `+`, or with the builtin.
+    say "Muv" + "-" + "Luv"
+    say word_concat("XM", "3")
+
+    -- Numeric conversion in both directions.
+    say word_from_int("108".to_int())
+    say format_num("2.5".to_num())
+    say char_to_word(70)
+}

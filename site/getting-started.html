@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started &middot; FREAK V3</title>
+<meta name="description" content="Build a real V3 compiler from source, then compile and run your first program.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html" class="active">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="getting-started">Getting started<a class="anchor" href="#getting-started" aria-label="Link to this section">#</a></h1>
+<p>&gt; Build a real V3 compiler from source, then compile and run your first program.</p>
+<h2 id="what-you-need">What you need<a class="anchor" href="#what-you-need" aria-label="Link to this section">#</a></h2>
+<ul><li><strong>Clang</strong> — V3 emits LLVM IR or C and hands it to Clang to produce a binary.</li><li><strong>Bash</strong> — for the reconstruction script. Git for Windows supplies a suitable shell.</li><li><strong>Python 3</strong> — only for the test harnesses and this site&#x27;s tooling.</li></ul>
+<p>Check Clang is reachable:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>clang --version</code></pre></div>
+<h2 id="build-the-compiler-from-source">Build the compiler from source<a class="anchor" href="#build-the-compiler-from-source" aria-label="Link to this section">#</a></h2>
+<p>V3 is self-hosted, so building it is a bootstrap. The repository carries a reviewed, version-controlled C seed at <code>build/freakc_v3.fk.c</code> precisely so you never need a pre-existing FREAK binary.</p>
+<p>The order of the eight compiler sources is fixed — they are concatenated into one translation unit before compiling:</p>
+<div class="codeblock"><pre class="code"><code>globals.fk  helpers.fk  lexer.fk  parser.fk
+checker.fk  emit_c.fk   emit_llvm.fk  main.fk</code></pre></div>
+<p>Build the seed, then regenerate the compiler from itself:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>repo=&quot;$PWD&quot;
+work=&quot;$(mktemp -d)&quot;
+
+cat src/compiler/v3/globals.fk src/compiler/v3/helpers.fk \
+    src/compiler/v3/lexer.fk src/compiler/v3/parser.fk \
+    src/compiler/v3/checker.fk src/compiler/v3/emit_c.fk \
+    src/compiler/v3/emit_llvm.fk src/compiler/v3/main.fk &gt; &quot;$work/freakc_v3.fk&quot;
+
+clang -o &quot;$work/freakc-seed&quot; build/freakc_v3.fk.c freakc/runtime/freak_runtime.c \
+  -I freakc/runtime -O2 -w -D_CRT_SECURE_NO_WARNINGS -lws2_32
+
+&quot;$work/freakc-seed&quot; &quot;$work/freakc_v3.fk&quot; --c &amp;&amp; mv &quot;$work/freakc_v3.fk.c&quot; &quot;$work/stage1.c&quot;
+clang -o &quot;$work/freakc-stage1&quot; &quot;$work/stage1.c&quot; freakc/runtime/freak_runtime.c \
+  -I freakc/runtime -O2 -w -lws2_32
+
+&quot;$work/freakc-stage1&quot; &quot;$work/freakc_v3.fk&quot; --c &amp;&amp; mv &quot;$work/freakc_v3.fk.c&quot; &quot;$work/stage2.c&quot;
+clang -o &quot;$work/freakc-stage2&quot; &quot;$work/stage2.c&quot; freakc/runtime/freak_runtime.c \
+  -I freakc/runtime -O2 -w -lws2_32
+
+&quot;$work/freakc-stage2&quot; &quot;$work/freakc_v3.fk&quot; --c &amp;&amp; mv &quot;$work/freakc_v3.fk.c&quot; &quot;$work/stage3.c&quot;
+cmp &quot;$work/stage2.c&quot; &quot;$work/stage3.c&quot; &amp;&amp; echo &quot;fixed point reached&quot;</code></pre></div>
+<div class="callout note"><div class="callout-title">Note</div><p>The last line is the point of the whole exercise. <code>stage2.c</code> and <code>stage3.c</code> must be byte-identical: the compiler built from generation 2 has to reproduce its own generated C exactly. That equality is the self-host fixed-point invariant. Native binary bytes are <em>not</em> expected to match across operating systems or Clang versions — only the generated C is.</p></div>
+<p>On non-Windows hosts drop <code>-lws2_32</code>; use <code>-lm</code> on Linux and no extra link flag on macOS. The cross-platform automated equivalent is:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python -u tests/v3_fixed_point.py</code></pre></div>
+<h2 id="build-the-freak-cli">Build the <code>freak</code> CLI<a class="anchor" href="#build-the-freak-cli" aria-label="Link to this section">#</a></h2>
+<p>The standalone <code>freakc</code> you just built takes a file and a backend flag. The public <code>freak</code> command is a second aggregate: the same seven compiler files plus the CLI, with <code>src/cli/main.fk</code> as the entry point instead of <code>v3/main.fk</code>.</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>cat std/version.fk \
+    src/compiler/v3/globals.fk src/compiler/v3/helpers.fk \
+    src/compiler/v3/lexer.fk src/compiler/v3/parser.fk \
+    src/compiler/v3/checker.fk src/compiler/v3/emit_c.fk \
+    src/compiler/v3/emit_llvm.fk \
+    src/cli/version.fk src/cli/toml.fk src/cli/lockfile.fk \
+    src/cli/build.fk src/cli/run.fk src/cli/hangar.fk \
+    src/cli/doctor.fk src/cli/audit.fk src/cli/main.fk &gt; &quot;$work/freakc_cli.fk&quot;
+
+&quot;$work/freakc-stage2&quot; &quot;$work/freakc_cli.fk&quot; --c
+mkdir -p &quot;$work/freak-home/bin&quot;
+clang -o &quot;$work/freak-home/bin/freak&quot; &quot;$work/freakc_cli.fk.c&quot; \
+  freakc/runtime/freak_runtime.c -I freakc/runtime -O2 -w -lws2_32</code></pre></div>
+<h2 id="install-the-payload">Install the payload<a class="anchor" href="#install-the-payload" aria-label="Link to this section">#</a></h2>
+<p>The compiler is not self-sufficient: it needs the C runtime and the standard library beside it. The canonical inventory is <code>packaging/distribution-files.manifest</code>, a list of <code>source|destination</code> pairs.</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>while IFS=&#x27;|&#x27; read -r src dst; do
+  case &quot;$src&quot; in &#x27;&#x27;|\#*) continue ;; esac
+  mkdir -p &quot;$work/freak-home/$(dirname &quot;$dst&quot;)&quot;
+  cp &quot;$src&quot; &quot;$work/freak-home/$dst&quot;
+done &lt; packaging/distribution-files.manifest</code></pre></div>
+<p>The layout that results:</p>
+<div class="codeblock"><pre class="code"><code>freak-home/
+  bin/freak            the compiler CLI
+  runtime/             freak_runtime.c, freak_llvm_runtime.c, headers
+  std/                 math.fk, string.fk, convert.fk, algorithm.fk, ...</code></pre></div>
+<p>Both <code>runtime/freak_abi</code> and <code>std/freak_abi</code> must contain the marker the compiler expects (<code>freak-v3-abi-1</code>), or every build stops with an ABI mismatch.</p>
+<p>Point <code>FREAK_HOME</code> at that directory, or leave it unset and let the CLI find the payload next to the executable:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>export FREAK_HOME=&quot;$work/freak-home&quot;
+freak --version</code></pre></div>
+<h2 id="your-first-program">Your first program<a class="anchor" href="#your-first-program" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/hello.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The smallest FREAK program.</span>
+<span class="c-com">-- `say` is always available; no import is needed.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello from FREAK&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Hello from FREAK</code></pre>
+  </div>
+</figure>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run hello.fk</code></pre></div>
+<p><code>freak build</code> leaves a native binary beside the source, named after it:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build hello.fk     # produces hello.exe (or hello)
+./hello</code></pre></div>
+<h2 id="a-program-with-a-bit-more-to-it">A program with a bit more to it<a class="anchor" href="#a-program-with-a-bit-more-to-it" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/fizzbuzz.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- FizzBuzz, written the way V3 wants it: a counted loop, a mutable</span>
+<span class="c-com">-- counter, and `when` over a computed tag.</span>
+<span class="c-kw">task</span> <span class="c-fn">tag</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">15</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;FizzBuzz&quot;</span> }
+    <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">3</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Fizz&quot;</span> }
+    <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">5</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Buzz&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-fn">word_from_int</span>(n)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">repeat</span> <span class="c-num">15</span> <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-fn">tag</span>(n)
+        n <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz</code></pre>
+  </div>
+</figure>
+<h2 id="check-your-setup">Check your setup<a class="anchor" href="#check-your-setup" aria-label="Link to this section">#</a></h2>
+<p><code>freak doctor</code> validates far more than <code>clang --version</code> — it checks the C headers, native link and execution, the optional LLD linker, the complete runtime and standard-library payload, and a full FREAK compile-link-execute probe.</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak doctor
+freak doctor --fix
+freak doctor --json</code></pre></div>
+<h2 id="common-first-errors">Common first errors<a class="anchor" href="#common-first-errors" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Message</th><th>Cause</th></tr></thead><tbody><tr><td><code>unexpected &#x27;use&#x27; — this token cannot start an expression</code></td><td>You ran <code>freak check</code>, which does not strip <code>use</code> lines or load the standard library. Use <code>freak build</code> or <code>freak run</code>.</td></tr><tr><td><code>expected an identifier for shape name, found &#x27;Pilot&#x27;</code></td><td>Keywords are case-insensitive; <code>Pilot</code> is the <code>pilot</code> keyword. Rename.</td></tr><tr><td><code>unknown callable &#x27;string_reverse&#x27;</code></td><td>Same cause — <code>freak check</code> compiles your file alone, without <code>std/</code>.</td></tr><tr><td><code>ABI MISMATCH</code></td><td><code>runtime/freak_abi</code> or <code>std/freak_abi</code> does not match the compiler&#x27;s expected marker. Reinstall the payload.</td></tr><tr><td><code>expected &#x27;=&#x27;, found &#x27;&lt;&#x27;</code></td><td>Generic type syntax. V3 has none — see <a href="not-in-v3.html">Not in V3</a>.</td></tr></tbody></table></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#what-you-need">What you need</a></li><li><a href="#build-the-compiler-from-source">Build the compiler from source</a></li><li><a href="#build-the-freak-cli">Build the `freak` CLI</a></li><li><a href="#install-the-payload">Install the payload</a></li><li><a href="#your-first-program">Your first program</a></li><li><a href="#a-program-with-a-bit-more-to-it">A program with a bit more to it</a></li><li><a href="#check-your-setup">Check your setup</a></li><li><a href="#common-first-errors">Common first errors</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

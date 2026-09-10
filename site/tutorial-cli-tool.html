@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorial 2: A command-line tool &middot; FREAK V3</title>
+<meta name="description" content="Read arguments, read a file, count what is in it, and print a coloured report that respects `NO_COLOR`. About 25 minutes.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html" class="active">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="tutorial-2-a-command-line-tool">Tutorial 2: A command-line tool<a class="anchor" href="#tutorial-2-a-command-line-tool" aria-label="Link to this section">#</a></h1>
+<p>&gt; Read arguments, read a file, count what is in it, and print a coloured report that respects <code>NO_COLOR</code>. About 25 minutes.</p>
+<p>By the end you will have a small <code>wc</code>-style tool. Along the way: the argument API, file I/O without <code>result&lt;T,E&gt;</code>, hand-rolled text scanning, ANSI colour, and exit codes.</p>
+<p>Start from <a href="tutorial-first-program.html">Tutorial 1</a> if you have not written any FREAK yet.</p>
+<h2 id="step-1-arguments">Step 1 — Arguments<a class="anchor" href="#step-1-arguments" aria-label="Link to this section">#</a></h2>
+<p>There is no <code>process::args()</code> returning a list. V3 rejects it deliberately rather than handing you the runtime&#x27;s raw <code>argv</code> as a fake handle. Use the indexed pair instead:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(process<span class="c-op">::</span><span class="c-fn">args_count</span>())
+
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> process<span class="c-op">::</span><span class="c-fn">args_count</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;arg <span class="c-interp">{i}</span>: &quot;</span> <span class="c-op">+</span> process<span class="c-op">::</span><span class="c-fn">arg</span>(i)
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+}</code></pre></div>
+<p>Argument 0 is the executable path, so the first real argument is index 1.</p>
+<p>That loop is the standard V3 iteration idiom: a counted <code>repeat</code> plus a manual index. There is no <code>for each</code>.</p>
+<h2 id="step-2-reading-a-file">Step 2 — Reading a file<a class="anchor" href="#step-2-reading-a-file" aria-label="Link to this section">#</a></h2>
+<p><code>fs::*</code> are builtins. There is no <code>result&lt;T,E&gt;</code> anywhere in V3, so failures come back as sentinel values — an empty <code>word</code>, or <code>false</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> path<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;notes.txt&quot;</span>
+
+    <span class="c-kw">if</span> <span class="c-kw">not</span> fs<span class="c-op">::</span><span class="c-fn">exists</span>(path) {
+        <span class="c-kw">say</span> <span class="c-str">&quot;no such file: &quot;</span> <span class="c-op">+</span> path
+        process<span class="c-op">::</span><span class="c-fn">exit</span>(<span class="c-num">1</span>)
+    }
+
+    <span class="c-kw">pilot</span> text<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> fs<span class="c-op">::</span><span class="c-fn">read</span>(path)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(text.<span class="c-fn">length</span>())
+}</code></pre></div>
+<p><code>process::exit(code)</code> ends the program immediately. Check <code>fs::exists</code> before reading — an unreadable file and an empty file both come back as <code>&quot;&quot;</code>.</p>
+<div class="callout note"><div class="callout-title">Note</div><p><code>fs::delete</code> returns <code>true</code> when the file is gone, whether this call removed it or it was already absent. It only returns <code>false</code> when the path could not be unlinked.</p></div>
+<h2 id="step-3-making-the-tool-self-contained">Step 3 — Making the tool self-contained<a class="anchor" href="#step-3-making-the-tool-self-contained" aria-label="Link to this section">#</a></h2>
+<p>So it always has something to work on, write a sample when no argument is given:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">sample_path</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">pilot</span> path<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;sample.txt&quot;</span>
+    fs<span class="c-op">::</span><span class="c-fn">write</span>(path, <span class="c-str">&quot;the beta do not negotiate\nhumanity answers with steel\n&quot;</span>)
+    <span class="c-kw">give back</span> path
+}
+
+<span class="c-kw">task</span> <span class="c-fn">target_path</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">args_count</span>() <span class="c-op">&gt;</span> <span class="c-num">1</span> {
+        <span class="c-kw">give back</span> process<span class="c-op">::</span><span class="c-fn">arg</span>(<span class="c-num">1</span>)
+    }
+    <span class="c-kw">give back</span> <span class="c-fn">sample_path</span>()
+}</code></pre></div>
+<h2 id="step-4-counting">Step 4 — Counting<a class="anchor" href="#step-4-counting" aria-label="Link to this section">#</a></h2>
+<p>No regex, no <code>.split()</code> into a list. Walk the characters:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">count_words</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> in_word<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">false</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> text.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> text.<span class="c-fn">char_at</span>(i)
+        <span class="c-kw">pilot</span> blank<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> c <span class="c-op">==</span> <span class="c-str">&quot; &quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\t&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\r&quot;</span>
+        <span class="c-kw">if</span> blank {
+            in_word <span class="c-op">=</span> <span class="c-lit">false</span>
+        } <span class="c-kw">else</span> {
+            <span class="c-kw">if</span> <span class="c-kw">not</span> in_word { total <span class="c-op">+=</span> <span class="c-num">1</span> }
+            in_word <span class="c-op">=</span> <span class="c-lit">true</span>
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> total
+}</code></pre></div>
+<p><code>.char_at(i)</code> returns a one-character <code>word</code> — there is no <code>char</code> type. Note <code>and</code> / <code>or</code> take <code>bool</code> only; there is no truthiness, so <code>if count</code> is an error where <code>if count &gt; 0</code> is fine.</p>
+<p>Counting lines is the same shape of loop, with one adjustment so a trailing newline does not invent an extra line:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">count_lines</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> text.<span class="c-fn">length</span>() <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-num">0</span> }
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> text.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">if</span> text.<span class="c-fn">char_at</span>(i) <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> { total <span class="c-op">+=</span> <span class="c-num">1</span> }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">if</span> text.<span class="c-fn">char_at</span>(text.<span class="c-fn">length</span>() <span class="c-op">-</span> <span class="c-num">1</span>) <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> { total <span class="c-op">-=</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> total
+}</code></pre></div>
+<h2 id="step-5-colour">Step 5 — Colour<a class="anchor" href="#step-5-colour" aria-label="Link to this section">#</a></h2>
+<p>There is no colour library. You build ANSI escape sequences as <code>word</code> values. <code>\x1b</code> is the ESC byte:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_BOLD</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_RED</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_GREEN</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[32m&quot;</span></code></pre></div>
+<p>Then concatenate:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-type">C_RED</span> <span class="c-op">+</span> <span class="c-str">&quot;error&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot;: no such file&quot;</span></code></pre></div>
+<p>Windows consoles are switched into ANSI mode automatically — the runtime calls <code>freak_enable_ansi()</code> at the start of every FREAK program, on both backends. You do not need to do anything platform-specific.</p>
+<p>The full code tables — attributes, 16 colours, backgrounds, 256-colour, truecolour, cursor control — are in <a href="console.html">Coloured output</a>.</p>
+<h2 id="step-6-respecting-no-color">Step 6 — Respecting NO_COLOR<a class="anchor" href="#step-6-respecting-no-color" aria-label="Link to this section">#</a></h2>
+<p>Nothing does this for you. The trick the CLI uses is to make the constants <code>pilot mut</code> and blank them, so every call site keeps working unchanged:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RED</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
+
+<span class="c-kw">task</span> <span class="c-fn">configure_output</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">env</span>(<span class="c-str">&quot;NO_COLOR&quot;</span>) <span class="c-op">!=</span> <span class="c-str">&quot;&quot;</span> {
+        <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_RED</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    }
+}</code></pre></div>
+<p>Call <code>configure_output()</code> first thing in <code>main</code>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>There is no TTY detection in V3, so your program cannot tell whether stdout is a pipe. Escapes are emitted even when output is redirected. Honouring <code>NO_COLOR</code> is the only politeness available.</p></div>
+<h2 id="the-finished-tool">The finished tool<a class="anchor" href="#the-finished-tool" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/tut_cli.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Tutorial 2, finished program.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- A small command-line tool: read a file, count its lines, words and</span>
+<span class="c-com">-- characters, then print a coloured report. Falls back to a sample file</span>
+<span class="c-com">-- it writes itself when given no argument, so it always has input.</span>
+
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_BOLD</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_DIM</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[2m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RED</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_GREEN</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[32m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_CYAN</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[36m&quot;</span>
+
+<span class="c-com">-- Honour the NO_COLOR convention. Blanking the constants keeps every</span>
+<span class="c-com">-- call site working unchanged.</span>
+<span class="c-kw">task</span> <span class="c-fn">configure_output</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">env</span>(<span class="c-str">&quot;NO_COLOR&quot;</span>) <span class="c-op">!=</span> <span class="c-str">&quot;&quot;</span> {
+        <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_BOLD</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_DIM</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_RED</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_GREEN</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_CYAN</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">sample_path</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">pilot</span> path<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;tut_sample.txt&quot;</span>
+    fs<span class="c-op">::</span><span class="c-fn">write</span>(path, <span class="c-str">&quot;the beta do not negotiate\nhumanity answers with steel\nand with pilots\n&quot;</span>)
+    <span class="c-kw">give back</span> path
+}
+
+<span class="c-com">-- Which file are we working on? Argument 0 is the executable itself.</span>
+<span class="c-kw">task</span> <span class="c-fn">target_path</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">args_count</span>() <span class="c-op">&gt;</span> <span class="c-num">1</span> {
+        <span class="c-kw">give back</span> process<span class="c-op">::</span><span class="c-fn">arg</span>(<span class="c-num">1</span>)
+    }
+    <span class="c-kw">give back</span> <span class="c-fn">sample_path</span>()
+}
+
+<span class="c-kw">task</span> <span class="c-fn">count_words</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> in_word<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">false</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> text.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> text.<span class="c-fn">char_at</span>(i)
+        <span class="c-kw">pilot</span> blank<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> c <span class="c-op">==</span> <span class="c-str">&quot; &quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\t&quot;</span> <span class="c-kw">or</span> c <span class="c-op">==</span> <span class="c-str">&quot;\r&quot;</span>
+        <span class="c-kw">if</span> blank {
+            in_word <span class="c-op">=</span> <span class="c-lit">false</span>
+        } <span class="c-kw">else</span> {
+            <span class="c-kw">if</span> <span class="c-kw">not</span> in_word { total <span class="c-op">+=</span> <span class="c-num">1</span> }
+            in_word <span class="c-op">=</span> <span class="c-lit">true</span>
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> total
+}
+
+<span class="c-kw">task</span> <span class="c-fn">count_lines</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> text.<span class="c-fn">length</span>() <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-num">0</span> }
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> text.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">if</span> text.<span class="c-fn">char_at</span>(i) <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> { total <span class="c-op">+=</span> <span class="c-num">1</span> }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-com">-- A trailing newline does not start a new line.</span>
+    <span class="c-kw">if</span> text.<span class="c-fn">char_at</span>(text.<span class="c-fn">length</span>() <span class="c-op">-</span> <span class="c-num">1</span>) <span class="c-op">==</span> <span class="c-str">&quot;\n&quot;</span> { total <span class="c-op">-=</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> total
+}
+
+<span class="c-kw">task</span> <span class="c-fn">row</span>(label<span class="c-op">:</span> <span class="c-type">word</span>, value<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;  &quot;</span> <span class="c-op">+</span> <span class="c-type">C_DIM</span> <span class="c-op">+</span> label <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot; &quot;</span> <span class="c-op">+</span> <span class="c-type">C_BOLD</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(value) <span class="c-op">+</span> <span class="c-type">C_RESET</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-fn">configure_output</span>()
+
+    <span class="c-kw">pilot</span> path<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-fn">target_path</span>()
+
+    <span class="c-kw">if</span> <span class="c-kw">not</span> fs<span class="c-op">::</span><span class="c-fn">exists</span>(path) {
+        <span class="c-kw">say</span> <span class="c-type">C_RED</span> <span class="c-op">+</span> <span class="c-str">&quot;error&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot;: no such file: &quot;</span> <span class="c-op">+</span> path
+        process<span class="c-op">::</span><span class="c-fn">exit</span>(<span class="c-num">1</span>)
+    }
+
+    <span class="c-kw">pilot</span> text<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> fs<span class="c-op">::</span><span class="c-fn">read</span>(path)
+
+    <span class="c-kw">say</span> <span class="c-type">C_CYAN</span> <span class="c-op">+</span> <span class="c-type">C_BOLD</span> <span class="c-op">+</span> <span class="c-str">&quot;report&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-type">C_DIM</span> <span class="c-op">+</span> <span class="c-str">&quot; for &quot;</span> <span class="c-op">+</span> path <span class="c-op">+</span> <span class="c-type">C_RESET</span>
+    <span class="c-fn">row</span>(<span class="c-str">&quot;lines     &quot;</span>, <span class="c-fn">count_lines</span>(text))
+    <span class="c-fn">row</span>(<span class="c-str">&quot;words     &quot;</span>, <span class="c-fn">count_words</span>(text))
+    <span class="c-fn">row</span>(<span class="c-str">&quot;characters&quot;</span>, text.<span class="c-fn">length</span>())
+
+    <span class="c-kw">if</span> <span class="c-fn">count_words</span>(text) <span class="c-op">&gt;</span> <span class="c-num">5</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;  &quot;</span> <span class="c-op">+</span> <span class="c-type">C_GREEN</span> <span class="c-op">+</span> <span class="c-str">&quot;ok&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot; enough material to work with&quot;</span>
+    }
+
+    fs<span class="c-op">::</span><span class="c-fn">delete</span>(<span class="c-str">&quot;tut_sample.txt&quot;</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output (ANSI rendered)</div>
+    <pre class="stdout term"><code><span style="font-weight:700;color:#0f8a9e">report</span><span style="opacity:.65"> for tut_sample.txt</span>
+  <span style="opacity:.65">lines     </span> <span style="font-weight:700">3</span>
+  <span style="opacity:.65">words     </span> <span style="font-weight:700">12</span>
+  <span style="opacity:.65">characters</span> <span style="font-weight:700">70</span>
+  <span style="color:#1f8f4e">ok</span> enough material to work with</code></pre>
+  </div>
+</figure>
+<p>Run it against your own file:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run wordcount.fk README.md
+NO_COLOR=1 freak run wordcount.fk README.md</code></pre></div>
+<h2 id="what-you-would-reach-for-next-and-cannot">What you would reach for next, and cannot<a class="anchor" href="#what-you-would-reach-for-next-and-cannot" aria-label="Link to this section">#</a></h2>
+<p>Worth knowing before you plan a bigger tool:</p>
+<div class="tablewrap"><table><thead><tr><th>You might want</th><th>V3 reality</th></tr></thead><tbody><tr><td><code>result&lt;T, E&gt;</code> and <code>?</code></td><td>None. Sentinels and <code>process::exit</code></td></tr><tr><td><code>.split(&quot;,&quot;)</code> into a list</td><td><code>string_split</code> returns an encoded word, not a list. Walk characters</td></tr><tr><td>A map for counting words</td><td>No <code>Map&lt;K,V&gt;</code>. Two parallel collections and <code>array_find</code></td></tr><tr><td><code>for each line in lines</code></td><td>Counted <code>repeat</code> plus an index</td></tr><tr><td>Writing to stderr</td><td>No stderr writer. Everything goes to stdout</td></tr><tr><td>A <code>-o</code> output flag</td><td>Output path is fixed to the source basename</td></tr></tbody></table></div>
+<p>See <a href="not-in-v3.html">Not in V3</a> for substitutes.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#step-1-arguments">Step 1 — Arguments</a></li><li><a href="#step-2-reading-a-file">Step 2 — Reading a file</a></li><li><a href="#step-3-making-the-tool-self-contained">Step 3 — Making the tool self-contained</a></li><li><a href="#step-4-counting">Step 4 — Counting</a></li><li><a href="#step-5-colour">Step 5 — Colour</a></li><li><a href="#step-6-respecting-no-color">Step 6 — Respecting NO_COLOR</a></li><li><a href="#the-finished-tool">The finished tool</a></li><li><a href="#what-you-would-reach-for-next-and-cannot">What you would reach for next, and cannot</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

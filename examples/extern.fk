@@ -1,0 +1,12 @@
+-- V3's `extern` is a single flat declaration -- no `extern [C] { ... }`
+-- block, no calling convention, no `link=`. Parameter and return types
+-- are single identifiers.
+--
+-- The declared symbol must exist at link time and must not start with
+-- the reserved `__freak_` prefix.
+extern task abs(v: int) -> int
+
+task main() -> void {
+    say word_from_int(abs(0 - 41))
+    say word_from_int(abs(41))
+}

@@ -1,0 +1,17 @@
+-- std/version.fk implements semver parsing and constraint matching.
+task main() -> void {
+    pilot parsed: word = ver_parse("2.14.1-rc.1+build7")
+
+    say word_from_int(ver_major(parsed))
+    say word_from_int(ver_minor(parsed))
+    say word_from_int(ver_patch(parsed))
+    say ver_pre(parsed)
+    say ver_build(parsed)
+    say ver_to_string(parsed)
+
+    say word_from_bool(ver_lt("1.2.3", "1.10.0"))
+    say word_from_bool(ver_gt("2.0.0", "1.9.9"))
+    say word_from_bool(ver_eq("1.0.0", "1.0.0"))
+    say word_from_bool(ver_satisfies("1.4.2", "^1.4"))
+    say word_from_bool(ver_satisfies("2.0.0", "^1.4"))
+}

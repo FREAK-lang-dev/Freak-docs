@@ -1,0 +1,55 @@
+-- `List<T>` is V3's typed sequence. The element type must be a scalar
+-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not
+-- allowed: there is no `List<List<int>>`.
+shape Contact {
+    tag: word
+}
+
+-- A List may be a parameter and a return type. It may NOT be a shape
+-- field: that reports "V3 owned shape fields do not yet support List
+-- values".
+task count_all(items: List<word>) -> int {
+    give back items.length()
+}
+
+task first_three() -> List<int> {
+    give back [1, 2, 3]
+}
+
+task main() -> void {
+    -- An array literal infers List<T> from its elements.
+    pilot names: List<word> = ["Takeru", "Meiya", "Sumika"]
+    say word_from_int(names.length())
+    say names[1]
+
+    -- Indexed assignment requires `pilot mut`.
+    pilot mut scores: List<int> = [10, 20, 30]
+    scores[0] = 99
+    say word_from_int(scores[0])
+
+    -- Every scalar element type works.
+    pilot ratios: List<num> = [1.5, 2.5]
+    say format_num(ratios[1])
+
+    pilot flags: List<bool> = [true, false]
+    say word_from_bool(flags[0])
+
+    -- Shapes too, and field access chains off the element.
+    pilot contacts: List<Contact> = [Contact { tag: "BETA-1" }]
+    say contacts[0].tag
+
+    -- List::filled(value, count) builds a pre-populated list.
+    pilot zeros: List<int> = List::filled(0, 4)
+    say word_from_int(zeros.length())
+
+    -- Passed to a task, and returned from one.
+    say word_from_int(count_all(names))
+    say word_from_int(first_three()[2])
+
+    -- Iterate with an index; there is no `for each`.
+    pilot mut i: int = 0
+    repeat names.length() times {
+        say names[i]
+        i += 1
+    }
+}

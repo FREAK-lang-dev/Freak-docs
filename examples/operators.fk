@@ -1,0 +1,25 @@
+-- Arithmetic, comparison and logic.
+task main() -> void {
+    pilot a: int = 17
+    pilot b: int = 5
+
+    say word_from_int(a + b)
+    say word_from_int(a - b)
+    say word_from_int(a * b)
+    say word_from_int(a / b)
+    say word_from_int(a % b)
+
+    say word_from_bool(a > b)
+    say word_from_bool(a == 17)
+    say word_from_bool(a != b)
+    say word_from_bool(a <= 17)
+
+    say word_from_bool(a > b and b > 0)
+    say word_from_bool(a < b or b > 0)
+    say word_from_bool(not false)
+
+    -- Unary minus applies to an expression. A negative *literal*
+    -- is written as a subtraction: `0 - 5`.
+    pilot neg: int = 0 - 5
+    say word_from_int(-neg)
+}

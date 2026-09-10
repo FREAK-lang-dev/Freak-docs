@@ -1,0 +1,62 @@
+-- A complete small program: split a sentence into words, count them,
+-- and report the longest one. Uses shapes, arrays, loops and std tasks.
+shape Report {
+    total: int
+    longest: word
+}
+
+impl Report {
+    task show(self) -> word {
+        give back "total={self.total} longest={self.longest}"
+    }
+}
+
+task split_words(text: word, out: int) -> void {
+    pilot mut current: word = ""
+    pilot mut i: int = 0
+
+    repeat text.length() times {
+        pilot c: word = text.char_at(i)
+        if c == " " {
+            if current.length() > 0 {
+                array_push(out, current)
+                current = ""
+            }
+        } else {
+            current = current + c
+        }
+        i += 1
+    }
+
+    if current.length() > 0 {
+        array_push(out, current)
+    }
+}
+
+task analyse(text: word) -> Report {
+    pilot words: int = array_new()
+    split_words(text, words)
+
+    pilot mut longest: word = ""
+    pilot mut i: int = 0
+
+    repeat array_len(words) times {
+        pilot w: word = array_get(words, i)
+        if w.length() > longest.length() {
+            longest = w
+        }
+        i += 1
+    }
+
+    -- `result` is a reserved word in V3, so the binding is `summary`.
+    pilot summary: Report = Report { total: array_len(words), longest: longest }
+    array_release(words)
+    give back summary
+}
+
+task main() -> void {
+    pilot r: Report = analyse("the beta will not negotiate with humanity")
+    say r.show()
+    say word_from_int(r.total)
+    say r.longest.to_upper()
+}

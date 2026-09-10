@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Words &amp; interpolation &middot; FREAK V3</title>
+<meta name="description" content="`word` is the string type. Its methods are compiler builtins, and `{path}` interpolation has precise rules.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html" class="active">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="words-interpolation">Words &amp; interpolation<a class="anchor" href="#words-interpolation" aria-label="Link to this section">#</a></h1>
+<p>&gt; <code>word</code> is the string type. Its methods are compiler builtins, and <code>{path}</code> interpolation has precise rules.</p>
+<h2 id="literals-and-escapes">Literals and escapes<a class="anchor" href="#literals-and-escapes" aria-label="Link to this section">#</a></h2>
+<p>A <code>word</code> literal is double-quoted.</p>
+<div class="tablewrap"><table><thead><tr><th>Escape</th><th>Meaning</th></tr></thead><tbody><tr><td><code>\n</code></td><td>newline</td></tr><tr><td><code>\r</code></td><td>carriage return</td></tr><tr><td><code>\t</code></td><td>tab</td></tr><tr><td><code>\&quot;</code></td><td>double quote</td></tr><tr><td><code>\\</code></td><td>backslash</td></tr><tr><td><code>\xNN</code></td><td>byte with hex value <code>NN</code></td></tr></tbody></table></div>
+<p><code>\x1b</code> is the ESC byte, which is how you produce coloured console output — see <a href="console.html">Coloured output</a>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p><code>\x00</code> is rejected at lex time: <em>&quot;embedded NUL escape is not supported&quot;</em>. V3 words use a NUL-terminated runtime representation, so a word can never contain a zero byte. A malformed hex escape (fewer than two hex digits) is also a lex error.</p></div>
+<p>An unterminated literal reports <em>&quot;unterminated string literal&quot;</em> pointing at the opening quote.</p>
+<h2 id="methods">Methods<a class="anchor" href="#methods" aria-label="Link to this section">#</a></h2>
+<p>All of these are compiler builtins — no import, and they work under <code>freak check</code> as well as <code>freak build</code>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/strings.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `word` is FREAK&#x27;s string type. These methods are compiler builtins,</span>
+<span class="c-com">-- available with no import.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> s<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;  Muv-Luv Alternative  &quot;</span>
+
+    <span class="c-kw">say</span> s.<span class="c-fn">trim</span>()
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(s.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> s.<span class="c-fn">trim</span>().<span class="c-fn">to_upper</span>()
+    <span class="c-kw">say</span> s.<span class="c-fn">trim</span>().<span class="c-fn">to_lower</span>()
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(s.<span class="c-fn">contains</span>(<span class="c-str">&quot;Luv&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(s.<span class="c-fn">trim</span>().<span class="c-fn">starts_with</span>(<span class="c-str">&quot;Muv&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(s.<span class="c-fn">trim</span>().<span class="c-fn">ends_with</span>(<span class="c-str">&quot;ive&quot;</span>))
+    <span class="c-kw">say</span> s.<span class="c-fn">trim</span>().<span class="c-fn">replace</span>(<span class="c-str">&quot;Luv&quot;</span>, <span class="c-str">&quot;Love&quot;</span>)
+    <span class="c-kw">say</span> s.<span class="c-fn">trim</span>().<span class="c-fn">substring</span>(<span class="c-num">0</span>, <span class="c-num">3</span>)
+    <span class="c-kw">say</span> s.<span class="c-fn">trim</span>().<span class="c-fn">char_at</span>(<span class="c-num">0</span>)
+
+    <span class="c-com">-- Concatenation with `+`, or with the builtin.</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;Muv&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;-&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;Luv&quot;</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_concat</span>(<span class="c-str">&quot;XM&quot;</span>, <span class="c-str">&quot;3&quot;</span>)
+
+    <span class="c-com">-- Numeric conversion in both directions.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-str">&quot;108&quot;</span>.<span class="c-fn">to_int</span>())
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(<span class="c-str">&quot;2.5&quot;</span>.<span class="c-fn">to_num</span>())
+    <span class="c-kw">say</span> <span class="c-fn">char_to_word</span>(<span class="c-num">70</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Muv-Luv Alternative
+23
+MUV-LUV ALTERNATIVE
+muv-luv alternative
+true
+true
+true
+Muv-Love Alternative
+Muv
+M
+Muv-Luv
+XM3
+108
+2.5
+F</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Method</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>.length()</code></td><td><code>-&gt; int</code></td><td>Character count</td></tr><tr><td><code>.trim()</code></td><td><code>-&gt; word</code></td><td>Strips leading and trailing whitespace</td></tr><tr><td><code>.to_upper()</code></td><td><code>-&gt; word</code></td><td></td></tr><tr><td><code>.to_lower()</code></td><td><code>-&gt; word</code></td><td></td></tr><tr><td><code>.contains(needle)</code></td><td><code>word -&gt; bool</code></td><td></td></tr><tr><td><code>.starts_with(prefix)</code></td><td><code>word -&gt; bool</code></td><td></td></tr><tr><td><code>.ends_with(suffix)</code></td><td><code>word -&gt; bool</code></td><td></td></tr><tr><td><code>.replace(old, new)</code></td><td><code>word, word -&gt; word</code></td><td>Replaces every occurrence</td></tr><tr><td><code>.substring(start, len)</code></td><td><code>int, int -&gt; word</code></td><td>Start index and <strong>length</strong>, not an end index</td></tr><tr><td><code>.char_at(i)</code></td><td><code>int -&gt; word</code></td><td>A one-character <code>word</code>, not a <code>char</code> type</td></tr><tr><td><code>.to_int()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.to_num()</code></td><td><code>-&gt; num</code></td><td></td></tr><tr><td><code>.checksum()</code></td><td><code>-&gt; int</code></td><td>Runtime hash</td></tr><tr><td><code>.repeated(n)</code></td><td><code>int -&gt; word</code></td><td>The word repeated <code>n</code> times</td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>.substring(start, len)</code> takes a <strong>length</strong> as its second argument. The bible describes <code>slice(from, to)</code>; V3&#x27;s builtin is not that function. <code>&quot;abcdef&quot;.substring(1, 3)</code> yields <code>&quot;bcd&quot;</code>.</p></div>
+<h3 id="snapshot-helpers">Snapshot helpers<a class="anchor" href="#snapshot-helpers" aria-label="Link to this section">#</a></h3>
+<p>Six further <code>word</code> methods exist for the compiler&#x27;s own line-and-field serialisation format. They are part of the builtin table and will type-check in your code, but they are internal plumbing rather than a general-purpose API:</p>
+<p><code>.snapshot_escape()</code>, <code>.snapshot_unescape()</code>, <code>.snapshot_line_count()</code>, <code>.snapshot_line(i)</code>, <code>.snapshot_lines()</code>, <code>.snapshot_field_count()</code>, <code>.snapshot_field_raw(i)</code>.</p>
+<h2 id="concatenation-and-conversion">Concatenation and conversion<a class="anchor" href="#concatenation-and-conversion" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;Muv&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;-&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;Luv&quot;</span>      <span class="c-com">-- operator</span>
+<span class="c-kw">say</span> <span class="c-fn">word_concat</span>(<span class="c-str">&quot;XM&quot;</span>, <span class="c-str">&quot;3&quot;</span>)   <span class="c-com">-- builtin, identical</span></code></pre></div>
+<p><code>+</code> on two words concatenates. <code>+</code> on a word and a number is a type error — convert first:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">42</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;answer: &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(n)
+<span class="c-kw">say</span> <span class="c-str">&quot;answer: <span class="c-interp">{n}</span>&quot;</span>              <span class="c-com">-- or interpolate</span></code></pre></div>
+<div class="tablewrap"><table><thead><tr><th>Builtin</th><th>Signature</th></tr></thead><tbody><tr><td><code>word_from_int(i)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>word_from_bool(b)</code></td><td><code>bool -&gt; word</code></td></tr><tr><td><code>word_to_int(w)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>word_concat(a, b)</code></td><td><code>word, word -&gt; word</code></td></tr><tr><td><code>word_join(handle)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>char_to_word(code)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>format_num(f)</code></td><td><code>num -&gt; word</code></td></tr><tr><td><code>parse_num(w)</code></td><td><code>word -&gt; num</code></td></tr></tbody></table></div>
+<p><code>format_num</code> prints a <code>num</code> without a trailing <code>.0</code> when it is integral — <code>format_num(12.0)</code> gives <code>12</code>.</p>
+<h2 id="indexing">Indexing<a class="anchor" href="#indexing" aria-label="Link to this section">#</a></h2>
+<p><code>word[i]</code> yields a one-character <code>word</code>. It is the only indexable type in V3.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> s<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;abc&quot;</span>
+<span class="c-kw">say</span> s[<span class="c-num">1</span>]           <span class="c-com">-- b</span>
+<span class="c-kw">say</span> s.<span class="c-fn">char_at</span>(<span class="c-num">1</span>)   <span class="c-com">-- b, identical</span></code></pre></div>
+<h2 id="interpolation">Interpolation<a class="anchor" href="#interpolation" aria-label="Link to this section">#</a></h2>
+<p><code>{path}</code> inside a double-quoted word substitutes a binding&#x27;s value.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/interpolation.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `{path}` inside a double-quoted word interpolates a binding.</span>
+<span class="c-com">-- A path is an identifier plus zero or more `.field` hops, and must</span>
+<span class="c-com">-- resolve to word, int, num or bool. Anything that is not a valid path</span>
+<span class="c-com">-- stays literal text.</span>
+<span class="c-com">-- (`Aviator`, not `Pilot`: V3 keywords are case-insensitive, so `Pilot`</span>
+<span class="c-com">-- is the `pilot` keyword and cannot name a shape.)</span>
+<span class="c-kw">shape</span> <span class="c-type">Aviator</span> {
+    name<span class="c-op">:</span> <span class="c-type">word</span>
+    score<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Aviator</span> {
+    <span class="c-kw">task</span> <span class="c-fn">summary</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.name}</span> scored <span class="c-interp">{self.score}</span>&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> callsign<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie&quot;</span>
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">pilot</span> rate<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">0.75</span>
+    <span class="c-kw">pilot</span> active<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">true</span>
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;callsign=<span class="c-interp">{callsign}</span> sorties=<span class="c-interp">{sorties}</span>&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;rate=<span class="c-interp">{rate}</span> active=<span class="c-interp">{active}</span>&quot;</span>
+
+    <span class="c-kw">pilot</span> p<span class="c-op">:</span> <span class="c-type">Aviator</span> <span class="c-op">=</span> <span class="c-type">Aviator</span> { name<span class="c-op">:</span> <span class="c-str">&quot;Meiya&quot;</span>, score<span class="c-op">:</span> <span class="c-num">98</span> }
+    <span class="c-kw">say</span> <span class="c-str">&quot;shape: <span class="c-interp">{p.name}</span> / <span class="c-interp">{p.score}</span>&quot;</span>
+    <span class="c-kw">say</span> p.<span class="c-fn">summary</span>()
+
+    <span class="c-com">-- Not a path, so it is printed literally:</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;literal {1 + 2} braces&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>callsign=Valkyrie sorties=12
+rate=0.75 active=true
+shape: Meiya / 98
+Meiya scored 98
+literal {1 + 2} braces</code></pre>
+  </div>
+</figure>
+<p>The rules are exact:</p>
+<ul><li>A <strong>path</strong> is an identifier followed by zero or more <code>.field</code> hops: <code>name</code>, <code>p.score</code>, <code>self.engine.thrust</code>.</li><li>The path must resolve to <code>word</code>, <code>int</code>, <code>num</code> or <code>bool</code>. Any other type is a type error.</li><li>Every segment must be a valid identifier — so it cannot be a keyword, in any casing.</li><li>A matched <code>{...}</code> whose body is <strong>not</strong> a valid path is left as literal text, braces included. <code>&quot;literal {1 + 2} braces&quot;</code> prints exactly that.</li><li>An unmatched <code>{</code> is literal text.</li><li>Unknown bindings are a compile error: <em>&quot;unknown interpolation binding &#x27;x&#x27;&quot;</em>.</li></ul>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Interpolation substitutes <strong>paths only</strong> — never calls, never expressions. <code>&quot;{p.sum()}&quot;</code> is not a call; it is literal text, because <code>sum()</code> is not a valid path segment. Compute into a binding first: ``<code>fk pilot total: int = p.sum() say &quot;sum={total}&quot; </code><code></code></p></div>
+<p>Dotted shape interpolation, including <code>{self.field}</code> inside a method, is verified working on the LLVM backend. It is <strong>not</strong> a claimed executable path on the C backend.</p>
+<h2 id="building-words-incrementally">Building words incrementally<a class="anchor" href="#building-words-incrementally" aria-label="Link to this section">#</a></h2>
+<p>Repeated <code>+</code> concatenation copies the whole accumulated word each time. <code>word_builder::*</code> avoids that. The builder is an <code>int</code> handle, not a shape.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/word_builder.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `word_builder::*` accumulates a word without the quadratic cost of</span>
+<span class="c-com">-- repeated `+` concatenation. The builder is an `int` handle.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> word_builder<span class="c-op">::</span><span class="c-fn">new</span>()
+
+    word_builder<span class="c-op">::</span><span class="c-fn">append</span>(b, <span class="c-str">&quot;Mission: &quot;</span>)
+    word_builder<span class="c-op">::</span><span class="c-fn">append</span>(b, <span class="c-str">&quot;Valkyries&quot;</span>)
+    word_builder<span class="c-op">::</span><span class="c-fn">append_char</span>(b, <span class="c-num">32</span>)      <span class="c-com">-- a space, by codepoint</span>
+    word_builder<span class="c-op">::</span><span class="c-fn">append_int</span>(b, <span class="c-num">4</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(word_builder<span class="c-op">::</span><span class="c-fn">length</span>(b))
+
+    <span class="c-com">-- `finish` consumes the builder and returns the accumulated word.</span>
+    <span class="c-kw">say</span> word_builder<span class="c-op">::</span><span class="c-fn">finish</span>(b)
+
+    <span class="c-com">-- with_capacity pre-allocates; clear reuses; discard frees unused.</span>
+    <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> word_builder<span class="c-op">::</span><span class="c-fn">with_capacity</span>(<span class="c-num">64</span>)
+    word_builder<span class="c-op">::</span><span class="c-fn">append</span>(c, <span class="c-str">&quot;scratch&quot;</span>)
+    word_builder<span class="c-op">::</span><span class="c-fn">clear</span>(c)
+    word_builder<span class="c-op">::</span><span class="c-fn">append</span>(c, <span class="c-str">&quot;reused&quot;</span>)
+    <span class="c-kw">say</span> word_builder<span class="c-op">::</span><span class="c-fn">finish</span>(c)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>20
+Mission: Valkyries 4
+reused</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>word_builder::new()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>word_builder::with_capacity(n)</code></td><td><code>int -&gt; int</code></td><td>Pre-allocate</td></tr><tr><td><code>word_builder::reserve(b, n)</code></td><td><code>int, int -&gt; void</code></td><td>Grow the capacity</td></tr><tr><td><code>word_builder::append(b, w)</code></td><td><code>int, word -&gt; void</code></td><td></td></tr><tr><td><code>word_builder::append_char(b, code)</code></td><td><code>int, int -&gt; void</code></td><td>By codepoint</td></tr><tr><td><code>word_builder::append_int(b, n)</code></td><td><code>int, int -&gt; void</code></td><td></td></tr><tr><td><code>word_builder::length(b)</code></td><td><code>int -&gt; int</code></td><td></td></tr><tr><td><code>word_builder::capacity(b)</code></td><td><code>int -&gt; int</code></td><td></td></tr><tr><td><code>word_builder::clear(b)</code></td><td><code>int -&gt; void</code></td><td>Keep the buffer, drop the content</td></tr><tr><td><code>word_builder::finish(b)</code></td><td><code>int -&gt; word</code></td><td>Consumes the builder</td></tr><tr><td><code>word_builder::discard(b)</code></td><td><code>int -&gt; void</code></td><td>Free without producing a word</td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>finish</code> consumes the builder — do not reuse the handle afterwards. Use <code>clear</code> to keep building with the same allocation, and <code>discard</code> when you are abandoning it without producing a word.</p></div>
+<p>This is V3&#x27;s answer to the bible&#x27;s <code>WordBuilder</code> from §7.2. The API is namespaced calls over a handle rather than methods on an object.</p>
+<h2 id="standard-library-word-tasks">Standard-library word tasks<a class="anchor" href="#standard-library-word-tasks" aria-label="Link to this section">#</a></h2>
+<p><code>std/string.fk</code> is ordinary FREAK source linked in by <code>freak build</code> and <code>freak run</code>. Its tasks are global and take the word as a normal argument.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/stdlib_string.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- std/string.fk ships as plain FREAK source and is always linked in by</span>
+<span class="c-com">-- `freak build` / `freak run`. Its tasks are global; there is no import.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">string_repeat</span>(<span class="c-str">&quot;ha&quot;</span>, <span class="c-num">3</span>)
+    <span class="c-kw">say</span> <span class="c-fn">string_reverse</span>(<span class="c-str">&quot;FREAK&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">string_count</span>(<span class="c-str">&quot;banana&quot;</span>, <span class="c-str">&quot;an&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">string_pad_left</span>(<span class="c-str">&quot;7&quot;</span>, <span class="c-num">4</span>, <span class="c-str">&quot;0&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">string_pad_right</span>(<span class="c-str">&quot;7&quot;</span>, <span class="c-num">4</span>, <span class="c-str">&quot;.&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">string_index_of</span>(<span class="c-str">&quot;alternative&quot;</span>, <span class="c-str">&quot;native&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">is_digit</span>(<span class="c-str">&quot;5&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">is_alpha</span>(<span class="c-str">&quot;x&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">is_whitespace</span>(<span class="c-str">&quot; &quot;</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>hahaha
+KAERF
+2
+0007
+7...
+5
+true
+true
+true</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>Signature</th></tr></thead><tbody><tr><td><code>string_repeat(s, count)</code></td><td><code>word, int -&gt; word</code></td></tr><tr><td><code>string_reverse(s)</code></td><td><code>word -&gt; word</code></td></tr><tr><td><code>string_count(haystack, needle)</code></td><td><code>word, word -&gt; int</code></td></tr><tr><td><code>string_index_of(s, needle)</code></td><td><code>word, word -&gt; int</code>, <code>-1</code> when absent</td></tr><tr><td><code>string_pad_left(s, width, pad)</code></td><td><code>word, int, word -&gt; word</code></td></tr><tr><td><code>string_pad_right(s, width, pad)</code></td><td><code>word, int, word -&gt; word</code></td></tr><tr><td><code>string_split(s, delim)</code></td><td><code>word, word -&gt; word</code> (an encoded word, not an array)</td></tr><tr><td><code>string_join(parts, sep)</code></td><td><code>word, word -&gt; word</code></td></tr><tr><td><code>string_trim(s)</code></td><td><code>word -&gt; word</code></td></tr><tr><td><code>string_substring(s, start, end)</code></td><td><code>word, int, int -&gt; word</code> — an <strong>end index</strong>, unlike the builtin</td></tr><tr><td><code>string_replace(s, old, new)</code></td><td><code>word, word, word -&gt; word</code></td></tr><tr><td><code>string_contains</code> / <code>string_starts_with</code> / <code>string_ends_with</code></td><td><code>-&gt; bool</code></td></tr><tr><td><code>is_digit(c)</code> / <code>is_alpha(c)</code> / <code>is_whitespace(c)</code></td><td><code>word -&gt; bool</code></td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p>These duplicate several builtin methods. The builtins are cheaper and work under <code>freak check</code>; the <code>std/</code> tasks exist because the standard library is itself written in FREAK. Where the two disagree — <code>substring</code> — prefer the builtin and mind the length-vs-end-index difference.</p></div>
+<h2 id="splitting-into-an-array">Splitting into an array<a class="anchor" href="#splitting-into-an-array" aria-label="Link to this section">#</a></h2>
+<p><code>string_split</code> returns an encoded word, not an array handle. To get a real array, walk the characters yourself:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/wordcount.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A complete small program: split a sentence into words, count them,</span>
+<span class="c-com">-- and report the longest one. Uses shapes, arrays, loops and std tasks.</span>
+<span class="c-kw">shape</span> <span class="c-type">Report</span> {
+    total<span class="c-op">:</span> <span class="c-type">int</span>
+    longest<span class="c-op">:</span> <span class="c-type">word</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Report</span> {
+    <span class="c-kw">task</span> <span class="c-fn">show</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;total=<span class="c-interp">{self.total}</span> longest=<span class="c-interp">{self.longest}</span>&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">split_words</span>(text<span class="c-op">:</span> <span class="c-type">word</span>, out<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> current<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> text.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> text.<span class="c-fn">char_at</span>(i)
+        <span class="c-kw">if</span> c <span class="c-op">==</span> <span class="c-str">&quot; &quot;</span> {
+            <span class="c-kw">if</span> current.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+                <span class="c-fn">array_push</span>(out, current)
+                current <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+            }
+        } <span class="c-kw">else</span> {
+            current <span class="c-op">=</span> current <span class="c-op">+</span> c
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">if</span> current.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+        <span class="c-fn">array_push</span>(out, current)
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">analyse</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">Report</span> {
+    <span class="c-kw">pilot</span> words<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_new</span>()
+    <span class="c-fn">split_words</span>(text, words)
+
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> longest<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(words) <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> w<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-fn">array_get</span>(words, i)
+        <span class="c-kw">if</span> w.<span class="c-fn">length</span>() <span class="c-op">&gt;</span> longest.<span class="c-fn">length</span>() {
+            longest <span class="c-op">=</span> w
+        }
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-com">-- `result` is a reserved word in V3, so the binding is `summary`.</span>
+    <span class="c-kw">pilot</span> summary<span class="c-op">:</span> <span class="c-type">Report</span> <span class="c-op">=</span> <span class="c-type">Report</span> { total<span class="c-op">:</span> <span class="c-fn">array_len</span>(words), longest<span class="c-op">:</span> longest }
+    <span class="c-fn">array_release</span>(words)
+    <span class="c-kw">give back</span> summary
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> r<span class="c-op">:</span> <span class="c-type">Report</span> <span class="c-op">=</span> <span class="c-fn">analyse</span>(<span class="c-str">&quot;the beta will not negotiate with humanity&quot;</span>)
+    <span class="c-kw">say</span> r.<span class="c-fn">show</span>()
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(r.total)
+    <span class="c-kw">say</span> r.longest.<span class="c-fn">to_upper</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>total=7 longest=negotiate
+7
+NEGOTIATE</code></pre>
+  </div>
+</figure>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#literals-and-escapes">Literals and escapes</a></li><li><a href="#methods">Methods</a></li><li><a href="#concatenation-and-conversion">Concatenation and conversion</a></li><li><a href="#indexing">Indexing</a></li><li><a href="#interpolation">Interpolation</a></li><li><a href="#building-words-incrementally">Building words incrementally</a></li><li><a href="#standard-library-word-tasks">Standard-library word tasks</a></li><li><a href="#splitting-into-an-array">Splitting into an array</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

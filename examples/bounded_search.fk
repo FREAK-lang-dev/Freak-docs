@@ -1,0 +1,32 @@
+-- A slightly larger program: integer square root by bisection, driven by
+-- a `training arc` so the loop is provably bounded.
+shape Bounds {
+    lo: int
+    hi: int
+}
+
+task isqrt(target: int) -> int {
+    if target < 2 { give back target }
+
+    pilot mut b: Bounds = Bounds { lo: 1, hi: target }
+
+    training arc until b.lo >= b.hi max 64 sessions {
+        pilot mid: int = (b.lo + b.hi + 1) / 2
+        if mid * mid > target {
+            b.hi = mid - 1
+        } else {
+            b.lo = mid
+        }
+    }
+
+    give back b.lo
+}
+
+task main() -> void {
+    say word_from_int(isqrt(0))
+    say word_from_int(isqrt(1))
+    say word_from_int(isqrt(15))
+    say word_from_int(isqrt(16))
+    say word_from_int(isqrt(17))
+    say word_from_int(isqrt(1000000))
+}

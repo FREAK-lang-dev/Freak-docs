@@ -1,0 +1,22 @@
+-- `when` matches a subject against literal arms. `_` is the catch-all.
+-- Each arm takes one statement; use a block to run several.
+task main() -> void {
+    pilot code: int = 2
+
+    when code {
+        1 -> say "launch"
+        2 -> {
+            say "hold"
+            say "await orders"
+        }
+        3 -> say "abort"
+        _ -> say "unknown"
+    }
+
+    pilot phase: word = "sortie"
+    when phase {
+        "briefing" -> say "in the briefing room"
+        "sortie"   -> say "in the air"
+        _          -> say "elsewhere"
+    }
+}

@@ -1,0 +1,27 @@
+-- `impl Doctrine for Shape` registers an operator implementation.
+-- V3 does not accept a `doctrine` *declaration*, but it does accept
+-- this impl form for the built-in operator doctrines, and the method
+-- is callable by name.
+shape Vec2 {
+    x: int
+    y: int
+}
+
+impl Add for Vec2 {
+    task add(self, other: Vec2) -> Vec2 {
+        give back Vec2 { x: self.x + other.x, y: self.y + other.y }
+    }
+}
+
+impl Vec2 {
+    task show(self) -> word {
+        give back "({self.x}, {self.y})"
+    }
+}
+
+task main() -> void {
+    pilot a: Vec2 = Vec2 { x: 1, y: 2 }
+    pilot b: Vec2 = Vec2 { x: 10, y: 20 }
+    pilot c: Vec2 = a.add(b)
+    say c.show()
+}

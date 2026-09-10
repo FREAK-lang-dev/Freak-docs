@@ -1,0 +1,14 @@
+-- The type annotation is optional. V3 infers from the initializer.
+-- When you do annotate, the annotation is a single identifier:
+-- `int`, `num`, `word`, `bool`, or the name of a shape.
+task main() -> void {
+    pilot a = 7            -- int
+    pilot b = 2.5          -- num
+    pilot c = "text"       -- word
+    pilot d = false        -- bool
+
+    say word_from_int(a)
+    say format_num(b)
+    say c
+    say word_from_bool(d)
+}

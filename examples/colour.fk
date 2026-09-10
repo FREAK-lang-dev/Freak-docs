@@ -1,0 +1,32 @@
+-- Coloured console output. There is no colour library: you build the
+-- ANSI escape sequences yourself as `word` values and concatenate them.
+--
+-- `\x1b` is the ESC byte. The V3 lexer preserves `\xNN` escapes all the
+-- way through to the backend, so they reach the terminal intact.
+pilot C_RESET = "\x1b[0m"
+pilot C_BOLD  = "\x1b[1m"
+pilot C_DIM   = "\x1b[2m"
+
+pilot C_RED   = "\x1b[31m"
+pilot C_GREEN = "\x1b[32m"
+pilot C_CYAN  = "\x1b[36m"
+
+pilot C_BRED  = "\x1b[1;31m"
+
+-- 24-bit truecolour: ESC [ 38;2;R;G;B m
+pilot C_PINK  = "\x1b[38;2;255;100;200m"
+
+task rgb(r: int, g: int, b: int) -> word {
+    give back "\x1b[38;2;" + word_from_int(r) + ";" + word_from_int(g) + ";" + word_from_int(b) + "m"
+}
+
+task main() -> void {
+    say C_BRED + "error" + C_RESET + ": engine failure"
+    say C_GREEN + "ok" + C_RESET + ": all systems nominal"
+    say C_DIM + "hint: check the coolant line" + C_RESET
+
+    say C_BOLD + C_CYAN + "XM3" + C_RESET + " reflex link online"
+    say C_PINK + "freak" + C_RESET + " 0.14.1"
+
+    say rgb(255, 180, 0) + "amber warning" + C_RESET
+}

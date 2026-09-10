@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bindings &amp; types &middot; FREAK V3</title>
+<meta name="description" content="The value model: five types, one binding keyword, and a case-insensitive keyword table that will bite you.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html" class="active">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="bindings-types">Bindings &amp; types<a class="anchor" href="#bindings-types" aria-label="Link to this section">#</a></h1>
+<p>&gt; The value model: five types, one binding keyword, and a case-insensitive keyword table that will bite you.</p>
+<h2 id="bindings">Bindings<a class="anchor" href="#bindings" aria-label="Link to this section">#</a></h2>
+<p><code>pilot</code> introduces a binding. The type annotation is optional; when present it follows the name after a colon.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/variables.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Bindings are declared with `pilot`.</span>
+<span class="c-com">-- `fixed pilot` marks an immutable binding.</span>
+<span class="c-com">-- `pilot mut` opts a binding into reassignment.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> answer<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">42</span>
+    <span class="c-kw">pilot</span> ratio<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">3.5</span>
+    <span class="c-kw">pilot</span> callsign<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Shirogane&quot;</span>
+    <span class="c-kw">pilot</span> ready<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">true</span>
+
+    <span class="c-kw">fixed</span> <span class="c-kw">pilot</span> <span class="c-type">MAX_SORTIES</span><span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
+
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> score<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    score <span class="c-op">=</span> score <span class="c-op">+</span> <span class="c-num">10</span>
+    score <span class="c-op">+=</span> <span class="c-num">5</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(answer)
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(ratio)
+    <span class="c-kw">say</span> callsign
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(ready)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-type">MAX_SORTIES</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(score)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>42
+3.5
+Shirogane
+true
+12
+15</code></pre>
+  </div>
+</figure>
+<p>Three forms exist:</p>
+<div class="tablewrap"><table><thead><tr><th>Form</th><th>Meaning</th></tr></thead><tbody><tr><td><code>pilot x = expr</code></td><td>Ordinary binding</td></tr><tr><td><code>pilot mut x = expr</code></td><td>Explicitly reassignable</td></tr><tr><td><code>fixed pilot x = expr</code></td><td>Immutable binding</td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>mut</code> and <code>fixed</code> only change behaviour under <code>--strict-borrow</code>. Without that flag V3 does no ownership or mutability checking, and all three forms behave identically. Write <code>mut</code> anyway — it documents intent and it is what the checker will demand when you turn it on.</p></div>
+<p>Assignment operators: <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code>.</p>
+<h2 id="type-inference">Type inference<a class="anchor" href="#type-inference" aria-label="Link to this section">#</a></h2>
+<p>The annotation can always be omitted. V3 infers from the initialiser.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/inference.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The type annotation is optional. V3 infers from the initializer.</span>
+<span class="c-com">-- When you do annotate, the annotation is a single identifier:</span>
+<span class="c-com">-- `int`, `num`, `word`, `bool`, or the name of a shape.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> a <span class="c-op">=</span> <span class="c-num">7</span>            <span class="c-com">-- int</span>
+    <span class="c-kw">pilot</span> b <span class="c-op">=</span> <span class="c-num">2.5</span>          <span class="c-com">-- num</span>
+    <span class="c-kw">pilot</span> c <span class="c-op">=</span> <span class="c-str">&quot;text&quot;</span>       <span class="c-com">-- word</span>
+    <span class="c-kw">pilot</span> d <span class="c-op">=</span> <span class="c-lit">false</span>        <span class="c-com">-- bool</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(a)
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(b)
+    <span class="c-kw">say</span> c
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(d)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>7
+2.5
+text
+false</code></pre>
+  </div>
+</figure>
+<h2 id="the-type-table">The type table<a class="anchor" href="#the-type-table" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td><code>int</code></td><td>64-bit signed integer. The default for whole-number literals</td></tr><tr><td><code>num</code></td><td>64-bit float. Any literal containing <code>.</code></td></tr><tr><td><code>word</code></td><td>UTF-8 string</td></tr><tr><td><code>bool</code></td><td><code>true</code> / <code>false</code>, and the aliases <code>yes</code> / <code>no</code> / <code>hai</code> / <code>iie</code></td></tr><tr><td><code>void</code></td><td>Absence of a value. Only a return type</td></tr><tr><td><code>List&lt;T&gt;</code></td><td>Typed sequence. <code>T</code> is a scalar or a shape name; no nesting</td></tr><tr><td><code>ByteBuffer</code></td><td>Builtin binary read/write cursor, with real methods</td></tr><tr><td><em>a shape name</em></td><td>Any type you declared with <code>shape</code></td></tr></tbody></table></div>
+<p>There is no <code>uint</code>, <code>tiny</code>, <code>char</code>, <code>big</code>, <code>float</code>, <code>float32</code> or <code>never</code>; and no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code>, tuple, fixed array or raw pointer.</p>
+<h3 id="the-type-annotation-grammar">The type-annotation grammar<a class="anchor" href="#the-type-annotation-grammar" aria-label="Link to this section">#</a></h3>
+<p>The parser takes one identifier, plus a single special case for <code>List</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> a<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>                       <span class="c-com">-- fine</span>
+<span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;x&quot;</span>                    <span class="c-com">-- fine</span>
+<span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">Rect</span> <span class="c-op">=</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> <span class="c-num">1</span>, h<span class="c-op">:</span> <span class="c-num">2</span> }    <span class="c-com">-- fine, Rect is a shape</span>
+<span class="c-kw">pilot</span> d<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">3</span>]         <span class="c-com">-- fine</span>
+<span class="c-kw">pilot</span> e<span class="c-op">:</span> <span class="c-type">ByteBuffer</span> <span class="c-op">=</span> <span class="c-type">ByteBuffer</span><span class="c-op">::</span><span class="c-fn">new</span>()
+
+<span class="c-com">-- none of these parse:</span>
+<span class="c-com">--   pilot f: maybe&lt;int&gt; = some(1)</span>
+<span class="c-com">--   pilot g: [int; 4] = [1, 2, 3, 4]</span>
+<span class="c-com">--   pilot h: List&lt;List&lt;int&gt;&gt; = []</span>
+<span class="c-com">--   task i&lt;T&gt;(x: T) -&gt; T { give back x }</span></code></pre></div>
+<p><code>List&lt;T&gt;</code> is the only generic form in the language, and it is hard-coded in <code>parser_take_type</code> rather than being a general mechanism — the element must be a plain identifier, so <code>List&lt;List&lt;int&gt;&gt;</code> is rejected with <em>&quot;expected &#x27;&gt;&#x27; after list element type&quot;</em>.</p>
+<p>The same grammar applies to shape fields, task parameters, task return types and <code>extern</code> signatures.</p>
+<div class="callout note"><div class="callout-title">Note</div><p><code>List&lt;T&gt;</code> and <code>ByteBuffer</code> are recent additions to V3. Much of the rest of the language still assumes the older untyped <code>int</code> handle, so the two surfaces coexist — see <a href="arrays.html">Lists &amp; arrays</a> for which calls accept which.</p></div>
+<h3 id="numeric-literals">Numeric literals<a class="anchor" href="#numeric-literals" aria-label="Link to this section">#</a></h3>
+<p>A literal with a <code>.</code> is <code>num</code>; otherwise <code>int</code>.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> i <span class="c-op">=</span> <span class="c-num">42</span>        <span class="c-com">-- int</span>
+<span class="c-kw">pilot</span> f <span class="c-op">=</span> <span class="c-num">42.0</span>      <span class="c-com">-- num</span></code></pre></div>
+<p>There is <strong>no negative literal</strong>. <code>-5</code> parses as unary minus applied to <code>5</code>, which is fine inside an expression but not as an initialiser in every position. The idiom used throughout the compiler&#x27;s own source is a subtraction:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> below_zero<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">5</span>
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-op">-</span>below_zero)</code></pre></div>
+<p>There are also no numeric suffixes: <code>42u</code>, <code>3.14f</code>, <code>42t</code> and <code>999b</code> are all V4.</p>
+<h3 id="mixing-int-and-num">Mixing int and num<a class="anchor" href="#mixing-int-and-num" aria-label="Link to this section">#</a></h3>
+<p>Arithmetic that involves a <code>num</code> on either side produces <code>num</code>. Convert explicitly at the boundary:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">7</span>
+<span class="c-kw">pilot</span> f<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> n.<span class="c-fn">to_num</span>()
+<span class="c-kw">pilot</span> back<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> f.<span class="c-fn">to_int</span>()</code></pre></div>
+<div class="tablewrap"><table><thead><tr><th>Conversion</th><th>Result</th></tr></thead><tbody><tr><td><code>intValue.to_num()</code></td><td><code>num</code></td></tr><tr><td><code>intValue.to_word()</code></td><td><code>word</code></td></tr><tr><td><code>numValue.to_int()</code></td><td><code>int</code></td></tr><tr><td><code>numValue.to_word()</code></td><td><code>word</code></td></tr><tr><td><code>boolValue.to_word()</code></td><td><code>word</code></td></tr><tr><td><code>wordValue.to_int()</code></td><td><code>int</code></td></tr><tr><td><code>wordValue.to_num()</code></td><td><code>num</code></td></tr><tr><td><code>word_from_int(i)</code></td><td><code>word</code></td></tr><tr><td><code>word_from_bool(b)</code></td><td><code>word</code></td></tr><tr><td><code>format_num(f)</code></td><td><code>word</code></td></tr><tr><td><code>parse_num(w)</code></td><td><code>num</code></td></tr><tr><td><code>word_to_int(w)</code></td><td><code>int</code></td></tr><tr><td><code>char_to_word(code)</code></td><td><code>word</code></td></tr></tbody></table></div>
+<h2 id="reserved-words-are-case-insensitive">Reserved words are case-insensitive<a class="anchor" href="#reserved-words-are-case-insensitive" aria-label="Link to this section">#</a></h2>
+<p>This is the single most surprising rule in V3, and the one that produces the most confusing errors.</p>
+<p>The lexer lowercases every identifier before comparing it against the keyword table. <code>pilot</code>, <code>Pilot</code>, <code>PILOT</code> and <code>PiLoT</code> are all the same keyword token. A keyword can never be an identifier, so none of those can name a shape, task, field or binding.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/reserved_words.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 matches keywords CASE-INSENSITIVELY. `pilot`, `Pilot` and `PILOT`</span>
+<span class="c-com">-- are all the same keyword token, so none of them can be used as a name.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- This bites most often on: Pilot, Result, Max, Route, Check, Move,</span>
+<span class="c-com">-- Copy, Some, Ok, Err, Got, Use, In, As, Each, Times, Done, Max.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- Pick a synonym instead. These all compile:</span>
+<span class="c-kw">shape</span> <span class="c-type">Aviator</span> {
+    tag<span class="c-op">:</span> <span class="c-type">word</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">outcome</span>(value<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> value <span class="c-op">&gt;</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;positive&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;non-positive&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> a<span class="c-op">:</span> <span class="c-type">Aviator</span> <span class="c-op">=</span> <span class="c-type">Aviator</span> { tag<span class="c-op">:</span> <span class="c-str">&quot;V-1&quot;</span> }
+    <span class="c-kw">pilot</span> verdict<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-fn">outcome</span>(<span class="c-num">3</span>)
+    <span class="c-kw">pilot</span> upper_bound<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">100</span>
+
+    <span class="c-kw">say</span> a.tag
+    <span class="c-kw">say</span> verdict
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(upper_bound)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>V-1
+positive
+100</code></pre>
+  </div>
+</figure>
+<p>Naming a shape <code>Pilot</code> produces:</p>
+<div class="codeblock"><pre class="code"><code>error: expected an identifier for shape name, found &#x27;Pilot&#x27;</code></pre></div>
+<h3 id="the-full-reserved-list">The full reserved list<a class="anchor" href="#the-full-reserved-list" aria-label="Link to this section">#</a></h3>
+<p>Every word below is reserved <strong>in any casing</strong>:</p>
+<div class="codeblock"><pre class="code"><code>pilot   fixed    task     say      shape    impl     doctrine
+launch  use      as       in       lend     mut      move
+copy    break    continue if       else     when     repeat
+times   until    done     for      each     check    result
+got     nobody   some     ok       err      sessions max
+foreshadow  payoff  route  sadly   deus_ex_machina   isekai
+eventually  and    or      not     nakama   tsundere extern
+
+true  false  yes  no  hai  iie</code></pre></div>
+<p>Multi-word keywords, lexed greedily:</p>
+<div class="codeblock"><pre class="code"><code>give back   or else    trust me    for each    for science
+training arc   bringing back   only on   PLUS ULTRA   FINAL FORM</code></pre></div>
+<p>The names that catch people most often are <code>Pilot</code>, <code>Result</code>, <code>Max</code>, <code>Route</code>, <code>Check</code>, <code>Move</code>, <code>Copy</code>, <code>Some</code>, <code>Ok</code>, <code>Err</code>, <code>Got</code>, <code>Use</code>, <code>In</code>, <code>As</code>, <code>Each</code>, <code>Done</code> and <code>Times</code>. Pick a synonym: <code>Aviator</code>, <code>Outcome</code>, <code>upper_bound</code>, <code>verdict</code>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Several of these words are reserved but have <strong>no grammar at all</strong> in V3 — <code>doctrine</code>, <code>use</code>, <code>launch</code>, <code>check</code>, <code>lend</code>, <code>route</code>, <code>foreshadow</code>, <code>isekai</code>, <code>trust me</code>, <code>for each</code>. They lex as keywords and then fail in the parser with <em>&quot;this token cannot start an expression&quot;</em>. They still cannot be used as identifiers.</p></div>
+<h2 id="top-level-code">Top-level code<a class="anchor" href="#top-level-code" aria-label="Link to this section">#</a></h2>
+<p>A file does not need a <code>main</code>. Statements written at the top level run in order, and top-level bindings are visible to every task in the file.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/toplevel.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A file does not need a `main`. Top-level statements run in order,</span>
+<span class="c-com">-- and top-level bindings are visible to every task in the file.</span>
+<span class="c-kw">pilot</span> squadron<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyries&quot;</span>
+<span class="c-kw">pilot</span> strength<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">4</span>
+
+<span class="c-kw">task</span> <span class="c-fn">roster</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{squadron}</span> x<span class="c-interp">{strength}</span>&quot;</span>
+}
+
+<span class="c-kw">say</span> <span class="c-str">&quot;booting&quot;</span>
+<span class="c-kw">say</span> <span class="c-fn">roster</span>()
+
+strength <span class="c-op">=</span> <span class="c-num">5</span>
+<span class="c-kw">say</span> <span class="c-fn">roster</span>()</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>booting
+Valkyries x4
+Valkyries x5</code></pre>
+  </div>
+</figure>
+<div class="callout note"><div class="callout-title">Note</div><p>This is a real difference from the bible, which forbids arbitrary executable statements at root scope and requires root bindings to be <code>fixed pilot</code> constants. V3 allows both.</p></div>
+<h2 id="comments">Comments<a class="anchor" href="#comments" aria-label="Link to this section">#</a></h2>
+<p><code>--</code> starts a comment that runs to the end of the line. There is no block comment form.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- a whole-line comment</span>
+<span class="c-kw">pilot</span> x <span class="c-op">=</span> <span class="c-num">1</span>    <span class="c-com">-- a trailing comment</span></code></pre></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#bindings">Bindings</a></li><li><a href="#type-inference">Type inference</a></li><li><a href="#the-type-table">The type table</a></li><li><a href="#reserved-words-are-case-insensitive">Reserved words are case-insensitive</a></li><li><a href="#top-level-code">Top-level code</a></li><li><a href="#comments">Comments</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

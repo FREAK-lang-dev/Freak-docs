@@ -1,0 +1,14 @@
+-- `eventually { ... }` marks a cleanup block.
+--
+-- IMPORTANT V3 caveat: V3 emits the block INLINE at the point it is
+-- written. It is not deferred to the end of scope and it does not run
+-- on `give back`, `break` or `panic`. Place it where you want it to run.
+task main() -> void {
+    say "engaging"
+
+    eventually {
+        say "cleanup"
+    }
+
+    say "disengaged"
+}

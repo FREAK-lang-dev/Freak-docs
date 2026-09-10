@@ -1,0 +1,16 @@
+-- Tasks may call themselves, and may call tasks declared later in the
+-- file: every task is indexed before any body is checked.
+task factorial(n: int) -> int {
+    if n <= 1 { give back 1 }
+    give back n * factorial(n - 1)
+}
+
+task fib(n: int) -> int {
+    if n < 2 { give back n }
+    give back fib(n - 1) + fib(n - 2)
+}
+
+task main() -> void {
+    say word_from_int(factorial(6))
+    say word_from_int(fib(12))
+}

@@ -1,0 +1,18 @@
+-- std/json.fk is a pure-FREAK parser. Values are `int` handles.
+task main() -> void {
+    json_init()
+
+    pilot doc: int = json_parse("{\"unit\":\"Valkyries\",\"members\":4,\"ready\":true}")
+
+    say json_get_type(doc)
+    say word_from_int(json_obj_len(doc))
+    say word_from_bool(json_obj_has(doc, "unit"))
+
+    say json_get_str(json_obj_get(doc, "unit"))
+    say word_from_int(json_get_int(json_obj_get(doc, "members")))
+    say word_from_bool(json_get_bool(json_obj_get(doc, "ready")))
+
+    pilot list: int = json_parse("[10, 20, 30]")
+    say word_from_int(json_arr_len(list))
+    say word_from_int(json_get_int(json_arr_get(list, 1)))
+}

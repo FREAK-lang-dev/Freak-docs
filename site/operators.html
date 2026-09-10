@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operators &middot; FREAK V3</title>
+<meta name="description" content="Full precedence table, exact type rules, and the four anime operators V3 really implements.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html" class="active">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="operators">Operators<a class="anchor" href="#operators" aria-label="Link to this section">#</a></h1>
+<p>&gt; Full precedence table, exact type rules, and the four anime operators V3 really implements.</p>
+<h2 id="precedence">Precedence<a class="anchor" href="#precedence" aria-label="Link to this section">#</a></h2>
+<p>Loosest binding first. Everything on one row is left-associative.</p>
+<div class="tablewrap"><table><thead><tr><th>Level</th><th>Operators</th></tr></thead><tbody><tr><td>1</td><td><code>or</code></td></tr><tr><td>2</td><td><code>and</code></td></tr><tr><td>3</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td></tr><tr><td>4</td><td><code>+</code> <code>-</code> <code>NAKAMA</code></td></tr><tr><td>5</td><td><code>*</code> <code>/</code> <code>%</code></td></tr><tr><td>6 (prefix)</td><td><code>not</code> <code>-</code> <code>PLUS ULTRA</code> <code>FINAL FORM</code> <code>TSUNDERE</code></td></tr><tr><td>7 (postfix)</td><td><code>.field</code> <code>.method()</code> <code>[index]</code> <code>|&gt;</code></td></tr></tbody></table></div>
+<p>Parentheses group as expected.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/operators.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Arithmetic, comparison and logic.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> a<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">17</span>
+    <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">5</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(a <span class="c-op">+</span> b)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(a <span class="c-op">-</span> b)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(a <span class="c-op">*</span> b)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(a <span class="c-op">/</span> b)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(a <span class="c-op">%</span> b)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(a <span class="c-op">&gt;</span> b)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(a <span class="c-op">==</span> <span class="c-num">17</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(a <span class="c-op">!=</span> b)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(a <span class="c-op">&lt;=</span> <span class="c-num">17</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(a <span class="c-op">&gt;</span> b <span class="c-kw">and</span> b <span class="c-op">&gt;</span> <span class="c-num">0</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(a <span class="c-op">&lt;</span> b <span class="c-kw">or</span> b <span class="c-op">&gt;</span> <span class="c-num">0</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-kw">not</span> <span class="c-lit">false</span>)
+
+    <span class="c-com">-- Unary minus applies to an expression. A negative *literal*</span>
+    <span class="c-com">-- is written as a subtraction: `0 - 5`.</span>
+    <span class="c-kw">pilot</span> neg<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">5</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-op">-</span>neg)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>22
+12
+85
+3
+2
+true
+true
+true
+true
+true
+true
+true
+5</code></pre>
+  </div>
+</figure>
+<h2 id="type-rules">Type rules<a class="anchor" href="#type-rules" aria-label="Link to this section">#</a></h2>
+<p>The checker is strict — these are the exact rules, not approximations.</p>
+<div class="tablewrap"><table><thead><tr><th>Operator</th><th>Accepts</th><th>Produces</th></tr></thead><tbody><tr><td><code>+</code></td><td>both numeric (<code>int</code>/<code>num</code>), <strong>or</strong> both <code>word</code></td><td><code>num</code> if either side is <code>num</code>, else <code>int</code>; <code>word</code> for word+word</td></tr><tr><td><code>-</code> <code>*</code> <code>/</code></td><td>both numeric</td><td><code>num</code> if either side is <code>num</code>, else <code>int</code></td></tr><tr><td><code>%</code></td><td>**both <code>int</code>**</td><td><code>int</code></td></tr><tr><td><code>NAKAMA</code></td><td>**both <code>int</code>**</td><td><code>int</code></td></tr><tr><td><code>and</code> <code>or</code></td><td>**both <code>bool</code>**</td><td><code>bool</code></td></tr><tr><td><code>==</code> <code>!=</code></td><td>equality-compatible types</td><td><code>bool</code></td></tr><tr><td><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>both numeric</td><td><code>bool</code></td></tr><tr><td><code>not</code></td><td><code>bool</code></td><td><code>bool</code></td></tr><tr><td><code>-</code> (prefix)</td><td>numeric</td><td>same as operand</td></tr><tr><td><code>PLUS ULTRA</code> <code>FINAL FORM</code> <code>TSUNDERE</code></td><td>**<code>int</code> only**</td><td><code>int</code></td></tr></tbody></table></div>
+<p>Two consequences worth internalising:</p>
+<ul><li>**<code>%</code> is integer-only.** <code>7.5 % 2.0</code> is a type error, not a float remainder.</li><li>**<code>and</code> / <code>or</code> do not coerce.** There is no truthiness. <code>if count and flag</code> is an error unless <code>count</code> is already <code>bool</code>.</li></ul>
+<p><code>+</code> is the only overloaded operator: numeric addition and word concatenation.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;Muv&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;-&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;Luv&quot;</span>
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">2</span> <span class="c-op">+</span> <span class="c-num">3</span>)</code></pre></div>
+<div class="callout v4"><div class="callout-title">Not in V3</div><p><code>**</code> (exponent) does not exist — you get <code>expected &#x27;,&#x27;, found &#x27;**&#x27;</code>. Use <code>math::pow(base, exp)</code> for <code>num</code>, or <code>std_pow(base, exp)</code> for <code>int</code>.</p></div>
+<h2 id="negative-numbers">Negative numbers<a class="anchor" href="#negative-numbers" aria-label="Link to this section">#</a></h2>
+<p>There is no negative literal. <code>-5</code> is unary minus applied to <code>5</code>. In an initialiser position, write the subtraction the compiler&#x27;s own source uses:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> below<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">5</span>
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-op">-</span>below)</code></pre></div>
+<h2 id="the-anime-operators">The anime operators<a class="anchor" href="#the-anime-operators" aria-label="Link to this section">#</a></h2>
+<p>Four of the bible&#x27;s anime operators are implemented. Their V3 semantics are <strong>not</strong> what the specification describes — the specification defines emotional scaling formulas; V3 implements simple integer arithmetic.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/anime_operators.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The anime operators that V3 actually implements.</span>
+<span class="c-com">-- The three unary forms are PREFIX and accept `int` only.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> base<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">6</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-kw">FINAL FORM</span> base)    <span class="c-com">-- base * base</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-kw">PLUS ULTRA</span> base)    <span class="c-com">-- base * 2</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-kw">TSUNDERE</span> base)      <span class="c-com">-- 0 - base</span>
+
+    <span class="c-com">-- NAKAMA is infix, at the same precedence as + and -.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">3</span> <span class="c-kw">NAKAMA</span> <span class="c-num">4</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>36
+12
+-6
+8</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Operator</th><th>Form</th><th>V3 lowering</th><th>Bible says</th></tr></thead><tbody><tr><td><code>FINAL FORM</code></td><td>prefix, <code>int</code></td><td><code>x * x</code></td><td>postfix <code>base FINAL FORM</code>, plus a 5-second build pause</td></tr><tr><td><code>PLUS ULTRA</code></td><td>prefix, <code>int</code></td><td><code>x * 2</code></td><td>infix <code>base PLUS ULTRA emotion</code> → <code>base * (1 + e²)</code></td></tr><tr><td><code>TSUNDERE</code></td><td>prefix, <code>int</code></td><td><code>0 - x</code></td><td>postfix; <code>!x</code> for bool, <code>-x</code> for num</td></tr><tr><td><code>NAKAMA</code></td><td>infix, <code>int</code></td><td><code>a + b</code></td><td><code>a + b + (a * b * 0.1)</code></td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Position and type both differ from the specification. In V3 all three unary operators are <strong>prefix</strong> and accept **<code>int</code> only**. <code>base FINAL FORM</code> fails with <code>expected &#x27;,&#x27;, found &#x27;FINAL FORM&#x27;</code>, and <code>TSUNDERE true</code> fails with <code>operator &#x27;TSUNDERE&#x27; does not accept bool</code>.</p></div>
+<p>Keyword matching is case-insensitive, so <code>plus ultra</code>, <code>Plus Ultra</code> and <code>PLUS ULTRA</code> all lex to the same token. Both words must be present — <code>PLUS</code> alone is an ordinary identifier.</p>
+<h2 id="the-pipe-operator">The pipe operator<a class="anchor" href="#the-pipe-operator" aria-label="Link to this section">#</a></h2>
+<p><code>|&gt;</code> binds at postfix precedence and rewrites a call so the left value becomes its <strong>first</strong> argument.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/pipe.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `|&gt;` feeds the left value in as the FIRST argument of the call on the</span>
+<span class="c-com">-- right, so `x |&gt; f(y)` is exactly `f(x, y)`.</span>
+<span class="c-kw">task</span> <span class="c-fn">double</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-num">2</span> }
+<span class="c-kw">task</span> <span class="c-fn">offset</span>(n<span class="c-op">:</span> <span class="c-type">int</span>, by<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">+</span> by }
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">3</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>() <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">1</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>10
+8
+11</code></pre>
+  </div>
+</figure>
+<div class="codeblock"><pre class="code"><code>x |&gt; f()        is  f(x)
+x |&gt; f(y)       is  f(x, y)
+x |&gt; f() |&gt; g() is  g(f(x))</code></pre></div>
+<p>The right-hand side must be a bare task name followed by an optional argument list. You cannot pipe into a method call, a shape constructor, or a namespaced builtin like <code>math::sqrt</code>.</p>
+<h2 id="postfix-forms">Postfix forms<a class="anchor" href="#postfix-forms" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Form</th><th>Meaning</th></tr></thead><tbody><tr><td><code>value.field</code></td><td>Shape field access</td></tr><tr><td><code>value.method(args)</code></td><td>Instance method or builtin method call</td></tr><tr><td><code>Shape::method(args)</code></td><td>Associated method call</td></tr><tr><td><code>namespace::call(args)</code></td><td>Builtin namespace call (<code>math::sqrt</code>, <code>fs::read</code>, …)</td></tr><tr><td><code>word[i]</code></td><td>Indexing — **only on <code>word</code>**, yielding a one-character <code>word</code></td></tr><tr><td><code>value |&gt; task()</code></td><td>Pipe</td></tr></tbody></table></div>
+<p>Indexing an array handle with <code>[i]</code> does not work. Arrays use <code>array_get(handle, i)</code> — see <a href="arrays.html">Arrays</a>.</p>
+<h2 id="operator-overloading">Operator overloading<a class="anchor" href="#operator-overloading" aria-label="Link to this section">#</a></h2>
+<p>Writing <code>impl Add for YourShape</code> registers an implementation, and the method is callable by name. V3 does <strong>not</strong> rewrite the <code>+</code> token to dispatch to it — see <a href="shapes.html#operator-doctrines">Shapes &amp; impl</a>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/operator_overload.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `impl Doctrine for Shape` registers an operator implementation.</span>
+<span class="c-com">-- V3 does not accept a `doctrine` *declaration*, but it does accept</span>
+<span class="c-com">-- this impl form for the built-in operator doctrines, and the method</span>
+<span class="c-com">-- is callable by name.</span>
+<span class="c-kw">shape</span> <span class="c-type">Vec2</span> {
+    x<span class="c-op">:</span> <span class="c-type">int</span>
+    y<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Add</span> <span class="c-kw">for</span> <span class="c-type">Vec2</span> {
+    <span class="c-kw">task</span> <span class="c-fn">add</span>(<span class="c-type">self</span>, other<span class="c-op">:</span> <span class="c-type">Vec2</span>) <span class="c-op">-&gt;</span> <span class="c-type">Vec2</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Vec2</span> { x<span class="c-op">:</span> <span class="c-type">self</span>.x <span class="c-op">+</span> other.x, y<span class="c-op">:</span> <span class="c-type">self</span>.y <span class="c-op">+</span> other.y }
+    }
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Vec2</span> {
+    <span class="c-kw">task</span> <span class="c-fn">show</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;(<span class="c-interp">{self.x}</span>, <span class="c-interp">{self.y}</span>)&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> a<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> <span class="c-type">Vec2</span> { x<span class="c-op">:</span> <span class="c-num">1</span>, y<span class="c-op">:</span> <span class="c-num">2</span> }
+    <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> <span class="c-type">Vec2</span> { x<span class="c-op">:</span> <span class="c-num">10</span>, y<span class="c-op">:</span> <span class="c-num">20</span> }
+    <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> a.<span class="c-fn">add</span>(b)
+    <span class="c-kw">say</span> c.<span class="c-fn">show</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>(11, 22)</code></pre>
+  </div>
+</figure>
+<h2 id="not-implemented">Not implemented<a class="anchor" href="#not-implemented" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Operator</th><th>Status</th></tr></thead><tbody><tr><td><code>**</code> exponent</td><td>V4 — use <code>math::pow</code> / <code>std_pow</code></td></tr><tr><td><code>?</code> error propagation</td><td>V4</td></tr><tr><td><code>or else</code> fallback</td><td>V4</td></tr><tr><td><code>||</code> as an xm3 branch separator</td><td>V4 — lexes as one token but has no grammar</td></tr><tr><td><code>as?</code> downcast</td><td>V4</td></tr><tr><td><code>*ptr</code>, <code>.read()</code>, <code>.write()</code>, <code>.offset()</code>, <code>.cast&lt;U&gt;()</code></td><td>V4</td></tr><tr><td><code>..</code> ranges</td><td>V4</td></tr></tbody></table></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#precedence">Precedence</a></li><li><a href="#type-rules">Type rules</a></li><li><a href="#negative-numbers">Negative numbers</a></li><li><a href="#the-anime-operators">The anime operators</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#postfix-forms">Postfix forms</a></li><li><a href="#operator-overloading">Operator overloading</a></li><li><a href="#not-implemented">Not implemented</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+-- The anime operators that V3 actually implements.
+-- The three unary forms are PREFIX and accept `int` only.
+task main() -> void {
+    pilot base: int = 6
+
+    say word_from_int(FINAL FORM base)    -- base * base
+    say word_from_int(PLUS ULTRA base)    -- base * 2
+    say word_from_int(TSUNDERE base)      -- 0 - base
+
+    -- NAKAMA is infix, at the same precedence as + and -.
+    say word_from_int(3 NAKAMA 4)
+}

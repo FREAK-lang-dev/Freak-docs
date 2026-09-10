@@ -1,0 +1,22 @@
+-- Process and clock builtins.
+-- Note: `process::args()` is deliberately rejected by V3. Use the
+-- indexed pair `process::args_count()` / `process::arg(i)` instead.
+task main() -> void {
+    pilot argc: int = process::args_count()
+    say word_from_int(argc)
+
+    pilot mut i: int = 0
+    repeat argc times {
+        say "arg {i}: " + process::arg(i)
+        i += 1
+    }
+
+    pilot started: int = time::now_ms()
+    pilot mut spin: int = 0
+    repeat 1000 times {
+        spin += 1
+    }
+    pilot elapsed: int = time::now_ms() - started
+    say word_from_bool(elapsed >= 0)
+    say word_from_bool(process::env("PATH").length() > 0)
+}

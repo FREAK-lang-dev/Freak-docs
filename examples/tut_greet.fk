@@ -1,0 +1,52 @@
+-- Tutorial 1, finished program.
+--
+-- A greeter that takes a name, decides how formal to be, and reports.
+-- Everything here is core V3: bindings, a shape, a method, a task,
+-- interpolation, a conditional and a counted loop.
+
+shape Aviator {
+    name: word
+    sorties: int
+}
+
+impl Aviator {
+    -- An associated method: called as Aviator::recruit(...).
+    task recruit(name: word) -> Aviator {
+        give back Aviator { name: name, sorties: 0 }
+    }
+
+    -- An instance method: `self` is the receiver.
+    task rank(self) -> word {
+        if self.sorties >= 50 { give back "veteran" }
+        if self.sorties >= 10 { give back "regular" }
+        give back "rookie"
+    }
+
+    task greeting(self) -> word {
+        -- Interpolation substitutes PATHS only, never calls. Writing
+        -- "{self.rank()}" would print those characters literally, so the
+        -- call result goes into a binding first.
+        pilot rank: word = self.rank()
+        give back "{self.name} - {self.sorties} sorties, rank {rank}"
+    }
+}
+
+task main() -> void {
+    pilot mut takeru: Aviator = Aviator::recruit("Shirogane Takeru")
+
+    -- Fly a few missions.
+    repeat 12 times {
+        takeru.sorties += 1
+    }
+
+    say takeru.greeting()
+
+    pilot rank: word = takeru.rank()
+    say "logged as: {rank}"
+
+    if takeru.sorties > 10 {
+        say "cleared for the next operation"
+    } else {
+        say "needs more flight hours"
+    }
+}

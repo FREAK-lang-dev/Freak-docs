@@ -1,0 +1,30 @@
+# Build artefacts left beside a .fk source by `freak build`
+*.exe
+*.pdb
+*.ilk
+*.obj
+*.fk.c
+*.fk.ll
+
+# Scratch output from running examples by hand
+examples/*.txt
+examples/hangar_out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Vercel
+.vercel/
+
+# Local agent/session config
+.claude/
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

@@ -1,0 +1,27 @@
+-- Shapes may hold other shapes. Field access chains through them,
+-- including inside string interpolation.
+shape Engine {
+    thrust: int
+}
+
+shape Tsf {
+    name: word
+    engine: Engine
+}
+
+impl Tsf {
+    task report(self) -> word {
+        give back "{self.name} thrust={self.engine.thrust}"
+    }
+}
+
+task main() -> void {
+    pilot unit: Tsf = Tsf {
+        name: "Takemikazuchi",
+        engine: Engine { thrust: 880 }
+    }
+
+    say unit.name
+    say word_from_int(unit.engine.thrust)
+    say unit.report()
+}

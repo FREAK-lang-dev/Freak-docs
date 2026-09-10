@@ -1,0 +1,33 @@
+-- `{path}` inside a double-quoted word interpolates a binding.
+-- A path is an identifier plus zero or more `.field` hops, and must
+-- resolve to word, int, num or bool. Anything that is not a valid path
+-- stays literal text.
+-- (`Aviator`, not `Pilot`: V3 keywords are case-insensitive, so `Pilot`
+-- is the `pilot` keyword and cannot name a shape.)
+shape Aviator {
+    name: word
+    score: int
+}
+
+impl Aviator {
+    task summary(self) -> word {
+        give back "{self.name} scored {self.score}"
+    }
+}
+
+task main() -> void {
+    pilot callsign: word = "Valkyrie"
+    pilot sorties: int = 12
+    pilot rate: num = 0.75
+    pilot active: bool = true
+
+    say "callsign={callsign} sorties={sorties}"
+    say "rate={rate} active={active}"
+
+    pilot p: Aviator = Aviator { name: "Meiya", score: 98 }
+    say "shape: {p.name} / {p.score}"
+    say p.summary()
+
+    -- Not a path, so it is printed literally:
+    say "literal {1 + 2} braces"
+}

@@ -1,0 +1,17 @@
+-- `fs::*` are compiler builtins. Paths are plain `word` values.
+task main() -> void {
+    fs::write("sortie.log", "launch\n")
+    fs::append("sortie.log", "engage\n")
+
+    if fs::exists("sortie.log") {
+        say fs::read("sortie.log").trim()
+    }
+
+    fs::make_dir("hangar_out")
+    say word_from_bool(fs::exists("hangar_out"))
+
+    -- `fs::delete` is file-only in V3, and reports true when the file is
+    -- gone -- whether this call removed it or it was already absent.
+    say word_from_bool(fs::delete("sortie.log"))
+    say word_from_bool(fs::exists("sortie.log"))
+}

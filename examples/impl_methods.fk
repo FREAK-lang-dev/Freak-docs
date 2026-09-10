@@ -1,0 +1,39 @@
+-- `impl Shape { ... }` attaches methods.
+-- A method whose first parameter is `self` is an instance method,
+-- called as `value.method(args)`.
+-- A method without `self` is an associated method,
+-- called as `Shape::method(args)`.
+shape Rect {
+    w: int
+    h: int
+}
+
+impl Rect {
+    task square(side: int) -> Rect {
+        give back Rect { w: side, h: side }
+    }
+
+    task area(self) -> int {
+        give back self.w * self.h
+    }
+
+    task perimeter(self) -> int {
+        give back 2 * (self.w + self.h)
+    }
+
+    task scaled(self, factor: int) -> Rect {
+        give back Rect { w: self.w * factor, h: self.h * factor }
+    }
+}
+
+task main() -> void {
+    pilot r: Rect = Rect { w: 3, h: 5 }
+    say word_from_int(r.area())
+    say word_from_int(r.perimeter())
+
+    pilot big: Rect = r.scaled(3)
+    say word_from_int(big.area())
+
+    pilot sq: Rect = Rect::square(4)
+    say word_from_int(sq.area())
+}

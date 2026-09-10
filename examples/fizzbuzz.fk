@@ -1,0 +1,16 @@
+-- FizzBuzz, written the way V3 wants it: a counted loop, a mutable
+-- counter, and `when` over a computed tag.
+task tag(n: int) -> word {
+    if n % 15 == 0 { give back "FizzBuzz" }
+    if n % 3 == 0 { give back "Fizz" }
+    if n % 5 == 0 { give back "Buzz" }
+    give back word_from_int(n)
+}
+
+task main() -> void {
+    pilot mut n: int = 1
+    repeat 15 times {
+        say tag(n)
+        n += 1
+    }
+}

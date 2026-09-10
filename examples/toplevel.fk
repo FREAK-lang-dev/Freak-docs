@@ -1,0 +1,14 @@
+-- A file does not need a `main`. Top-level statements run in order,
+-- and top-level bindings are visible to every task in the file.
+pilot squadron: word = "Valkyries"
+pilot strength: int = 4
+
+task roster() -> word {
+    give back "{squadron} x{strength}"
+}
+
+say "booting"
+say roster()
+
+strength = 5
+say roster()

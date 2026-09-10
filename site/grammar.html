@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grammar &middot; FREAK V3</title>
+<meta name="description" content="The complete V3 grammar, transcribed from `src/compiler/v3/lexer.fk` and `parser.fk`.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html" class="active">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="grammar">Grammar<a class="anchor" href="#grammar" aria-label="Link to this section">#</a></h1>
+<p>&gt; The complete V3 grammar, transcribed from <code>src/compiler/v3/lexer.fk</code> and <code>parser.fk</code>.</p>
+<p>This is the whole language. If a construct is not derivable from these rules, it does not parse.</p>
+<h2 id="lexical-structure">Lexical structure<a class="anchor" href="#lexical-structure" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>program-text  = { token | whitespace | comment }
+
+comment       = &quot;--&quot; { any-char-except-newline }
+whitespace    = &quot; &quot; | &quot;\t&quot; | &quot;\r&quot; | &quot;\n&quot;
+
+token         = number | word-literal | identifier | keyword
+              | bool-literal | punctuation
+
+number        = digit { digit | &quot;.&quot; }
+                -- more than one &quot;.&quot; is a lex error
+                -- no sign, no exponent, no suffix
+
+word-literal  = &#x27;&quot;&#x27; { char | escape } &#x27;&quot;&#x27;
+escape        = &quot;\\n&quot; | &quot;\\r&quot; | &quot;\\t&quot; | &quot;\\&quot; any | &quot;\\x&quot; hex hex
+                -- &quot;\x00&quot; is rejected
+
+identifier    = ( letter | &quot;_&quot; ) { letter | digit | &quot;_&quot; }
+                -- letters are ASCII A-Z a-z only</code></pre></div>
+<p>Identifiers are classified against the keyword table <strong>case-insensitively</strong>: an identifier whose lowercase form is a keyword becomes that keyword token.</p>
+<div class="codeblock"><pre class="code"><code>bool-literal  = &quot;true&quot; | &quot;false&quot; | &quot;yes&quot; | &quot;no&quot; | &quot;hai&quot; | &quot;iie&quot;
+
+punctuation   = &quot;==&quot; | &quot;!=&quot; | &quot;&lt;=&quot; | &quot;&gt;=&quot; | &quot;+=&quot; | &quot;-=&quot; | &quot;*=&quot; | &quot;/=&quot;
+              | &quot;%=&quot; | &quot;-&gt;&quot; | &quot;=&gt;&quot; | &quot;**&quot; | &quot;|&gt;&quot; | &quot;||&quot; | &quot;::&quot;
+              | &quot;=&quot; | &quot;+&quot; | &quot;-&quot; | &quot;*&quot; | &quot;/&quot; | &quot;%&quot; | &quot;&lt;&quot; | &quot;&gt;&quot; | &quot;!&quot;
+              | &quot;:&quot; | &quot;|&quot; | &quot;@&quot; | &quot;?&quot; | &quot;{&quot; | &quot;}&quot; | &quot;(&quot; | &quot;)&quot;
+              | &quot;[&quot; | &quot;]&quot; | &quot;,&quot; | &quot;.&quot;</code></pre></div>
+<p><code>**</code>, <code>=&gt;</code>, <code>||</code>, <code>?</code> and <code>!</code> are produced by the lexer but have <strong>no grammar rule</strong> — reaching one is a parse error.</p>
+<h3 id="multi-word-keywords">Multi-word keywords<a class="anchor" href="#multi-word-keywords" aria-label="Link to this section">#</a></h3>
+<p>Lexed greedily: on seeing the first word, the lexer looks ahead for the second and merges them.</p>
+<div class="codeblock"><pre class="code"><code>&quot;give back&quot;  &quot;or else&quot;    &quot;trust me&quot;   &quot;for each&quot;   &quot;for science&quot;
+&quot;training arc&quot;   &quot;bringing back&quot;   &quot;only on&quot;   &quot;PLUS ULTRA&quot;   &quot;FINAL FORM&quot;</code></pre></div>
+<h3 id="keyword-table">Keyword table<a class="anchor" href="#keyword-table" aria-label="Link to this section">#</a></h3>
+<div class="codeblock"><pre class="code"><code>pilot fixed task say shape impl doctrine launch use as in lend mut move
+copy break continue if else when repeat times until done for each check
+result got nobody some ok err sessions max foreshadow payoff route sadly
+deus_ex_machina isekai eventually and or not nakama tsundere extern</code></pre></div>
+<p>Many of these are reserved without having a grammar rule — see <a href="language-basics.html#the-full-reserved-list">the reserved list</a>.</p>
+<h2 id="program">Program<a class="anchor" href="#program" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>program    = { statement }</code></pre></div>
+<p>There is no distinction between top-level and nested statements: the same <code>statement</code> rule is used everywhere. A <code>task</code>, <code>shape</code> or <code>impl</code> is syntactically just a statement, so it may legally appear nested inside another block.</p>
+<h2 id="statements">Statements<a class="anchor" href="#statements" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>statement  = [ annotation ] statement-body
+
+annotation = &quot;@&quot; identifier            -- exactly one, no arguments
+
+statement-body =
+      say-stmt | shape-decl | impl-decl | eventually-stmt
+    | fixed-decl | pilot-decl | give-back | break-stmt | continue-stmt
+    | if-stmt | repeat-stmt | training-arc | when-stmt
+    | extern-decl | task-decl | block | assign-or-expr
+
+say-stmt      = &quot;say&quot; expression
+
+fixed-decl    = &quot;fixed&quot; &quot;pilot&quot; identifier [ &quot;:&quot; type ] &quot;=&quot; expression
+pilot-decl    = &quot;pilot&quot; [ &quot;mut&quot; ] identifier [ &quot;:&quot; type ] &quot;=&quot; expression
+
+give-back     = &quot;give back&quot; [ expression ]
+break-stmt    = &quot;break&quot;
+continue-stmt = &quot;continue&quot;
+
+if-stmt       = &quot;if&quot; expression block [ &quot;else&quot; ( if-stmt | block ) ]
+
+repeat-stmt   = &quot;repeat&quot; &quot;until&quot; expression block
+              | &quot;repeat&quot; expression &quot;times&quot; block
+
+training-arc  = &quot;training arc&quot; &quot;until&quot; expression
+                &quot;max&quot; expression &quot;sessions&quot; block
+
+when-stmt     = &quot;when&quot; expression &quot;{&quot; { when-arm } &quot;}&quot;
+when-arm      = ( &quot;_&quot; | expression ) &quot;-&gt;&quot; statement
+
+eventually-stmt = &quot;eventually&quot; block
+
+block         = &quot;{&quot; { statement } &quot;}&quot;
+
+assign-or-expr = expression [ assign-op expression ]
+assign-op      = &quot;=&quot; | &quot;+=&quot; | &quot;-=&quot; | &quot;*=&quot; | &quot;/=&quot; | &quot;%=&quot;</code></pre></div>
+<p>Every type position — <code>pilot-decl</code>, <code>fixed-decl</code>, shape fields, parameters, return types, <code>extern</code> signatures — goes through one rule:</p>
+<div class="codeblock"><pre class="code"><code>type        = identifier
+            | &quot;List&quot; &quot;&lt;&quot; identifier &quot;&gt;&quot;</code></pre></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>List&lt;T&gt;</code> is the language&#x27;s only generic form, and it is a hard-coded special case in <code>parser_take_type</code> rather than a general mechanism: the element must be a plain identifier, so <code>List&lt;List&lt;int&gt;&gt;</code> is rejected. That single rule is why <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>Map&lt;K,V&gt;</code>, fixed arrays, tuples and raw pointers have no syntax.</p></div>
+<h2 id="declarations">Declarations<a class="anchor" href="#declarations" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre class="code"><code>shape-decl  = &quot;shape&quot; identifier &quot;{&quot; { field } &quot;}&quot;
+field       = identifier &quot;:&quot; type [ &quot;,&quot; ]
+
+impl-decl   = &quot;impl&quot; identifier [ &quot;for&quot; identifier ] &quot;{&quot; { impl-method } &quot;}&quot;
+impl-method = &quot;task&quot; identifier &quot;(&quot; params &quot;)&quot; [ &quot;-&gt;&quot; type ] block
+
+task-decl   = &quot;task&quot; identifier &quot;(&quot; params &quot;)&quot; [ &quot;-&gt;&quot; type ] block
+
+extern-decl = &quot;extern&quot; &quot;task&quot; identifier &quot;(&quot; ext-params &quot;)&quot; &quot;-&gt;&quot; type
+
+params      = [ param { &quot;,&quot; param } ]
+param       = &quot;self&quot; | identifier &quot;:&quot; type
+ext-params  = [ identifier &quot;:&quot; type { &quot;,&quot; identifier &quot;:&quot; type } ]</code></pre></div>
+<p>In <code>impl D for S</code>, <code>S</code> owns the methods and <code>D</code> is recorded as provenance only — it is never validated. A method&#x27;s mangled global name is <code>S_method</code>.</p>
+<p><code>self</code> is written bare; the compiler substitutes the owning shape&#x27;s type.</p>
+<h2 id="expressions">Expressions<a class="anchor" href="#expressions" aria-label="Link to this section">#</a></h2>
+<p>Loosest to tightest:</p>
+<div class="codeblock"><pre class="code"><code>expression  = and-expr { &quot;or&quot; and-expr }
+and-expr    = cmp-expr { &quot;and&quot; cmp-expr }
+cmp-expr    = add-expr { ( &quot;==&quot; | &quot;!=&quot; | &quot;&lt;&quot; | &quot;&gt;&quot; | &quot;&lt;=&quot; | &quot;&gt;=&quot; ) add-expr }
+add-expr    = mul-expr { ( &quot;+&quot; | &quot;-&quot; | &quot;NAKAMA&quot; ) mul-expr }
+mul-expr    = unary { ( &quot;*&quot; | &quot;/&quot; | &quot;%&quot; ) unary }
+
+unary       = ( &quot;not&quot; | &quot;-&quot; | &quot;PLUS ULTRA&quot; | &quot;FINAL FORM&quot; | &quot;TSUNDERE&quot; ) unary
+            | postfix
+
+postfix     = primary { postfix-op }
+postfix-op  = &quot;.&quot; identifier [ &quot;(&quot; args &quot;)&quot; ]
+            | &quot;[&quot; expression &quot;]&quot;
+            | &quot;|&gt;&quot; identifier [ &quot;(&quot; args &quot;)&quot; ]
+
+primary     = number
+            | word-literal
+            | bool-literal
+            | identifier [ &quot;::&quot; identifier ] [ ctor-args | &quot;(&quot; args &quot;)&quot; ]
+            | &quot;(&quot; expression &quot;)&quot;
+            | &quot;[&quot; [ expression { &quot;,&quot; expression } ] &quot;]&quot;
+
+ctor-args   = &quot;{&quot; [ field-init { &quot;,&quot; field-init } ] &quot;}&quot;
+field-init  = identifier &quot;:&quot; expression
+
+args        = [ expression { &quot;,&quot; expression } ]</code></pre></div>
+<p><code>ctor-args</code> is only taken when the identifier is an <strong>already-registered shape name</strong>, which is why a shape must be declared before it is constructed in token order.</p>
+<p><code>x |&gt; f(a)</code> desugars to <code>f(x, a)</code>; the pipe target must be a bare identifier.</p>
+<h2 id="string-interpolation">String interpolation<a class="anchor" href="#string-interpolation" aria-label="Link to this section">#</a></h2>
+<p>Interpolation is resolved by the parser after lexing, over the literal&#x27;s text.</p>
+<div class="codeblock"><pre class="code"><code>interp-path = identifier { &quot;.&quot; identifier }</code></pre></div>
+<p>A <code>{...}</code> whose body matches <code>interp-path</code>, where every segment is a valid identifier and not a keyword, becomes an interpolated expression. Anything else — including <code>{1 + 2}</code> and <code>{f()}</code> — stays literal text, braces included. An unmatched <code>{</code> is literal.</p>
+<p>The resolved path must have type <code>word</code>, <code>int</code>, <code>num</code> or <code>bool</code>.</p>
+<h2 id="error-recovery">Error recovery<a class="anchor" href="#error-recovery" aria-label="Link to this section">#</a></h2>
+<p>The parser reports a diagnostic, skips one token, and continues. After 100 syntax errors it stops:</p>
+<div class="codeblock"><pre class="code"><code>error: too many errors, giving up (&gt;100 syntax errors in &lt;file&gt;)</code></pre></div>
+<p>There are no <code>ErrorNode</code> or <code>IncompleteNode</code> tolerant-AST nodes — those are V4. Codegen is skipped whenever any frontend diagnostic fired.</p>
+<h2 id="reading-the-real-thing">Reading the real thing<a class="anchor" href="#reading-the-real-thing" aria-label="Link to this section">#</a></h2>
+<p>The authoritative sources, in the order they are concatenated:</p>
+<div class="tablewrap"><table><thead><tr><th>File</th><th>Role</th></tr></thead><tbody><tr><td><code>src/compiler/v3/globals.fk</code></td><td>Identity, compiler state, token and AST tables</td></tr><tr><td><code>src/compiler/v3/helpers.fk</code></td><td>Arrays, diagnostics, AST allocation, emit helpers</td></tr><tr><td><code>src/compiler/v3/lexer.fk</code></td><td>Tokenisation</td></tr><tr><td><code>src/compiler/v3/parser.fk</code></td><td>Recursive descent into parallel AST arrays</td></tr><tr><td><code>src/compiler/v3/checker.fk</code></td><td>Type checks and the opt-in Phase-1 borrow checker</td></tr><tr><td><code>src/compiler/v3/emit_c.fk</code></td><td>Streaming C lowering</td></tr><tr><td><code>src/compiler/v3/emit_llvm.fk</code></td><td>Streaming LLVM IR lowering</td></tr><tr><td><code>src/compiler/v3/main.fk</code></td><td>Standalone <code>freakc</code> entry point</td></tr></tbody></table></div>
+<p>The whole compiler is one flattened translation unit with globally unique symbols; the file split is a maintenance convention, not a module system.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#lexical-structure">Lexical structure</a></li><li><a href="#program">Program</a></li><li><a href="#statements">Statements</a></li><li><a href="#declarations">Declarations</a></li><li><a href="#expressions">Expressions</a></li><li><a href="#string-interpolation">String interpolation</a></li><li><a href="#error-recovery">Error recovery</a></li><li><a href="#reading-the-real-thing">Reading the real thing</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+-- V3 has three loop forms: a counted loop, a condition loop,
+-- and the bounded `training arc`.
+task main() -> void {
+    -- repeat N times
+    pilot mut total: int = 0
+    repeat 5 times {
+        total += 2
+    }
+    say word_from_int(total)
+
+    -- repeat until CONDITION  (tested before each pass)
+    pilot mut countdown: int = 3
+    repeat until countdown == 0 {
+        say word_from_int(countdown)
+        countdown -= 1
+    }
+
+    -- break and continue work in every loop form
+    pilot mut seen: int = 0
+    repeat 10 times {
+        seen += 1
+        if seen == 3 { continue }
+        if seen == 6 { break }
+    }
+    say word_from_int(seen)
+}

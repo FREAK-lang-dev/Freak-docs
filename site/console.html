@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coloured output &middot; FREAK V3</title>
+<meta name="description" content="There is no colour library. You write ANSI escape sequences into `word` values yourself — so this page is the full code reference.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html" class="active">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="coloured-output">Coloured output<a class="anchor" href="#coloured-output" aria-label="Link to this section">#</a></h1>
+<p>&gt; There is no colour library. You write ANSI escape sequences into <code>word</code> values yourself — so this page is the full code reference.</p>
+<p>FREAK has no <code>std::term</code>, no <code>Color</code> type and no formatting helpers. Colour works because two things are true:</p>
+<ol><li>The lexer supports <code>\xNN</code> byte escapes and passes them through to the backend untouched.</li><li>Every compiled FREAK program enables ANSI processing at startup.</li></ol>
+<p>That is enough. Colour constants are ordinary <code>word</code> bindings, concatenated with <code>+</code>. The compiler&#x27;s own CLI is written this way, so it doubles as the reference implementation.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/colour.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Coloured console output. There is no colour library: you build the</span>
+<span class="c-com">-- ANSI escape sequences yourself as `word` values and concatenate them.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- `\x1b` is the ESC byte. The V3 lexer preserves `\xNN` escapes all the</span>
+<span class="c-com">-- way through to the backend, so they reach the terminal intact.</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_BOLD</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_DIM</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[2m&quot;</span>
+
+<span class="c-kw">pilot</span> <span class="c-type">C_RED</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[31m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_GREEN</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[32m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_CYAN</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[36m&quot;</span>
+
+<span class="c-kw">pilot</span> <span class="c-type">C_BRED</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
+
+<span class="c-com">-- 24-bit truecolour: ESC [ 38;2;R;G;B m</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_PINK</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;255;100;200m&quot;</span>
+
+<span class="c-kw">task</span> <span class="c-fn">rgb</span>(r<span class="c-op">:</span> <span class="c-type">int</span>, g<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;\x1b[38;2;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(r) <span class="c-op">+</span> <span class="c-str">&quot;;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(g) <span class="c-op">+</span> <span class="c-str">&quot;;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(b) <span class="c-op">+</span> <span class="c-str">&quot;m&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-type">C_BRED</span> <span class="c-op">+</span> <span class="c-str">&quot;error&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot;: engine failure&quot;</span>
+    <span class="c-kw">say</span> <span class="c-type">C_GREEN</span> <span class="c-op">+</span> <span class="c-str">&quot;ok&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot;: all systems nominal&quot;</span>
+    <span class="c-kw">say</span> <span class="c-type">C_DIM</span> <span class="c-op">+</span> <span class="c-str">&quot;hint: check the coolant line&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span>
+
+    <span class="c-kw">say</span> <span class="c-type">C_BOLD</span> <span class="c-op">+</span> <span class="c-type">C_CYAN</span> <span class="c-op">+</span> <span class="c-str">&quot;XM3&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot; reflex link online&quot;</span>
+    <span class="c-kw">say</span> <span class="c-type">C_PINK</span> <span class="c-op">+</span> <span class="c-str">&quot;freak&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot; 0.14.1&quot;</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">rgb</span>(<span class="c-num">255</span>, <span class="c-num">180</span>, <span class="c-num">0</span>) <span class="c-op">+</span> <span class="c-str">&quot;amber warning&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output (ANSI rendered)</div>
+    <pre class="stdout term"><code><span style="font-weight:700;color:#c8322a">error</span>: engine failure
+<span style="color:#1f8f4e">ok</span>: all systems nominal
+<span style="opacity:.65">hint: check the coolant line</span>
+<span style="font-weight:700;color:#0f8a9e">XM3</span> reflex link online
+<span style="color:rgb(255,100,200)">freak</span> 0.14.1
+<span style="color:rgb(255,180,0)">amber warning</span></code></pre>
+  </div>
+</figure>
+<h2 id="anatomy-of-a-sequence">Anatomy of a sequence<a class="anchor" href="#anatomy-of-a-sequence" aria-label="Link to this section">#</a></h2>
+<p>Everything below is a <strong>CSI</strong> sequence — <code>ESC [</code> followed by parameters and a single final letter that selects the operation:</p>
+<div class="codeblock"><pre class="code"><code>\x1b [ params &lt;final&gt;
+ │     │       └── the operation: `m` = set graphics, `H` = move cursor, …
+ │     └────────── numeric parameters, `;` separated
+ └──────────────── ESC, decimal 27, written \x1b in a FREAK word</code></pre></div>
+<p><code>\x1b</code> is the only part that needs escaping; <code>[</code>, the digits, the semicolons and the final letter are ordinary characters.</p>
+<p>Sequences ending in <code>m</code> are <strong>SGR</strong> (Select Graphic Rendition) — colour and text style. Everything else moves the cursor or edits the screen.</p>
+<p>Multiple parameters combine in one sequence, which is cheaper and more reliable than emitting several:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1;4;31m&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;bold underlined red&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;\x1b[0m&quot;</span></code></pre></div>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/ansi_codes.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A tour of the SGR (Select Graphic Rendition) code space, to confirm</span>
+<span class="c-com">-- every family survives the V3 lexer, both backends and the runtime.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- Form: ESC [ params m     where ESC is \x1b</span>
+<span class="c-kw">pilot</span> <span class="c-type">RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
+
+<span class="c-kw">task</span> <span class="c-fn">sgr</span>(code<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;\x1b[&quot;</span> <span class="c-op">+</span> code <span class="c-op">+</span> <span class="c-str">&quot;m&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">swatch</span>(label<span class="c-op">:</span> <span class="c-type">word</span>, code<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">sgr</span>(code) <span class="c-op">+</span> label <span class="c-op">+</span> <span class="c-type">RESET</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-com">-- Attributes</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;bold&quot;</span>, <span class="c-str">&quot;1&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;dim&quot;</span>, <span class="c-str">&quot;2&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;italic&quot;</span>, <span class="c-str">&quot;3&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;underline&quot;</span>, <span class="c-str">&quot;4&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;blink&quot;</span>, <span class="c-str">&quot;5&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;reverse&quot;</span>, <span class="c-str">&quot;7&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;hidden&quot;</span>, <span class="c-str">&quot;8&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;strike&quot;</span>, <span class="c-str">&quot;9&quot;</span>)
+
+    <span class="c-com">-- Standard foreground 30-37</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;black&quot;</span>, <span class="c-str">&quot;30&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;red&quot;</span>, <span class="c-str">&quot;31&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;green&quot;</span>, <span class="c-str">&quot;32&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;yellow&quot;</span>, <span class="c-str">&quot;33&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;blue&quot;</span>, <span class="c-str">&quot;34&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;magenta&quot;</span>, <span class="c-str">&quot;35&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;cyan&quot;</span>, <span class="c-str">&quot;36&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;white&quot;</span>, <span class="c-str">&quot;37&quot;</span>)
+
+    <span class="c-com">-- Bright foreground 90-97</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;bright red&quot;</span>, <span class="c-str">&quot;91&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;bright green&quot;</span>, <span class="c-str">&quot;92&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;bright cyan&quot;</span>, <span class="c-str">&quot;96&quot;</span>)
+
+    <span class="c-com">-- Background 40-47 and bright 100-107</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;on red&quot;</span>, <span class="c-str">&quot;41&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;on blue&quot;</span>, <span class="c-str">&quot;44&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;on bright yellow&quot;</span>, <span class="c-str">&quot;103&quot;</span>)
+
+    <span class="c-com">-- Combined parameters in one sequence</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;bold + underline + red&quot;</span>, <span class="c-str">&quot;1;4;31&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;white on magenta&quot;</span>, <span class="c-str">&quot;37;45&quot;</span>)
+
+    <span class="c-com">-- 256-colour: 38;5;N foreground, 48;5;N background</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;256 fg 208&quot;</span>, <span class="c-str">&quot;38;5;208&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;256 bg 22&quot;</span>, <span class="c-str">&quot;48;5;22&quot;</span>)
+
+    <span class="c-com">-- 24-bit truecolour: 38;2;R;G;B and 48;2;R;G;B</span>
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;rgb fg&quot;</span>, <span class="c-str">&quot;38;2;255;100;200&quot;</span>)
+    <span class="c-fn">swatch</span>(<span class="c-str">&quot;rgb bg&quot;</span>, <span class="c-str">&quot;48;2;20;20;90&quot;</span>)
+
+    <span class="c-com">-- Selective reset: 22 clears bold/dim, 24 clears underline,</span>
+    <span class="c-com">-- 39 resets foreground, 49 resets background.</span>
+    <span class="c-kw">say</span> <span class="c-fn">sgr</span>(<span class="c-str">&quot;1&quot;</span>) <span class="c-op">+</span> <span class="c-str">&quot;bold &quot;</span> <span class="c-op">+</span> <span class="c-fn">sgr</span>(<span class="c-str">&quot;22&quot;</span>) <span class="c-op">+</span> <span class="c-str">&quot;normal again&quot;</span> <span class="c-op">+</span> <span class="c-type">RESET</span>
+    <span class="c-kw">say</span> <span class="c-fn">sgr</span>(<span class="c-str">&quot;31&quot;</span>) <span class="c-op">+</span> <span class="c-str">&quot;red &quot;</span> <span class="c-op">+</span> <span class="c-fn">sgr</span>(<span class="c-str">&quot;39&quot;</span>) <span class="c-op">+</span> <span class="c-str">&quot;default again&quot;</span> <span class="c-op">+</span> <span class="c-type">RESET</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output (ANSI rendered)</div>
+    <pre class="stdout term"><code><span style="font-weight:700">bold</span>
+<span style="opacity:.65">dim</span>
+<span style="font-style:italic">italic</span>
+<span style="text-decoration:underline">underline</span>
+blink
+<span style="color:#16161d;background:#d7d7e0">reverse</span>
+<span style="visibility:hidden">hidden</span>
+<span style="text-decoration:line-through">strike</span>
+<span style="color:#3b3b46">black</span>
+<span style="color:#c8322a">red</span>
+<span style="color:#1f8f4e">green</span>
+<span style="color:#a06f00">yellow</span>
+<span style="color:#2f5fc0">blue</span>
+<span style="color:#a03fb0">magenta</span>
+<span style="color:#0f8a9e">cyan</span>
+<span style="color:#c9c9d4">white</span>
+<span style="color:#e8564c">bright red</span>
+<span style="color:#3fbe72">bright green</span>
+<span style="color:#37abbd">bright cyan</span>
+<span style="background:#c8322a">on red</span>
+<span style="background:#2f5fc0">on blue</span>
+<span style="background:#c99400">on bright yellow</span>
+<span style="font-weight:700;text-decoration:underline;color:#c8322a">bold + underline + red</span>
+<span style="color:#c9c9d4;background:#a03fb0">white on magenta</span>
+<span style="color:#ff8700">256 fg 208</span>
+<span style="background:#005f00">256 bg 22</span>
+<span style="color:rgb(255,100,200)">rgb fg</span>
+<span style="background:rgb(20,20,90)">rgb bg</span>
+<span style="font-weight:700">bold </span>normal again
+<span style="color:#c8322a">red </span>default again</code></pre>
+  </div>
+</figure>
+<div class="callout note"><div class="callout-title">Note</div><p>That output block is the program&#x27;s real bytes, re-rendered as HTML. Two swatches look odd on purpose: <strong>blink</strong> appears unstyled, because this page does not animate it and many terminals ignore it too; and <strong>hidden</strong> appears blank, because that is what <code>8</code> does. Non-SGR sequences are dropped from the rendering rather than shown as garbage.</p></div>
+<h2 id="sgr-attributes">SGR: attributes<a class="anchor" href="#sgr-attributes" aria-label="Link to this section">#</a></h2>
+<p>Each attribute has a matching off-switch, so you can turn one thing off without resetting everything.</p>
+<div class="tablewrap"><table><thead><tr><th>On</th><th>Off</th><th>Effect</th></tr></thead><tbody><tr><td><code>0</code></td><td>—</td><td>Reset all attributes and colours</td></tr><tr><td><code>1</code></td><td><code>22</code></td><td>Bold / increased intensity</td></tr><tr><td><code>2</code></td><td><code>22</code></td><td>Dim / faint</td></tr><tr><td><code>3</code></td><td><code>23</code></td><td>Italic</td></tr><tr><td><code>4</code></td><td><code>24</code></td><td>Underline</td></tr><tr><td><code>5</code></td><td><code>25</code></td><td>Slow blink</td></tr><tr><td><code>6</code></td><td><code>25</code></td><td>Rapid blink — rarely implemented</td></tr><tr><td><code>7</code></td><td><code>27</code></td><td>Reverse video (swap foreground and background)</td></tr><tr><td><code>8</code></td><td><code>28</code></td><td>Conceal / hidden</td></tr><tr><td><code>9</code></td><td><code>29</code></td><td>Crossed out / strikethrough</td></tr><tr><td><code>21</code></td><td><code>24</code></td><td>Double underline — sometimes &quot;bold off&quot; instead</td></tr><tr><td><code>51</code></td><td><code>54</code></td><td>Framed</td></tr><tr><td><code>52</code></td><td><code>54</code></td><td>Encircled</td></tr><tr><td><code>53</code></td><td><code>55</code></td><td>Overlined</td></tr></tbody></table></div>
+<p>Note that <code>22</code> clears <strong>both</strong> bold and dim, since they share an intensity channel.</p>
+<h2 id="sgr-foreground-colour">SGR: foreground colour<a class="anchor" href="#sgr-foreground-colour" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Code</th><th>Colour</th><th>Code</th><th>Bright variant</th></tr></thead><tbody><tr><td><code>30</code></td><td>Black</td><td><code>90</code></td><td>Bright black (grey)</td></tr><tr><td><code>31</code></td><td>Red</td><td><code>91</code></td><td>Bright red</td></tr><tr><td><code>32</code></td><td>Green</td><td><code>92</code></td><td>Bright green</td></tr><tr><td><code>33</code></td><td>Yellow</td><td><code>93</code></td><td>Bright yellow</td></tr><tr><td><code>34</code></td><td>Blue</td><td><code>94</code></td><td>Bright blue</td></tr><tr><td><code>35</code></td><td>Magenta</td><td><code>95</code></td><td>Bright magenta</td></tr><tr><td><code>36</code></td><td>Cyan</td><td><code>96</code></td><td>Bright cyan</td></tr><tr><td><code>37</code></td><td>White</td><td><code>97</code></td><td>Bright white</td></tr><tr><td><code>39</code></td><td><strong>Default foreground</strong></td><td></td><td></td></tr></tbody></table></div>
+<h2 id="sgr-background-colour">SGR: background colour<a class="anchor" href="#sgr-background-colour" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Code</th><th>Colour</th><th>Code</th><th>Bright variant</th></tr></thead><tbody><tr><td><code>40</code></td><td>Black</td><td><code>100</code></td><td>Bright black (grey)</td></tr><tr><td><code>41</code></td><td>Red</td><td><code>101</code></td><td>Bright red</td></tr><tr><td><code>42</code></td><td>Green</td><td><code>102</code></td><td>Bright green</td></tr><tr><td><code>43</code></td><td>Yellow</td><td><code>103</code></td><td>Bright yellow</td></tr><tr><td><code>44</code></td><td>Blue</td><td><code>104</code></td><td>Bright blue</td></tr><tr><td><code>45</code></td><td>Magenta</td><td><code>105</code></td><td>Bright magenta</td></tr><tr><td><code>46</code></td><td>Cyan</td><td><code>106</code></td><td>Bright cyan</td></tr><tr><td><code>47</code></td><td>White</td><td><code>107</code></td><td>Bright white</td></tr><tr><td><code>49</code></td><td><strong>Default background</strong></td><td></td><td></td></tr></tbody></table></div>
+<h2 id="sgr-extended-colour">SGR: extended colour<a class="anchor" href="#sgr-extended-colour" aria-label="Link to this section">#</a></h2>
+<p><code>38</code> sets the foreground and <code>48</code> the background, each with two sub-forms selected by the next parameter.</p>
+<div class="tablewrap"><table><thead><tr><th>Sequence</th><th>Meaning</th></tr></thead><tbody><tr><td><code>\x1b[38;5;Nm</code></td><td>Foreground from the 256-colour palette, <code>N</code> = 0–255</td></tr><tr><td><code>\x1b[48;5;Nm</code></td><td>Background from the 256-colour palette</td></tr><tr><td><code>\x1b[38;2;R;G;Bm</code></td><td>Foreground, 24-bit truecolour, each channel 0–255</td></tr><tr><td><code>\x1b[48;2;R;G;Bm</code></td><td>Background, 24-bit truecolour</td></tr><tr><td><code>\x1b[58;5;Nm</code></td><td>Underline colour — an extension, patchy support</td></tr><tr><td><code>\x1b[59m</code></td><td>Default underline colour</td></tr></tbody></table></div>
+<p>The 256-colour index is laid out in three blocks:</p>
+<div class="tablewrap"><table><thead><tr><th>Range</th><th>Contents</th></tr></thead><tbody><tr><td><code>0</code>–<code>7</code></td><td>The standard colours, same as <code>30</code>–<code>37</code></td></tr><tr><td><code>8</code>–<code>15</code></td><td>The bright colours, same as <code>90</code>–<code>97</code></td></tr><tr><td><code>16</code>–<code>231</code></td><td>A 6×6×6 RGB cube</td></tr><tr><td><code>232</code>–<code>255</code></td><td>24 greys, dark to light</td></tr></tbody></table></div>
+<p>The cube index is <code>16 + 36*r + 6*g + b</code>, where each of <code>r</code>, <code>g</code>, <code>b</code> is 0–5:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">cube</span>(r<span class="c-op">:</span> <span class="c-type">int</span>, g<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;\x1b[38;5;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(<span class="c-num">16</span> <span class="c-op">+</span> <span class="c-num">36</span> <span class="c-op">*</span> r <span class="c-op">+</span> <span class="c-num">6</span> <span class="c-op">*</span> g <span class="c-op">+</span> b) <span class="c-op">+</span> <span class="c-str">&quot;m&quot;</span>
+}</code></pre></div>
+<p>Truecolour is the simplest option when you know the exact shade you want:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">rgb</span>(r<span class="c-op">:</span> <span class="c-type">int</span>, g<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;\x1b[38;2;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(r) <span class="c-op">+</span> <span class="c-str">&quot;;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(g) <span class="c-op">+</span> <span class="c-str">&quot;;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(b) <span class="c-op">+</span> <span class="c-str">&quot;m&quot;</span>
+}</code></pre></div>
+<h2 id="cursor-and-screen-control">Cursor and screen control<a class="anchor" href="#cursor-and-screen-control" aria-label="Link to this section">#</a></h2>
+<p>These are CSI sequences with a final letter other than <code>m</code>. They pass through V3 exactly the same way — they are just bytes — but they act on the terminal rather than on the text, so they cannot be shown in a captured output block.</p>
+<div class="tablewrap"><table><thead><tr><th>Sequence</th><th>Effect</th></tr></thead><tbody><tr><td><code>\x1b[nA</code></td><td>Cursor up <code>n</code> rows</td></tr><tr><td><code>\x1b[nB</code></td><td>Cursor down <code>n</code> rows</td></tr><tr><td><code>\x1b[nC</code></td><td>Cursor forward <code>n</code> columns</td></tr><tr><td><code>\x1b[nD</code></td><td>Cursor back <code>n</code> columns</td></tr><tr><td><code>\x1b[nE</code></td><td>Cursor to start of line, <code>n</code> rows down</td></tr><tr><td><code>\x1b[nF</code></td><td>Cursor to start of line, <code>n</code> rows up</td></tr><tr><td><code>\x1b[nG</code></td><td>Cursor to column <code>n</code></td></tr><tr><td><code>\x1b[row;colH</code></td><td>Cursor to an absolute position, 1-based</td></tr><tr><td><code>\x1b[nJ</code></td><td>Erase display — <code>0</code> to end, <code>1</code> to start, <code>2</code> all, <code>3</code> all plus scrollback</td></tr><tr><td><code>\x1b[nK</code></td><td>Erase line — <code>0</code> to end, <code>1</code> to start, <code>2</code> whole line</td></tr><tr><td><code>\x1b[nS</code></td><td>Scroll up <code>n</code> lines</td></tr><tr><td><code>\x1b[nT</code></td><td>Scroll down <code>n</code> lines</td></tr><tr><td><code>\x1b[s</code></td><td>Save cursor position</td></tr><tr><td><code>\x1b[u</code></td><td>Restore saved cursor position</td></tr><tr><td><code>\x1b[?25l</code></td><td>Hide the cursor</td></tr><tr><td><code>\x1b[?25h</code></td><td>Show the cursor</td></tr><tr><td><code>\x1b[?1049h</code></td><td>Switch to the alternate screen buffer</td></tr><tr><td><code>\x1b[?1049l</code></td><td>Return to the main screen buffer</td></tr></tbody></table></div>
+<p>A progress line, using carriage return plus erase-to-end:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-num">5</span> <span class="c-kw">times</span> {
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+        <span class="c-kw">say</span> <span class="c-str">&quot;\r\x1b[K&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;working &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(i) <span class="c-op">+</span> <span class="c-str">&quot;/5&quot;</span>
+    }
+    <span class="c-kw">say</span> <span class="c-str">&quot;&quot;</span>
+}</code></pre></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>say</code> always appends a newline, so a true in-place progress indicator is not possible with it — each call moves to the next line regardless. The snippet above redraws on successive lines. V3 has no unbuffered write, so if you need real single-line progress you must go through the C runtime.</p></div>
+<h2 id="ansi-is-enabled-for-you">ANSI is enabled for you<a class="anchor" href="#ansi-is-enabled-for-you" aria-label="Link to this section">#</a></h2>
+<p>On Windows, escapes only work when the console has <code>ENABLE_VIRTUAL_TERMINAL_PROCESSING</code> set. The runtime does this for <strong>every</strong> FREAK program, not just the CLI:</p>
+<ul><li><code>freak_enable_ansi()</code> in <code>freakc/runtime/freak_runtime.c</code> sets the flag on both stdout and stderr.</li><li>The C backend emits a direct <code>freak_enable_ansi();</code> call into <code>main</code>.</li><li>The LLVM backend calls it via <code>freak_llvm_setup_args</code>, which the emitted <code>main</code> invokes with <code>argc</code>/<code>argv</code>.</li></ul>
+<p>So nothing platform-specific is needed on your side. On POSIX the call is a no-op.</p>
+<h2 id="the-escape-itself">The escape itself<a class="anchor" href="#the-escape-itself" aria-label="Link to this section">#</a></h2>
+<p><code>\x1b</code> is one of a small set of byte escapes the lexer understands:</p>
+<div class="tablewrap"><table><thead><tr><th>Escape</th><th>Byte</th></tr></thead><tbody><tr><td><code>\n</code></td><td>newline</td></tr><tr><td><code>\r</code></td><td>carriage return</td></tr><tr><td><code>\t</code></td><td>tab</td></tr><tr><td><code>\&quot;</code></td><td>double quote</td></tr><tr><td><code>\\</code></td><td>backslash</td></tr><tr><td><code>\xNN</code></td><td>any byte, two hex digits</td></tr></tbody></table></div>
+<p>The lexer&#x27;s hex branch re-emits <code>\xNN</code> as that literal two-character sequence specifically so the C and LLVM emitters pass it straight into the generated string constant. Nothing in the pipeline interprets it.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p><code>\x00</code> is rejected at lex time — <em>&quot;embedded NUL escape is not supported&quot;</em> — because V3 words are NUL-terminated at runtime. A malformed hex escape (fewer than two hex digits) is also a lex error.</p></div>
+<h2 id="the-clis-palette">The CLI&#x27;s palette<a class="anchor" href="#the-clis-palette" aria-label="Link to this section">#</a></h2>
+<p><code>src/cli/version.fk</code> declares its whole palette as top-level <code>pilot</code> bindings. That file is plain FREAK compiled by V3, so it is a worked example you can copy.</p>
+<div class="tablewrap"><table><thead><tr><th>Group</th><th>Constants</th></tr></thead><tbody><tr><td>Styles</td><td><code>C_RESET</code> <code>C_BOLD</code> <code>C_DIM</code> <code>C_ITALIC</code> <code>C_ULINE</code> <code>C_BLINK</code> <code>C_STRIKE</code></td></tr><tr><td>Standard</td><td><code>C_RED</code> <code>C_GREEN</code> <code>C_YELLOW</code> <code>C_BLUE</code> <code>C_MAGENTA</code> <code>C_CYAN</code> <code>C_WHITE</code></td></tr><tr><td>Bold</td><td><code>C_BRED</code> <code>C_BGREEN</code> <code>C_BYELLOW</code> <code>C_BBLUE</code> <code>C_BMAGENTA</code> <code>C_BCYAN</code> <code>C_BWHITE</code></td></tr><tr><td>Truecolour gradient</td><td><code>C_G1</code>…<code>C_G6</code> — pink → purple → blue → cyan</td></tr><tr><td>Background</td><td><code>C_BG_DARK</code> = <code>\x1b[48;2;20;20;30m</code></td></tr></tbody></table></div>
+<p>The gradient is what produces the banner from <code>freak help</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-type">C_G1</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;255;100;200m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_G2</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;220;80;220m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-type">C_G3</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;180;70;240m&quot;</span></code></pre></div>
+<h2 id="box-drawing-and-symbols">Box drawing and symbols<a class="anchor" href="#box-drawing-and-symbols" aria-label="Link to this section">#</a></h2>
+<p>The same file declares Unicode decorations as raw UTF-8 <strong>byte</strong> escapes, because V3 has no <code>char</code> type and no <code>\u</code> escape — you spell out the encoding:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-type">BOX_TL</span> <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x95\xad&quot;</span>      <span class="c-com">-- U+256D  round corner</span>
+<span class="c-kw">pilot</span> <span class="c-type">BOX_H</span>  <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x94\x80&quot;</span>      <span class="c-com">-- U+2500  horizontal</span>
+<span class="c-kw">pilot</span> <span class="c-type">BOX_V</span>  <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x94\x82&quot;</span>      <span class="c-com">-- U+2502  vertical</span>
+<span class="c-kw">pilot</span> <span class="c-type">SYM_CHECK</span> <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x9c\x93&quot;</span>   <span class="c-com">-- U+2713  check mark</span></code></pre></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>.length()</code> counts characters, not bytes, so a box-drawing character is one character even though it is three bytes. Padding maths built on <code>.length()</code> stays correct.</p></div>
+<h2 id="respecting-the-users-terminal">Respecting the user&#x27;s terminal<a class="anchor" href="#respecting-the-users-terminal" aria-label="Link to this section">#</a></h2>
+<p>The CLI honours the <code>NO_COLOR</code> convention in <code>cli_configure_output()</code>. Nothing does this for you automatically — the runtime enables ANSI, it does not decide whether you <em>should</em> use it. Copy the pattern:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_BRED</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
+
+<span class="c-kw">task</span> <span class="c-fn">configure_output</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">env</span>(<span class="c-str">&quot;NO_COLOR&quot;</span>) <span class="c-op">!=</span> <span class="c-str">&quot;&quot;</span> {
+        <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+        <span class="c-type">C_BRED</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-fn">configure_output</span>()
+    <span class="c-kw">say</span> <span class="c-type">C_BRED</span> <span class="c-op">+</span> <span class="c-str">&quot;error&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot;: no colour when NO_COLOR is set&quot;</span>
+}</code></pre></div>
+<p>Setting the constants to the empty word is exactly what <code>cli_disable_colors()</code> does — every call site keeps working and concatenates nothing.</p>
+<p>The CLI checks four variables:</p>
+<div class="tablewrap"><table><thead><tr><th>Variable</th><th>Effect in the CLI</th></tr></thead><tbody><tr><td><code>NO_COLOR</code></td><td>Any non-empty value disables colour</td></tr><tr><td><code>FREAK_NO_COLOR</code></td><td>Truthy value disables colour</td></tr><tr><td><code>FREAK_ASCII</code></td><td>Force ASCII box drawing and symbols</td></tr><tr><td><code>FREAK_UNICODE</code></td><td>Force Unicode even when it would otherwise degrade</td></tr></tbody></table></div>
+<p>On Windows without an explicit override it degrades decorations to ASCII unless it detects a modern terminal via <code>WT_SESSION</code>, <code>TERM_PROGRAM</code>, <code>ANSICON</code> or <code>ConEmuANSI</code>.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>There is no TTY detection anywhere. Neither the CLI nor your program can tell whether stdout is a pipe, so escapes are emitted even when output is redirected. That is why tooling around FREAK — including this site&#x27;s verification harness — has to strip ANSI from captured compiler output.</p></div>
+<h2 id="the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics<a class="anchor" href="#the-compilers-own-diagnostics" aria-label="Link to this section">#</a></h2>
+<p>V3 hardcodes red for errors rather than using the palette, because the compiler files are concatenated <em>ahead</em> of the CLI&#x27;s constants:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1;31merror\x1b[0m: &quot;</span> <span class="c-op">+</span> msg</code></pre></div>
+<p>That line is in <code>src/compiler/v3/helpers.fk</code>, with variants in <code>parser.fk</code> (the</p>
+<p>&gt;100-error bail-out) and <code>main.fk</code> (the abort summary). The caret line under a diagnostic is coloured the same way.</p>
+<h2 id="support-and-practical-notes">Support and practical notes<a class="anchor" href="#support-and-practical-notes" aria-label="Link to this section">#</a></h2>
+<ul><li><strong>Always reset.</strong> An unclosed sequence leaks into the shell prompt after your program exits.</li><li><strong>Safe floor:</strong> the 8 standard colours and <code>1</code>/<code>4</code>/<code>0</code>. Universally supported.</li><li><strong>Widely safe:</strong> bright colours, backgrounds, 256-colour, truecolour, <code>2</code>, <code>3</code>, <code>7</code>, <code>9</code>.</li><li><strong>Patchy:</strong> <code>5</code>/<code>6</code> blink (often ignored), <code>8</code> conceal, <code>21</code> double underline, <code>51</code>–<code>55</code> framed/encircled/overlined, <code>58</code> underline colour.</li><li><strong>Combine parameters</strong> in one sequence rather than emitting several.</li><li>Colour goes through <code>say</code>, which writes to stdout. There is no stderr writer in V3, so diagnostics and normal output share one stream.</li></ul>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#anatomy-of-a-sequence">Anatomy of a sequence</a></li><li><a href="#sgr-attributes">SGR: attributes</a></li><li><a href="#sgr-foreground-colour">SGR: foreground colour</a></li><li><a href="#sgr-background-colour">SGR: background colour</a></li><li><a href="#sgr-extended-colour">SGR: extended colour</a></li><li><a href="#cursor-and-screen-control">Cursor and screen control</a></li><li><a href="#ansi-is-enabled-for-you">ANSI is enabled for you</a></li><li><a href="#the-escape-itself">The escape itself</a></li><li><a href="#the-clis-palette">The CLI&#x27;s palette</a></li><li><a href="#box-drawing-and-symbols">Box drawing and symbols</a></li><li><a href="#respecting-the-users-terminal">Respecting the user&#x27;s terminal</a></li><li><a href="#the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics</a></li><li><a href="#support-and-practical-notes">Support and practical notes</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

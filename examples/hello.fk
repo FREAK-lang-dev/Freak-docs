@@ -1,0 +1,5 @@
+-- The smallest FREAK program.
+-- `say` is always available; no import is needed.
+task main() -> void {
+    say "Hello from FREAK"
+}

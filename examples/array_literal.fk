@@ -1,0 +1,37 @@
+-- An array literal infers `List<T>` from its elements. Numbers stay
+-- numbers -- there is no need to convert them to `word` any more.
+--
+-- The older untyped `array_*` handle still exists alongside it; see
+-- arrays.html for when each one applies.
+task main() -> void {
+    pilot names: List<word> = ["Takeru", "Meiya", "Sumika"]
+    say word_from_int(names.length())
+    say names[1]
+
+    pilot numbers: List<int> = [3, 1, 2]
+    say word_from_int(numbers.length())
+    say word_from_int(numbers[0])
+
+    -- The array_* builtins accept a List<word> as well as a raw handle.
+    say word_from_int(array_len(names))
+    say array_get(names, 2)
+
+    -- std/algorithm.fk tasks are declared with `handle: int`, so they take
+    -- only the legacy handle. Build one with array_new() to use them.
+    pilot h: int = array_new()
+    array_push(h, word_from_int(3))
+    array_push(h, word_from_int(1))
+    array_push(h, word_from_int(2))
+
+    array_sort_int(h)
+    say array_join(h, ",")
+    say word_from_int(array_sum_int(h))
+    say word_from_int(array_max_int(h))
+    say word_from_int(array_binary_search_int(h, 3))
+
+    array_reverse(h)
+    say array_join(h, "|")
+    say word_from_bool(array_contains(h, "2"))
+
+    array_release(h)
+}

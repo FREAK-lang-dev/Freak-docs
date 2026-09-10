@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FREAK V3 &middot; FREAK V3</title>
+<meta name="description" content="The complete, verified reference for the language the shipping FREAK V3 compiler actually accepts.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html" class="active">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="freak-v3">FREAK V3<a class="anchor" href="#freak-v3" aria-label="Link to this section">#</a></h1>
+<p>&gt; The complete, verified reference for the language the shipping FREAK V3 compiler actually accepts.</p>
+<p>FREAK is a programming language written entirely by AI. Its compiler is self-hosted: the compiler that builds FREAK programs is itself written in FREAK. This site documents <strong>V3 &quot;Maverick&quot;</strong> — the shipping, self-hosted generation that lives in <code>src/compiler/v3/</code>.</p>
+<div class="summary-card"><div class="sc-num">43/43</div><div class="sc-body"><strong>documentation examples compile</strong><span>Verified with freak 0.14.1 (Maverick) on 2026-09-10T21:32:59Z. Every code block on this site marked <em>compiles</em> was built by that compiler and, where it produces output, executed.</span></div></div>
+<h2 id="why-this-site-exists">Why this site exists<a class="anchor" href="#why-this-site-exists" aria-label="Link to this section">#</a></h2>
+<p>The project ships a specification, <code>freak-full-bible.md</code>, that describes the <em>complete</em> language: variants, doctrines, closures, generics, lifetimes, squadron concurrency, probability types, and more. That document is explicit that it describes the destination, not the present.</p>
+<p>The V3 compiler implements a <strong>much smaller</strong> language than the bible. Not a slightly smaller one — a fundamentally smaller one. Roughly a fifth of the bible&#x27;s surface compiles today.</p>
+<p>Every page here documents only what V3 accepts, and proves it: each FREAK snippet on this site is a real file under <code>examples/</code>, compiled by a real V3 binary, and — where it produces output — executed, with the output captured verbatim. Nothing here is aspirational.</p>
+<p>For the feature-by-feature comparison against the specification, see <a href="conformance.html">Bible vs V3</a>. For what to write instead of the features that are missing, see <a href="not-in-v3.html">Not in V3</a>.</p>
+<h2 id="hello-freak">Hello, FREAK<a class="anchor" href="#hello-freak" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/hello.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The smallest FREAK program.</span>
+<span class="c-com">-- `say` is always available; no import is needed.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello from FREAK&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Hello from FREAK</code></pre>
+  </div>
+</figure>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run hello.fk</code></pre></div>
+<h2 id="the-language-in-one-screen">The language in one screen<a class="anchor" href="#the-language-in-one-screen" aria-label="Link to this section">#</a></h2>
+<p>This is close to the whole language. If a construct is not on this list, check <a href="not-in-v3.html">Not in V3</a> before reaching for it.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- comments start with a double dash</span>
+
+<span class="c-kw">pilot</span> x <span class="c-op">=</span> <span class="c-num">42</span>                    <span class="c-com">-- binding, type inferred</span>
+<span class="c-kw">pilot</span> y<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;text&quot;</span>          <span class="c-com">-- explicit type annotation</span>
+<span class="c-kw">fixed</span> <span class="c-kw">pilot</span> <span class="c-type">LIMIT</span><span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">100</span>    <span class="c-com">-- immutable binding</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> counter<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>      <span class="c-com">-- reassignable binding</span>
+
+<span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b             <span class="c-com">-- explicit return, always</span>
+}
+
+<span class="c-kw">shape</span> <span class="c-type">Point</span> { x<span class="c-op">:</span> <span class="c-type">int</span>  y<span class="c-op">:</span> <span class="c-type">int</span> }  <span class="c-com">-- record type</span>
+
+<span class="c-kw">impl</span> <span class="c-type">Point</span> {
+    <span class="c-kw">task</span> <span class="c-fn">make</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">Point</span> { <span class="c-kw">give back</span> <span class="c-type">Point</span> { x<span class="c-op">:</span> v, y<span class="c-op">:</span> v } }
+    <span class="c-kw">task</span> <span class="c-fn">sum</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> <span class="c-type">self</span>.x <span class="c-op">+</span> <span class="c-type">self</span>.y }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> p<span class="c-op">:</span> <span class="c-type">Point</span> <span class="c-op">=</span> <span class="c-type">Point</span><span class="c-op">::</span><span class="c-fn">make</span>(<span class="c-num">3</span>)
+    <span class="c-kw">say</span> <span class="c-str">&quot;sum={p.sum()}&quot;</span>          <span class="c-com">-- (interpolates paths, not calls)</span>
+
+    <span class="c-kw">if</span> p.x <span class="c-op">&gt;</span> <span class="c-num">2</span> { <span class="c-kw">say</span> <span class="c-str">&quot;big&quot;</span> } <span class="c-kw">else</span> { <span class="c-kw">say</span> <span class="c-str">&quot;small&quot;</span> }
+
+    <span class="c-kw">when</span> p.x {
+        <span class="c-num">3</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;three&quot;</span>
+        _ <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;other&quot;</span>
+    }
+
+    <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> { <span class="c-kw">say</span> <span class="c-str">&quot;again&quot;</span> }
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> counter <span class="c-op">==</span> <span class="c-num">3</span> { counter <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> counter <span class="c-op">&gt;</span> <span class="c-num">99</span> <span class="c-kw">max</span> <span class="c-num">10</span> <span class="c-kw">sessions</span> { counter <span class="c-op">+=</span> <span class="c-num">1</span> }
+
+    <span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-str">&quot;alpha&quot;</span>, <span class="c-str">&quot;bravo&quot;</span>]
+    <span class="c-kw">say</span> names[<span class="c-num">0</span>]
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1;32mok\x1b[0m&quot;</span>        <span class="c-com">-- ANSI colour, no library needed</span>
+}</code></pre></div>
+<h2 id="what-makes-v3-unusual">What makes V3 unusual<a class="anchor" href="#what-makes-v3-unusual" aria-label="Link to this section">#</a></h2>
+<p><strong>One flat namespace.</strong> There are no modules at runtime. <code>use</code> lines are stripped before parsing and act only as a hint that tells the build to link an optional standard-library file. Every task and every top-level binding in your file and in the standard library shares one global scope.</p>
+<p><strong>Keywords are case-insensitive.</strong> <code>pilot</code>, <code>Pilot</code> and <code>PILOT</code> are the same token. This makes a surprising number of natural names illegal — <code>Pilot</code>, <code>Result</code>, <code>Max</code>, <code>Route</code> and <code>Check</code> cannot name your shapes or bindings. See <a href="language-basics.html#reserved-words-are-case-insensitive">reserved words</a>.</p>
+<p>**Type annotations are one identifier, plus <code>List&lt;T&gt;</code>.** <code>pilot x: int</code> and <code>pilot x: List&lt;int&gt;</code> both work; <code>List</code> is the only generic form, and it does not nest.</p>
+<p><strong>Four scalars, shapes, and two builtin types.</strong> <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code>, <code>void</code>, the <code>shape</code> records you declare, plus <code>List&lt;T&gt;</code> and <code>ByteBuffer</code>. No <code>maybe&lt;T&gt;</code>, no <code>result&lt;T,E&gt;</code>, no <code>Map&lt;K,V&gt;</code>, no tuples. Alongside <code>List&lt;T&gt;</code> an older untyped array handle survives, addressed by an <code>int</code>.</p>
+<p><strong>No implicit returns.</strong> Every value-returning path needs <code>give back</code>.</p>
+<h2 id="two-backends">Two backends<a class="anchor" href="#two-backends" aria-label="Link to this section">#</a></h2>
+<p>V3 emits either LLVM IR or portable C.</p>
+<div class="tablewrap"><table><thead><tr><th>Backend</th><th>Flag</th><th>Status</th></tr></thead><tbody><tr><td>LLVM IR</td><td><code>--llvm</code> (default)</td><td>Full surface, including shapes, methods and <code>std::ui</code></td></tr><tr><td>C</td><td><code>--c</code></td><td>Scalars, control flow, words, arrays and native calls. Shape storage is <em>not</em> a claimed executable path</td></tr></tbody></table></div>
+<p>If your program uses shapes, use the default LLVM backend. Every example on this site was verified through it.</p>
+<h2 id="where-to-go-next">Where to go next<a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a></h2>
+<ul><li><a href="getting-started.html">Getting started</a> — build the compiler and run a program</li><li><a href="language-basics.html">Bindings &amp; types</a> — the value model</li><li><a href="shapes.html">Shapes &amp; impl</a> — the only user-defined type</li><li><a href="arrays.html">Lists &amp; arrays</a> — the two collection surfaces</li><li><a href="console.html">Coloured output</a> — ANSI escapes and terminal handling</li><li><a href="stdlib.html">Standard library</a> — the complete callable surface</li><li><a href="conformance.html">Bible vs V3</a> — the specification comparison</li></ul>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#why-this-site-exists">Why this site exists</a></li><li><a href="#hello-freak">Hello, FREAK</a></li><li><a href="#the-language-in-one-screen">The language in one screen</a></li><li><a href="#what-makes-v3-unusual">What makes V3 unusual</a></li><li><a href="#two-backends">Two backends</a></li><li><a href="#where-to-go-next">Where to go next</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

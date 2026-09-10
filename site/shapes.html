@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shapes &amp; impl &middot; FREAK V3</title>
+<meta name="description" content="`shape` is the only user-defined type in V3. `impl` attaches methods to it.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html" class="active">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="shapes-impl">Shapes &amp; impl<a class="anchor" href="#shapes-impl" aria-label="Link to this section">#</a></h1>
+<p>&gt; <code>shape</code> is the only user-defined type in V3. <code>impl</code> attaches methods to it.</p>
+<h2 id="declaring-a-shape">Declaring a shape<a class="anchor" href="#declaring-a-shape" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Name</span> {
+    field<span class="c-op">:</span> type
+    field<span class="c-op">:</span> type
+}</code></pre></div>
+<p>Fields are <code>name: type</code>, where the type is <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code>, or another shape&#x27;s name. Separators are optional: newlines, commas, or a trailing comma before <code>}</code> all work.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>A shape field may <strong>not</strong> hold a <code>List&lt;T&gt;</code>, even though the annotation parses everywhere else: ``<code>text type error: V3 owned shape fields do not yet support List values </code>`<code> Keep the list in a separate binding, or store a legacy </code>int<code> array handle in the field instead. </code>List&lt;T&gt;` <em>is</em> allowed as a task parameter and return type.</p></div>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/shapes.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `shape` declares a record type. Each field is `name: type`,</span>
+<span class="c-com">-- where the type is a single identifier.</span>
+<span class="c-kw">shape</span> <span class="c-type">Vector2</span> {
+    x<span class="c-op">:</span> <span class="c-type">int</span>
+    y<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">shape</span> <span class="c-type">Squad</span> {
+    callsign<span class="c-op">:</span> <span class="c-type">word</span>
+    members<span class="c-op">:</span> <span class="c-type">int</span>
+    ready<span class="c-op">:</span> <span class="c-type">bool</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> v<span class="c-op">:</span> <span class="c-type">Vector2</span> <span class="c-op">=</span> <span class="c-type">Vector2</span> { x<span class="c-op">:</span> <span class="c-num">3</span>, y<span class="c-op">:</span> <span class="c-num">4</span> }
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(v.x)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(v.y)
+
+    <span class="c-com">-- Fields are assignable.</span>
+    v.x <span class="c-op">=</span> <span class="c-num">10</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(v.x)
+
+    <span class="c-kw">pilot</span> s<span class="c-op">:</span> <span class="c-type">Squad</span> <span class="c-op">=</span> <span class="c-type">Squad</span> { callsign<span class="c-op">:</span> <span class="c-str">&quot;Valkyries&quot;</span>, members<span class="c-op">:</span> <span class="c-num">4</span>, ready<span class="c-op">:</span> <span class="c-lit">true</span> }
+    <span class="c-kw">say</span> s.callsign
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(s.members)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(s.ready)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>3
+4
+10
+Valkyries
+4
+true</code></pre>
+  </div>
+</figure>
+<h2 id="construction">Construction<a class="anchor" href="#construction" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> v<span class="c-op">:</span> <span class="c-type">Vector2</span> <span class="c-op">=</span> <span class="c-type">Vector2</span> { x<span class="c-op">:</span> <span class="c-num">3</span>, y<span class="c-op">:</span> <span class="c-num">4</span> }</code></pre></div>
+<p>Every field must be supplied, by name, in any order. Field labels are checked against the declaration; an unknown or missing field is a compile error.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>The parser only treats <code>Name { ... }</code> as a constructor when <code>Name</code> is already a <strong>registered shape</strong>. A shape must therefore be declared before it is constructed in the token stream. Declaring shapes at the top of the file, as every example here does, keeps this from ever mattering.</p></div>
+<h2 id="field-access-and-assignment">Field access and assignment<a class="anchor" href="#field-access-and-assignment" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(v.x)
+v.x <span class="c-op">=</span> <span class="c-num">10</span></code></pre></div>
+<p>Compound assignment works on fields too: <code>v.x += 1</code>.</p>
+<p>Access chains through nested shapes, including inside string interpolation.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/nested_shapes.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Shapes may hold other shapes. Field access chains through them,</span>
+<span class="c-com">-- including inside string interpolation.</span>
+<span class="c-kw">shape</span> <span class="c-type">Engine</span> {
+    thrust<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">shape</span> <span class="c-type">Tsf</span> {
+    name<span class="c-op">:</span> <span class="c-type">word</span>
+    engine<span class="c-op">:</span> <span class="c-type">Engine</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Tsf</span> {
+    <span class="c-kw">task</span> <span class="c-fn">report</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.name}</span> thrust=<span class="c-interp">{self.engine.thrust}</span>&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> unit<span class="c-op">:</span> <span class="c-type">Tsf</span> <span class="c-op">=</span> <span class="c-type">Tsf</span> {
+        name<span class="c-op">:</span> <span class="c-str">&quot;Takemikazuchi&quot;</span>,
+        engine<span class="c-op">:</span> <span class="c-type">Engine</span> { thrust<span class="c-op">:</span> <span class="c-num">880</span> }
+    }
+
+    <span class="c-kw">say</span> unit.name
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(unit.engine.thrust)
+    <span class="c-kw">say</span> unit.<span class="c-fn">report</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Takemikazuchi
+880
+Takemikazuchi thrust=880</code></pre>
+  </div>
+</figure>
+<h2 id="methods">Methods<a class="anchor" href="#methods" aria-label="Link to this section">#</a></h2>
+<p><code>impl Shape { ... }</code> may contain only <code>task</code> declarations.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/impl_methods.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `impl Shape { ... }` attaches methods.</span>
+<span class="c-com">-- A method whose first parameter is `self` is an instance method,</span>
+<span class="c-com">-- called as `value.method(args)`.</span>
+<span class="c-com">-- A method without `self` is an associated method,</span>
+<span class="c-com">-- called as `Shape::method(args)`.</span>
+<span class="c-kw">shape</span> <span class="c-type">Rect</span> {
+    w<span class="c-op">:</span> <span class="c-type">int</span>
+    h<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Rect</span> {
+    <span class="c-kw">task</span> <span class="c-fn">square</span>(side<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">Rect</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> side, h<span class="c-op">:</span> side }
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">area</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+        <span class="c-kw">give back</span> <span class="c-type">self</span>.w <span class="c-op">*</span> <span class="c-type">self</span>.h
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">perimeter</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+        <span class="c-kw">give back</span> <span class="c-num">2</span> <span class="c-op">*</span> (<span class="c-type">self</span>.w <span class="c-op">+</span> <span class="c-type">self</span>.h)
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">scaled</span>(<span class="c-type">self</span>, factor<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">Rect</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> <span class="c-type">self</span>.w <span class="c-op">*</span> factor, h<span class="c-op">:</span> <span class="c-type">self</span>.h <span class="c-op">*</span> factor }
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> r<span class="c-op">:</span> <span class="c-type">Rect</span> <span class="c-op">=</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> <span class="c-num">3</span>, h<span class="c-op">:</span> <span class="c-num">5</span> }
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(r.<span class="c-fn">area</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(r.<span class="c-fn">perimeter</span>())
+
+    <span class="c-kw">pilot</span> big<span class="c-op">:</span> <span class="c-type">Rect</span> <span class="c-op">=</span> r.<span class="c-fn">scaled</span>(<span class="c-num">3</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(big.<span class="c-fn">area</span>())
+
+    <span class="c-kw">pilot</span> sq<span class="c-op">:</span> <span class="c-type">Rect</span> <span class="c-op">=</span> <span class="c-type">Rect</span><span class="c-op">::</span><span class="c-fn">square</span>(<span class="c-num">4</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(sq.<span class="c-fn">area</span>())
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>15
+16
+135
+16</code></pre>
+  </div>
+</figure>
+<p>The receiver decides the call form:</p>
+<div class="tablewrap"><table><thead><tr><th>Declaration</th><th>Kind</th><th>Call</th></tr></thead><tbody><tr><td><code>task area(self) -&gt; int</code></td><td>instance method</td><td><code>value.area()</code></td></tr><tr><td><code>task scaled(self, f: int) -&gt; Rect</code></td><td>instance method with args</td><td><code>value.scaled(3)</code></td></tr><tr><td><code>task square(side: int) -&gt; Rect</code></td><td>associated method</td><td><code>Rect::square(4)</code></td></tr></tbody></table></div>
+<p><code>self</code> is written bare — never <code>self: Rect</code>. The compiler substitutes the owning shape&#x27;s type once the <code>impl</code> target is known, so <code>self.field</code> resolves properly and duplicate field/method names across shapes do not collide.</p>
+<p>Methods are compiled to a flat global task named <code>Shape_method</code>. This is why two shapes may both define <code>area</code> without conflict, and why the checker tracks <code>impl</code> provenance separately: a free task literally named <code>Rect_area</code> is <strong>not</strong> accepted as proof that <code>Rect.area</code> exists.</p>
+<h2 id="operator-doctrines">Operator doctrines<a class="anchor" href="#operator-doctrines" aria-label="Link to this section">#</a></h2>
+<p>V3 accepts <code>impl Doctrine for Shape</code> and records the doctrine name as provenance. The methods become callable exactly like any other method.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/operator_overload.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `impl Doctrine for Shape` registers an operator implementation.</span>
+<span class="c-com">-- V3 does not accept a `doctrine` *declaration*, but it does accept</span>
+<span class="c-com">-- this impl form for the built-in operator doctrines, and the method</span>
+<span class="c-com">-- is callable by name.</span>
+<span class="c-kw">shape</span> <span class="c-type">Vec2</span> {
+    x<span class="c-op">:</span> <span class="c-type">int</span>
+    y<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Add</span> <span class="c-kw">for</span> <span class="c-type">Vec2</span> {
+    <span class="c-kw">task</span> <span class="c-fn">add</span>(<span class="c-type">self</span>, other<span class="c-op">:</span> <span class="c-type">Vec2</span>) <span class="c-op">-&gt;</span> <span class="c-type">Vec2</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Vec2</span> { x<span class="c-op">:</span> <span class="c-type">self</span>.x <span class="c-op">+</span> other.x, y<span class="c-op">:</span> <span class="c-type">self</span>.y <span class="c-op">+</span> other.y }
+    }
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Vec2</span> {
+    <span class="c-kw">task</span> <span class="c-fn">show</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;(<span class="c-interp">{self.x}</span>, <span class="c-interp">{self.y}</span>)&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> a<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> <span class="c-type">Vec2</span> { x<span class="c-op">:</span> <span class="c-num">1</span>, y<span class="c-op">:</span> <span class="c-num">2</span> }
+    <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> <span class="c-type">Vec2</span> { x<span class="c-op">:</span> <span class="c-num">10</span>, y<span class="c-op">:</span> <span class="c-num">20</span> }
+    <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">Vec2</span> <span class="c-op">=</span> a.<span class="c-fn">add</span>(b)
+    <span class="c-kw">say</span> c.<span class="c-fn">show</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>(11, 22)</code></pre>
+  </div>
+</figure>
+<div class="callout warn"><div class="callout-title">Careful</div><p><strong>The operator token is not rewritten.</strong> Implementing <code>Add</code> does not make <code>+</code> work on your shape: ``<code>text type error: operator &#x27;+&#x27; does not accept Vec2 and Vec2 </code>`<code> Call the method by name — </code>a.add(b)<code>. The bible&#x27;s </code>pilot v = v1 + v2` dispatch is V4.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p>The doctrine name is <strong>not validated</strong>. <code>impl Whatever for Vec2 { ... }</code> compiles cleanly — the name is recorded and otherwise ignored. There is no check that the doctrine exists, that its methods are all implemented, or that signatures match. Use <code>Add</code>, <code>Sub</code>, <code>Mul</code>, <code>Div</code>, <code>Neg</code>, <code>Eq</code> by convention, and expect V4 to start enforcing them.</p></div>
+<p><code>doctrine</code> <strong>declarations</strong> do not parse at all:</p>
+<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;doctrine&#x27; — this token cannot start an expression</code></pre></div>
+<p>So a doctrine is never a real contract in V3, and there is no generic bound (<code>task f&lt;T: Displayable&gt;(...)</code>), no <code>dyn Doctrine</code>, and no dynamic dispatch.</p>
+<h2 id="shapes-as-values">Shapes as values<a class="anchor" href="#shapes-as-values" aria-label="Link to this section">#</a></h2>
+<p>Shapes live in runtime storage and are handled by reference. Two consequences:</p>
+<ul><li>Passing a shape to a task and mutating a field inside is <strong>visible to the caller</strong>. There is no implicit copy.</li><li>Assigning one shape binding to another aliases the same storage.</li></ul>
+<p>To get an independent value, construct a new one — a small <code>copy</code> associated method is the usual idiom:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">impl</span> <span class="c-type">Rect</span> {
+    <span class="c-kw">task</span> <span class="c-fn">copy_of</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">Rect</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> <span class="c-type">self</span>.w, h<span class="c-op">:</span> <span class="c-type">self</span>.h }
+    }
+}</code></pre></div>
+<p>Under <code>--strict-borrow</code> the Phase-1 checker additionally treats user shapes as single-owner move types, so a use after move is reported.</p>
+<h2 id="backend-support">Backend support<a class="anchor" href="#backend-support" aria-label="Link to this section">#</a></h2>
+<p>Shape construction, field access, method execution and dotted <code>{shape.field}</code> interpolation are verified executable evidence on the <strong>LLVM backend only</strong>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>The C backend (<code>--c</code>) may transpile shape declarations, but packaged shape runtime storage is explicitly not a claimed executable path. If your program declares a shape, build it with the default LLVM backend.</p></div>
+<h2 id="what-shapes-cannot-do">What shapes cannot do<a class="anchor" href="#what-shapes-cannot-do" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Feature</th><th>Status</th></tr></thead><tbody><tr><td>Generic fields <code>shape Pair&lt;A, B&gt;</code></td><td>V4</td></tr><tr><td>Field default values</td><td>V4</td></tr><tr><td><code>variant</code> sum types</td><td>V4</td></tr><tr><td><code>alias</code> type aliases</td><td>V4</td></tr><tr><td><code>doctrine</code> declarations</td><td>V4</td></tr><tr><td>Doctrine bounds on generics</td><td>V4</td></tr><tr><td><code>dyn Doctrine</code> and vtables</td><td>V4</td></tr><tr><td>Real operator dispatch through <code>Add</code> etc.</td><td>V4</td></tr><tr><td>Field visibility / <code>launch</code> on fields</td><td>V4</td></tr><tr><td><code>@layout(C)</code>, <code>@repr(u32)</code></td><td>V4</td></tr><tr><td><code>Shared&lt;T&gt;</code> / <code>Weak&lt;T&gt;</code></td><td>V4</td></tr><tr><td>A destructor or <code>drop</code> hook</td><td>V4</td></tr></tbody></table></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-a-shape">Declaring a shape</a></li><li><a href="#construction">Construction</a></li><li><a href="#field-access-and-assignment">Field access and assignment</a></li><li><a href="#methods">Methods</a></li><li><a href="#operator-doctrines">Operator doctrines</a></li><li><a href="#shapes-as-values">Shapes as values</a></li><li><a href="#backend-support">Backend support</a></li><li><a href="#what-shapes-cannot-do">What shapes cannot do</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

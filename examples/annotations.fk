@@ -1,0 +1,18 @@
+-- V3 parses a bare `@name` annotation and then ignores it.
+-- It carries no semantics, and it must NOT take arguments:
+-- `@rival(meiya)` does not parse as an annotation in V3.
+@protagonist
+task hero() -> word {
+    give back "Shirogane Takeru"
+}
+
+@deprecated
+task legacy() -> word {
+    give back "old path"
+}
+
+@season_finale
+task main() -> void {
+    say hero()
+    say legacy()
+}

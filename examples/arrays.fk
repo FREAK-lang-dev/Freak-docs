@@ -1,0 +1,25 @@
+-- V3 arrays are runtime handles of `word` elements, addressed by an
+-- `int` handle. Store other types by converting them to `word`.
+task main() -> void {
+    pilot xs: int = array_new()
+
+    array_push(xs, "alpha")
+    array_push(xs, "bravo")
+    array_push(xs, "charlie")
+
+    say word_from_int(array_len(xs))
+    say array_get(xs, 0)
+    say array_get(xs, 2)
+
+    array_set(xs, 1, "BRAVO")
+    say array_get(xs, 1)
+
+    -- Iterate with an index and a counted loop.
+    pilot mut i: int = 0
+    repeat array_len(xs) times {
+        say array_get(xs, i)
+        i += 1
+    }
+
+    array_release(xs)
+}

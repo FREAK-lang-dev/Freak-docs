@@ -1,0 +1,94 @@
+-- Tutorial 3, finished program.
+--
+-- Model a squadron with shapes, keep the members in a List, and compute
+-- a summary. Shows the two collection surfaces working side by side and
+-- the one restriction that catches people: a shape cannot hold a List.
+
+shape Airframe {
+    model: word
+    thrust: int
+}
+
+shape Member {
+    callsign: word
+    sorties: int
+    frame: Airframe
+}
+
+impl Member {
+    task enlist(callsign: word, model: word, thrust: int) -> Member {
+        give back Member {
+            callsign: callsign,
+            sorties: 0,
+            frame: Airframe { model: model, thrust: thrust }
+        }
+    }
+
+    task veteran(self) -> bool {
+        give back self.sorties >= 20
+    }
+
+    task line(self) -> word {
+        give back "{self.callsign}  {self.frame.model}  thrust {self.frame.thrust}  sorties {self.sorties}"
+    }
+}
+
+-- A List may be a parameter and a return type. It may NOT be a field on
+-- a shape: that reports
+--   "V3 owned shape fields do not yet support List values"
+task total_sorties(counts: List<int>) -> int {
+    pilot mut sum: int = 0
+    pilot mut i: int = 0
+    repeat counts.length() times {
+        sum += counts[i]
+        i += 1
+    }
+    give back sum
+}
+
+task main() -> void {
+    pilot mut ichi: Member = Member::enlist("Valkyrie-1", "Takemikazuchi", 880)
+    pilot mut ni: Member = Member::enlist("Valkyrie-2", "Shiranui", 640)
+    pilot mut san: Member = Member::enlist("Valkyrie-3", "Gekishin", 520)
+
+    repeat 24 times { ichi.sorties += 1 }
+    repeat 8 times { ni.sorties += 1 }
+    repeat 31 times { san.sorties += 1 }
+
+    say ichi.line()
+    say ni.line()
+    say san.line()
+
+    -- A typed List holds the numbers we want to aggregate.
+    pilot counts: List<int> = [ichi.sorties, ni.sorties, san.sorties]
+    say "total sorties: " + word_from_int(total_sorties(counts))
+    say "squadron size: " + word_from_int(counts.length())
+
+    -- Names in a List<word>, indexed like any other list.
+    pilot names: List<word> = [ichi.callsign, ni.callsign, san.callsign]
+    pilot mut i: int = 0
+    repeat names.length() times {
+        say "  member " + word_from_int(i) + ": " + names[i]
+        i += 1
+    }
+
+    -- Counting veterans needs the shapes themselves, so loop over them
+    -- directly rather than trying to put Members in a List.
+    pilot mut veterans: int = 0
+    if ichi.veteran() { veterans += 1 }
+    if ni.veteran() { veterans += 1 }
+    if san.veteran() { veterans += 1 }
+    say "veterans: " + word_from_int(veterans)
+
+    -- The legacy handle is still the right tool when you need the
+    -- std/algorithm.fk helpers, which are declared with `handle: int`.
+    pilot ranking: int = array_new()
+    array_push(ranking, word_from_int(ichi.sorties))
+    array_push(ranking, word_from_int(ni.sorties))
+    array_push(ranking, word_from_int(san.sorties))
+
+    array_sort_int(ranking)
+    say "sorted sorties: " + array_join(ranking, ", ")
+    say "busiest pilot flew " + word_from_int(array_max_int(ranking))
+    array_release(ranking)
+}

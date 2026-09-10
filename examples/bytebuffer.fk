@@ -1,0 +1,24 @@
+-- `ByteBuffer` is a real builtin type with methods, unlike the `int`
+-- handles used elsewhere. It is a seekable binary read/write cursor.
+task main() -> void {
+    pilot buf: ByteBuffer = ByteBuffer::new()
+
+    buf.write_word("hi")
+    buf.write_int(7)
+    buf.write_byte(255)
+
+    say word_from_int(buf.length())
+    say word_from_int(buf.position())
+
+    -- Rewind and read the same values back.
+    buf.seek(0)
+    say buf.read_word(2)
+    say word_from_int(buf.read_int())
+    say word_from_int(buf.read_byte())
+    say word_from_int(buf.remaining())
+
+    -- status() reports the last failure; 0 means clean.
+    say word_from_int(buf.status())
+
+    buf.release()
+}

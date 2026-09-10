@@ -1,0 +1,22 @@
+-- Bindings are declared with `pilot`.
+-- `fixed pilot` marks an immutable binding.
+-- `pilot mut` opts a binding into reassignment.
+task main() -> void {
+    pilot answer: int = 42
+    pilot ratio: num = 3.5
+    pilot callsign: word = "Shirogane"
+    pilot ready: bool = true
+
+    fixed pilot MAX_SORTIES: int = 12
+
+    pilot mut score: int = 0
+    score = score + 10
+    score += 5
+
+    say word_from_int(answer)
+    say format_num(ratio)
+    say callsign
+    say word_from_bool(ready)
+    say word_from_int(MAX_SORTIES)
+    say word_from_int(score)
+}

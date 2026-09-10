@@ -1,0 +1,24 @@
+-- `task` declares a function. `give back` returns a value.
+-- A block-bodied task that returns a non-void type must use `give back`
+-- on every path; there is no implicit tail return.
+task add(a: int, b: int) -> int {
+    give back a + b
+}
+
+task shout(message: word) -> void {
+    say message.to_upper()
+}
+
+task classify(n: int) -> word {
+    if n < 0 { give back "negative" }
+    if n == 0 { give back "zero" }
+    give back "positive"
+}
+
+task main() -> void {
+    say word_from_int(add(20, 22))
+    shout("stand by")
+    say classify(0 - 3)
+    say classify(0)
+    say classify(9)
+}

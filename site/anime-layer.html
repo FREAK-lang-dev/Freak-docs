@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anime layer &middot; FREAK V3</title>
+<meta name="description" content="FREAK&#x27;s signature feature set. Four pieces of it compile in V3; the rest is specified but unimplemented.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html" class="active">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="anime-layer">Anime layer<a class="anchor" href="#anime-layer" aria-label="Link to this section">#</a></h1>
+<p>&gt; FREAK&#x27;s signature feature set. Four pieces of it compile in V3; the rest is specified but unimplemented.</p>
+<p>The bible&#x27;s Section 5 describes a large narrative-flavoured layer: foreshadowing debts, route types, honour-gated unsafe blocks, death-flag analysis, and <code>deus_ex_machina</code> miracles. V3 implements a small slice of it.</p>
+<h2 id="what-compiles">What compiles<a class="anchor" href="#what-compiles" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Construct</th><th>Status in V3</th></tr></thead><tbody><tr><td><code>training arc until C max N sessions { }</code></td><td><strong>Works</strong> — a real bounded loop</td></tr><tr><td><code>eventually { }</code></td><td><strong>Parses and emits</strong>, but inline, not deferred</td></tr><tr><td><code>@annotation</code></td><td><strong>Parses</strong>, then ignored. One per statement, no arguments</td></tr><tr><td><code>PLUS ULTRA</code>, <code>FINAL FORM</code>, <code>TSUNDERE</code>, <code>NAKAMA</code></td><td><strong>Work</strong>, with different semantics from the spec</td></tr></tbody></table></div>
+<p>Everything else in Section 5 fails at the parser.</p>
+<h2 id="training-arc">training arc<a class="anchor" href="#training-arc" aria-label="Link to this section">#</a></h2>
+<p>The one anime construct that is genuinely useful and genuinely implemented. It is a loop with a mandatory session cap, so it cannot spin forever.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/training_arc.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `training arc` is a loop with a mandatory session cap.</span>
+<span class="c-com">-- It stops when the condition becomes true OR when the cap is hit,</span>
+<span class="c-com">-- so it cannot spin forever.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> power<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> power <span class="c-op">&gt;=</span> <span class="c-num">100</span> <span class="c-kw">max</span> <span class="c-num">8</span> <span class="c-kw">sessions</span> {
+        power <span class="c-op">+=</span> <span class="c-num">20</span>
+    }
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(power)
+
+    <span class="c-com">-- The cap wins when the condition is never reachable.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> stuck<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> stuck <span class="c-op">&gt;</span> <span class="c-num">1000</span> <span class="c-kw">max</span> <span class="c-num">4</span> <span class="c-kw">sessions</span> {
+        stuck <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(stuck)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>100
+4</code></pre>
+  </div>
+</figure>
+<p>Full details in <a href="control-flow.html#training-arc">Control flow</a>.</p>
+<h2 id="eventually">eventually<a class="anchor" href="#eventually" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/eventually.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `eventually { ... }` marks a cleanup block.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- IMPORTANT V3 caveat: V3 emits the block INLINE at the point it is</span>
+<span class="c-com">-- written. It is not deferred to the end of scope and it does not run</span>
+<span class="c-com">-- on `give back`, `break` or `panic`. Place it where you want it to run.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;engaging&quot;</span>
+
+    <span class="c-kw">eventually</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;cleanup&quot;</span>
+    }
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;disengaged&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>engaging
+cleanup
+disengaged</code></pre>
+  </div>
+</figure>
+<div class="callout warn"><div class="callout-title">Careful</div><p>V3 emits the block <strong>inline, at the point you wrote it</strong>. It is not deferred to end of scope, it does not run in LIFO order with other <code>eventually</code> blocks, and it does not run on <code>give back</code>, <code>break</code> or <code>panic</code>. It is a labelled section, not <code>defer</code>.</p></div>
+<p><code>eventually if cond { }</code> does not parse: <code>expected &#x27;{&#x27;, found &#x27;if&#x27;</code>.</p>
+<h2 id="annotations">Annotations<a class="anchor" href="#annotations" aria-label="Link to this section">#</a></h2>
+<p>V3&#x27;s parser recognises <code>@</code> followed by one identifier, discards it, and carries on. No annotation has any semantic effect.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/annotations.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 parses a bare `@name` annotation and then ignores it.</span>
+<span class="c-com">-- It carries no semantics, and it must NOT take arguments:</span>
+<span class="c-com">-- `@rival(meiya)` does not parse as an annotation in V3.</span>
+<span class="c-attr">@protagonist</span>
+<span class="c-kw">task</span> <span class="c-fn">hero</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;Shirogane Takeru&quot;</span>
+}
+
+<span class="c-attr">@deprecated</span>
+<span class="c-kw">task</span> <span class="c-fn">legacy</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;old path&quot;</span>
+}
+
+<span class="c-attr">@season_finale</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">hero</span>()
+    <span class="c-kw">say</span> <span class="c-fn">legacy</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Shirogane Takeru
+old path</code></pre>
+  </div>
+</figure>
+<p>Three hard limits:</p>
+<ul><li><strong>No arguments.</strong> <code>@rival(meiya)</code> breaks — the parser consumes <code>@rival</code>, then tries to parse <code>(meiya)</code> as the next statement and reports <code>unknown binding &#x27;meiya&#x27;</code>. The same applies to <code>@experiment(&quot;...&quot;)</code>, <code>@classified(&quot;...&quot;)</code> and <code>@i_know_what_im_doing(&quot;...&quot;)</code>.</li><li><strong>One per statement.</strong> Stacking two annotations fails with <code>unexpected &#x27;@&#x27;</code>.</li><li><strong>No validation.</strong> Any identifier is accepted; unknown names are not warned about, and <code>@season_finale</code> is not checked for uniqueness.</li></ul>
+<p>So <code>@protagonist</code> grants no power level, <code>@nakige</code> requires no caller prefix, <code>@deprecated</code> produces no warning, and <code>@classified</code> redacts nothing.</p>
+<h2 id="the-anime-operators">The anime operators<a class="anchor" href="#the-anime-operators" aria-label="Link to this section">#</a></h2>
+<p>Four operators work, with V3-specific meanings.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/anime_operators.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The anime operators that V3 actually implements.</span>
+<span class="c-com">-- The three unary forms are PREFIX and accept `int` only.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> base<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">6</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-kw">FINAL FORM</span> base)    <span class="c-com">-- base * base</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-kw">PLUS ULTRA</span> base)    <span class="c-com">-- base * 2</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-kw">TSUNDERE</span> base)      <span class="c-com">-- 0 - base</span>
+
+    <span class="c-com">-- NAKAMA is infix, at the same precedence as + and -.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">3</span> <span class="c-kw">NAKAMA</span> <span class="c-num">4</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>36
+12
+-6
+8</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Operator</th><th>V3 form</th><th>V3 lowering</th></tr></thead><tbody><tr><td><code>FINAL FORM x</code></td><td>prefix, <code>int</code></td><td><code>x * x</code></td></tr><tr><td><code>PLUS ULTRA x</code></td><td>prefix, <code>int</code></td><td><code>x * 2</code></td></tr><tr><td><code>TSUNDERE x</code></td><td>prefix, <code>int</code></td><td><code>0 - x</code></td></tr><tr><td><code>a NAKAMA b</code></td><td>infix, <code>int</code></td><td><code>a + b</code></td></tr></tbody></table></div>
+<p>The specification puts all three unary forms in postfix position, allows <code>num</code> and <code>bool</code>, and defines emotional scaling formulas. V3 does none of that — see <a href="operators.html#the-anime-operators">Operators</a>.</p>
+<h2 id="what-does-not-parse">What does not parse<a class="anchor" href="#what-does-not-parse" aria-label="Link to this section">#</a></h2>
+<p>Each of these lexes as a keyword and then fails in the parser with <em>&quot;this token cannot start an expression&quot;</em>:</p>
+<div class="tablewrap"><table><thead><tr><th>Construct</th><th>Bible section</th></tr></thead><tbody><tr><td><code>foreshadow pilot x = ...</code> / <code>payoff x</code></td><td>§5.2</td></tr><tr><td><code>route TrueRoute</code>, <code>check route</code>, <code>only on R from x</code></td><td>§5.3</td></tr><tr><td><code>deus_ex_machina &quot;20+ words&quot; { }</code></td><td>§5.5</td></tr><tr><td><code>isekai { } bringing back { }</code></td><td>§5.7</td></tr><tr><td><code>trust me &quot;reason&quot; on my honor as .level { }</code></td><td>§4.5</td></tr><tr><td><code>direct_order [arch] { asm }</code></td><td>§4.5</td></tr><tr><td><code>sadly call()</code></td><td>§5.1</td></tr><tr><td><code>for science, call()</code></td><td>§5.1</td></tr><tr><td><code>knowing this will hurt, call()</code></td><td>§5.1</td></tr><tr><td><code>training arc ... with growth</code></td><td>§5.6</td></tr><tr><td><code>prob[0.3] chance { }</code>, <code>prob_when</code></td><td>§2.2</td></tr><tr><td><code>declare x was v in timeline &quot;t&quot;</code></td><td>§2.3</td></tr><tr><td><code>mood</code>, <code>.chill</code> and mood arithmetic</td><td>§2.4</td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>knowing</code> is not even a keyword in V3&#x27;s lexer — it parses as an ordinary identifier, and the error surfaces at the comma instead.</p></div>
+<h2 id="the-audit-commands">The audit commands<a class="anchor" href="#the-audit-commands" aria-label="Link to this section">#</a></h2>
+<p>The audit subcommands still exist and still work, because they are <strong>text scanners running outside the compiler</strong>:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak audit-science      # every `for science,` call site
+freak audit-trust        # every `trust me` block and its honor level
+freak audit-miracles     # every `deus_ex_machina` block
+freak foreshadow-audit   # unpaid `foreshadow` bindings</code></pre></div>
+<p>They shell out to <code>python -m freakc</code>, so they need the Python bootstrap package and the repository&#x27;s audit inputs. They scan source text — which means they can report on constructs the native V3 compiler cannot compile. A file full of <code>foreshadow</code> declarations will audit cleanly and fail to build.</p>
+<h2 id="writing-anime-flavoured-v3-today">Writing anime-flavoured V3 today<a class="anchor" href="#writing-anime-flavoured-v3-today" aria-label="Link to this section">#</a></h2>
+<p>The layer you can actually use is narrow, but it is not nothing:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-attr">@protagonist</span>
+<span class="c-kw">task</span> <span class="c-fn">engage</span>(power<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> charge<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> power
+
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> charge <span class="c-op">&gt;=</span> <span class="c-num">9000</span> <span class="c-kw">max</span> <span class="c-num">12</span> <span class="c-kw">sessions</span> {
+        charge <span class="c-op">=</span> <span class="c-kw">PLUS ULTRA</span> charge
+    }
+
+    <span class="c-kw">eventually</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;systems nominal&quot;</span>
+    }
+
+    <span class="c-kw">if</span> charge <span class="c-op">&gt;=</span> <span class="c-num">9000</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;over nine thousand&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;insufficient&quot;</span>
+}</code></pre></div>
+<p>Bounded loops, prefix power scaling, a cleanup section and decorative annotations. Everything else is <a href="not-in-v3.html">V4</a>.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#what-compiles">What compiles</a></li><li><a href="#training-arc">training arc</a></li><li><a href="#eventually">eventually</a></li><li><a href="#annotations">Annotations</a></li><li><a href="#the-anime-operators">The anime operators</a></li><li><a href="#what-does-not-parse">What does not parse</a></li><li><a href="#the-audit-commands">The audit commands</a></li><li><a href="#writing-anime-flavoured-v3-today">Writing anime-flavoured V3 today</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

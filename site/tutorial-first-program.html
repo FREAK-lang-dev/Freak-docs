@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorial 1: Your first program &middot; FREAK V3</title>
+<meta name="description" content="Build and run a FREAK program from nothing, then grow it into something with a shape and a method. About 15 minutes.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html" class="active">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="tutorial-1-your-first-program">Tutorial 1: Your first program<a class="anchor" href="#tutorial-1-your-first-program" aria-label="Link to this section">#</a></h1>
+<p>&gt; Build and run a FREAK program from nothing, then grow it into something with a shape and a method. About 15 minutes.</p>
+<p>This assumes you have a working <code>freak</code> on your PATH. If not, do <a href="getting-started.html">Getting started</a> first — you need to build the compiler from source, because V3 is self-hosted.</p>
+<h2 id="step-1-say-something">Step 1 — Say something<a class="anchor" href="#step-1-say-something" aria-label="Link to this section">#</a></h2>
+<p>Create <code>greet.fk</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, launch&quot;</span>
+}</code></pre></div>
+<p>Run it:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run greet.fk</code></pre></div>
+<p>Two things are already worth noticing. <code>say</code> needs no import — it is a compiler builtin, always in scope. And <code>main</code> is optional: statements written at the top level of a file run in order, so this would work too:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, launch&quot;</span></code></pre></div>
+<p>Use <code>main</code> anyway. It gives you somewhere to put local bindings.</p>
+<h2 id="step-2-bindings">Step 2 — Bindings<a class="anchor" href="#step-2-bindings" aria-label="Link to this section">#</a></h2>
+<p><code>pilot</code> introduces a binding. Add a couple:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> callsign<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
+
+    <span class="c-kw">say</span> callsign
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(sorties)
+}</code></pre></div>
+<p>The annotation is optional — <code>pilot sorties = 12</code> infers <code>int</code>. Note <code>word_from_int</code>: <code>say</code> accepts <code>int</code> directly, but the moment you want to glue a number onto a word you must convert it, because <code>+</code> will not mix types.</p>
+<p>There are five types worth knowing at this stage: <code>int</code>, <code>num</code> (float), <code>word</code> (string), <code>bool</code>, and <code>void</code>. Full list in <a href="language-basics.html">Bindings &amp; types</a>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>**Do not name anything <code>Pilot</code>.** V3 matches keywords case-insensitively, so <code>Pilot</code>, <code>PILOT</code> and <code>pilot</code> are the same token, and none can be an identifier. The same trap catches <code>Result</code>, <code>Max</code>, <code>Check</code>, <code>Route</code>, <code>Move</code>, <code>Copy</code>, <code>Some</code>, <code>Ok</code>, <code>Err</code> and <code>Done</code>. Pick a synonym — this tutorial uses <code>Aviator</code>.</p></div>
+<h2 id="step-3-interpolation">Step 3 — Interpolation<a class="anchor" href="#step-3-interpolation" aria-label="Link to this section">#</a></h2>
+<p>Instead of converting and concatenating, put the value in the string:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> callsign<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{callsign}</span> has flown <span class="c-interp">{sorties}</span> sorties&quot;</span>
+}</code></pre></div>
+<p><code>{path}</code> substitutes a binding. A <em>path</em> is an identifier plus optional <code>.field</code> hops — <code>callsign</code>, <code>unit.name</code>, <code>self.frame.thrust</code>.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Interpolation substitutes paths, <strong>never calls</strong>. <code>&quot;{rank()}&quot;</code> prints those characters literally rather than calling anything. Compute into a binding first — this is the single most common surprise in V3.</p></div>
+<h2 id="step-4-a-task-of-your-own">Step 4 — A task of your own<a class="anchor" href="#step-4-a-task-of-your-own" aria-label="Link to this section">#</a></h2>
+<p><code>task</code> declares a function; <code>give back</code> returns from it.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">rank_for</span>(sorties<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;veteran&quot;</span> }
+    <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">10</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;regular&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;rookie&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">rank_for</span>(<span class="c-num">12</span>)
+}</code></pre></div>
+<p>There is <strong>no implicit return</strong>. A block-bodied task that returns a value needs <code>give back</code> on every path — a bare expression at the end is evaluated and discarded. The arrow shorthand <code>=&gt; expr</code> from the specification does not parse in V3.</p>
+<p>Order does not matter: every task is indexed before any body is checked, so <code>main</code> can call a task declared below it.</p>
+<h2 id="step-5-a-shape">Step 5 — A shape<a class="anchor" href="#step-5-a-shape" aria-label="Link to this section">#</a></h2>
+<p><code>shape</code> is V3&#x27;s record type, and the only user-defined type there is.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Aviator</span> {
+    name<span class="c-op">:</span> <span class="c-type">word</span>
+    sorties<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> takeru<span class="c-op">:</span> <span class="c-type">Aviator</span> <span class="c-op">=</span> <span class="c-type">Aviator</span> { name<span class="c-op">:</span> <span class="c-str">&quot;Shirogane Takeru&quot;</span>, sorties<span class="c-op">:</span> <span class="c-num">12</span> }
+    <span class="c-kw">say</span> takeru.name
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(takeru.sorties)
+}</code></pre></div>
+<p>Every field must be supplied by name at construction. Fields are readable and assignable, and they chain: <code>unit.frame.thrust</code>.</p>
+<h2 id="step-6-methods">Step 6 — Methods<a class="anchor" href="#step-6-methods" aria-label="Link to this section">#</a></h2>
+<p><code>impl</code> attaches tasks to a shape. Whether the first parameter is <code>self</code> decides how you call it.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">impl</span> <span class="c-type">Aviator</span> {
+    <span class="c-com">-- No self: an associated method, called Aviator::recruit(...)</span>
+    <span class="c-kw">task</span> <span class="c-fn">recruit</span>(name<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">Aviator</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Aviator</span> { name<span class="c-op">:</span> name, sorties<span class="c-op">:</span> <span class="c-num">0</span> }
+    }
+
+    <span class="c-com">-- With self: an instance method, called value.rank()</span>
+    <span class="c-kw">task</span> <span class="c-fn">rank</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">if</span> <span class="c-type">self</span>.sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;veteran&quot;</span> }
+        <span class="c-kw">give back</span> <span class="c-str">&quot;rookie&quot;</span>
+    }
+}</code></pre></div>
+<p>Write <code>self</code> bare, never <code>self: Aviator</code> — the compiler fills in the owning shape.</p>
+<h2 id="step-7-loops">Step 7 — Loops<a class="anchor" href="#step-7-loops" aria-label="Link to this section">#</a></h2>
+<p>Three forms, no <code>for each</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-num">12</span> <span class="c-kw">times</span> { takeru.sorties <span class="c-op">+=</span> <span class="c-num">1</span> }     <span class="c-com">-- counted</span>
+<span class="c-kw">repeat</span> <span class="c-kw">until</span> <span class="c-kw">done</span> { <span class="c-fn">work</span>() }                 <span class="c-com">-- condition, tested first</span>
+<span class="c-kw">training arc</span> <span class="c-kw">until</span> ready <span class="c-kw">max</span> <span class="c-num">8</span> <span class="c-kw">sessions</span> { }  <span class="c-com">-- bounded, cannot spin forever</span></code></pre></div>
+<p>To reassign a binding you must declare it <code>pilot mut</code>. Without <code>--strict-borrow</code> the compiler will not enforce that, but write it anyway — it documents intent and the checker will demand it once you turn the flag on.</p>
+<h2 id="the-finished-program">The finished program<a class="anchor" href="#the-finished-program" aria-label="Link to this section">#</a></h2>
+<p>Everything above, assembled:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/tut_greet.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Tutorial 1, finished program.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- A greeter that takes a name, decides how formal to be, and reports.</span>
+<span class="c-com">-- Everything here is core V3: bindings, a shape, a method, a task,</span>
+<span class="c-com">-- interpolation, a conditional and a counted loop.</span>
+
+<span class="c-kw">shape</span> <span class="c-type">Aviator</span> {
+    name<span class="c-op">:</span> <span class="c-type">word</span>
+    sorties<span class="c-op">:</span> <span class="c-type">int</span>
+}
+
+<span class="c-kw">impl</span> <span class="c-type">Aviator</span> {
+    <span class="c-com">-- An associated method: called as Aviator::recruit(...).</span>
+    <span class="c-kw">task</span> <span class="c-fn">recruit</span>(name<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">Aviator</span> {
+        <span class="c-kw">give back</span> <span class="c-type">Aviator</span> { name<span class="c-op">:</span> name, sorties<span class="c-op">:</span> <span class="c-num">0</span> }
+    }
+
+    <span class="c-com">-- An instance method: `self` is the receiver.</span>
+    <span class="c-kw">task</span> <span class="c-fn">rank</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-kw">if</span> <span class="c-type">self</span>.sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;veteran&quot;</span> }
+        <span class="c-kw">if</span> <span class="c-type">self</span>.sorties <span class="c-op">&gt;=</span> <span class="c-num">10</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;regular&quot;</span> }
+        <span class="c-kw">give back</span> <span class="c-str">&quot;rookie&quot;</span>
+    }
+
+    <span class="c-kw">task</span> <span class="c-fn">greeting</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+        <span class="c-com">-- Interpolation substitutes PATHS only, never calls. Writing</span>
+        <span class="c-com">-- &quot;{self.rank()}&quot; would print those characters literally, so the</span>
+        <span class="c-com">-- call result goes into a binding first.</span>
+        <span class="c-kw">pilot</span> rank<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-type">self</span>.<span class="c-fn">rank</span>()
+        <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.name}</span> - <span class="c-interp">{self.sorties}</span> sorties, rank <span class="c-interp">{rank}</span>&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> takeru<span class="c-op">:</span> <span class="c-type">Aviator</span> <span class="c-op">=</span> <span class="c-type">Aviator</span><span class="c-op">::</span><span class="c-fn">recruit</span>(<span class="c-str">&quot;Shirogane Takeru&quot;</span>)
+
+    <span class="c-com">-- Fly a few missions.</span>
+    <span class="c-kw">repeat</span> <span class="c-num">12</span> <span class="c-kw">times</span> {
+        takeru.sorties <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">say</span> takeru.<span class="c-fn">greeting</span>()
+
+    <span class="c-kw">pilot</span> rank<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> takeru.<span class="c-fn">rank</span>()
+    <span class="c-kw">say</span> <span class="c-str">&quot;logged as: <span class="c-interp">{rank}</span>&quot;</span>
+
+    <span class="c-kw">if</span> takeru.sorties <span class="c-op">&gt;</span> <span class="c-num">10</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;cleared for the next operation&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;needs more flight hours&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Shirogane Takeru - 12 sorties, rank regular
+logged as: regular
+cleared for the next operation</code></pre>
+  </div>
+</figure>
+<h2 id="where-to-go-next">Where to go next<a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a></h2>
+<ul><li><a href="tutorial-cli-tool.html">Tutorial 2</a> — a real command-line tool with files and colour</li><li><a href="tutorial-data.html">Tutorial 3</a> — lists, and modelling data properly</li><li><a href="control-flow.html">Control flow</a> — the loop and branch forms in detail</li><li><a href="not-in-v3.html">Not in V3</a> — what to write instead of the features the specification promises</li></ul>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#step-1-say-something">Step 1 — Say something</a></li><li><a href="#step-2-bindings">Step 2 — Bindings</a></li><li><a href="#step-3-interpolation">Step 3 — Interpolation</a></li><li><a href="#step-4-a-task-of-your-own">Step 4 — A task of your own</a></li><li><a href="#step-5-a-shape">Step 5 — A shape</a></li><li><a href="#step-6-methods">Step 6 — Methods</a></li><li><a href="#step-7-loops">Step 7 — Loops</a></li><li><a href="#the-finished-program">The finished program</a></li><li><a href="#where-to-go-next">Where to go next</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

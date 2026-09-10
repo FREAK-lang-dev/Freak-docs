@@ -1,0 +1,22 @@
+-- `word_builder::*` accumulates a word without the quadratic cost of
+-- repeated `+` concatenation. The builder is an `int` handle.
+task main() -> void {
+    pilot b: int = word_builder::new()
+
+    word_builder::append(b, "Mission: ")
+    word_builder::append(b, "Valkyries")
+    word_builder::append_char(b, 32)      -- a space, by codepoint
+    word_builder::append_int(b, 4)
+
+    say word_from_int(word_builder::length(b))
+
+    -- `finish` consumes the builder and returns the accumulated word.
+    say word_builder::finish(b)
+
+    -- with_capacity pre-allocates; clear reuses; discard frees unused.
+    pilot c: int = word_builder::with_capacity(64)
+    word_builder::append(c, "scratch")
+    word_builder::clear(c)
+    word_builder::append(c, "reused")
+    say word_builder::finish(c)
+}

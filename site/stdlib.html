@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standard library &middot; FREAK V3</title>
+<meta name="description" content="Every callable V3 recognises: the compiler builtins, and the FREAK-source modules linked into your build.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html" class="active">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="standard-library">Standard library<a class="anchor" href="#standard-library" aria-label="Link to this section">#</a></h1>
+<p>&gt; Every callable V3 recognises: the compiler builtins, and the FREAK-source modules linked into your build.</p>
+<p>There are two distinct surfaces, and the difference matters.</p>
+<p><strong>Compiler builtins</strong> are known to the type checker itself. They always exist, need no import, and work under <code>freak check</code>.</p>
+<p><strong>Standard-library tasks</strong> live in <code>std/*.fk</code> as ordinary FREAK source. The CLI concatenates those files ahead of yours during <code>freak build</code> and <code>freak run</code>. They are global tasks in the same flat namespace as your own.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p><code>freak check</code> compiles your file <strong>alone</strong>. Anything from <code>std/</code> reports <code>unknown callable</code>. Use <code>freak build</code> or <code>freak run</code> to type-check code that uses the standard library.</p></div>
+<h2 id="how-modules-are-loaded">How modules are loaded<a class="anchor" href="#how-modules-are-loaded" aria-label="Link to this section">#</a></h2>
+<p><code>use</code> lines are rewritten to comments before parsing, so they never reach the grammar. They survive only as a <strong>textual trigger</strong> telling the build to link an optional module.</p>
+<div class="tablewrap"><table><thead><tr><th>Module</th><th>Loaded</th></tr></thead><tbody><tr><td><code>std/math.fk</code>, <code>std/string.fk</code>, <code>std/convert.fk</code>, <code>std/algorithm.fk</code>, <code>std/json.fk</code>, <code>std/version.fk</code></td><td>Always</td></tr><tr><td><code>std/runtime.fk</code>, <code>std/http.fk</code></td><td>Always, LLVM backend only</td></tr><tr><td><code>std/math3d.fk</code></td><td>Only if the source text contains <code>use std::math3d</code></td></tr><tr><td><code>std/zip.fk</code></td><td>Only if the source text contains <code>use std::zip</code></td></tr><tr><td><code>std/ui/window.fk</code></td><td>Only if the source text contains <code>use std::ui</code></td></tr><tr><td><code>packages/cockpit/src/*.fk</code></td><td>Only if the source text contains <code>use cockpit</code></td></tr></tbody></table></div>
+<p>So <code>use std::ui</code> is not an import — it is a build flag written in import syntax. Everything else is already in scope without it.</p>
+<h2 id="prelude-builtins">Prelude builtins<a class="anchor" href="#prelude-builtins" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>say(value)</code></td><td>scalar <code>-&gt; void</code></td><td>Prints with a newline. Accepts <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code> — <strong>not</strong> a shape</td></tr><tr><td><code>ask(prompt)</code></td><td><code>word -&gt; word</code></td><td>Reads a line from stdin</td></tr><tr><td><code>panic(message)</code></td><td><code>word -&gt; void</code></td><td>Aborts the process</td></tr></tbody></table></div>
+<p><code>say</code> takes a statement form as well as a call form — <code>say &quot;x&quot;</code> and <code>say(&quot;x&quot;)</code> are identical, because <code>(&quot;x&quot;)</code> is just a parenthesised expression.</p>
+<h2 id="conversion-builtins">Conversion builtins<a class="anchor" href="#conversion-builtins" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>word_from_int(i)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>word_from_bool(b)</code></td><td><code>bool -&gt; word</code></td></tr><tr><td><code>word_to_int(w)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>word_concat(a, b)</code></td><td><code>word, word -&gt; word</code></td></tr><tr><td><code>word_join(handle)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>char_to_word(code)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>format_num(f)</code></td><td><code>num -&gt; word</code></td></tr><tr><td><code>parse_num(w)</code></td><td><code>word -&gt; num</code></td></tr></tbody></table></div>
+<h2 id="word-methods"><code>word</code> methods<a class="anchor" href="#word-methods" aria-label="Link to this section">#</a></h2>
+<p>Covered in full in <a href="words.html#methods">Words &amp; interpolation</a>: <code>.length()</code>, <code>.trim()</code>, <code>.to_upper()</code>, <code>.to_lower()</code>, <code>.contains()</code>, <code>.starts_with()</code>, <code>.ends_with()</code>, <code>.replace()</code>, <code>.substring()</code>, <code>.char_at()</code>, <code>.to_int()</code>, <code>.to_num()</code>, <code>.checksum()</code>, <code>.repeated(n)</code>, plus seven internal <code>snapshot_*</code> helpers.</p>
+<p>Scalar methods: <code>int.to_num()</code>, <code>int.to_word()</code>, <code>num.to_int()</code>, <code>num.to_word()</code>, <code>bool.to_word()</code>.</p>
+<h2 id="lists-and-arrays">Lists and arrays<a class="anchor" href="#lists-and-arrays" aria-label="Link to this section">#</a></h2>
+<p><code>array_new</code>, <code>array_push</code>, <code>array_get</code>, <code>array_set</code>, <code>array_len</code>, <code>array_release</code>, <code>word_join</code>, plus typed <code>List&lt;T&gt;</code> with <code>.length()</code>, indexing and <code>List::filled(value, count)</code> — see <a href="arrays.html">Lists &amp; arrays</a>.</p>
+<h2 id="wordbuilder">WordBuilder<a class="anchor" href="#wordbuilder" aria-label="Link to this section">#</a></h2>
+<p><code>word_builder::new</code>, <code>with_capacity</code>, <code>reserve</code>, <code>append</code>, <code>append_char</code>, <code>append_int</code>, <code>length</code>, <code>capacity</code>, <code>clear</code>, <code>finish</code>, <code>discard</code> — see <a href="words.html#building-words-incrementally">Words &amp; interpolation</a>.</p>
+<h2 id="bytebuffer">ByteBuffer<a class="anchor" href="#bytebuffer" aria-label="Link to this section">#</a></h2>
+<p>The only builtin type with real method syntax. Constructed with <code>ByteBuffer::new()</code> or <code>ByteBuffer::with_capacity(n)</code>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/bytebuffer.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `ByteBuffer` is a real builtin type with methods, unlike the `int`</span>
+<span class="c-com">-- handles used elsewhere. It is a seekable binary read/write cursor.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> buf<span class="c-op">:</span> <span class="c-type">ByteBuffer</span> <span class="c-op">=</span> <span class="c-type">ByteBuffer</span><span class="c-op">::</span><span class="c-fn">new</span>()
+
+    buf.<span class="c-fn">write_word</span>(<span class="c-str">&quot;hi&quot;</span>)
+    buf.<span class="c-fn">write_int</span>(<span class="c-num">7</span>)
+    buf.<span class="c-fn">write_byte</span>(<span class="c-num">255</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(buf.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(buf.<span class="c-fn">position</span>())
+
+    <span class="c-com">-- Rewind and read the same values back.</span>
+    buf.<span class="c-fn">seek</span>(<span class="c-num">0</span>)
+    <span class="c-kw">say</span> buf.<span class="c-fn">read_word</span>(<span class="c-num">2</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(buf.<span class="c-fn">read_int</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(buf.<span class="c-fn">read_byte</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(buf.<span class="c-fn">remaining</span>())
+
+    <span class="c-com">-- status() reports the last failure; 0 means clean.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(buf.<span class="c-fn">status</span>())
+
+    buf.<span class="c-fn">release</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>11
+0
+hi
+7
+255
+0
+0</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Method</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>.length()</code></td><td><code>-&gt; int</code></td><td>Bytes written</td></tr><tr><td><code>.capacity()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.position()</code></td><td><code>-&gt; int</code></td><td>The read/seek cursor</td></tr><tr><td><code>.remaining()</code></td><td><code>-&gt; int</code></td><td>Bytes from the cursor to the end</td></tr><tr><td><code>.reserve(n)</code></td><td><code>int -&gt; void</code></td><td></td></tr><tr><td><code>.seek(pos)</code></td><td><code>int -&gt; void</code></td><td>Move the read cursor</td></tr><tr><td><code>.clear()</code></td><td><code>-&gt; void</code></td><td></td></tr><tr><td><code>.truncate(n)</code></td><td><code>int -&gt; void</code></td><td></td></tr><tr><td><code>.write_byte(b)</code></td><td><code>int -&gt; void</code></td><td></td></tr><tr><td><code>.write_int(n)</code></td><td><code>int -&gt; void</code></td><td></td></tr><tr><td><code>.write_int_be(n)</code></td><td><code>int -&gt; void</code></td><td>Big-endian</td></tr><tr><td><code>.write_word(w)</code></td><td><code>word -&gt; void</code></td><td></td></tr><tr><td><code>.read_byte()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.read_int()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.read_int_be()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.read_word(len)</code></td><td><code>int -&gt; word</code></td><td></td></tr><tr><td><code>.slice(from, len)</code></td><td><code>int, int -&gt; ByteBuffer</code></td><td></td></tr><tr><td><code>.to_word()</code></td><td><code>-&gt; word</code></td><td></td></tr><tr><td><code>.status()</code></td><td><code>-&gt; int</code></td><td>Last failure code; <code>0</code> is clean</td></tr><tr><td><code>.clear_status()</code></td><td><code>-&gt; void</code></td><td></td></tr><tr><td><code>.release()</code></td><td><code>-&gt; void</code></td><td>Free the buffer</td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p>Writes append to the end; <code>position()</code> is the <strong>read</strong> cursor, so it stays at <code>0</code> until you read or <code>seek</code>. Errors are reported out-of-band through <code>status()</code> rather than by return value, since V3 has no <code>result&lt;T, E&gt;</code>.</p></div>
+<p>This is the closest thing V3 has to the bible&#x27;s <code>std::bytes</code> §7.14.</p>
+<h2 id="math-builtins"><code>math::</code> builtins<a class="anchor" href="#math-builtins" aria-label="Link to this section">#</a></h2>
+<p>Floating point, over <code>num</code>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/stdlib_math.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Two numeric surfaces exist side by side:</span>
+<span class="c-com">--   `math::*` are compiler builtins over `num` (floating point).</span>
+<span class="c-com">--   `std_*` come from std/math.fk and work on `int`.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-com">-- builtins, num</span>
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">sqrt</span>(<span class="c-num">144.0</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">pow</span>(<span class="c-num">2.0</span>, <span class="c-num">10.0</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">floor</span>(<span class="c-num">3.9</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">ceil</span>(<span class="c-num">3.1</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">sin</span>(<span class="c-num">0.0</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">cos</span>(<span class="c-num">0.0</span>))
+
+    <span class="c-com">-- std/math.fk, int</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_abs</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">9</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_max</span>(<span class="c-num">3</span>, <span class="c-num">8</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_min</span>(<span class="c-num">3</span>, <span class="c-num">8</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_clamp</span>(<span class="c-num">42</span>, <span class="c-num">0</span>, <span class="c-num">10</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_pow</span>(<span class="c-num">2</span>, <span class="c-num">8</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_gcd</span>(<span class="c-num">84</span>, <span class="c-num">30</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_lcm</span>(<span class="c-num">4</span>, <span class="c-num">6</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_factorial</span>(<span class="c-num">6</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_fibonacci</span>(<span class="c-num">12</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">std_is_even</span>(<span class="c-num">4</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_sign</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">3</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>12
+1024
+3
+4
+0
+1
+9
+8
+3
+10
+256
+6
+12
+720
+144
+true
+-1</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>math::sqrt(x)</code></td><td><code>num -&gt; num</code></td></tr><tr><td><code>math::pow(base, exp)</code></td><td><code>num, num -&gt; num</code></td></tr><tr><td><code>math::sin(x)</code> / <code>math::cos(x)</code> / <code>math::tan(x)</code></td><td><code>num -&gt; num</code></td></tr><tr><td><code>math::floor(x)</code> / <code>math::ceil(x)</code></td><td><code>num -&gt; num</code></td></tr></tbody></table></div>
+<p>That is the entire <code>math::</code> namespace. No <code>log</code>, <code>exp</code>, <code>asin</code>, <code>atan2</code>, <code>abs</code>, <code>gcd</code>, <code>simd</code> — those bible entries are V4.</p>
+<h2 id="fs-builtins"><code>fs::</code> builtins<a class="anchor" href="#fs-builtins" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/files.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `fs::*` are compiler builtins. Paths are plain `word` values.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    fs<span class="c-op">::</span><span class="c-fn">write</span>(<span class="c-str">&quot;sortie.log&quot;</span>, <span class="c-str">&quot;launch\n&quot;</span>)
+    fs<span class="c-op">::</span><span class="c-fn">append</span>(<span class="c-str">&quot;sortie.log&quot;</span>, <span class="c-str">&quot;engage\n&quot;</span>)
+
+    <span class="c-kw">if</span> fs<span class="c-op">::</span><span class="c-fn">exists</span>(<span class="c-str">&quot;sortie.log&quot;</span>) {
+        <span class="c-kw">say</span> fs<span class="c-op">::</span><span class="c-fn">read</span>(<span class="c-str">&quot;sortie.log&quot;</span>).<span class="c-fn">trim</span>()
+    }
+
+    fs<span class="c-op">::</span><span class="c-fn">make_dir</span>(<span class="c-str">&quot;hangar_out&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(fs<span class="c-op">::</span><span class="c-fn">exists</span>(<span class="c-str">&quot;hangar_out&quot;</span>))
+
+    <span class="c-com">-- `fs::delete` is file-only in V3, and reports true when the file is</span>
+    <span class="c-com">-- gone -- whether this call removed it or it was already absent.</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(fs<span class="c-op">::</span><span class="c-fn">delete</span>(<span class="c-str">&quot;sortie.log&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(fs<span class="c-op">::</span><span class="c-fn">exists</span>(<span class="c-str">&quot;sortie.log&quot;</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>launch
+engage
+true
+true
+false</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>fs::read(path)</code></td><td><code>word -&gt; word</code></td><td>Empty word on failure</td></tr><tr><td><code>fs::write(path, content)</code></td><td><code>word, word -&gt; void</code></td><td></td></tr><tr><td><code>fs::append(path, content)</code></td><td><code>word, word -&gt; void</code></td><td></td></tr><tr><td><code>fs::exists(path)</code></td><td><code>word -&gt; bool</code></td><td></td></tr><tr><td><code>fs::delete(path)</code></td><td><code>word -&gt; bool</code></td><td><strong>File only.</strong> <code>true</code> when the file was removed <em>or was already absent</em>; <code>false</code> when it could not be unlinked</td></tr><tr><td><code>fs::list_dir(path)</code></td><td><code>word -&gt; word</code></td><td>Encoded listing</td></tr><tr><td><code>fs::make_dir(path)</code></td><td><code>word -&gt; void</code></td><td></td></tr></tbody></table></div>
+<p>There is no <code>fs::copy</code>, <code>fs::move</code>, <code>fs::is_file</code>, <code>fs::is_dir</code>, <code>dir::create_all</code> or <code>dir::delete</code>, and no <code>result&lt;T, E&gt;</code> — errors surface as empty words or <code>false</code>.</p>
+<h2 id="process-builtins"><code>process::</code> builtins<a class="anchor" href="#process-builtins" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/process_time.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Process and clock builtins.</span>
+<span class="c-com">-- Note: `process::args()` is deliberately rejected by V3. Use the</span>
+<span class="c-com">-- indexed pair `process::args_count()` / `process::arg(i)` instead.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> argc<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> process<span class="c-op">::</span><span class="c-fn">args_count</span>()
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(argc)
+
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> argc <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;arg <span class="c-interp">{i}</span>: &quot;</span> <span class="c-op">+</span> process<span class="c-op">::</span><span class="c-fn">arg</span>(i)
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">pilot</span> started<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> time<span class="c-op">::</span><span class="c-fn">now_ms</span>()
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> spin<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-num">1000</span> <span class="c-kw">times</span> {
+        spin <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">pilot</span> elapsed<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> time<span class="c-op">::</span><span class="c-fn">now_ms</span>() <span class="c-op">-</span> started
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(elapsed <span class="c-op">&gt;=</span> <span class="c-num">0</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(process<span class="c-op">::</span><span class="c-fn">env</span>(<span class="c-str">&quot;PATH&quot;</span>).<span class="c-fn">length</span>() <span class="c-op">&gt;</span> <span class="c-num">0</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>3
+arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_d1d_096_\process_time.exe
+arg 1: alpha
+arg 2: bravo
+true
+true</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>process::args_count()</code></td><td><code>-&gt; int</code></td></tr><tr><td><code>process::arg(i)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>process::env(name)</code></td><td><code>word -&gt; word</code></td></tr><tr><td><code>process::exec(cmd)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>process::exec_capture(cmd)</code></td><td><code>word -&gt; word</code></td></tr><tr><td><code>process::exit(code)</code></td><td><code>int -&gt; void</code></td></tr><tr><td><code>process::input()</code></td><td><code>-&gt; word</code></td></tr><tr><td><code>process::pid()</code></td><td><code>-&gt; int</code></td></tr><tr><td><code>process::set_env(name, value)</code></td><td><code>word, word -&gt; void</code></td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p><code>process::args()</code> is <strong>deliberately rejected</strong> by V3 rather than exposing the runtime&#x27;s raw <code>argv</code> pointer as a fake array handle. Use the indexed pair <code>process::args_count()</code> and <code>process::arg(i)</code>. Argument 0 is the executable path.</p></div>
+<h2 id="time-builtins"><code>time::</code> builtins<a class="anchor" href="#time-builtins" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>time::now_ms()</code></td><td><code>-&gt; int</code> — milliseconds since the epoch</td></tr><tr><td><code>time::monotonic_ns()</code></td><td><code>-&gt; int</code> — nanoseconds from a monotonic clock</td></tr></tbody></table></div>
+<p>Use <code>monotonic_ns()</code> for measuring elapsed time; it does not jump when the wall clock is adjusted.</p>
+<p>There is no <code>sleep</code>, no <code>Instant</code>, no <code>Duration</code>, and no duration literals like <code>500.milliseconds</code>.</p>
+<h2 id="tcp-builtins"><code>tcp::</code> builtins<a class="anchor" href="#tcp-builtins" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>tcp::connect(host, port)</code></td><td><code>word, int -&gt; int</code> — socket handle</td></tr><tr><td><code>tcp::send(sock, data)</code></td><td><code>int, word -&gt; int</code></td></tr><tr><td><code>tcp::recv(sock, max)</code></td><td><code>int, int -&gt; word</code></td></tr><tr><td><code>tcp::recv_all(sock, max)</code></td><td><code>int, int -&gt; word</code></td></tr><tr><td><code>tcp::close(sock)</code></td><td><code>int -&gt; void</code></td></tr></tbody></table></div>
+<p><code>std/http.fk</code> builds on these and is linked automatically on the LLVM backend.</p>
+<h3 id="the-newer-socket-api">The newer socket API<a class="anchor" href="#the-newer-socket-api" aria-label="Link to this section">#</a></h3>
+<p>A second, lower-level socket surface exists alongside the calls above. It adds listening, accepting, timeouts and <code>ByteBuffer</code>-based transfer.</p>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>tcp::socket_connect(host, port)</code></td><td><code>word, int -&gt; int</code></td></tr><tr><td><code>tcp::socket_listen(host, port)</code></td><td><code>word, int -&gt; int</code></td></tr><tr><td><code>tcp::socket_accept(listener)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>tcp::socket_local_port(sock)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>tcp::socket_status(sock)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>tcp::socket_eof(sock)</code></td><td><code>int -&gt; bool</code></td></tr><tr><td><code>tcp::socket_set_timeout(sock, ms)</code></td><td><code>int, int -&gt; void</code></td></tr><tr><td><code>tcp::socket_send(sock, buf, off, len)</code></td><td><code>int, ByteBuffer, int, int -&gt; int</code></td></tr><tr><td><code>tcp::socket_send_all(sock, buf, off, len)</code></td><td><code>int, ByteBuffer, int, int -&gt; int</code></td></tr><tr><td><code>tcp::socket_receive(sock, buf, max)</code></td><td><code>int, ByteBuffer, int -&gt; int</code></td></tr><tr><td><code>tcp::socket_close(sock)</code></td><td><code>int -&gt; void</code></td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p>This is the first V3 API that can write a server, since <code>socket_listen</code> and <code>socket_accept</code> have no equivalent in the older <code>tcp::connect</code> family. Like <code>ByteBuffer</code>, it reports failure through a <code>status()</code>-style code rather than a <code>result&lt;T, E&gt;</code>.</p></div>
+<h2 id="ui-builtins"><code>ui::</code> builtins<a class="anchor" href="#ui-builtins" aria-label="Link to this section">#</a></h2>
+<p>A raw, indexed windowing API: <code>ui::create_window</code>, <code>ui::destroy_window</code>, <code>ui::poll_events</code>, <code>ui::begin_frame</code>, <code>ui::end_frame</code>, <code>ui::clear</code>, <code>ui::fill_rect</code>, <code>ui::stroke_rect</code>, <code>ui::fill_circle</code>, <code>ui::draw_line</code>, <code>ui::draw_text</code>, <code>ui::measure_text</code>, <code>ui::get_width</code>, <code>ui::get_height</code>, <code>ui::set_clip</code>, <code>ui::reset_clip</code>, and an <code>ui::event_*</code> family (<code>kind</code>, <code>key</code>, <code>pressed</code>, <code>character</code>, <code>mouse_x</code>, <code>mouse_y</code>, <code>button</code>, <code>repeat</code>, <code>scroll_dy</code>, <code>width</code>, <code>height</code>, <code>gained</code>).</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p><code>std::ui</code> runs on the <strong>LLVM backend, on Windows, through the Win32/GDI runtime only</strong>. There is no macOS or Linux native backend, and the C backend has no executable shape storage for UI programs. <code>WindowConfig.vsync</code> is retained but ignored, events use the raw indexed API rather than an owned event list, and COCKPIT is a source preview, not a frozen package.</p></div>
+<p>Geometry crosses this ABI as pixel-addressed <code>int</code>. Convert from <code>num</code> before calling.</p>
+<h2 id="stdmath-integer-maths"><code>std::math</code> — integer maths<a class="anchor" href="#stdmath-integer-maths" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/stdlib_math.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Two numeric surfaces exist side by side:</span>
+<span class="c-com">--   `math::*` are compiler builtins over `num` (floating point).</span>
+<span class="c-com">--   `std_*` come from std/math.fk and work on `int`.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-com">-- builtins, num</span>
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">sqrt</span>(<span class="c-num">144.0</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">pow</span>(<span class="c-num">2.0</span>, <span class="c-num">10.0</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">floor</span>(<span class="c-num">3.9</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">ceil</span>(<span class="c-num">3.1</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">sin</span>(<span class="c-num">0.0</span>))
+    <span class="c-kw">say</span> <span class="c-fn">format_num</span>(math<span class="c-op">::</span><span class="c-fn">cos</span>(<span class="c-num">0.0</span>))
+
+    <span class="c-com">-- std/math.fk, int</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_abs</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">9</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_max</span>(<span class="c-num">3</span>, <span class="c-num">8</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_min</span>(<span class="c-num">3</span>, <span class="c-num">8</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_clamp</span>(<span class="c-num">42</span>, <span class="c-num">0</span>, <span class="c-num">10</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_pow</span>(<span class="c-num">2</span>, <span class="c-num">8</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_gcd</span>(<span class="c-num">84</span>, <span class="c-num">30</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_lcm</span>(<span class="c-num">4</span>, <span class="c-num">6</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_factorial</span>(<span class="c-num">6</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_fibonacci</span>(<span class="c-num">12</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">std_is_even</span>(<span class="c-num">4</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">std_sign</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">3</span>))
+}</code></pre>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>Signature</th></tr></thead><tbody><tr><td><code>std_abs(x)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>std_sign(x)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>std_min(a, b)</code> / <code>std_max(a, b)</code></td><td><code>int, int -&gt; int</code></td></tr><tr><td><code>std_clamp(x, lo, hi)</code></td><td><code>int, int, int -&gt; int</code></td></tr><tr><td><code>std_pow(base, exp)</code></td><td><code>int, int -&gt; int</code></td></tr><tr><td><code>std_gcd(a, b)</code> / <code>std_lcm(a, b)</code></td><td><code>int, int -&gt; int</code></td></tr><tr><td><code>std_factorial(n)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>std_fibonacci(n)</code></td><td><code>int -&gt; int</code></td></tr><tr><td><code>std_is_even(x)</code> / <code>std_is_odd(x)</code></td><td><code>int -&gt; bool</code></td></tr><tr><td><code>int_to_word(n)</code></td><td><code>int -&gt; word</code></td></tr></tbody></table></div>
+<h2 id="stdstring"><code>std::string</code><a class="anchor" href="#stdstring" aria-label="Link to this section">#</a></h2>
+<p>Listed in full in <a href="words.html#standard-library-word-tasks">Words &amp; interpolation</a>.</p>
+<h2 id="stdconvert"><code>std::convert</code><a class="anchor" href="#stdconvert" aria-label="Link to this section">#</a></h2>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/stdlib_convert.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- std/convert.fk: base conversion and safe parsing.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">int_to_hex</span>(<span class="c-num">255</span>)
+    <span class="c-kw">say</span> <span class="c-fn">int_to_bin</span>(<span class="c-num">10</span>)
+    <span class="c-kw">say</span> <span class="c-fn">int_to_oct</span>(<span class="c-num">64</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">char_to_digit</span>(<span class="c-str">&quot;7&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">word_to_int_safe</span>(<span class="c-str">&quot;not a number&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">word_to_int_safe</span>(<span class="c-str">&quot;123&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">bool_to_word</span>(<span class="c-lit">true</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>ff
+1010
+100
+7
+0
+123
+true</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>Signature</th></tr></thead><tbody><tr><td><code>int_to_hex(n)</code> / <code>int_to_bin(n)</code> / <code>int_to_oct(n)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>char_to_digit(c)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>word_to_int_safe(s)</code></td><td><code>word -&gt; int</code> — <code>0</code> on failure, never panics</td></tr><tr><td><code>bool_to_word(b)</code></td><td><code>bool -&gt; word</code></td></tr></tbody></table></div>
+<h2 id="stdalgorithm"><code>std::algorithm</code><a class="anchor" href="#stdalgorithm" aria-label="Link to this section">#</a></h2>
+<p>See <a href="arrays.html#stdalgorithmfk-helpers">Arrays</a>, including the two functions that are broken.</p>
+<h2 id="stdjson"><code>std::json</code><a class="anchor" href="#stdjson" aria-label="Link to this section">#</a></h2>
+<p>A complete JSON parser in pure FREAK. Values are <code>int</code> handles.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/stdlib_json.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- std/json.fk is a pure-FREAK parser. Values are `int` handles.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-fn">json_init</span>()
+
+    <span class="c-kw">pilot</span> doc<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">json_parse</span>(<span class="c-str">&quot;{\&quot;unit\&quot;:\&quot;Valkyries\&quot;,\&quot;members\&quot;:4,\&quot;ready\&quot;:true}&quot;</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">json_get_type</span>(doc)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">json_obj_len</span>(doc))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">json_obj_has</span>(doc, <span class="c-str">&quot;unit&quot;</span>))
+
+    <span class="c-kw">say</span> <span class="c-fn">json_get_str</span>(<span class="c-fn">json_obj_get</span>(doc, <span class="c-str">&quot;unit&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">json_get_int</span>(<span class="c-fn">json_obj_get</span>(doc, <span class="c-str">&quot;members&quot;</span>)))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">json_get_bool</span>(<span class="c-fn">json_obj_get</span>(doc, <span class="c-str">&quot;ready&quot;</span>)))
+
+    <span class="c-kw">pilot</span> list<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">json_parse</span>(<span class="c-str">&quot;[10, 20, 30]&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">json_arr_len</span>(list))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">json_get_int</span>(<span class="c-fn">json_arr_get</span>(list, <span class="c-num">1</span>)))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>o
+3
+true
+Valkyries
+4
+true
+3
+20</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>Signature</th></tr></thead><tbody><tr><td><code>json_init()</code></td><td><code>-&gt; void</code> — call once before parsing</td></tr><tr><td><code>json_parse(source)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>json_stringify(handle)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>json_get_type(h)</code></td><td><code>int -&gt; word</code> — <code>o</code>, <code>a</code>, <code>s</code>, <code>n</code>, <code>b</code>, <code>z</code></td></tr><tr><td><code>json_get_str(h)</code> / <code>json_get_int(h)</code> / <code>json_get_bool(h)</code></td><td><code>int -&gt; word</code> / <code>int</code> / <code>bool</code></td></tr><tr><td><code>json_is_null(h)</code></td><td><code>int -&gt; bool</code></td></tr><tr><td><code>json_obj_len(h)</code> / <code>json_obj_has(h, key)</code> / <code>json_obj_get(h, key)</code> / <code>json_obj_key_at(h, i)</code></td><td>object access</td></tr><tr><td><code>json_arr_len(h)</code> / <code>json_arr_get(h, i)</code></td><td>array access</td></tr></tbody></table></div>
+<h2 id="stdversion"><code>std::version</code><a class="anchor" href="#stdversion" aria-label="Link to this section">#</a></h2>
+<p>Semantic-version parsing and constraint matching — the machinery behind Hangar&#x27;s dependency resolution.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/stdlib_version.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- std/version.fk implements semver parsing and constraint matching.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">pilot</span> parsed<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-fn">ver_parse</span>(<span class="c-str">&quot;2.14.1-rc.1+build7&quot;</span>)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">ver_major</span>(parsed))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">ver_minor</span>(parsed))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">ver_patch</span>(parsed))
+    <span class="c-kw">say</span> <span class="c-fn">ver_pre</span>(parsed)
+    <span class="c-kw">say</span> <span class="c-fn">ver_build</span>(parsed)
+    <span class="c-kw">say</span> <span class="c-fn">ver_to_string</span>(parsed)
+
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">ver_lt</span>(<span class="c-str">&quot;1.2.3&quot;</span>, <span class="c-str">&quot;1.10.0&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">ver_gt</span>(<span class="c-str">&quot;2.0.0&quot;</span>, <span class="c-str">&quot;1.9.9&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">ver_eq</span>(<span class="c-str">&quot;1.0.0&quot;</span>, <span class="c-str">&quot;1.0.0&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">ver_satisfies</span>(<span class="c-str">&quot;1.4.2&quot;</span>, <span class="c-str">&quot;^1.4&quot;</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(<span class="c-fn">ver_satisfies</span>(<span class="c-str">&quot;2.0.0&quot;</span>, <span class="c-str">&quot;^1.4&quot;</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>2
+14
+1
+rc.1
+build7
+2.14.1-rc.1+build7
+false
+true
+true
+true
+false</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>Signature</th></tr></thead><tbody><tr><td><code>ver_parse(version)</code></td><td><code>word -&gt; word</code> — an encoded parse result</td></tr><tr><td><code>ver_major</code> / <code>ver_minor</code> / <code>ver_patch</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>ver_pre</code> / <code>ver_build</code> / <code>ver_to_string</code></td><td><code>word -&gt; word</code></td></tr><tr><td><code>ver_compare(a, b)</code></td><td><code>word, word -&gt; int</code></td></tr><tr><td><code>ver_eq</code> / <code>ver_lt</code> / <code>ver_gt</code> / <code>ver_lte</code> / <code>ver_gte</code></td><td><code>word, word -&gt; bool</code></td></tr><tr><td><code>ver_bump_major</code> / <code>ver_bump_minor</code> / <code>ver_bump_patch</code></td><td><code>word -&gt; word</code></td></tr><tr><td><code>ver_satisfies(version, constraint)</code></td><td><code>word, word -&gt; bool</code></td></tr><tr><td><code>version_matches_constraint(version, constraint)</code></td><td><code>word, word -&gt; bool</code></td></tr></tbody></table></div>
+<h2 id="modules-that-do-not-exist">Modules that do not exist<a class="anchor" href="#modules-that-do-not-exist" aria-label="Link to this section">#</a></h2>
+<p>The bible&#x27;s Section 7 lists many more. None of these are in V3:</p>
+<p><code>std::iter</code> (<code>.map</code>, <code>.filter</code>, <code>.fold</code>, …), <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code> and <code>Lineup&lt;T&gt;</code> from <code>std::collections</code>, <code>std::io</code> beyond <code>say</code> / <code>ask</code>, <code>std::random</code>, <code>std::thread</code>, <code>std::anime</code>, <code>std::narrative</code>, <code>std::test</code>, <code>std::mem</code> (<code>Shared</code>, <code>Weak</code>, <code>size_of</code>, <code>alloc</code>), <code>std::ffi</code>, <code>std::os</code>, <code>std::panic</code>, <code>std::regex</code>, <code>std::crypto</code>.</p>
+<p>Partially covered, in a V3-specific shape rather than the bible&#x27;s:</p>
+<div class="tablewrap"><table><thead><tr><th>Bible module</th><th>V3 equivalent</th></tr></thead><tbody><tr><td><code>std::collections</code> <code>List&lt;T&gt;</code></td><td>Typed <code>List&lt;T&gt;</code> with indexing and <code>List::filled</code> — no <code>push</code>/<code>pop</code>/<code>sort</code></td></tr><tr><td><code>std::bytes</code> <code>ByteBuffer</code></td><td>The builtin <code>ByteBuffer</code> type</td></tr><tr><td><code>std::word</code> <code>WordBuilder</code></td><td><code>word_builder::*</code> over an <code>int</code> handle</td></tr><tr><td><code>std::net</code></td><td><code>tcp::socket_*</code>, including listen and accept</td></tr></tbody></table></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#how-modules-are-loaded">How modules are loaded</a></li><li><a href="#prelude-builtins">Prelude builtins</a></li><li><a href="#conversion-builtins">Conversion builtins</a></li><li><a href="#word-methods">`word` methods</a></li><li><a href="#lists-and-arrays">Lists and arrays</a></li><li><a href="#wordbuilder">WordBuilder</a></li><li><a href="#bytebuffer">ByteBuffer</a></li><li><a href="#math-builtins">`math::` builtins</a></li><li><a href="#fs-builtins">`fs::` builtins</a></li><li><a href="#process-builtins">`process::` builtins</a></li><li><a href="#time-builtins">`time::` builtins</a></li><li><a href="#tcp-builtins">`tcp::` builtins</a></li><li><a href="#ui-builtins">`ui::` builtins</a></li><li><a href="#stdmath-integer-maths">`std::math` — integer maths</a></li><li><a href="#stdstring">`std::string`</a></li><li><a href="#stdconvert">`std::convert`</a></li><li><a href="#stdalgorithm">`std::algorithm`</a></li><li><a href="#stdjson">`std::json`</a></li><li><a href="#stdversion">`std::version`</a></li><li><a href="#modules-that-do-not-exist">Modules that do not exist</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

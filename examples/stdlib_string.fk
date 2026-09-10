@@ -1,0 +1,13 @@
+-- std/string.fk ships as plain FREAK source and is always linked in by
+-- `freak build` / `freak run`. Its tasks are global; there is no import.
+task main() -> void {
+    say string_repeat("ha", 3)
+    say string_reverse("FREAK")
+    say word_from_int(string_count("banana", "an"))
+    say string_pad_left("7", 4, "0")
+    say string_pad_right("7", 4, ".")
+    say word_from_int(string_index_of("alternative", "native"))
+    say word_from_bool(is_digit("5"))
+    say word_from_bool(is_alpha("x"))
+    say word_from_bool(is_whitespace(" "))
+}

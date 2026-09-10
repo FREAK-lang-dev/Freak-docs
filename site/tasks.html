@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tasks &middot; FREAK V3</title>
+<meta name="description" content="Functions are called tasks. One declaration form, one return keyword, no shorthands.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html" class="active">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="tasks">Tasks<a class="anchor" href="#tasks" aria-label="Link to this section">#</a></h1>
+<p>&gt; Functions are called tasks. One declaration form, one return keyword, no shorthands.</p>
+<h2 id="declaring-a-task">Declaring a task<a class="anchor" href="#declaring-a-task" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">name</span>(param<span class="c-op">:</span> type, param<span class="c-op">:</span> type) <span class="c-op">-&gt;</span> returntype {
+    body
+}</code></pre></div>
+<p><code>-&gt; returntype</code> may be omitted, in which case the return type is <code>void</code>. Parameter and return types follow the same grammar as everywhere else — one identifier, or <code>List&lt;T&gt;</code>. See <a href="language-basics.html#the-type-annotation-grammar">the type-annotation grammar</a>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/tasks.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `task` declares a function. `give back` returns a value.</span>
+<span class="c-com">-- A block-bodied task that returns a non-void type must use `give back`</span>
+<span class="c-com">-- on every path; there is no implicit tail return.</span>
+<span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}
+
+<span class="c-kw">task</span> <span class="c-fn">shout</span>(message<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> message.<span class="c-fn">to_upper</span>()
+}
+
+<span class="c-kw">task</span> <span class="c-fn">classify</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;negative&quot;</span> }
+    <span class="c-kw">if</span> n <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;zero&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;positive&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">add</span>(<span class="c-num">20</span>, <span class="c-num">22</span>))
+    <span class="c-fn">shout</span>(<span class="c-str">&quot;stand by&quot;</span>)
+    <span class="c-kw">say</span> <span class="c-fn">classify</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">3</span>)
+    <span class="c-kw">say</span> <span class="c-fn">classify</span>(<span class="c-num">0</span>)
+    <span class="c-kw">say</span> <span class="c-fn">classify</span>(<span class="c-num">9</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>42
+STAND BY
+negative
+zero
+positive</code></pre>
+  </div>
+</figure>
+<h2 id="give-back"><code>give back</code><a class="anchor" href="#give-back" aria-label="Link to this section">#</a></h2>
+<p><code>give back expr</code> returns a value. <code>give back</code> on its own returns from a <code>void</code> task.</p>
+<p>There is <strong>no implicit tail return</strong>. A bare expression at the end of a block is evaluated and discarded. Every path that must produce a value needs its own <code>give back</code>:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">area</span>(r<span class="c-op">:</span> <span class="c-type">num</span>) <span class="c-op">-&gt;</span> <span class="c-type">num</span> {
+    math<span class="c-op">::</span><span class="c-fn">pow</span>(r, <span class="c-num">2.0</span>) <span class="c-op">*</span> <span class="c-num">3.14159</span>    <span class="c-com">-- computed, then thrown away</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">area_ok</span>(r<span class="c-op">:</span> <span class="c-type">num</span>) <span class="c-op">-&gt;</span> <span class="c-type">num</span> {
+    <span class="c-kw">give back</span> math<span class="c-op">::</span><span class="c-fn">pow</span>(r, <span class="c-num">2.0</span>) <span class="c-op">*</span> <span class="c-num">3.14159</span>
+}</code></pre></div>
+<p>The checker reports a missing return on a value-returning task, pointing at the <code>task</code> keyword of the offending declaration.</p>
+<div class="callout v4"><div class="callout-title">Not in V3</div><p>The arrow shorthand <code>task square(x: num) =&gt; x * x</code> is in the bible but does <strong>not</strong> parse in V3 — you get <code>expected &#x27;{&#x27;, found &#x27;=&gt;&#x27;</code>. Neither does the <code>done</code> block terminator: <code>task f() -&gt; int</code> … <code>done</code> fails with <code>expected &#x27;{&#x27;, found &#x27;give back&#x27;</code>. Braces are the only block delimiter.</p></div>
+<h2 id="calling">Calling<a class="anchor" href="#calling" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">add</span>(<span class="c-num">1</span>, <span class="c-num">2</span>))
+}</code></pre></div>
+<p>Arguments are positional. Named call arguments — <code>connect(host: &quot;localhost&quot;, port: 8080)</code> — are V4 and do not parse.</p>
+<p>Argument count and argument types are both checked against the declaration.</p>
+<h2 id="order-does-not-matter">Order does not matter<a class="anchor" href="#order-does-not-matter" aria-label="Link to this section">#</a></h2>
+<p>Every task in the file is indexed before any body is checked, so a task may call one declared later, and may call itself.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/recursion.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Tasks may call themselves, and may call tasks declared later in the</span>
+<span class="c-com">-- file: every task is indexed before any body is checked.</span>
+<span class="c-kw">task</span> <span class="c-fn">factorial</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&lt;=</span> <span class="c-num">1</span> { <span class="c-kw">give back</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-fn">factorial</span>(n <span class="c-op">-</span> <span class="c-num">1</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">fib</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">2</span> { <span class="c-kw">give back</span> n }
+    <span class="c-kw">give back</span> <span class="c-fn">fib</span>(n <span class="c-op">-</span> <span class="c-num">1</span>) <span class="c-op">+</span> <span class="c-fn">fib</span>(n <span class="c-op">-</span> <span class="c-num">2</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">factorial</span>(<span class="c-num">6</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">fib</span>(<span class="c-num">12</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>720
+144</code></pre>
+  </div>
+</figure>
+<h2 id="main"><code>main</code><a class="anchor" href="#main" aria-label="Link to this section">#</a></h2>
+<p>If a task called <code>main</code> exists it becomes the program entry point. If it does not, top-level statements are the program. You can have both — top-level statements run first, then <code>main</code>.</p>
+<h2 id="parameters-are-by-value">Parameters are by value<a class="anchor" href="#parameters-are-by-value" aria-label="Link to this section">#</a></h2>
+<p>There is no <code>lend</code> / <code>lend mut</code> in V3: the borrow syntax from the bible does not parse in a parameter list. Every parameter is passed by value.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- does not parse in V3:</span>
+<span class="c-com">--   task show(lend p: Point) -&gt; void { say word_from_int(p.x) }</span>
+
+<span class="c-com">-- write this instead:</span>
+<span class="c-kw">task</span> <span class="c-fn">show</span>(p<span class="c-op">:</span> <span class="c-type">Point</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> { <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(p.x) }</code></pre></div>
+<p>For shapes this matters: a shape parameter is a handle into runtime storage, so mutating a field inside a task is visible to the caller. Treat shape arguments as shared, and return a new value when you want isolation.</p>
+<h2 id="instance-and-associated-methods">Instance and associated methods<a class="anchor" href="#instance-and-associated-methods" aria-label="Link to this section">#</a></h2>
+<p>A task declared inside <code>impl Shape { ... }</code> whose first parameter is <code>self</code> is an instance method; without <code>self</code> it is an associated method. Both are covered in <a href="shapes.html#methods">Shapes &amp; impl</a>.</p>
+<h2 id="the-pipe-operator">The pipe operator<a class="anchor" href="#the-pipe-operator" aria-label="Link to this section">#</a></h2>
+<p><code>|&gt;</code> rewrites a call so the piped value becomes its first argument.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/pipe.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `|&gt;` feeds the left value in as the FIRST argument of the call on the</span>
+<span class="c-com">-- right, so `x |&gt; f(y)` is exactly `f(x, y)`.</span>
+<span class="c-kw">task</span> <span class="c-fn">double</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-num">2</span> }
+<span class="c-kw">task</span> <span class="c-fn">offset</span>(n<span class="c-op">:</span> <span class="c-type">int</span>, by<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">+</span> by }
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">3</span>))
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>() <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">1</span>))
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>10
+8
+11</code></pre>
+  </div>
+</figure>
+<p><code>x |&gt; f()</code> is exactly <code>f(x)</code>, and <code>x |&gt; f(y)</code> is exactly <code>f(x, y)</code>. The right side must be a plain task name — you cannot pipe into a method or a shape constructor.</p>
+<h2 id="extern-tasks"><code>extern</code> tasks<a class="anchor" href="#extern-tasks" aria-label="Link to this section">#</a></h2>
+<p>A task implemented in C is declared with <code>extern</code>, on one line, with no body. See <a href="ffi.html">extern &amp; FFI</a>.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">abs</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span></code></pre></div>
+<h2 id="what-tasks-cannot-do">What tasks cannot do<a class="anchor" href="#what-tasks-cannot-do" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><table><thead><tr><th>Feature</th><th>Status</th></tr></thead><tbody><tr><td>Generic parameters <code>task f&lt;T&gt;(...)</code></td><td>V4 — <code>expected &#x27;(&#x27;, found &#x27;&lt;&#x27;</code></td></tr><tr><td>Named call arguments</td><td>V4</td></tr><tr><td>Default parameter values</td><td>V4</td></tr><tr><td>Variadic parameters</td><td>V4</td></tr><tr><td>Closures / lambdas <code>|x| =&gt; x * 2</code></td><td>V4 — <code>|</code> cannot start an expression</td></tr><tr><td>Arrow bodies <code>=&gt; expr</code></td><td>V4</td></tr><tr><td><code>done</code> as a block terminator</td><td>V4</td></tr><tr><td>Returning <code>maybe&lt;T&gt;</code> or <code>result&lt;T,E&gt;</code></td><td>V4 — no such types</td></tr><tr><td><code>?</code> error propagation, <code>or else</code></td><td>V4</td></tr><tr><td>Visibility modifiers <code>launch</code> / <code>launch(package)</code></td><td>V4</td></tr></tbody></table></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      built from source with a verified self-host fixed point.
+      43/43 examples compile; regenerate with
+      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-a-task">Declaring a task</a></li><li><a href="#give-back">`give back`</a></li><li><a href="#calling">Calling</a></li><li><a href="#order-does-not-matter">Order does not matter</a></li><li><a href="#main">`main`</a></li><li><a href="#parameters-are-by-value">Parameters are by value</a></li><li><a href="#instance-and-associated-methods">Instance and associated methods</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#extern-tasks">`extern` tasks</a></li><li><a href="#what-tasks-cannot-do">What tasks cannot do</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

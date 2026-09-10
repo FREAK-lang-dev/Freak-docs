@@ -1,0 +1,10 @@
+-- `|>` feeds the left value in as the FIRST argument of the call on the
+-- right, so `x |> f(y)` is exactly `f(x, y)`.
+task double(n: int) -> int { give back n * 2 }
+task offset(n: int, by: int) -> int { give back n + by }
+
+task main() -> void {
+    say word_from_int(5 |> double())
+    say word_from_int(5 |> offset(3))
+    say word_from_int(5 |> double() |> offset(1))
+}

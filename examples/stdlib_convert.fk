@@ -1,0 +1,10 @@
+-- std/convert.fk: base conversion and safe parsing.
+task main() -> void {
+    say int_to_hex(255)
+    say int_to_bin(10)
+    say int_to_oct(64)
+    say word_from_int(char_to_digit("7"))
+    say word_from_int(word_to_int_safe("not a number"))
+    say word_from_int(word_to_int_safe("123"))
+    say bool_to_word(true)
+}
