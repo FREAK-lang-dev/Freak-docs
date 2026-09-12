@@ -49,6 +49,8 @@ All of these are compiler builtins — no import, and they work under
 | `.to_int()` | `-> int` | |
 | `.to_num()` | `-> num` | |
 | `.checksum()` | `-> int` | Runtime hash |
+| `.parse_int()` | `-> int` | Checked; sets the parse status on failure |
+| `.parse_num()` | `-> num` | Checked; sets the parse status on failure |
 | `.repeated(n)` | `int -> word` | The word repeated `n` times |
 
 > [!note]
@@ -58,13 +60,43 @@ All of these are compiler builtins — no import, and they work under
 
 ### Snapshot helpers
 
-Six further `word` methods exist for the compiler's own line-and-field
+Seven further `word` methods exist for the compiler's own line-and-field
 serialisation format. They are part of the builtin table and will type-check in
 your code, but they are internal plumbing rather than a general-purpose API:
 
 `.snapshot_escape()`, `.snapshot_unescape()`, `.snapshot_line_count()`,
 `.snapshot_line(i)`, `.snapshot_lines()`, `.snapshot_field_count()`,
 `.snapshot_field_raw(i)`.
+
+## Checked parsing
+
+`.to_int()` and `.to_num()` convert silently — a word that is not a number
+yields `0`, indistinguishable from parsing `"0"`. As of v0.14.2 there is a
+checked pair that reports failure out of band:
+
+```fk
+say word_from_int("42".parse_int())      -- 42
+say word_from_int(parse_status())        -- 0, clean
+
+say word_from_int("nope".parse_int())    -- 0
+say word_from_int(parse_status())        -- 1, failed
+parse_clear_status()
+```
+
+| Call | Signature | Meaning |
+|---|---|---|
+| `w.parse_int()` | `-> int` | Parse, `0` on failure |
+| `w.parse_num()` | `-> num` | Parse, `0.0` on failure |
+| `parse_status()` | `-> int` | `0` clean, non-zero if a parse failed |
+| `parse_clear_status()` | `-> void` | Reset it |
+
+The status is global and **sticky** — it stays set until you clear it — so
+check it immediately after the parse you care about, exactly as with
+`ByteBuffer.status()`. This is V3's substitute for `maybe<int>`, which does not
+exist.
+
+`std/convert.fk` also offers `word_to_int_safe(s)`, which returns `0` on
+failure without touching any status.
 
 ## Concatenation and conversion
 
@@ -73,8 +105,8 @@ say "Muv" + "-" + "Luv"      -- operator
 say word_concat("XM", "3")   -- builtin, identical
 ```
 
-`+` on two words concatenates. `+` on a word and a number is a type error —
-convert first:
+`+` on two words concatenates, and `+=` appends in place as of v0.14.2.
+`+` on a word and a number is a type error — convert first:
 
 ```fk
 pilot n: int = 42
@@ -138,6 +170,13 @@ The rules are exact:
 Dotted shape interpolation, including `{self.field}` inside a method, is
 verified working on the LLVM backend. It is **not** a claimed executable path
 on the C backend.
+
+## Printing without a newline
+
+`say` always appends a newline. To put several pieces on one line, build the
+word first and say it once — or use carriage-return and cursor-movement
+escapes to redraw. All three techniques are in
+[Printing on the same line](console.html#printing-on-the-same-line).
 
 ## Building words incrementally
 

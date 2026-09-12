@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -129,7 +129,7 @@ false</code></pre>
   </div>
 </figure>
 <h2 id="the-type-table">The type table<a class="anchor" href="#the-type-table" aria-label="Link to this section">#</a></h2>
-<div class="tablewrap"><table><thead><tr><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td><code>int</code></td><td>64-bit signed integer. The default for whole-number literals</td></tr><tr><td><code>num</code></td><td>64-bit float. Any literal containing <code>.</code></td></tr><tr><td><code>word</code></td><td>UTF-8 string</td></tr><tr><td><code>bool</code></td><td><code>true</code> / <code>false</code>, and the aliases <code>yes</code> / <code>no</code> / <code>hai</code> / <code>iie</code></td></tr><tr><td><code>void</code></td><td>Absence of a value. Only a return type</td></tr><tr><td><code>List&lt;T&gt;</code></td><td>Typed sequence. <code>T</code> is a scalar or a shape name; no nesting</td></tr><tr><td><code>ByteBuffer</code></td><td>Builtin binary read/write cursor, with real methods</td></tr><tr><td><em>a shape name</em></td><td>Any type you declared with <code>shape</code></td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td><code>int</code></td><td>64-bit signed integer. The default for whole-number literals</td></tr><tr><td><code>num</code></td><td>64-bit float. Any literal containing <code>.</code></td></tr><tr><td><code>word</code></td><td>UTF-8 string</td></tr><tr><td><code>bool</code></td><td><code>true</code> / <code>false</code>, and the aliases <code>yes</code> / <code>no</code> / <code>hai</code> / <code>iie</code></td></tr><tr><td><code>void</code></td><td>Absence of a value. Only a return type</td></tr><tr><td><code>List&lt;T&gt;</code></td><td>Typed growable sequence. <code>T</code> is a scalar or a shape name; no nesting</td></tr><tr><td><code>ByteBuffer</code></td><td>Builtin binary read/write cursor, with real methods</td></tr><tr><td><em>a shape name</em></td><td>Any type you declared with <code>shape</code></td></tr></tbody></table></div>
 <p>There is no <code>uint</code>, <code>tiny</code>, <code>char</code>, <code>big</code>, <code>float</code>, <code>float32</code> or <code>never</code>; and no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code>, tuple, fixed array or raw pointer.</p>
 <h3 id="the-type-annotation-grammar">The type-annotation grammar<a class="anchor" href="#the-type-annotation-grammar" aria-label="Link to this section">#</a></h3>
 <p>The parser takes one identifier, plus a single special case for <code>List</code>:</p>
@@ -254,9 +254,9 @@ Valkyries x5</code></pre>
 <span class="c-kw">pilot</span> x <span class="c-op">=</span> <span class="c-num">1</span>    <span class="c-com">-- a trailing comment</span></code></pre></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>

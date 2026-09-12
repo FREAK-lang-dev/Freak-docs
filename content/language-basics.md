@@ -40,7 +40,7 @@ The annotation can always be omitted. V3 infers from the initialiser.
 | `word` | UTF-8 string |
 | `bool` | `true` / `false`, and the aliases `yes` / `no` / `hai` / `iie` |
 | `void` | Absence of a value. Only a return type |
-| `List<T>` | Typed sequence. `T` is a scalar or a shape name; no nesting |
+| `List<T>` | Typed growable sequence. `T` is a scalar or a shape name; no nesting |
 | `ByteBuffer` | Builtin binary read/write cursor, with real methods |
 | *a shape name* | Any type you declared with `shape` |
 

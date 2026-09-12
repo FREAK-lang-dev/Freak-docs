@@ -70,6 +70,8 @@ const MUST_MATCH = [
   "256-colour", "cursor", "erase line", "SGR", "reverse video", "strikethrough",
   "ByteBuffer", "word_builder", "List", "List::filled", "socket",
   "hangar", "hangar_modules", "package", "dependencies", "concatenate",
+  "same line", "newline", "carriage return", "progress", "push", "pop",
+  "parse_status", "checked parsing",
   "array_sort_word", "segfault", "case-insensitive", "reserved words",
   "training arc", "give back", "interpolation", "substring", "freak check",
   "pipe", "hangar", "doctrine", "closure", "variant", "eventually",

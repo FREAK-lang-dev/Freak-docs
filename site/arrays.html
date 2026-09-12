@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -57,7 +57,7 @@
 <h1 id="lists-arrays">Lists &amp; arrays<a class="anchor" href="#lists-arrays" aria-label="Link to this section">#</a></h1>
 <p>&gt; V3 has two collection surfaces: a typed <code>List&lt;T&gt;</code>, and an older untyped handle. Know which one you are holding.</p>
 <p>This is the one part of V3 with genuine overlap, because <code>List&lt;T&gt;</code> was added on top of a pre-existing untyped array. Both still work, and they are not interchangeable everywhere.</p>
-<div class="tablewrap"><table><thead><tr><th></th><th><code>List&lt;T&gt;</code></th><th>Legacy handle</th></tr></thead><tbody><tr><td>Type</td><td><code>List&lt;int&gt;</code>, <code>List&lt;word&gt;</code>, <code>List&lt;Shape&gt;</code>, …</td><td><code>int</code></td></tr><tr><td>Created by</td><td><code>[a, b, c]</code>, <code>List::filled(v, n)</code></td><td><code>array_new()</code></td></tr><tr><td>Element type</td><td>Checked</td><td>Always <code>word</code></td></tr><tr><td>Length</td><td><code>list.length()</code></td><td><code>array_len(h)</code></td></tr><tr><td>Read</td><td><code>list[i]</code></td><td><code>array_get(h, i)</code></td></tr><tr><td>Write</td><td><code>list[i] = v</code> (needs <code>pilot mut</code>)</td><td><code>array_set(h, i, v)</code></td></tr><tr><td>Append</td><td>—</td><td><code>array_push(h, v)</code></td></tr><tr><td>Accepted by <code>array_*</code> builtins</td><td>yes, when <code>List&lt;word&gt;</code></td><td>yes</td></tr><tr><td>Accepted by <code>std/algorithm.fk</code> tasks</td><td><strong>no</strong></td><td>yes</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th></th><th><code>List&lt;T&gt;</code></th><th>Legacy handle</th></tr></thead><tbody><tr><td>Type</td><td><code>List&lt;int&gt;</code>, <code>List&lt;word&gt;</code>, <code>List&lt;Shape&gt;</code>, …</td><td><code>int</code></td></tr><tr><td>Created by</td><td><code>[a, b, c]</code>, <code>List::new()</code>, <code>List::with_capacity(n)</code>, <code>List::filled(v, n)</code></td><td><code>array_new()</code></td></tr><tr><td>Element type</td><td>Checked</td><td>Always <code>word</code></td></tr><tr><td>Length</td><td><code>list.length()</code></td><td><code>array_len(h)</code></td></tr><tr><td>Read</td><td><code>list[i]</code></td><td><code>array_get(h, i)</code></td></tr><tr><td>Write</td><td><code>list[i] = v</code> (needs <code>pilot mut</code>)</td><td><code>array_set(h, i, v)</code></td></tr><tr><td>Append</td><td><code>list.push(v)</code></td><td><code>array_push(h, v)</code></td></tr><tr><td>Remove</td><td><code>list.pop()</code></td><td>—</td></tr><tr><td>Accepted by <code>array_*</code> builtins</td><td>yes, when <code>List&lt;word&gt;</code></td><td>yes</td></tr><tr><td>Accepted by <code>std/algorithm.fk</code> tasks</td><td><strong>no</strong></td><td>yes</td></tr></tbody></table></div>
 <h2 id="the-list-type">The List type<a class="anchor" href="#the-list-type" aria-label="Link to this section">#</a></h2>
 <p>The element type must be a scalar — <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code> — or the name of a shape. There is no nesting: <code>List&lt;List&lt;int&gt;&gt;</code> does not parse.</p>
 <figure class="example">
@@ -113,6 +113,20 @@
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">count_all</span>(names))
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">first_three</span>()[<span class="c-num">2</span>])
 
+    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> queue<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
+    queue.<span class="c-fn">push</span>(<span class="c-num">10</span>)
+    queue.<span class="c-fn">push</span>(<span class="c-num">20</span>)
+    queue.<span class="c-fn">push</span>(<span class="c-num">30</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">pop</span>())      <span class="c-com">-- 30, removed and returned</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">capacity</span>()) <span class="c-com">-- starts at 8, doubles as needed</span>
+    queue.<span class="c-fn">reserve</span>(<span class="c-num">64</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">capacity</span>())
+    queue.<span class="c-fn">clear</span>()
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
+
     <span class="c-com">-- Iterate with an index; there is no `for each`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
     <span class="c-kw">repeat</span> names.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
@@ -131,6 +145,12 @@ BETA-1
 4
 3
 3
+3
+30
+2
+8
+64
+0
 Takeru
 Meiya
 Sumika</code></pre>
@@ -138,11 +158,21 @@ Sumika</code></pre>
 </figure>
 <p>Rules worth pinning down:</p>
 <ul><li>**<code>[a, b, c]</code> infers <code>List&lt;T&gt;</code>** from its elements, all of which must share one type. Numbers stay numbers; no conversion to <code>word</code> is needed.</li><li>**<code>.length()</code> is a method**, not a field. <code>list.length</code> reports <em>&quot;non-shape value has no fields&quot;</em>.</li><li>**Indexed assignment needs <code>pilot mut</code>.** Otherwise you get <em>&quot;indexed assignment requires a mutable list binding; declare it with pilot mut&quot;</em>.</li><li>**<code>List::filled(value, count)</code>** builds a pre-populated list and takes its element type from <code>value</code>.</li><li>Indexing a shape element chains: <code>contacts[0].tag</code>.</li></ul>
-<p>There is still no <code>push</code>, <code>pop</code>, <code>insert</code>, <code>remove</code>, <code>sort</code> or iterator on <code>List&lt;T&gt;</code>. It is a fixed-shape, indexable sequence. To build one incrementally, use the legacy handle, or size it with <code>List::filled</code> and assign by index.</p>
+<h3 id="growing-a-list">Growing a list<a class="anchor" href="#growing-a-list" aria-label="Link to this section">#</a></h3>
+<p>As of <strong>v0.14.2</strong> lists grow. This is the biggest change to the type since it was introduced, and it removes most reasons to reach for the legacy handle.</p>
+<div class="tablewrap"><table><thead><tr><th>Method</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>.push(value)</code></td><td><code>T -&gt; void</code></td><td>Append</td></tr><tr><td><code>.pop()</code></td><td><code>-&gt; T</code></td><td>Remove and return the last element</td></tr><tr><td><code>.length()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.capacity()</code></td><td><code>-&gt; int</code></td><td>Allocated slots; starts at 8 and doubles</td></tr><tr><td><code>.reserve(n)</code></td><td><code>int -&gt; void</code></td><td>Grow the capacity up front</td></tr><tr><td><code>.clear()</code></td><td><code>-&gt; void</code></td><td>Length to zero, capacity kept</td></tr></tbody></table></div>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> xs<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
+xs.<span class="c-fn">push</span>(<span class="c-num">10</span>)
+xs.<span class="c-fn">push</span>(<span class="c-num">20</span>)
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(xs.<span class="c-fn">pop</span>())     <span class="c-com">-- 20</span>
+<span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(xs.<span class="c-fn">length</span>())  <span class="c-com">-- 1</span></code></pre></div>
+<p>Constructors: <code>List::new()</code>, <code>List::with_capacity(n)</code>, <code>List::filled(v, n)</code>, or a literal.</p>
+<p>Mutating methods need <code>pilot mut</code>, same as indexed assignment.</p>
+<p>Still missing: <code>insert</code>, <code>remove</code>, <code>sort</code>, and any iterator. Sorting a list means copying into a legacy handle, or writing the loop.</p>
 <h3 id="where-a-list-may-appear">Where a List may appear<a class="anchor" href="#where-a-list-may-appear" aria-label="Link to this section">#</a></h3>
 <div class="tablewrap"><table><thead><tr><th>Position</th><th>Allowed</th></tr></thead><tbody><tr><td><code>pilot</code> / <code>fixed pilot</code> binding</td><td>yes</td></tr><tr><td>Task parameter</td><td>yes</td></tr><tr><td>Task return type</td><td>yes</td></tr><tr><td><strong>Shape field</strong></td><td><strong>no</strong></td></tr></tbody></table></div>
 <div class="callout warn"><div class="callout-title">Careful</div><p>A shape field cannot hold a list: ``<code>text type error: V3 owned shape fields do not yet support List values </code>`<code> Store a legacy </code>int` array handle in the field instead, or keep the list in a separate binding beside the shape.</p></div>
-<div class="callout note"><div class="callout-title">Note</div><p><code>List&lt;T&gt;</code> is newer than most of V3 and the surface is thin. Treat it as the right choice for <em>holding</em> typed data, and the legacy handle as the right choice for <em>building</em> and for reaching the <code>std/algorithm.fk</code> helpers.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p>With <code>push</code>/<code>pop</code> landed, <code>List&lt;T&gt;</code> is now the default choice. The legacy handle is worth keeping for two things only: reaching the <code>std/algorithm.fk</code> helpers, which are declared <code>handle: int</code>, and storing a collection in a shape field, which <code>List&lt;T&gt;</code> still cannot do.</p></div>
 <h2 id="the-legacy-handle">The legacy handle<a class="anchor" href="#the-legacy-handle" aria-label="Link to this section">#</a></h2>
 <p><code>array_new()</code> returns an <code>int</code> handle to a runtime array whose elements are always <code>word</code>. Store other types by converting them in and out.</p>
 <figure class="example">
@@ -290,9 +320,9 @@ true</code></pre>
 <p>Still none. <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code> and <code>Lineup&lt;T&gt;</code> do not exist, and the <code>{ &quot;k&quot;: v }</code> map literal does not parse. For small lookups, use two parallel collections and <code>array_find</code>.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>

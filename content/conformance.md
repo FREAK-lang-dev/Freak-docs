@@ -42,7 +42,7 @@ Bible status: ⚠️ Partial. Real V3 status: a small core works.
 | 1.3 `[T; N]`, tuples, `*T` / `*mut T` | V4 | **Rejected** | |
 | 1.4 `maybe<T>` / `some` / `nobody` | ✅ | **Rejected** | `expected '{', found '<'` |
 | 1.4 `result<T,E>` / `ok` / `err` | ✅ | **Rejected** | |
-| 1.4 `List<T>` | ✅ | **Compiles** — typed, indexable, `List::filled`; no `push`/`sort`/iterators | |
+| 1.4 `List<T>` | ✅ | **Compiles** — typed, indexable, growable (`push`/`pop`/`reserve`/`clear`); no `sort`/`insert`/iterators | |
 | 1.4 `Map<K,V>` `Set<T>` `Lineup<T>` | ✅ | **Absent** | No map literal either |
 | 1.5 `shape` declaration | ✅ | **Compiles** | |
 | 1.5 Shape construction `S { f: v }` | ✅ | **Compiles** | LLVM backend |
@@ -63,7 +63,7 @@ Bible status: ⚠️ Partial. Real V3 status: a small core works.
 | 1.8 Closures `\|x\| => expr` | ⚠️ | **Rejected** | `unexpected '\|'` |
 | 1.8 Capture modes `copy` / `move` / `mut` | V4 | **Absent** | |
 | 1.9 Pipe `\|>` | ✅ | **Compiles** — bare task names only | |
-| 1.10 `?` propagation | ✅ | **Rejected** | `unexpected '?'` |
+| 1.10 `?` propagation | ✅ | **Rejected** | `unexpected '?'`. `parse_status()` is the closest substitute |
 | 1.10 `check` over maybe / result | ✅ | **Rejected** | `unexpected 'check'` |
 | 1.10 `or else` | ✅ | **Rejected** | `unexpected 'or else'` |
 | 1.11 Generics `<T>`, bounds | ⚠️ | **Rejected** | `expected '(', found '<'`. `List<T>` is a hard-coded special case, not a mechanism |
@@ -183,7 +183,7 @@ The four anime operators also diverge in form, not just in enforcement:
 | `std::word` methods | Partial — as builtin `word` methods, plus `.repeated(n)`. `.substring` takes a **length**, not an end index; no `.split`, `.chars` |
 | `std::word` `WordBuilder` | Present as `word_builder::*` over an `int` handle |
 | `std::num` | Absent — `math::*` builtins plus `std_*` int tasks instead |
-| `std::collections` `List<T>` | Partial — typed and indexable, but no `push`, `pop`, `sort` or iterators |
+| `std::collections` `List<T>` | Partial — typed, indexable and growable as of v0.14.2; no `sort`, `insert` or iterators |
 | `std::collections` `Map`/`Set`/`Lineup` | **Absent** |
 | `std::iter` | **Absent** |
 | `std::io` | `say` and `ask` only |
@@ -251,12 +251,18 @@ Counting the bible's own feature inventory against compile evidence:
 | §16 FFI | 1 declaration form | all else |
 
 > [!note]
-> V3 is not standing still inside its version number. `List<T>`, `ByteBuffer`,
-> `word_builder::*`, the `tcp::socket_*` family, `word.repeated(n)`,
-> `time::monotonic_ns()`, `process::pid()` and `ui::set_clip` all landed after
-> the first pass of this site was written, with `VERSION` unchanged at
-> `0.14.1`. The compiler generation is frozen for *new semantics*; the builtin
-> table clearly is not. Re-run the verification harness when you pull.
+> **v0.14.2 update.** Lists became growable (`push`, `pop`, `reserve`,
+> `capacity`, `clear`, `List::new`, `List::with_capacity`), `word` gained
+> checked `parse_int`/`parse_num` with a global `parse_status()`, and `+=`
+> now works on words.
+>
+> V3 is not standing still. `List<T>`, `ByteBuffer`, `word_builder::*`, the
+> `tcp::socket_*` family, `word.repeated(n)`, `time::monotonic_ns()`,
+> `process::pid()` and `ui::set_clip` all landed after the first pass of this
+> site was written, with `VERSION` unchanged at `0.14.1`. Growable lists,
+> checked parsing and `word +=` followed in `0.14.2`. The compiler generation
+> is frozen for *new semantics*; the builtin table clearly is not. Re-run the
+> verification harness when you pull.
 
 V3 is a small, sharp, genuinely self-hosting language: scalars, words, shapes,
 methods, three loops, two branch forms, flat arrays and a C FFI. The bible

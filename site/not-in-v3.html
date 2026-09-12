@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -64,6 +64,7 @@ error: unexpected &#x27;check&#x27;
 error: unexpected &#x27;?&#x27;
 error: unexpected &#x27;or else&#x27;</code></pre></div>
 <p>There is no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>some</code>, <code>nobody</code>, <code>ok</code>, <code>err</code>, <code>?</code> or <code>or else</code>. Signal absence and failure with sentinel values, the way the compiler&#x27;s own source does.</p>
+<p>For parsing specifically, v0.14.2 added a checked pair — <code>w.parse_int()</code> / <code>w.parse_num()</code> plus a global <code>parse_status()</code> — which distinguishes &quot;parsed zero&quot; from &quot;failed&quot;. <code>ByteBuffer.status()</code> follows the same out-of-band pattern. See <a href="words.html#checked-parsing">checked parsing</a>.</p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- A word task returns &quot;&quot; for &quot;no value&quot;.</span>
 <span class="c-kw">task</span> <span class="c-fn">find_name</span>(id<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">if</span> id <span class="c-op">==</span> <span class="c-num">1</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Takeru&quot;</span> }
@@ -95,7 +96,7 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
     message<span class="c-op">:</span> <span class="c-type">word</span>
 }</code></pre></div>
 <h2 id="collections">Collections<a class="anchor" href="#collections" aria-label="Link to this section">#</a></h2>
-<p><code>List&lt;T&gt;</code> <strong>does</strong> exist now — typed, indexable, with <code>List::filled</code> — but it has no <code>push</code>, <code>pop</code>, <code>insert</code>, <code>remove</code>, <code>sort</code> or iterators, and it does not nest. See <a href="arrays.html">Lists &amp; arrays</a>.</p>
+<p><code>List&lt;T&gt;</code> <strong>does</strong> exist now — typed, indexable, and growable as of v0.14.2 (<code>push</code>, <code>pop</code>, <code>reserve</code>, <code>capacity</code>, <code>clear</code>). What it still lacks is <code>insert</code>, <code>remove</code>, <code>sort</code> and any iterator, and it does not nest. See <a href="arrays.html">Lists &amp; arrays</a>.</p>
 <p>Still absent: <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code>, <code>Lineup&lt;T&gt;</code>, and the <code>{ &quot;k&quot;: v }</code> map literal.</p>
 <p>For a map, keep two parallel collections:</p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">map_get</span>(keys<span class="c-op">:</span> <span class="c-type">int</span>, values<span class="c-op">:</span> <span class="c-type">int</span>, key<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
@@ -191,9 +192,9 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <p>No language server, no incremental parsing, no tolerant AST, no autocomplete, no <code>test &quot;name&quot; { expect ... }</code> framework, no JIT. Parse errors abort the build. <code>freak test</code> is a shim around a Python regression runner in the source checkout.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>

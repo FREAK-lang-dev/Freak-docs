@@ -9,7 +9,7 @@ specification promises. Every FREAK snippet on the site is a real file in
 [`examples/`](examples/), compiled by a real V3 binary and — where it produces
 output — executed, with stdout captured verbatim into the page.
 
-**44 / 44 examples compile and run** under `freak 0.14.1 (Maverick)`, built
+**45 / 45 examples compile and run** under `freak 0.14.2 (Maverick)`, built
 from source with a verified self-host fixed point.
 
 ---
@@ -46,6 +46,7 @@ meta/
 tools/
   verify.py        builds and runs every example with a real V3 compiler
   build_docs.py    renders content/ + verified.json into site/
+  ansi_html.py     replays captured terminal output (SGR, CR, cursor) as HTML
   search_smoke.js  headless check that the search index answers real queries
   sync_labels.py   applies meta/labels.json to the org's repos
 site/              the generated website — this is what Vercel serves
@@ -128,11 +129,13 @@ documented rather than worked around silently:
 ## Caveat: V3 moves inside its version number
 
 The compiler *generation* is frozen for new semantics, but the builtin table is
-not. Between two passes over these docs — with `VERSION` unchanged at `0.14.1`
-— V3 gained a typed `List<T>`, a builtin `ByteBuffer`, the `word_builder::*`
-accumulator, a `tcp::socket_*` family that can listen and accept,
-`word.repeated(n)`, `time::monotonic_ns()`, `process::pid()`,
-`process::set_env()` and `ui::set_clip`. An older compiler can no longer
+not, and it moves fast. Within `0.14.1` V3 gained a typed `List<T>`, a builtin
+`ByteBuffer`, the `word_builder::*` accumulator, a `tcp::socket_*` family that
+can listen and accept, `word.repeated(n)`, `time::monotonic_ns()`,
+`process::pid()`, `process::set_env()` and `ui::set_clip`. `0.14.2` then made
+lists growable (`push`/`pop`/`reserve`/`capacity`/`clear`, `List::new`,
+`List::with_capacity`), added checked `parse_int`/`parse_num` with a global
+`parse_status()`, and allowed `+=` on words. An older compiler can no longer
 compile the current `std/`.
 
 So: rebuild the compiler from the checkout you are documenting, and re-run

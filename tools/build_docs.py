@@ -14,7 +14,10 @@ from __future__ import annotations
 import html
 import json
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
@@ -183,159 +186,10 @@ def highlight_fk(code: str) -> str:
 
 
 # --------------------------------------------------------------------------
-# ANSI -> HTML, so colour examples render as colour instead of as escapes
+# Terminal output rendering lives in ansi_html.py
 # --------------------------------------------------------------------------
 
-# Every CSI sequence, not just SGR: the final byte tells us which it is.
-CSI_SEQ = re.compile(r"\x1b\[([0-9;?]*)([A-Za-z])")
-
-# xterm 16-colour base, used for codes 30-37 / 40-47 / 90-97 / 100-107 and for
-# the first 16 slots of the 256-colour cube. Tuned to stay legible on the dark
-# ground the terminal block is painted on.
-ANSI_BASE = [
-    "#3b3b46", "#c8322a", "#1f8f4e", "#a06f00",
-    "#2f5fc0", "#a03fb0", "#0f8a9e", "#c9c9d4",
-    "#7b7b8a", "#e8564c", "#3fbe72", "#c99400",
-    "#5a86e0", "#c163d0", "#37abbd", "#ffffff",
-]
-
-
-def xterm256(n: int) -> str:
-    """Resolve an xterm 256-colour index to a hex string."""
-    if n < 16:
-        return ANSI_BASE[n]
-    if n < 232:
-        n -= 16
-        levels = [0, 95, 135, 175, 215, 255]
-        r, g, b = levels[n // 36], levels[(n // 6) % 6], levels[n % 6]
-        return f"#{r:02x}{g:02x}{b:02x}"
-    v = 8 + (n - 232) * 10
-    return f"#{v:02x}{v:02x}{v:02x}"
-
-
-def _blank_state() -> dict:
-    return {"bold": False, "dim": False, "italic": False, "underline": False,
-            "strike": False, "reverse": False, "hidden": False,
-            "fg": None, "bg": None}
-
-
-def _apply_sgr(state: dict, params: str) -> None:
-    """Fold one SGR parameter list into the running style state."""
-    codes = [int(c) for c in params.split(";") if c != ""] or [0]
-    i = 0
-    while i < len(codes):
-        c = codes[i]
-        if c == 0:
-            state.update(_blank_state())
-        elif c == 1:
-            state["bold"] = True
-        elif c == 2:
-            state["dim"] = True
-        elif c == 3:
-            state["italic"] = True
-        elif c == 4:
-            state["underline"] = True
-        elif c == 7:
-            state["reverse"] = True
-        elif c == 8:
-            state["hidden"] = True
-        elif c == 9:
-            state["strike"] = True
-        elif c == 22:
-            state["bold"] = state["dim"] = False
-        elif c == 23:
-            state["italic"] = False
-        elif c == 24:
-            state["underline"] = False
-        elif c == 27:
-            state["reverse"] = False
-        elif c == 28:
-            state["hidden"] = False
-        elif c == 29:
-            state["strike"] = False
-        elif 30 <= c <= 37:
-            state["fg"] = ANSI_BASE[c - 30]
-        elif 90 <= c <= 97:
-            state["fg"] = ANSI_BASE[c - 90 + 8]
-        elif 40 <= c <= 47:
-            state["bg"] = ANSI_BASE[c - 40]
-        elif 100 <= c <= 107:
-            state["bg"] = ANSI_BASE[c - 100 + 8]
-        elif c == 39:
-            state["fg"] = None
-        elif c == 49:
-            state["bg"] = None
-        elif c in (38, 48) and i + 1 < len(codes):
-            key = "fg" if c == 38 else "bg"
-            mode = codes[i + 1]
-            if mode == 5 and i + 2 < len(codes):
-                state[key] = xterm256(codes[i + 2])
-                i += 2
-            elif mode == 2 and i + 4 < len(codes):
-                r, g, b = codes[i + 2], codes[i + 3], codes[i + 4]
-                state[key] = f"rgb({r},{g},{b})"
-                i += 4
-        i += 1
-
-
-def _style_of(state: dict) -> str:
-    fg, bg = state["fg"], state["bg"]
-    if state["reverse"]:
-        fg, bg = bg or "#16161d", fg or "#d7d7e0"
-    decls = []
-    if state["bold"]:
-        decls.append("font-weight:700")
-    if state["dim"]:
-        decls.append("opacity:.65")
-    if state["italic"]:
-        decls.append("font-style:italic")
-    deco = []
-    if state["underline"]:
-        deco.append("underline")
-    if state["strike"]:
-        deco.append("line-through")
-    if deco:
-        decls.append("text-decoration:" + " ".join(deco))
-    if state["hidden"]:
-        decls.append("visibility:hidden")
-    if fg:
-        decls.append(f"color:{fg}")
-    if bg:
-        decls.append(f"background:{bg}")
-    return ";".join(decls)
-
-
-def ansi_to_html(text: str) -> str:
-    """Render a captured terminal stream as HTML.
-
-    Tracks SGR state across the whole stream so selective resets (22, 24, 39,
-    49) behave the way a terminal treats them, and silently drops non-SGR CSI
-    sequences such as cursor movement, which have no meaning in a static page.
-    """
-    state = _blank_state()
-    out = []
-    pos = 0
-
-    def emit(chunk: str) -> None:
-        if not chunk:
-            return
-        style = _style_of(state)
-        body = html.escape(chunk)
-        out.append(f'<span style="{style}">{body}</span>' if style else body)
-
-    for m in CSI_SEQ.finditer(text):
-        emit(text[pos:m.start()])
-        pos = m.end()
-        if m.group(2) == "m":
-            _apply_sgr(state, m.group(1))
-        # any other final byte is a non-SGR control sequence: drop it
-
-    emit(text[pos:])
-    return "".join(out)
-
-
-def has_ansi(text: str) -> bool:
-    return bool(CSI_SEQ.search(text))
+from ansi_html import render as ansi_to_html, has_ansi   # noqa: E402
 
 
 # --------------------------------------------------------------------------

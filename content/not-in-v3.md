@@ -26,6 +26,12 @@ There is no `maybe<T>`, `result<T,E>`, `some`, `nobody`, `ok`, `err`, `?` or
 `or else`. Signal absence and failure with sentinel values, the way the
 compiler's own source does.
 
+For parsing specifically, v0.14.2 added a checked pair —
+`w.parse_int()` / `w.parse_num()` plus a global `parse_status()` — which
+distinguishes "parsed zero" from "failed". `ByteBuffer.status()` follows the
+same out-of-band pattern. See
+[checked parsing](words.html#checked-parsing).
+
 ```fk
 -- A word task returns "" for "no value".
 task find_name(id: int) -> word {
@@ -65,9 +71,10 @@ shape Outcome {
 
 ## Collections
 
-`List<T>` **does** exist now — typed, indexable, with `List::filled` — but it
-has no `push`, `pop`, `insert`, `remove`, `sort` or iterators, and it does not
-nest. See [Lists & arrays](arrays.html).
+`List<T>` **does** exist now — typed, indexable, and growable as of v0.14.2
+(`push`, `pop`, `reserve`, `capacity`, `clear`). What it still lacks is
+`insert`, `remove`, `sort` and any iterator, and it does not nest. See
+[Lists & arrays](arrays.html).
 
 Still absent: `Map<K,V>`, `Set<T>`, `Lineup<T>`, and the `{ "k": v }` map
 literal.

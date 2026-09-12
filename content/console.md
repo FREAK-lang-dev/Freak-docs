@@ -168,24 +168,81 @@ rather than on the text, so they cannot be shown in a captured output block.
 | `\x1b[?1049h` | Switch to the alternate screen buffer |
 | `\x1b[?1049l` | Return to the main screen buffer |
 
-A progress line, using carriage return plus erase-to-end:
+See [Printing on the same line](#printing-on-the-same-line) below for what to
+do with these.
+
+## Printing on the same line
+
+`say` **always appends a newline**. There is no print-without-newline builtin:
+the runtime's writer takes a newline flag, and `say` passes it as true
+(`freak_say` in `freak_runtime.c`). The only builtin that writes without one is
+`ask`, and it then blocks reading a line from stdin — fine for a prompt, useless
+for output.
+
+So there are three techniques, all verified below.
+
+{{example:same_line}}
+
+### 1. Build the line, then say it once
+
+The usual answer, and the one to reach for first. Nothing reaches the terminal
+until the `say`, so the pieces land on one line.
 
 ```fk
-task main() -> void {
-    pilot mut i: int = 0
-    repeat 5 times {
-        i += 1
-        say "\r\x1b[K" + "working " + word_from_int(i) + "/5"
-    }
-    say ""
+pilot mut row: word = "loading:"
+pilot mut i: int = 0
+repeat 5 times {
+    row += " " + word_from_int(i)
+    i += 1
 }
+say row
 ```
 
+`word += word` works as of v0.14.2. For many pieces, prefer
+[`word_builder`](words.html#building-words-incrementally), which does not
+re-copy the accumulated word on every concatenation.
+
+### 2. Carriage return, within one say
+
+`\r` moves the cursor to column 0. Anything after it in the *same* `say`
+overwrites what came before, on the same physical line:
+
+```fk
+say "calculating...\r\x1b[Kdone"
+```
+
+`\x1b[K` erases to end of line, which matters when the new text is shorter than
+the old — without it, the tail of `calculating...` would still be showing.
+
+### 3. Cursor-up, to redraw a line you already finished
+
+Once `say` has emitted its newline the cursor is on the next row, but you can
+go back:
+
+```fk
+say "progress   0%"
+say "\x1b[1A\r\x1b[Kprogress  33%"
+say "\x1b[1A\r\x1b[Kprogress 100%"
+```
+
+`\x1b[1A` moves up one row, `\r` returns to column 0, `\x1b[K` clears it. The
+`say` redraws the row, and its own newline puts the cursor back where it
+started. In a terminal those three lines display as **one** line counting up.
+
+This is the pattern for progress indicators, spinners and live counters.
+
+> [!warn]
+> Cursor movement only works on a terminal. Redirect the output to a file and
+> the escapes are just bytes — you get every intermediate line, not the final
+> one. With no TTY detection available (see below) your program cannot tell the
+> difference, so keep `\x1b[1A` tricks out of anything whose output might be
+> piped, or gate them behind a flag.
+
 > [!note]
-> `say` always appends a newline, so a true in-place progress indicator is not
-> possible with it — each call moves to the next line regardless. The snippet
-> above redraws on successive lines. V3 has no unbuffered write, so if you need
-> real single-line progress you must go through the C runtime.
+> The output block above is this site replaying the program's real bytes
+> through a small terminal model — carriage returns overwrite, `\x1b[1A`
+> redraws the previous line — so you see what a terminal shows rather than the
+> raw escape soup.
 
 ## ANSI is enabled for you
 

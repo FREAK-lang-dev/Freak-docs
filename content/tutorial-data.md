@@ -96,8 +96,18 @@ pilot mut tally: List<int> = List::filled(0, 3)
 tally[0] = 24
 ```
 
-There is no `push`, `pop`, `sort` or iterator. It is an indexable sequence,
-nothing more.
+Lists grow as of v0.14.2: `.push(v)`, `.pop()`, `.reserve(n)`, `.capacity()`
+and `.clear()`, with `List::new()` and `List::with_capacity(n)` as
+constructors. Mutating methods need `pilot mut`.
+
+```fk
+pilot mut queue: List<int> = List::new()
+queue.push(10)
+queue.push(20)
+say word_from_int(queue.pop())      -- 20
+```
+
+Still no `insert`, `remove`, `sort` or iterator.
 
 ## Step 4 — The restriction
 
@@ -149,8 +159,9 @@ say array_get(h, 0)
 array_release(h)
 ```
 
-It is worth keeping around for two reasons: it can **grow** (`array_push`), and
-it is the only thing the `std/algorithm.fk` helpers accept.
+Now that `List<T>` grows too, it is worth keeping around for one reason: it is
+the only thing the `std/algorithm.fk` helpers accept — and the only collection
+you can store in a shape field.
 
 ```fk
 array_sort_int(h)
@@ -178,7 +189,7 @@ The `array_*` **builtins** are more forgiving — `array_len`, `array_get`,
 |---|---|
 | Typed elements, fixed size | `List<T>` |
 | Numbers without converting to `word` | `List<int>` / `List<num>` |
-| Growing a collection | Legacy handle + `array_push` |
+| Growing a collection | `List<T>` + `.push()` |
 | Sorting, joining, searching | Legacy handle + `std/algorithm.fk` |
 | A field inside a shape | Legacy handle — `List` is rejected |
 | Returning a collection from a task | Either; or mutate a handle passed in |

@@ -9,12 +9,13 @@ interchangeable everywhere.
 | | `List<T>` | Legacy handle |
 |---|---|---|
 | Type | `List<int>`, `List<word>`, `List<Shape>`, … | `int` |
-| Created by | `[a, b, c]`, `List::filled(v, n)` | `array_new()` |
+| Created by | `[a, b, c]`, `List::new()`, `List::with_capacity(n)`, `List::filled(v, n)` | `array_new()` |
 | Element type | Checked | Always `word` |
 | Length | `list.length()` | `array_len(h)` |
 | Read | `list[i]` | `array_get(h, i)` |
 | Write | `list[i] = v` (needs `pilot mut`) | `array_set(h, i, v)` |
-| Append | — | `array_push(h, v)` |
+| Append | `list.push(v)` | `array_push(h, v)` |
+| Remove | `list.pop()` | — |
 | Accepted by `array_*` builtins | yes, when `List<word>` | yes |
 | Accepted by `std/algorithm.fk` tasks | **no** | yes |
 
@@ -37,9 +38,35 @@ Rules worth pinning down:
   element type from `value`.
 - Indexing a shape element chains: `contacts[0].tag`.
 
-There is still no `push`, `pop`, `insert`, `remove`, `sort` or iterator on
-`List<T>`. It is a fixed-shape, indexable sequence. To build one incrementally,
-use the legacy handle, or size it with `List::filled` and assign by index.
+### Growing a list
+
+As of **v0.14.2** lists grow. This is the biggest change to the type since it
+was introduced, and it removes most reasons to reach for the legacy handle.
+
+| Method | Signature | Notes |
+|---|---|---|
+| `.push(value)` | `T -> void` | Append |
+| `.pop()` | `-> T` | Remove and return the last element |
+| `.length()` | `-> int` | |
+| `.capacity()` | `-> int` | Allocated slots; starts at 8 and doubles |
+| `.reserve(n)` | `int -> void` | Grow the capacity up front |
+| `.clear()` | `-> void` | Length to zero, capacity kept |
+
+```fk
+pilot mut xs: List<int> = List::new()
+xs.push(10)
+xs.push(20)
+say word_from_int(xs.pop())     -- 20
+say word_from_int(xs.length())  -- 1
+```
+
+Constructors: `List::new()`, `List::with_capacity(n)`, `List::filled(v, n)`, or
+a literal.
+
+Mutating methods need `pilot mut`, same as indexed assignment.
+
+Still missing: `insert`, `remove`, `sort`, and any iterator. Sorting a list
+means copying into a legacy handle, or writing the loop.
 
 ### Where a List may appear
 
@@ -61,9 +88,10 @@ use the legacy handle, or size it with `List::filled` and assign by index.
 > separate binding beside the shape.
 
 > [!note]
-> `List<T>` is newer than most of V3 and the surface is thin. Treat it as the
-> right choice for *holding* typed data, and the legacy handle as the right
-> choice for *building* and for reaching the `std/algorithm.fk` helpers.
+> With `push`/`pop` landed, `List<T>` is now the default choice. The legacy
+> handle is worth keeping for two things only: reaching the
+> `std/algorithm.fk` helpers, which are declared `handle: int`, and storing a
+> collection in a shape field, which `List<T>` still cannot do.
 
 ## The legacy handle
 

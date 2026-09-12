@@ -76,6 +76,7 @@ hidden.
 
 {{example:colour}}
 {{example:ansi_codes}}
+{{example:same_line}}
 
 ## System
 

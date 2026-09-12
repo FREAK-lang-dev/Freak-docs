@@ -1,0 +1,58 @@
+-- Printing on the same line.
+--
+-- `say` ALWAYS appends a newline -- there is no print-without-newline
+-- builtin in V3. These are the three techniques that work instead.
+
+task main() -> void {
+    -- ---------------------------------------------------------------
+    -- 1. Build the line, then say it once.
+    --
+    -- The usual answer. Nothing is written until the say, so the pieces
+    -- land on one line.
+    -- ---------------------------------------------------------------
+    pilot mut row: word = "loading:"
+    pilot mut i: int = 0
+    repeat 5 times {
+        row += " " + word_from_int(i)
+        i += 1
+    }
+    say row
+
+    -- For a lot of pieces, word_builder avoids re-copying the word on
+    -- every concatenation.
+    pilot b: int = word_builder::new()
+    word_builder::append(b, "squadron:")
+    pilot mut n: int = 1
+    repeat 3 times {
+        word_builder::append(b, " V-")
+        word_builder::append_int(b, n)
+        n += 1
+    }
+    say word_builder::finish(b)
+
+    -- ---------------------------------------------------------------
+    -- 2. Carriage return inside ONE say, to overwrite within the line.
+    --
+    -- "\r" returns the cursor to column 0. Everything after it paints
+    -- over what came before, on the same physical line.
+    -- ---------------------------------------------------------------
+    say "calculating...\r\x1b[Kdone          "
+
+    -- ---------------------------------------------------------------
+    -- 3. Cursor-up, to overwrite a line a PREVIOUS say already ended.
+    --
+    -- "\x1b[1A" moves up one row, "\r" returns to column 0, "\x1b[K"
+    -- erases to end of line. The say then redraws that row and its own
+    -- newline puts the cursor back where it started.
+    --
+    -- In a terminal these four lines display as one line counting up.
+    -- Captured to a file they stay separate, because the escapes are
+    -- cursor movement rather than text.
+    -- ---------------------------------------------------------------
+    say "progress   0%"
+    say "\x1b[1A\r\x1b[Kprogress  33%"
+    say "\x1b[1A\r\x1b[Kprogress  66%"
+    say "\x1b[1A\r\x1b[Kprogress 100%"
+
+    say "finished"
+}

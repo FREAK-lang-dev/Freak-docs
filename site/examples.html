@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -56,7 +56,7 @@
     <article class="prose">
 <h1 id="verified-examples">Verified examples<a class="anchor" href="#verified-examples" aria-label="Link to this section">#</a></h1>
 <p>&gt; Every program on this site, compiled and executed by a real V3 binary.</p>
-<div class="summary-card"><div class="sc-num">44/44</div><div class="sc-body"><strong>documentation examples compile</strong><span>Verified with freak 0.14.1 (Maverick) on 2026-09-10T21:44:45Z. Every code block on this site marked <em>compiles</em> was built by that compiler and, where it produces output, executed.</span></div></div>
+<div class="summary-card"><div class="sc-num">45/45</div><div class="sc-body"><strong>documentation examples compile</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-09-12T16:12:25Z. Every code block on this site marked <em>compiles</em> was built by that compiler and, where it produces output, executed.</span></div></div>
 <p>Each card below shows the exact source file under <code>examples/</code>, a badge for whether it compiled and ran, and the program&#x27;s captured output. Reproduce the whole set with:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python tools/verify.py --freak /path/to/freak
 python tools/build_docs.py</code></pre></div>
@@ -904,6 +904,20 @@ Takemikazuchi thrust=880</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">count_all</span>(names))
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">first_three</span>()[<span class="c-num">2</span>])
 
+    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> queue<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
+    queue.<span class="c-fn">push</span>(<span class="c-num">10</span>)
+    queue.<span class="c-fn">push</span>(<span class="c-num">20</span>)
+    queue.<span class="c-fn">push</span>(<span class="c-num">30</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">pop</span>())      <span class="c-com">-- 30, removed and returned</span>
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">capacity</span>()) <span class="c-com">-- starts at 8, doubles as needed</span>
+    queue.<span class="c-fn">reserve</span>(<span class="c-num">64</span>)
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">capacity</span>())
+    queue.<span class="c-fn">clear</span>()
+    <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
+
     <span class="c-com">-- Iterate with an index; there is no `for each`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
     <span class="c-kw">repeat</span> names.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
@@ -922,6 +936,12 @@ BETA-1
 4
 3
 3
+3
+30
+2
+8
+64
+0
 Takeru
 Meiya
 Sumika</code></pre>
@@ -1356,6 +1376,78 @@ blink
 <span style="color:#c8322a">red </span>default again</code></pre>
   </div>
 </figure>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/same_line.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Printing on the same line.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- `say` ALWAYS appends a newline -- there is no print-without-newline</span>
+<span class="c-com">-- builtin in V3. These are the three techniques that work instead.</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-com">-- 1. Build the line, then say it once.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- The usual answer. Nothing is written until the say, so the pieces</span>
+    <span class="c-com">-- land on one line.</span>
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> row<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;loading:&quot;</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-num">5</span> <span class="c-kw">times</span> {
+        row <span class="c-op">+=</span> <span class="c-str">&quot; &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(i)
+        i <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> row
+
+    <span class="c-com">-- For a lot of pieces, word_builder avoids re-copying the word on</span>
+    <span class="c-com">-- every concatenation.</span>
+    <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> word_builder<span class="c-op">::</span><span class="c-fn">new</span>()
+    word_builder<span class="c-op">::</span><span class="c-fn">append</span>(b, <span class="c-str">&quot;squadron:&quot;</span>)
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
+        word_builder<span class="c-op">::</span><span class="c-fn">append</span>(b, <span class="c-str">&quot; V-&quot;</span>)
+        word_builder<span class="c-op">::</span><span class="c-fn">append_int</span>(b, n)
+        n <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> word_builder<span class="c-op">::</span><span class="c-fn">finish</span>(b)
+
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-com">-- 2. Carriage return inside ONE say, to overwrite within the line.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- &quot;\r&quot; returns the cursor to column 0. Everything after it paints</span>
+    <span class="c-com">-- over what came before, on the same physical line.</span>
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;calculating...\r\x1b[Kdone          &quot;</span>
+
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-com">-- 3. Cursor-up, to overwrite a line a PREVIOUS say already ended.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- &quot;\x1b[1A&quot; moves up one row, &quot;\r&quot; returns to column 0, &quot;\x1b[K&quot;</span>
+    <span class="c-com">-- erases to end of line. The say then redraws that row and its own</span>
+    <span class="c-com">-- newline puts the cursor back where it started.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- In a terminal these four lines display as one line counting up.</span>
+    <span class="c-com">-- Captured to a file they stay separate, because the escapes are</span>
+    <span class="c-com">-- cursor movement rather than text.</span>
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;progress   0%&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress  33%&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress  66%&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress 100%&quot;</span>
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;finished&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output (ANSI rendered)</div>
+    <pre class="stdout term"><code>loading: 0 1 2 3 4
+squadron: V-1 V-2 V-3
+done
+progress 100%
+finished</code></pre>
+  </div>
+</figure>
 <h2 id="system">System<a class="anchor" href="#system" aria-label="Link to this section">#</a></h2>
 <figure class="example">
   <figcaption>
@@ -1458,7 +1550,7 @@ hi
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_eggu039s\process_time.exe
+arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_e8et7pyk\process_time.exe
 arg 1: alpha
 arg 2: bravo
 true
@@ -2047,9 +2139,9 @@ NEGOTIATE</code></pre>
 </figure>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>

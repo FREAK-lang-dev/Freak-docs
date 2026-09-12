@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -242,16 +242,105 @@ blink
 <h2 id="cursor-and-screen-control">Cursor and screen control<a class="anchor" href="#cursor-and-screen-control" aria-label="Link to this section">#</a></h2>
 <p>These are CSI sequences with a final letter other than <code>m</code>. They pass through V3 exactly the same way — they are just bytes — but they act on the terminal rather than on the text, so they cannot be shown in a captured output block.</p>
 <div class="tablewrap"><table><thead><tr><th>Sequence</th><th>Effect</th></tr></thead><tbody><tr><td><code>\x1b[nA</code></td><td>Cursor up <code>n</code> rows</td></tr><tr><td><code>\x1b[nB</code></td><td>Cursor down <code>n</code> rows</td></tr><tr><td><code>\x1b[nC</code></td><td>Cursor forward <code>n</code> columns</td></tr><tr><td><code>\x1b[nD</code></td><td>Cursor back <code>n</code> columns</td></tr><tr><td><code>\x1b[nE</code></td><td>Cursor to start of line, <code>n</code> rows down</td></tr><tr><td><code>\x1b[nF</code></td><td>Cursor to start of line, <code>n</code> rows up</td></tr><tr><td><code>\x1b[nG</code></td><td>Cursor to column <code>n</code></td></tr><tr><td><code>\x1b[row;colH</code></td><td>Cursor to an absolute position, 1-based</td></tr><tr><td><code>\x1b[nJ</code></td><td>Erase display — <code>0</code> to end, <code>1</code> to start, <code>2</code> all, <code>3</code> all plus scrollback</td></tr><tr><td><code>\x1b[nK</code></td><td>Erase line — <code>0</code> to end, <code>1</code> to start, <code>2</code> whole line</td></tr><tr><td><code>\x1b[nS</code></td><td>Scroll up <code>n</code> lines</td></tr><tr><td><code>\x1b[nT</code></td><td>Scroll down <code>n</code> lines</td></tr><tr><td><code>\x1b[s</code></td><td>Save cursor position</td></tr><tr><td><code>\x1b[u</code></td><td>Restore saved cursor position</td></tr><tr><td><code>\x1b[?25l</code></td><td>Hide the cursor</td></tr><tr><td><code>\x1b[?25h</code></td><td>Show the cursor</td></tr><tr><td><code>\x1b[?1049h</code></td><td>Switch to the alternate screen buffer</td></tr><tr><td><code>\x1b[?1049l</code></td><td>Return to the main screen buffer</td></tr></tbody></table></div>
-<p>A progress line, using carriage return plus erase-to-end:</p>
-<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+<p>See <a href="#printing-on-the-same-line">Printing on the same line</a> below for what to do with these.</p>
+<h2 id="printing-on-the-same-line">Printing on the same line<a class="anchor" href="#printing-on-the-same-line" aria-label="Link to this section">#</a></h2>
+<p><code>say</code> <strong>always appends a newline</strong>. There is no print-without-newline builtin: the runtime&#x27;s writer takes a newline flag, and <code>say</code> passes it as true (<code>freak_say</code> in <code>freak_runtime.c</code>). The only builtin that writes without one is <code>ask</code>, and it then blocks reading a line from stdin — fine for a prompt, useless for output.</p>
+<p>So there are three techniques, all verified below.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/same_line.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Printing on the same line.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- `say` ALWAYS appends a newline -- there is no print-without-newline</span>
+<span class="c-com">-- builtin in V3. These are the three techniques that work instead.</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-com">-- 1. Build the line, then say it once.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- The usual answer. Nothing is written until the say, so the pieces</span>
+    <span class="c-com">-- land on one line.</span>
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> row<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;loading:&quot;</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
     <span class="c-kw">repeat</span> <span class="c-num">5</span> <span class="c-kw">times</span> {
+        row <span class="c-op">+=</span> <span class="c-str">&quot; &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(i)
         i <span class="c-op">+=</span> <span class="c-num">1</span>
-        <span class="c-kw">say</span> <span class="c-str">&quot;\r\x1b[K&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;working &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(i) <span class="c-op">+</span> <span class="c-str">&quot;/5&quot;</span>
     }
-    <span class="c-kw">say</span> <span class="c-str">&quot;&quot;</span>
-}</code></pre></div>
-<div class="callout note"><div class="callout-title">Note</div><p><code>say</code> always appends a newline, so a true in-place progress indicator is not possible with it — each call moves to the next line regardless. The snippet above redraws on successive lines. V3 has no unbuffered write, so if you need real single-line progress you must go through the C runtime.</p></div>
+    <span class="c-kw">say</span> row
+
+    <span class="c-com">-- For a lot of pieces, word_builder avoids re-copying the word on</span>
+    <span class="c-com">-- every concatenation.</span>
+    <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> word_builder<span class="c-op">::</span><span class="c-fn">new</span>()
+    word_builder<span class="c-op">::</span><span class="c-fn">append</span>(b, <span class="c-str">&quot;squadron:&quot;</span>)
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
+        word_builder<span class="c-op">::</span><span class="c-fn">append</span>(b, <span class="c-str">&quot; V-&quot;</span>)
+        word_builder<span class="c-op">::</span><span class="c-fn">append_int</span>(b, n)
+        n <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> word_builder<span class="c-op">::</span><span class="c-fn">finish</span>(b)
+
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-com">-- 2. Carriage return inside ONE say, to overwrite within the line.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- &quot;\r&quot; returns the cursor to column 0. Everything after it paints</span>
+    <span class="c-com">-- over what came before, on the same physical line.</span>
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;calculating...\r\x1b[Kdone          &quot;</span>
+
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-com">-- 3. Cursor-up, to overwrite a line a PREVIOUS say already ended.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- &quot;\x1b[1A&quot; moves up one row, &quot;\r&quot; returns to column 0, &quot;\x1b[K&quot;</span>
+    <span class="c-com">-- erases to end of line. The say then redraws that row and its own</span>
+    <span class="c-com">-- newline puts the cursor back where it started.</span>
+    <span class="c-com">--</span>
+    <span class="c-com">-- In a terminal these four lines display as one line counting up.</span>
+    <span class="c-com">-- Captured to a file they stay separate, because the escapes are</span>
+    <span class="c-com">-- cursor movement rather than text.</span>
+    <span class="c-com">-- ---------------------------------------------------------------</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;progress   0%&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress  33%&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress  66%&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress 100%&quot;</span>
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;finished&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output (ANSI rendered)</div>
+    <pre class="stdout term"><code>loading: 0 1 2 3 4
+squadron: V-1 V-2 V-3
+done
+progress 100%
+finished</code></pre>
+  </div>
+</figure>
+<h3 id="1-build-the-line-then-say-it-once">1. Build the line, then say it once<a class="anchor" href="#1-build-the-line-then-say-it-once" aria-label="Link to this section">#</a></h3>
+<p>The usual answer, and the one to reach for first. Nothing reaches the terminal until the <code>say</code>, so the pieces land on one line.</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> row<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;loading:&quot;</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
+<span class="c-kw">repeat</span> <span class="c-num">5</span> <span class="c-kw">times</span> {
+    row <span class="c-op">+=</span> <span class="c-str">&quot; &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(i)
+    i <span class="c-op">+=</span> <span class="c-num">1</span>
+}
+<span class="c-kw">say</span> row</code></pre></div>
+<p><code>word += word</code> works as of v0.14.2. For many pieces, prefer [<code>word_builder</code>](words.html#building-words-incrementally), which does not re-copy the accumulated word on every concatenation.</p>
+<h3 id="2-carriage-return-within-one-say">2. Carriage return, within one say<a class="anchor" href="#2-carriage-return-within-one-say" aria-label="Link to this section">#</a></h3>
+<p><code>\r</code> moves the cursor to column 0. Anything after it in the <em>same</em> <code>say</code> overwrites what came before, on the same physical line:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;calculating...\r\x1b[Kdone&quot;</span></code></pre></div>
+<p><code>\x1b[K</code> erases to end of line, which matters when the new text is shorter than the old — without it, the tail of <code>calculating...</code> would still be showing.</p>
+<h3 id="3-cursor-up-to-redraw-a-line-you-already-finished">3. Cursor-up, to redraw a line you already finished<a class="anchor" href="#3-cursor-up-to-redraw-a-line-you-already-finished" aria-label="Link to this section">#</a></h3>
+<p>Once <code>say</code> has emitted its newline the cursor is on the next row, but you can go back:</p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;progress   0%&quot;</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress  33%&quot;</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress 100%&quot;</span></code></pre></div>
+<p><code>\x1b[1A</code> moves up one row, <code>\r</code> returns to column 0, <code>\x1b[K</code> clears it. The <code>say</code> redraws the row, and its own newline puts the cursor back where it started. In a terminal those three lines display as <strong>one</strong> line counting up.</p>
+<p>This is the pattern for progress indicators, spinners and live counters.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Cursor movement only works on a terminal. Redirect the output to a file and the escapes are just bytes — you get every intermediate line, not the final one. With no TTY detection available (see below) your program cannot tell the difference, so keep <code>\x1b[1A</code> tricks out of anything whose output might be piped, or gate them behind a flag.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p>The output block above is this site replaying the program&#x27;s real bytes through a small terminal model — carriage returns overwrite, <code>\x1b[1A</code> redraws the previous line — so you see what a terminal shows rather than the raw escape soup.</p></div>
 <h2 id="ansi-is-enabled-for-you">ANSI is enabled for you<a class="anchor" href="#ansi-is-enabled-for-you" aria-label="Link to this section">#</a></h2>
 <p>On Windows, escapes only work when the console has <code>ENABLE_VIRTUAL_TERMINAL_PROCESSING</code> set. The runtime does this for <strong>every</strong> FREAK program, not just the CLI:</p>
 <ul><li><code>freak_enable_ansi()</code> in <code>freakc/runtime/freak_runtime.c</code> sets the flag on both stdout and stderr.</li><li>The C backend emits a direct <code>freak_enable_ansi();</code> call into <code>main</code>.</li><li>The LLVM backend calls it via <code>freak_llvm_setup_args</code>, which the emitted <code>main</code> invokes with <code>argc</code>/<code>argv</code>.</li></ul>
@@ -305,13 +394,13 @@ blink
 <ul><li><strong>Always reset.</strong> An unclosed sequence leaks into the shell prompt after your program exits.</li><li><strong>Safe floor:</strong> the 8 standard colours and <code>1</code>/<code>4</code>/<code>0</code>. Universally supported.</li><li><strong>Widely safe:</strong> bright colours, backgrounds, 256-colour, truecolour, <code>2</code>, <code>3</code>, <code>7</code>, <code>9</code>.</li><li><strong>Patchy:</strong> <code>5</code>/<code>6</code> blink (often ignored), <code>8</code> conceal, <code>21</code> double underline, <code>51</code>–<code>55</code> framed/encircled/overlined, <code>58</code> underline colour.</li><li><strong>Combine parameters</strong> in one sequence rather than emitting several.</li><li>Colour goes through <code>say</code>, which writes to stdout. There is no stderr writer in V3, so diagnostics and normal output share one stream.</li></ul>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>
-  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#anatomy-of-a-sequence">Anatomy of a sequence</a></li><li><a href="#sgr-attributes">SGR: attributes</a></li><li><a href="#sgr-foreground-colour">SGR: foreground colour</a></li><li><a href="#sgr-background-colour">SGR: background colour</a></li><li><a href="#sgr-extended-colour">SGR: extended colour</a></li><li><a href="#cursor-and-screen-control">Cursor and screen control</a></li><li><a href="#ansi-is-enabled-for-you">ANSI is enabled for you</a></li><li><a href="#the-escape-itself">The escape itself</a></li><li><a href="#the-clis-palette">The CLI&#x27;s palette</a></li><li><a href="#box-drawing-and-symbols">Box drawing and symbols</a></li><li><a href="#respecting-the-users-terminal">Respecting the user&#x27;s terminal</a></li><li><a href="#the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics</a></li><li><a href="#support-and-practical-notes">Support and practical notes</a></li></ul></aside>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#anatomy-of-a-sequence">Anatomy of a sequence</a></li><li><a href="#sgr-attributes">SGR: attributes</a></li><li><a href="#sgr-foreground-colour">SGR: foreground colour</a></li><li><a href="#sgr-background-colour">SGR: background colour</a></li><li><a href="#sgr-extended-colour">SGR: extended colour</a></li><li><a href="#cursor-and-screen-control">Cursor and screen control</a></li><li><a href="#printing-on-the-same-line">Printing on the same line</a></li><li><a href="#ansi-is-enabled-for-you">ANSI is enabled for you</a></li><li><a href="#the-escape-itself">The escape itself</a></li><li><a href="#the-clis-palette">The CLI&#x27;s palette</a></li><li><a href="#box-drawing-and-symbols">Box drawing and symbols</a></li><li><a href="#respecting-the-users-terminal">Respecting the user&#x27;s terminal</a></li><li><a href="#the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics</a></li><li><a href="#support-and-practical-notes">Support and practical notes</a></li></ul></aside>
 </div>
 <script src="assets/search-index.js"></script>
 <script src="assets/app.js"></script>

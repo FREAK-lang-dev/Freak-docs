@@ -35,19 +35,27 @@ def strip_ansi(text: str) -> str:
     return ANSI.sub("", text)
 
 
+def decode(raw: bytes) -> str:
+    """Decode child output without universal-newline translation.
+
+    Text mode folds a lone carriage return into a newline, which destroys
+    exactly the bytes a same-line-printing example is about. Only the
+    platform CRLF pairing is normalised here; a standalone CR is content.
+    """
+    text = raw.decode("utf-8", errors="replace")
+    return text.replace(chr(13) + chr(10), chr(10))
+
+
 def run(cmd, cwd, timeout=180, stdin_text="", keep_ansi=False):
     proc = subprocess.run(
         cmd,
         cwd=str(cwd),
-        input=stdin_text,
+        input=stdin_text.encode() if stdin_text else None,
         capture_output=True,
-        text=True,
         timeout=timeout,
-        encoding="utf-8",
-        errors="replace",
     )
-    out = proc.stdout or ""
-    err = proc.stderr or ""
+    out = decode(proc.stdout or b"")
+    err = decode(proc.stderr or b"")
     if keep_ansi:
         return proc.returncode, out, err
     return proc.returncode, strip_ansi(out), strip_ansi(err)

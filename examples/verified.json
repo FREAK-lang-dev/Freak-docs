@@ -1,8 +1,8 @@
 {
-  "compiler": "freak 0.14.1 (Maverick)",
-  "generated_utc": "2026-09-10T21:44:45Z",
-  "total": 44,
-  "compiled": 44,
+  "compiler": "freak 0.14.2 (Maverick)",
+  "generated_utc": "2026-09-12T16:12:25Z",
+  "total": 45,
+  "compiled": 45,
   "examples": {
     "anime_operators": {
       "name": "anime_operators",
@@ -14,7 +14,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8022
+      "elapsed_ms": 7908
     },
     "annotations": {
       "name": "annotations",
@@ -26,7 +26,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8026
+      "elapsed_ms": 7906
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -38,7 +38,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8236
+      "elapsed_ms": 7913
     },
     "array_literal": {
       "name": "array_literal",
@@ -50,7 +50,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8128
+      "elapsed_ms": 8028
     },
     "arrays": {
       "name": "arrays",
@@ -62,7 +62,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8061
+      "elapsed_ms": 7905
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -74,7 +74,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8123
+      "elapsed_ms": 8073
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -86,7 +86,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7937
+      "elapsed_ms": 8054
     },
     "colour": {
       "name": "colour",
@@ -98,7 +98,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8028
+      "elapsed_ms": 7974
     },
     "control_if": {
       "name": "control_if",
@@ -110,7 +110,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7858
+      "elapsed_ms": 8038
     },
     "control_loops": {
       "name": "control_loops",
@@ -122,7 +122,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7976
+      "elapsed_ms": 7894
     },
     "control_when": {
       "name": "control_when",
@@ -134,7 +134,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7912
+      "elapsed_ms": 7885
     },
     "eventually": {
       "name": "eventually",
@@ -146,7 +146,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7919
+      "elapsed_ms": 7754
     },
     "extern": {
       "name": "extern",
@@ -158,7 +158,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8211
+      "elapsed_ms": 8111
     },
     "files": {
       "name": "files",
@@ -170,7 +170,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8346
+      "elapsed_ms": 7975
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -182,7 +182,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8344
+      "elapsed_ms": 7862
     },
     "hello": {
       "name": "hello",
@@ -194,7 +194,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8252
+      "elapsed_ms": 7878
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -206,7 +206,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8175
+      "elapsed_ms": 7953
     },
     "inference": {
       "name": "inference",
@@ -218,7 +218,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8066
+      "elapsed_ms": 7869
     },
     "interpolation": {
       "name": "interpolation",
@@ -230,19 +230,19 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8367
+      "elapsed_ms": 8144
     },
     "lists": {
       "name": "lists",
       "file": "lists.fk",
-      "source": "-- `List<T>` is V3's typed sequence. The element type must be a scalar\n-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not\n-- allowed: there is no `List<List<int>>`.\nshape Contact {\n    tag: word\n}\n\n-- A List may be a parameter and a return type. It may NOT be a shape\n-- field: that reports \"V3 owned shape fields do not yet support List\n-- values\".\ntask count_all(items: List<word>) -> int {\n    give back items.length()\n}\n\ntask first_three() -> List<int> {\n    give back [1, 2, 3]\n}\n\ntask main() -> void {\n    -- An array literal infers List<T> from its elements.\n    pilot names: List<word> = [\"Takeru\", \"Meiya\", \"Sumika\"]\n    say word_from_int(names.length())\n    say names[1]\n\n    -- Indexed assignment requires `pilot mut`.\n    pilot mut scores: List<int> = [10, 20, 30]\n    scores[0] = 99\n    say word_from_int(scores[0])\n\n    -- Every scalar element type works.\n    pilot ratios: List<num> = [1.5, 2.5]\n    say format_num(ratios[1])\n\n    pilot flags: List<bool> = [true, false]\n    say word_from_bool(flags[0])\n\n    -- Shapes too, and field access chains off the element.\n    pilot contacts: List<Contact> = [Contact { tag: \"BETA-1\" }]\n    say contacts[0].tag\n\n    -- List::filled(value, count) builds a pre-populated list.\n    pilot zeros: List<int> = List::filled(0, 4)\n    say word_from_int(zeros.length())\n\n    -- Passed to a task, and returned from one.\n    say word_from_int(count_all(names))\n    say word_from_int(first_three()[2])\n\n    -- Iterate with an index; there is no `for each`.\n    pilot mut i: int = 0\n    repeat names.length() times {\n        say names[i]\n        i += 1\n    }\n}\n",
+      "source": "-- `List<T>` is V3's typed sequence. The element type must be a scalar\n-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not\n-- allowed: there is no `List<List<int>>`.\nshape Contact {\n    tag: word\n}\n\n-- A List may be a parameter and a return type. It may NOT be a shape\n-- field: that reports \"V3 owned shape fields do not yet support List\n-- values\".\ntask count_all(items: List<word>) -> int {\n    give back items.length()\n}\n\ntask first_three() -> List<int> {\n    give back [1, 2, 3]\n}\n\ntask main() -> void {\n    -- An array literal infers List<T> from its elements.\n    pilot names: List<word> = [\"Takeru\", \"Meiya\", \"Sumika\"]\n    say word_from_int(names.length())\n    say names[1]\n\n    -- Indexed assignment requires `pilot mut`.\n    pilot mut scores: List<int> = [10, 20, 30]\n    scores[0] = 99\n    say word_from_int(scores[0])\n\n    -- Every scalar element type works.\n    pilot ratios: List<num> = [1.5, 2.5]\n    say format_num(ratios[1])\n\n    pilot flags: List<bool> = [true, false]\n    say word_from_bool(flags[0])\n\n    -- Shapes too, and field access chains off the element.\n    pilot contacts: List<Contact> = [Contact { tag: \"BETA-1\" }]\n    say contacts[0].tag\n\n    -- List::filled(value, count) builds a pre-populated list.\n    pilot zeros: List<int> = List::filled(0, 4)\n    say word_from_int(zeros.length())\n\n    -- Passed to a task, and returned from one.\n    say word_from_int(count_all(names))\n    say word_from_int(first_three()[2])\n\n    -- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.\n    pilot mut queue: List<int> = List::new()\n    queue.push(10)\n    queue.push(20)\n    queue.push(30)\n    say word_from_int(queue.length())\n    say word_from_int(queue.pop())      -- 30, removed and returned\n    say word_from_int(queue.length())\n    say word_from_int(queue.capacity()) -- starts at 8, doubles as needed\n    queue.reserve(64)\n    say word_from_int(queue.capacity())\n    queue.clear()\n    say word_from_int(queue.length())\n\n    -- Iterate with an index; there is no `for each`.\n    pilot mut i: int = 0\n    repeat names.length() times {\n        say names[i]\n        i += 1\n    }\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "3\nMeiya\n99\n2.5\ntrue\nBETA-1\n4\n3\n3\nTakeru\nMeiya\nSumika",
+      "stdout": "3\nMeiya\n99\n2.5\ntrue\nBETA-1\n4\n3\n3\n3\n30\n2\n8\n64\n0\nTakeru\nMeiya\nSumika",
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8239
+      "elapsed_ms": 7954
     },
     "module_pattern": {
       "name": "module_pattern",
@@ -254,7 +254,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8184
+      "elapsed_ms": 7926
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -266,7 +266,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8112
+      "elapsed_ms": 7976
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -278,7 +278,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8078
+      "elapsed_ms": 7810
     },
     "operators": {
       "name": "operators",
@@ -290,7 +290,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8000
+      "elapsed_ms": 7849
     },
     "pipe": {
       "name": "pipe",
@@ -302,7 +302,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8035
+      "elapsed_ms": 7719
     },
     "process_time": {
       "name": "process_time",
@@ -310,11 +310,11 @@
       "source": "-- Process and clock builtins.\n-- Note: `process::args()` is deliberately rejected by V3. Use the\n-- indexed pair `process::args_count()` / `process::arg(i)` instead.\ntask main() -> void {\n    pilot argc: int = process::args_count()\n    say word_from_int(argc)\n\n    pilot mut i: int = 0\n    repeat argc times {\n        say \"arg {i}: \" + process::arg(i)\n        i += 1\n    }\n\n    pilot started: int = time::now_ms()\n    pilot mut spin: int = 0\n    repeat 1000 times {\n        spin += 1\n    }\n    pilot elapsed: int = time::now_ms() - started\n    say word_from_bool(elapsed >= 0)\n    say word_from_bool(process::env(\"PATH\").length() > 0)\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "3\narg 0: C:\\Users\\cozor\\AppData\\Local\\Temp\\fkdocs_eggu039s\\process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
+      "stdout": "3\narg 0: C:\\Users\\cozor\\AppData\\Local\\Temp\\fkdocs_e8et7pyk\\process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8061
+      "elapsed_ms": 7688
     },
     "recursion": {
       "name": "recursion",
@@ -326,7 +326,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8019
+      "elapsed_ms": 7651
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -338,7 +338,19 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8072
+      "elapsed_ms": 7629
+    },
+    "same_line": {
+      "name": "same_line",
+      "file": "same_line.fk",
+      "source": "-- Printing on the same line.\n--\n-- `say` ALWAYS appends a newline -- there is no print-without-newline\n-- builtin in V3. These are the three techniques that work instead.\n\ntask main() -> void {\n    -- ---------------------------------------------------------------\n    -- 1. Build the line, then say it once.\n    --\n    -- The usual answer. Nothing is written until the say, so the pieces\n    -- land on one line.\n    -- ---------------------------------------------------------------\n    pilot mut row: word = \"loading:\"\n    pilot mut i: int = 0\n    repeat 5 times {\n        row += \" \" + word_from_int(i)\n        i += 1\n    }\n    say row\n\n    -- For a lot of pieces, word_builder avoids re-copying the word on\n    -- every concatenation.\n    pilot b: int = word_builder::new()\n    word_builder::append(b, \"squadron:\")\n    pilot mut n: int = 1\n    repeat 3 times {\n        word_builder::append(b, \" V-\")\n        word_builder::append_int(b, n)\n        n += 1\n    }\n    say word_builder::finish(b)\n\n    -- ---------------------------------------------------------------\n    -- 2. Carriage return inside ONE say, to overwrite within the line.\n    --\n    -- \"\\r\" returns the cursor to column 0. Everything after it paints\n    -- over what came before, on the same physical line.\n    -- ---------------------------------------------------------------\n    say \"calculating...\\r\\x1b[Kdone          \"\n\n    -- ---------------------------------------------------------------\n    -- 3. Cursor-up, to overwrite a line a PREVIOUS say already ended.\n    --\n    -- \"\\x1b[1A\" moves up one row, \"\\r\" returns to column 0, \"\\x1b[K\"\n    -- erases to end of line. The say then redraws that row and its own\n    -- newline puts the cursor back where it started.\n    --\n    -- In a terminal these four lines display as one line counting up.\n    -- Captured to a file they stay separate, because the escapes are\n    -- cursor movement rather than text.\n    -- ---------------------------------------------------------------\n    say \"progress   0%\"\n    say \"\\x1b[1A\\r\\x1b[Kprogress  33%\"\n    say \"\\x1b[1A\\r\\x1b[Kprogress  66%\"\n    say \"\\x1b[1A\\r\\x1b[Kprogress 100%\"\n\n    say \"finished\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "loading: 0 1 2 3 4\nsquadron: V-1 V-2 V-3\ncalculating...\r\u001b[Kdone          \nprogress   0%\n\u001b[1A\r\u001b[Kprogress  33%\n\u001b[1A\r\u001b[Kprogress  66%\n\u001b[1A\r\u001b[Kprogress 100%\nfinished",
+      "errors": [],
+      "backend": "llvm",
+      "exit_code": 0,
+      "elapsed_ms": 7838
     },
     "shapes": {
       "name": "shapes",
@@ -350,7 +362,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8019
+      "elapsed_ms": 7631
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -362,7 +374,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8128
+      "elapsed_ms": 8079
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -374,7 +386,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8070
+      "elapsed_ms": 8140
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -386,7 +398,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8050
+      "elapsed_ms": 7983
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -398,7 +410,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8019
+      "elapsed_ms": 8143
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -410,7 +422,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7998
+      "elapsed_ms": 7848
     },
     "strings": {
       "name": "strings",
@@ -422,7 +434,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8062
+      "elapsed_ms": 7865
     },
     "tasks": {
       "name": "tasks",
@@ -434,7 +446,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7884
+      "elapsed_ms": 7887
     },
     "toplevel": {
       "name": "toplevel",
@@ -446,7 +458,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8040
+      "elapsed_ms": 7763
     },
     "training_arc": {
       "name": "training_arc",
@@ -458,7 +470,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8028
+      "elapsed_ms": 7688
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -470,7 +482,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8073
+      "elapsed_ms": 7820
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -482,7 +494,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8097
+      "elapsed_ms": 7833
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -494,7 +506,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8010
+      "elapsed_ms": 7786
     },
     "variables": {
       "name": "variables",
@@ -506,7 +518,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8044
+      "elapsed_ms": 6302
     },
     "word_builder": {
       "name": "word_builder",
@@ -518,7 +530,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 5901
+      "elapsed_ms": 6283
     },
     "wordcount": {
       "name": "wordcount",
@@ -530,7 +542,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 6073
+      "elapsed_ms": 6197
     }
   }
 }

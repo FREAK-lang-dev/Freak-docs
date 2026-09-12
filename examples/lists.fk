@@ -46,6 +46,20 @@ task main() -> void {
     say word_from_int(count_all(names))
     say word_from_int(first_three()[2])
 
+    -- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.
+    pilot mut queue: List<int> = List::new()
+    queue.push(10)
+    queue.push(20)
+    queue.push(30)
+    say word_from_int(queue.length())
+    say word_from_int(queue.pop())      -- 30, removed and returned
+    say word_from_int(queue.length())
+    say word_from_int(queue.capacity()) -- starts at 8, doubles as needed
+    queue.reserve(64)
+    say word_from_int(queue.capacity())
+    queue.clear()
+    say word_from_int(queue.length())
+
     -- Iterate with an index; there is no `for each`.
     pilot mut i: int = 0
     repeat names.length() times {

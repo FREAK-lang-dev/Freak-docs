@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -68,12 +68,14 @@
 <div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>say(value)</code></td><td>scalar <code>-&gt; void</code></td><td>Prints with a newline. Accepts <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code> — <strong>not</strong> a shape</td></tr><tr><td><code>ask(prompt)</code></td><td><code>word -&gt; word</code></td><td>Reads a line from stdin</td></tr><tr><td><code>panic(message)</code></td><td><code>word -&gt; void</code></td><td>Aborts the process</td></tr></tbody></table></div>
 <p><code>say</code> takes a statement form as well as a call form — <code>say &quot;x&quot;</code> and <code>say(&quot;x&quot;)</code> are identical, because <code>(&quot;x&quot;)</code> is just a parenthesised expression.</p>
 <h2 id="conversion-builtins">Conversion builtins<a class="anchor" href="#conversion-builtins" aria-label="Link to this section">#</a></h2>
-<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>word_from_int(i)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>word_from_bool(b)</code></td><td><code>bool -&gt; word</code></td></tr><tr><td><code>word_to_int(w)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>word_concat(a, b)</code></td><td><code>word, word -&gt; word</code></td></tr><tr><td><code>word_join(handle)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>char_to_word(code)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>format_num(f)</code></td><td><code>num -&gt; word</code></td></tr><tr><td><code>parse_num(w)</code></td><td><code>word -&gt; num</code></td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Call</th><th>Signature</th></tr></thead><tbody><tr><td><code>word_from_int(i)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>word_from_bool(b)</code></td><td><code>bool -&gt; word</code></td></tr><tr><td><code>word_to_int(w)</code></td><td><code>word -&gt; int</code></td></tr><tr><td><code>word_concat(a, b)</code></td><td><code>word, word -&gt; word</code></td></tr><tr><td><code>word_join(handle)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>char_to_word(code)</code></td><td><code>int -&gt; word</code></td></tr><tr><td><code>format_num(f)</code></td><td><code>num -&gt; word</code></td></tr><tr><td><code>parse_num(w)</code></td><td><code>word -&gt; num</code></td></tr><tr><td><code>parse_status()</code></td><td><code>-&gt; int</code> — non-zero if the last checked parse failed</td></tr><tr><td><code>parse_clear_status()</code></td><td><code>-&gt; void</code></td></tr></tbody></table></div>
 <h2 id="word-methods"><code>word</code> methods<a class="anchor" href="#word-methods" aria-label="Link to this section">#</a></h2>
-<p>Covered in full in <a href="words.html#methods">Words &amp; interpolation</a>: <code>.length()</code>, <code>.trim()</code>, <code>.to_upper()</code>, <code>.to_lower()</code>, <code>.contains()</code>, <code>.starts_with()</code>, <code>.ends_with()</code>, <code>.replace()</code>, <code>.substring()</code>, <code>.char_at()</code>, <code>.to_int()</code>, <code>.to_num()</code>, <code>.checksum()</code>, <code>.repeated(n)</code>, plus seven internal <code>snapshot_*</code> helpers.</p>
+<p>Covered in full in <a href="words.html#methods">Words &amp; interpolation</a>: <code>.length()</code>, <code>.trim()</code>, <code>.to_upper()</code>, <code>.to_lower()</code>, <code>.contains()</code>, <code>.starts_with()</code>, <code>.ends_with()</code>, <code>.replace()</code>, <code>.substring()</code>, <code>.char_at()</code>, <code>.to_int()</code>, <code>.to_num()</code>, <code>.parse_int()</code>, <code>.parse_num()</code>, <code>.checksum()</code>, <code>.repeated(n)</code>, plus seven internal <code>snapshot_*</code> helpers.</p>
 <p>Scalar methods: <code>int.to_num()</code>, <code>int.to_word()</code>, <code>num.to_int()</code>, <code>num.to_word()</code>, <code>bool.to_word()</code>.</p>
 <h2 id="lists-and-arrays">Lists and arrays<a class="anchor" href="#lists-and-arrays" aria-label="Link to this section">#</a></h2>
-<p><code>array_new</code>, <code>array_push</code>, <code>array_get</code>, <code>array_set</code>, <code>array_len</code>, <code>array_release</code>, <code>word_join</code>, plus typed <code>List&lt;T&gt;</code> with <code>.length()</code>, indexing and <code>List::filled(value, count)</code> — see <a href="arrays.html">Lists &amp; arrays</a>.</p>
+<p>Typed <code>List&lt;T&gt;</code>: <code>List::new()</code>, <code>List::with_capacity(n)</code>, <code>List::filled(v, n)</code>, indexing, <code>.length()</code>, <code>.push()</code>, <code>.pop()</code>, <code>.capacity()</code>, <code>.reserve(n)</code>, <code>.clear()</code>.</p>
+<p>Legacy handle: <code>array_new</code>, <code>array_push</code>, <code>array_get</code>, <code>array_set</code>, <code>array_len</code>, <code>array_release</code>, <code>word_join</code>.</p>
+<p>Both, and when each applies — see <a href="arrays.html">Lists &amp; arrays</a>.</p>
 <h2 id="wordbuilder">WordBuilder<a class="anchor" href="#wordbuilder" aria-label="Link to this section">#</a></h2>
 <p><code>word_builder::new</code>, <code>with_capacity</code>, <code>reserve</code>, <code>append</code>, <code>append_char</code>, <code>append_int</code>, <code>length</code>, <code>capacity</code>, <code>clear</code>, <code>finish</code>, <code>discard</code> — see <a href="words.html#building-words-incrementally">Words &amp; interpolation</a>.</p>
 <h2 id="bytebuffer">ByteBuffer<a class="anchor" href="#bytebuffer" aria-label="Link to this section">#</a></h2>
@@ -241,7 +243,7 @@ false</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_eggu039s\process_time.exe
+arg 0: C:\Users\cozor\AppData\Local\Temp\fkdocs_e8et7pyk\process_time.exe
 arg 1: alpha
 arg 2: bravo
 true
@@ -415,9 +417,9 @@ false</code></pre>
 <div class="tablewrap"><table><thead><tr><th>Bible module</th><th>V3 equivalent</th></tr></thead><tbody><tr><td><code>std::collections</code> <code>List&lt;T&gt;</code></td><td>Typed <code>List&lt;T&gt;</code> with indexing and <code>List::filled</code> — no <code>push</code>/<code>pop</code>/<code>sort</code></td></tr><tr><td><code>std::bytes</code> <code>ByteBuffer</code></td><td>The builtin <code>ByteBuffer</code> type</td></tr><tr><td><code>std::word</code> <code>WordBuilder</code></td><td><code>word_builder::*</code> over an <code>int</code> handle</td></tr><tr><td><code>std::net</code></td><td><code>tcp::socket_*</code>, including listen and accept</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>

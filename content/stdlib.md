@@ -57,13 +57,16 @@ syntax. Everything else is already in scope without it.
 | `char_to_word(code)` | `int -> word` |
 | `format_num(f)` | `num -> word` |
 | `parse_num(w)` | `word -> num` |
+| `parse_status()` | `-> int` — non-zero if the last checked parse failed |
+| `parse_clear_status()` | `-> void` |
 
 ## `word` methods
 
 Covered in full in [Words & interpolation](words.html#methods):
 `.length()`, `.trim()`, `.to_upper()`, `.to_lower()`, `.contains()`,
 `.starts_with()`, `.ends_with()`, `.replace()`, `.substring()`, `.char_at()`,
-`.to_int()`, `.to_num()`, `.checksum()`, `.repeated(n)`, plus seven internal
+`.to_int()`, `.to_num()`, `.parse_int()`, `.parse_num()`, `.checksum()`,
+`.repeated(n)`, plus seven internal
 `snapshot_*` helpers.
 
 Scalar methods: `int.to_num()`, `int.to_word()`, `num.to_int()`,
@@ -71,9 +74,14 @@ Scalar methods: `int.to_num()`, `int.to_word()`, `num.to_int()`,
 
 ## Lists and arrays
 
-`array_new`, `array_push`, `array_get`, `array_set`, `array_len`,
-`array_release`, `word_join`, plus typed `List<T>` with `.length()`, indexing
-and `List::filled(value, count)` — see [Lists & arrays](arrays.html).
+Typed `List<T>`: `List::new()`, `List::with_capacity(n)`,
+`List::filled(v, n)`, indexing, `.length()`, `.push()`, `.pop()`,
+`.capacity()`, `.reserve(n)`, `.clear()`.
+
+Legacy handle: `array_new`, `array_push`, `array_get`, `array_set`,
+`array_len`, `array_release`, `word_join`.
+
+Both, and when each applies — see [Lists & arrays](arrays.html).
 
 ## WordBuilder
 

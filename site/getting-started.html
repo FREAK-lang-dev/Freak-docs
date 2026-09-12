@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.1 (Maverick)</span>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -191,9 +191,9 @@ freak doctor --json</code></pre></div>
 <div class="tablewrap"><table><thead><tr><th>Message</th><th>Cause</th></tr></thead><tbody><tr><td><code>unexpected &#x27;use&#x27; — this token cannot start an expression</code></td><td>You ran <code>freak check</code>, which does not strip <code>use</code> lines or load the standard library. Use <code>freak build</code> or <code>freak run</code>.</td></tr><tr><td><code>expected an identifier for shape name, found &#x27;Pilot&#x27;</code></td><td>Keywords are case-insensitive; <code>Pilot</code> is the <code>pilot</code> keyword. Rename.</td></tr><tr><td><code>unknown callable &#x27;string_reverse&#x27;</code></td><td>Same cause — <code>freak check</code> compiles your file alone, without <code>std/</code>.</td></tr><tr><td><code>ABI MISMATCH</code></td><td><code>runtime/freak_abi</code> or <code>std/freak_abi</code> does not match the compiler&#x27;s expected marker. Reinstall the payload.</td></tr><tr><td><code>expected &#x27;=&#x27;, found &#x27;&lt;&#x27;</code></td><td>Generic type syntax. V3 has none — see <a href="not-in-v3.html">Not in V3</a>.</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.1 (Maverick)</strong>,
+      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
       built from source with a verified self-host fixed point.
-      44/44 examples compile; regenerate with
+      45/45 examples compile; regenerate with
       <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
     </footer>
   </main>
