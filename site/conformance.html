@@ -55,7 +55,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="bible-vs-v3">Bible vs V3<a class="anchor" href="#bible-vs-v3" aria-label="Link to this section">#</a></h1>
-<p>&gt; A section-by-section comparison of <code>freak-full-bible.md</code> against what the V3 compiler accepts, established by compiling probe programs.</p>
+<p class="lede">A section-by-section comparison of <code>freak-full-bible.md</code> against what the V3 compiler accepts, established by compiling probe programs.</p>
 <h2 id="method">Method<a class="anchor" href="#method" aria-label="Link to this section">#</a></h2>
 <p>The bible carries its own status table in §0.2, but that table describes the project as a whole — it counts a feature as landed when it works in the <strong>V4</strong> compiler under <code>src/compiler/v4/</code>. Many rows the bible marks partial are entirely absent from the shipping V3 compiler.</p>
 <p>The verdicts below come from a different method: writing a probe program for each feature and running it through a V3 binary built from source. &quot;Compiles&quot; means the frontend accepted it. &quot;Rejected&quot; quotes the actual diagnostic.</p>

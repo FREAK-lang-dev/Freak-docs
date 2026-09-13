@@ -415,6 +415,19 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
                        f"<p>{inline(text)}</p></div>")
             continue
 
+        # Page lede: a "> ..." line that is not a callout. Markdown calls it a
+        # blockquote; here it is the one-line summary under the title, so it
+        # renders as a lede paragraph rather than keeping the marker.
+        if stripped.startswith(">") and not stripped.startswith("> [!"):
+            quoted = []
+            while i < n and lines[i].strip().startswith(">"):
+                quoted.append(lines[i].strip().lstrip(">").strip())
+                i += 1
+            text = " ".join(x for x in quoted if x)
+            buffer_text.append(text)
+            out.append(f'<p class="lede">{inline(text)}</p>')
+            continue
+
         # table
         if stripped.startswith("|"):
             rows = []

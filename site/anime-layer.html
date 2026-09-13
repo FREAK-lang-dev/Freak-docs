@@ -55,7 +55,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="anime-layer">Anime layer<a class="anchor" href="#anime-layer" aria-label="Link to this section">#</a></h1>
-<p>&gt; FREAK&#x27;s signature feature set. Four pieces of it compile in V3; the rest is specified but unimplemented.</p>
+<p class="lede">FREAK&#x27;s signature feature set. Four pieces of it compile in V3; the rest is specified but unimplemented.</p>
 <p>The bible&#x27;s Section 5 describes a large narrative-flavoured layer: foreshadowing debts, route types, honour-gated unsafe blocks, death-flag analysis, and <code>deus_ex_machina</code> miracles. V3 implements a small slice of it.</p>
 <h2 id="what-compiles">What compiles<a class="anchor" href="#what-compiles" aria-label="Link to this section">#</a></h2>
 <div class="tablewrap"><table><thead><tr><th>Construct</th><th>Status in V3</th></tr></thead><tbody><tr><td><code>training arc until C max N sessions { }</code></td><td><strong>Works</strong> — a real bounded loop</td></tr><tr><td><code>eventually { }</code></td><td><strong>Parses and emits</strong>, but inline, not deferred</td></tr><tr><td><code>@annotation</code></td><td><strong>Parses</strong>, then ignored. One per statement, no arguments</td></tr><tr><td><code>PLUS ULTRA</code>, <code>FINAL FORM</code>, <code>TSUNDERE</code>, <code>NAKAMA</code></td><td><strong>Work</strong>, with different semantics from the spec</td></tr></tbody></table></div>

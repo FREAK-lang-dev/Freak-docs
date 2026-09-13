@@ -55,7 +55,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="extern-ffi">extern &amp; FFI<a class="anchor" href="#extern-ffi" aria-label="Link to this section">#</a></h1>
-<p>&gt; V3&#x27;s foreign-function interface is one line long, and that is the whole of it.</p>
+<p class="lede">V3&#x27;s foreign-function interface is one line long, and that is the whole of it.</p>
 <h2 id="the-declaration-form">The declaration form<a class="anchor" href="#the-declaration-form" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">name</span>(param<span class="c-op">:</span> type, param<span class="c-op">:</span> type) <span class="c-op">-&gt;</span> returntype</code></pre></div>
 <p>One line, no body, no block, no attributes. Parameter and return types use the usual <a href="language-basics.html#the-type-annotation-grammar">type grammar</a>, but only a small set makes sense at a C boundary: <code>int</code>, <code>num</code>, <code>bool</code>, <code>void</code>. See <a href="#type-mapping">type mapping</a> below before reaching for <code>word</code> — and never for <code>List&lt;T&gt;</code> or <code>ByteBuffer</code>, which have no C representation.</p>

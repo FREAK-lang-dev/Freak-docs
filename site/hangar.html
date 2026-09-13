@@ -55,7 +55,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="hangar-packages">Hangar &amp; packages<a class="anchor" href="#hangar-packages" aria-label="Link to this section">#</a></h1>
-<p>&gt; Hangar manages dependencies. V3 cannot consume them. This page explains the gap and what to do instead.</p>
+<p class="lede">Hangar manages dependencies. V3 cannot consume them. This page explains the gap and what to do instead.</p>
 <p>Hangar is FREAK&#x27;s package manager, shipping as <code>freak hangar &lt;cmd&gt;</code> and as a standalone <code>hangar</code> binary. It initialises projects, edits manifests, resolves semver constraints, downloads packages and publishes them.</p>
 <div class="callout warn"><div class="callout-title">Careful</div><p><strong>An installed package is not visible to the compiler.</strong> <code>freak build</code> never reads <code>hangar_modules/</code> and never reads <code>[dependencies]</code>. A <code>use pkg::{…}</code> line is rewritten to a comment before parsing, so nothing is imported and the first call into the package fails with <code>unknown callable</code>. Hangar today is a manifest and download tool. The link step that would make a dependency usable does not exist in V3.</p></div>
 <p>Verified against the shipping compiler:</p>

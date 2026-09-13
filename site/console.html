@@ -55,7 +55,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="coloured-output">Coloured output<a class="anchor" href="#coloured-output" aria-label="Link to this section">#</a></h1>
-<p>&gt; There is no colour library. You write ANSI escape sequences into <code>word</code> values yourself — so this page is the full code reference.</p>
+<p class="lede">There is no colour library. You write ANSI escape sequences into <code>word</code> values yourself — so this page is the full code reference.</p>
 <p>FREAK has no <code>std::term</code>, no <code>Color</code> type and no formatting helpers. Colour works because two things are true:</p>
 <ol><li>The lexer supports <code>\xNN</code> byte escapes and passes them through to the backend untouched.</li><li>Every compiled FREAK program enables ANSI processing at startup.</li></ol>
 <p>That is enough. Colour constants are ordinary <code>word</code> bindings, concatenated with <code>+</code>. The compiler&#x27;s own CLI is written this way, so it doubles as the reference implementation.</p>
@@ -389,7 +389,8 @@ finished</code></pre>
 <p>V3 hardcodes red for errors rather than using the palette, because the compiler files are concatenated <em>ahead</em> of the CLI&#x27;s constants:</p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1;31merror\x1b[0m: &quot;</span> <span class="c-op">+</span> msg</code></pre></div>
 <p>That line is in <code>src/compiler/v3/helpers.fk</code>, with variants in <code>parser.fk</code> (the</p>
-<p>&gt;100-error bail-out) and <code>main.fk</code> (the abort summary). The caret line under a diagnostic is coloured the same way.</p>
+<p class="lede">100-error bail-out) and <code>main.fk</code> (the abort summary). The caret line under a</p>
+<p>diagnostic is coloured the same way.</p>
 <h2 id="support-and-practical-notes">Support and practical notes<a class="anchor" href="#support-and-practical-notes" aria-label="Link to this section">#</a></h2>
 <ul><li><strong>Always reset.</strong> An unclosed sequence leaks into the shell prompt after your program exits.</li><li><strong>Safe floor:</strong> the 8 standard colours and <code>1</code>/<code>4</code>/<code>0</code>. Universally supported.</li><li><strong>Widely safe:</strong> bright colours, backgrounds, 256-colour, truecolour, <code>2</code>, <code>3</code>, <code>7</code>, <code>9</code>.</li><li><strong>Patchy:</strong> <code>5</code>/<code>6</code> blink (often ignored), <code>8</code> conceal, <code>21</code> double underline, <code>51</code>–<code>55</code> framed/encircled/overlined, <code>58</code> underline colour.</li><li><strong>Combine parameters</strong> in one sequence rather than emitting several.</li><li>Colour goes through <code>say</code>, which writes to stdout. There is no stderr writer in V3, so diagnostics and normal output share one stream.</li></ul>
     </article>

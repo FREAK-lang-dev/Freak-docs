@@ -55,7 +55,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="standard-library">Standard library<a class="anchor" href="#standard-library" aria-label="Link to this section">#</a></h1>
-<p>&gt; Every callable V3 recognises: the compiler builtins, and the FREAK-source modules linked into your build.</p>
+<p class="lede">Every callable V3 recognises: the compiler builtins, and the FREAK-source modules linked into your build.</p>
 <p>There are two distinct surfaces, and the difference matters.</p>
 <p><strong>Compiler builtins</strong> are known to the type checker itself. They always exist, need no import, and work under <code>freak check</code>.</p>
 <p><strong>Standard-library tasks</strong> live in <code>std/*.fk</code> as ordinary FREAK source. The CLI concatenates those files ahead of yours during <code>freak build</code> and <code>freak run</code>. They are global tasks in the same flat namespace as your own.</p>
