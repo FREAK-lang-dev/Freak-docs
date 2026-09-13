@@ -82,6 +82,23 @@ All of these work. What they cannot do is make a package compile.
 
 `hangar search` from the specification does not exist in this build.
 
+### Signing in
+
+In 0.14.2, `hangar login` stores a registry token in
+`~/.hangar/credentials` — a string an administrator mints and you paste in.
+`hangar publish` sends it as a bearer token.
+
+> [!note]
+> This is being replaced. On `main`, tokens are gone: `hangar auth login` runs
+> a device flow instead — it prints a short one-time code, opens the registry
+> in your browser, and waits while you approve it there. What lands in
+> `~/.hangar/credentials` is then a session tied to your account, which you can
+> revoke yourself with `hangar auth logout`. `hangar auth status` says who you
+> are signed in as, and `hangar login` still works as an alias. Publishing is
+> tied to an account too: the first publish of a name claims it, and nobody
+> else can ship that name afterwards. Not in 0.14.2 — this page follows the
+> shipping compiler, and will change when the next release lands.
+
 ## hangar.toml
 
 What `hangar init` actually writes:
