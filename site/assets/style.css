@@ -381,3 +381,21 @@ pre.stdout.term {
   padding: 12px 14px;
 }
 :root:not([data-theme="dark"]) pre.stdout.term { color: #d7d7e0; }
+
+/* Conformance status markers. Inline SVG rather than emoji so the glyph
+   inherits the pill's colour and carries an accessible name. */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  border: 1px solid transparent;
+}
+.status-pill svg { flex: none; }
+.status-shipped { color: var(--ok);   background: var(--ok-soft);
+                  border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+.status-partial { color: var(--warn); background: var(--warn-soft);
+                  border-color: color-mix(in srgb, var(--warn) 30%, transparent); }
+.status-v4      { color: var(--v4);   background: var(--v4-soft);
+                  border-color: color-mix(in srgb, var(--v4) 30%, transparent); }
+.status-planned { color: var(--fg-faint); background: var(--bg-alt);
+                  border-color: var(--border); }

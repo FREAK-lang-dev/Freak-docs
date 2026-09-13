@@ -11,6 +11,7 @@ Usage:
 
 from __future__ import annotations
 
+import argparse
 import html
 import json
 import re
@@ -69,6 +70,8 @@ KEYWORDS = {
     "extern", "give back", "or else", "trust me", "for each", "for science",
     "training arc", "bringing back", "only on",
 }
+PAGE_LINK_RE = re.compile(r'href="([a-z0-9-]+)\.html')
+
 LITERALS = {"true", "false", "yes", "no", "hai", "iie"}
 MULTIWORD = ["give back", "or else", "trust me", "for each", "for science",
              "training arc", "bringing back", "only on", "PLUS ULTRA",
@@ -190,6 +193,7 @@ def highlight_fk(code: str) -> str:
 # --------------------------------------------------------------------------
 
 from ansi_html import render as ansi_to_html, has_ansi   # noqa: E402
+from status_pills import expand as expand_status_pills   # noqa: E402
 
 
 # --------------------------------------------------------------------------
@@ -223,7 +227,7 @@ def inline(text: str) -> str:
         seg = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", seg)
         seg = re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"<em>\1</em>", seg)
         rendered.append(seg)
-    return "".join(rendered)
+    return expand_status_pills("".join(rendered))
 
 
 def slugify(text: str) -> str:
@@ -508,7 +512,7 @@ PAGE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} &middot; FREAK V3</title>
 <meta name="description" content="{desc}">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128165;</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -545,8 +549,19 @@ PAGE = """<!doctype html>
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fragments", metavar="DIR",
+                    help="also emit body-only fragments plus manifest.json and "
+                         "search-index.json into DIR, for embedding in a host site")
+    args = ap.parse_args()
+
     data = json.loads(VERIFIED.read_text(encoding="utf-8"))
     ASSETS.mkdir(parents=True, exist_ok=True)
+
+    frag_dir = Path(args.fragments).resolve() if args.fragments else None
+    if frag_dir:
+        frag_dir.mkdir(parents=True, exist_ok=True)
+    manifest: list[dict] = []
 
     search_rows: list[dict] = []
     pages = [(slug, label) for _, items in NAV for slug, label in items]
@@ -583,9 +598,38 @@ def main() -> int:
         (SITE / f"{slug}.html").write_text(page, encoding="utf-8")
         print(f"  wrote site/{slug}.html")
 
+        if frag_dir:
+            # Body-only, with in-site links rewritten for the host router.
+            frag = re.sub(PAGE_LINK_RE, 'href="./\\1', body)
+            (frag_dir / f"{slug}.html").write_text(frag, encoding="utf-8")
+            group = next(g for g, items in NAV
+                         if any(sl == slug for sl, _ in items))
+            manifest.append({
+                "slug": slug,
+                "label": label,
+                "group": group,
+                "title": title,
+                "description": desc,
+                "headings": [h for h in headings if h["level"] == 2],
+            })
+
     index_js = "window.SEARCH_INDEX = " + json.dumps(search_rows, separators=(",", ":")) + ";"
     (ASSETS / "search-index.js").write_text(index_js, encoding="utf-8")
     print(f"  wrote site/assets/search-index.js ({len(search_rows)} records)")
+
+    if frag_dir:
+        (frag_dir / "manifest.json").write_text(json.dumps({
+            "compiler": data["compiler"],
+            "generated_utc": data["generated_utc"],
+            "examples_total": data["total"],
+            "examples_compiled": data["compiled"],
+            "groups": [g for g, _ in NAV],
+            "pages": manifest,
+        }, indent=2), encoding="utf-8")
+        (frag_dir / "search-index.json").write_text(
+            json.dumps(search_rows, separators=(",", ":")), encoding="utf-8")
+        print(f"  wrote {len(manifest)} fragments + manifest.json + "
+              f"search-index.json to {frag_dir}")
     return 0
 
 

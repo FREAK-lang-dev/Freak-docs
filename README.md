@@ -47,6 +47,7 @@ tools/
   verify.py        builds and runs every example with a real V3 compiler
   build_docs.py    renders content/ + verified.json into site/
   ansi_html.py     replays captured terminal output (SGR, CR, cursor) as HTML
+  status_pills.py  inline SVG conformance markers, so no page needs emoji
   search_smoke.js  headless check that the search index answers real queries
   sync_labels.py   applies meta/labels.json to the org's repos
 site/              the generated website — this is what Vercel serves
@@ -115,6 +116,31 @@ control sequences.
 
 Adding a page means adding `content/<slug>.md` and an entry in the `NAV` table
 at the top of `build_docs.py`.
+
+## Embedding in freaklang.dev
+
+The same build also emits an embeddable form, used by the `/docs/v3` section of
+[freaklang.dev](https://github.com/FREAK-lang-dev/freaklang.dev):
+
+```sh
+python tools/build_docs.py --fragments /path/to/freaklang.dev/apps/main-site/public/docs-v3
+```
+
+That writes body-only HTML fragments (no `<head>`, no chrome, in-page links
+rewritten to `./slug#anchor`), plus `manifest.json` describing the sidebar
+groups, page order and per-page `<h2>` anchors, and `search-index.json`. The
+host site supplies its own styling and navigation and drives everything from
+the manifest, so a page added here appears there without any code change.
+
+Regeneration is documented on that side in `scripts/sync-v3-docs.md`.
+
+## No emoji
+
+Conformance markers are inline SVG pills (`:shipped:`, `:partial:`, `:v4:`,
+`:planned:` in the Markdown source), not emoji. Emoji render inconsistently
+across platforms, carry no accessible name, and cannot inherit the surrounding
+colour; an SVG stroked with `currentColor` does all three. The favicon is an
+SVG mark for the same reason.
 
 ## Two compiler defects documented here
 

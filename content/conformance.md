@@ -6,7 +6,7 @@
 
 The bible carries its own status table in §0.2, but that table describes the
 project as a whole — it counts a feature as landed when it works in the **V4**
-compiler under `src/compiler/v4/`. Many rows marked "⚠️ Partial" are entirely
+compiler under `src/compiler/v4/`. Many rows the bible marks partial are entirely
 absent from the shipping V3 compiler.
 
 The verdicts below come from a different method: writing a probe program for
@@ -14,6 +14,11 @@ each feature and running it through a V3 binary built from source. "Compiles"
 means the frontend accepted it. "Rejected" quotes the actual diagnostic.
 
 {{verified-summary}}
+
+The Bible column below reports the specification's own status legend, rendered
+as: :shipped: works end to end, :partial: parsed but the guarantee is
+incomplete, :v4: specified and not in the shipping compiler.
+
 
 > [!note]
 > A recurring pattern is worth stating once. Many bible features are
@@ -24,69 +29,69 @@ means the frontend accepted it. "Rejected" quotes the actual diagnostic.
 
 ## Section 1 — Syntax
 
-Bible status: ⚠️ Partial. Real V3 status: a small core works.
+Bible status: :partial: — real V3 status: a small core works.
 
 | §1 feature | Bible | V3 | Evidence |
 |---|---|---|---|
-| 1.1 `pilot` / `fixed pilot` / `pilot mut` | ✅ | **Compiles** | |
-| 1.1 Type annotation `x: T` | ✅ | **Compiles** — one identifier, plus `List<T>` | |
-| 1.2 `task name(p: T) -> R { }` | ✅ | **Compiles** | |
-| 1.2 `give back` | ✅ | **Compiles** | |
-| 1.2 Arrow body `=> expr` | ✅ | **Rejected** | `expected '{', found '=>'` |
-| 1.2 `done` block terminator | ✅ | **Rejected** | `expected '{', found 'give back'` |
-| 1.2 Named call arguments | V4 | **Rejected** | |
-| 1.2 `say` | ✅ | **Compiles** — scalars only, not shapes | |
-| 1.2 `{path}` interpolation | ✅ | **Compiles** — paths only, never calls | |
-| 1.3 `int` `num` `word` `bool` `void` | ✅ | **Compiles** | |
-| 1.3 `uint` `tiny` `char` `big` `float` `float32` `never` | V4 | **Absent** | |
-| 1.3 `[T; N]`, tuples, `*T` / `*mut T` | V4 | **Rejected** | |
-| 1.4 `maybe<T>` / `some` / `nobody` | ✅ | **Rejected** | `expected '{', found '<'` |
-| 1.4 `result<T,E>` / `ok` / `err` | ✅ | **Rejected** | |
-| 1.4 `List<T>` | ✅ | **Compiles** — typed, indexable, growable (`push`/`pop`/`reserve`/`clear`); no `sort`/`insert`/iterators | |
-| 1.4 `Map<K,V>` `Set<T>` `Lineup<T>` | ✅ | **Absent** | No map literal either |
-| 1.5 `shape` declaration | ✅ | **Compiles** | |
-| 1.5 Shape construction `S { f: v }` | ✅ | **Compiles** | LLVM backend |
-| 1.5 `impl S { task m(self) }` | ✅ | **Compiles** | |
-| 1.5 Generic shapes `shape Pair<A,B>` | V4 | **Rejected** | |
-| 1.6 `doctrine` declaration | ⚠️ | **Rejected** | `unexpected 'doctrine'` |
-| 1.6 `impl D for S { }` | ⚠️ | **Compiles** — `D` unvalidated | |
-| 1.6 Operator dispatch via `Add` | ⚠️ | **Rejected** | `operator '+' does not accept Vec2 and Vec2` |
-| 1.6 `dyn Doctrine`, vtables | V4 | **Absent** | |
-| 1.7 `if` / `else if` / `else` | ✅ | **Compiles** | |
-| 1.7 `when` with literal arms and `_` | ⚠️ | **Compiles** — statement only | |
-| 1.7 `when` with destructuring | V4 | **Absent** | |
-| 1.7 `for each x in list` | ✅ | **Rejected** | `unexpected 'for each'` |
-| 1.7 `repeat N times` / `repeat until` | ✅ | **Compiles** | |
-| 1.7 `training arc ... max N sessions` | ⚠️ | **Compiles** | |
-| 1.7 `training arc ... with growth` | V4 | **Rejected** | |
-| 1.7 `break` / `continue` | ✅ | **Compiles** | |
-| 1.8 Closures `\|x\| => expr` | ⚠️ | **Rejected** | `unexpected '\|'` |
-| 1.8 Capture modes `copy` / `move` / `mut` | V4 | **Absent** | |
-| 1.9 Pipe `\|>` | ✅ | **Compiles** — bare task names only | |
-| 1.10 `?` propagation | ✅ | **Rejected** | `unexpected '?'`. `parse_status()` is the closest substitute |
-| 1.10 `check` over maybe / result | ✅ | **Rejected** | `unexpected 'check'` |
-| 1.10 `or else` | ✅ | **Rejected** | `unexpected 'or else'` |
-| 1.11 Generics `<T>`, bounds | ⚠️ | **Rejected** | `expected '(', found '<'`. `List<T>` is a hard-coded special case, not a mechanism |
-| 1.12 `lend` / `lend mut` | ⚠️ | **Rejected** | `expected an identifier for parameter name, found 'lend'` |
-| 1.13 `use module::{...}` | ⚠️ | **Stripped** — a build hint, not an import | |
-| 1.13 `use module::*` | V4 | **Stripped** | |
-| 1.13 `launch` visibility | ⚠️ | **Rejected** | `unexpected 'launch'` |
-| 1.14 `variant` | V4 | **Rejected** | |
-| 1.14 `alias` | V4 | **Rejected** | |
-| 1.14 Root `fixed pilot` constants | ⚠️ | **Compiles** — and V3 also allows mutable root bindings and root statements, which the bible forbids | |
-| 1.15 `[a, b, c]` literal | ⚠️ | **Compiles** — infers `List<T>` from its elements | |
-| 1.15 `[expr; N]` repeat-fill | V4 | **Rejected** | |
-| 1.15 No implicit tail return | ✅ | **Enforced** | |
+| 1.1 `pilot` / `fixed pilot` / `pilot mut` | :shipped: | **Compiles** | |
+| 1.1 Type annotation `x: T` | :shipped: | **Compiles** — one identifier, plus `List<T>` | |
+| 1.2 `task name(p: T) -> R { }` | :shipped: | **Compiles** | |
+| 1.2 `give back` | :shipped: | **Compiles** | |
+| 1.2 Arrow body `=> expr` | :shipped: | **Rejected** | `expected '{', found '=>'` |
+| 1.2 `done` block terminator | :shipped: | **Rejected** | `expected '{', found 'give back'` |
+| 1.2 Named call arguments | :v4: | **Rejected** | |
+| 1.2 `say` | :shipped: | **Compiles** — scalars only, not shapes | |
+| 1.2 `{path}` interpolation | :shipped: | **Compiles** — paths only, never calls | |
+| 1.3 `int` `num` `word` `bool` `void` | :shipped: | **Compiles** | |
+| 1.3 `uint` `tiny` `char` `big` `float` `float32` `never` | :v4: | **Absent** | |
+| 1.3 `[T; N]`, tuples, `*T` / `*mut T` | :v4: | **Rejected** | |
+| 1.4 `maybe<T>` / `some` / `nobody` | :shipped: | **Rejected** | `expected '{', found '<'` |
+| 1.4 `result<T,E>` / `ok` / `err` | :shipped: | **Rejected** | |
+| 1.4 `List<T>` | :shipped: | **Compiles** — typed, indexable, growable (`push`/`pop`/`reserve`/`clear`); no `sort`/`insert`/iterators | |
+| 1.4 `Map<K,V>` `Set<T>` `Lineup<T>` | :shipped: | **Absent** | No map literal either |
+| 1.5 `shape` declaration | :shipped: | **Compiles** | |
+| 1.5 Shape construction `S { f: v }` | :shipped: | **Compiles** | LLVM backend |
+| 1.5 `impl S { task m(self) }` | :shipped: | **Compiles** | |
+| 1.5 Generic shapes `shape Pair<A,B>` | :v4: | **Rejected** | |
+| 1.6 `doctrine` declaration | :partial: | **Rejected** | `unexpected 'doctrine'` |
+| 1.6 `impl D for S { }` | :partial: | **Compiles** — `D` unvalidated | |
+| 1.6 Operator dispatch via `Add` | :partial: | **Rejected** | `operator '+' does not accept Vec2 and Vec2` |
+| 1.6 `dyn Doctrine`, vtables | :v4: | **Absent** | |
+| 1.7 `if` / `else if` / `else` | :shipped: | **Compiles** | |
+| 1.7 `when` with literal arms and `_` | :partial: | **Compiles** — statement only | |
+| 1.7 `when` with destructuring | :v4: | **Absent** | |
+| 1.7 `for each x in list` | :shipped: | **Rejected** | `unexpected 'for each'` |
+| 1.7 `repeat N times` / `repeat until` | :shipped: | **Compiles** | |
+| 1.7 `training arc ... max N sessions` | :partial: | **Compiles** | |
+| 1.7 `training arc ... with growth` | :v4: | **Rejected** | |
+| 1.7 `break` / `continue` | :shipped: | **Compiles** | |
+| 1.8 Closures `\|x\| => expr` | :partial: | **Rejected** | `unexpected '\|'` |
+| 1.8 Capture modes `copy` / `move` / `mut` | :v4: | **Absent** | |
+| 1.9 Pipe `\|>` | :shipped: | **Compiles** — bare task names only | |
+| 1.10 `?` propagation | :shipped: | **Rejected** | `unexpected '?'`. `parse_status()` is the closest substitute |
+| 1.10 `check` over maybe / result | :shipped: | **Rejected** | `unexpected 'check'` |
+| 1.10 `or else` | :shipped: | **Rejected** | `unexpected 'or else'` |
+| 1.11 Generics `<T>`, bounds | :partial: | **Rejected** | `expected '(', found '<'`. `List<T>` is a hard-coded special case, not a mechanism |
+| 1.12 `lend` / `lend mut` | :partial: | **Rejected** | `expected an identifier for parameter name, found 'lend'` |
+| 1.13 `use module::{...}` | :partial: | **Stripped** — a build hint, not an import | |
+| 1.13 `use module::*` | :v4: | **Stripped** | |
+| 1.13 `launch` visibility | :partial: | **Rejected** | `unexpected 'launch'` |
+| 1.14 `variant` | :v4: | **Rejected** | |
+| 1.14 `alias` | :v4: | **Rejected** | |
+| 1.14 Root `fixed pilot` constants | :partial: | **Compiles** — and V3 also allows mutable root bindings and root statements, which the bible forbids | |
+| 1.15 `[a, b, c]` literal | :partial: | **Compiles** — infers `List<T>` from its elements | |
+| 1.15 `[expr; N]` repeat-fill | :v4: | **Rejected** | |
+| 1.15 No implicit tail return | :shipped: | **Enforced** | |
 
 ## Section 2 — Advanced type system
 
-Bible: 🔜 V4, entire section. V3: **entirely absent**, as documented.
+Bible: :v4:, entire section. V3: **entirely absent**, as documented.
 
 `power<N>`, `prob[lo..hi]`, `causality<T>` and `mood` do not lex or parse.
 
 ## Section 3 — Concurrency
 
-Bible: 🔜 V4, entire section. V3: **entirely absent**.
+Bible: :v4:, entire section. V3: **entirely absent**.
 
 No `xm3`, `sortie`, `debrief`, `formation`, `BriefingRoom`, `wingman` or
 `Comms`. None of those words are even keywords in V3's lexer. `||` lexes as a
@@ -96,7 +101,7 @@ There is no concurrency in V3 at all — not even `std::thread::spawn`.
 
 ## Section 4 — Borrow checker
 
-Bible: ⚠️ Partial, with an extensive description of V4's Meiya checker.
+Bible: :partial:. It carries an extensive description of V4's Meiya checker.
 
 V3 ships **Phase-1 only**, behind `--strict-borrow`:
 
@@ -123,21 +128,21 @@ shipping compiler.
 
 | §5 feature | Bible | V3 |
 |---|---|---|
-| 5.1 `@annotation` | ⚠️ | **Parses, ignored.** One per statement, no arguments |
-| 5.1 `@deprecated` enforcement | ⚠️ | Not enforced |
-| 5.1 Caller prefixes `sadly`, `for science,`, `knowing this will hurt,` | ⚠️ | **Rejected** |
-| 5.2 `foreshadow` / `payoff` | ✅ | **Rejected** — the auditor scans text only |
-| 5.3 `route`, `check route`, `only on` | V4 | **Rejected** |
-| 5.4 `PLUS ULTRA` `NAKAMA` `FINAL FORM` `TSUNDERE` | ⚠️ | **Compile**, with different position and semantics |
-| 5.5 `deus_ex_machina` | ⚠️ | **Rejected** |
-| 5.6 `training arc` | ⚠️ | **Compiles** |
-| 5.6 `with growth` | V4 | **Rejected** |
-| 5.7 `isekai { } bringing back { }` | ⚠️ | **Rejected** |
-| 5.7 `eventually { }` | ⚠️ | **Compiles**, emitted inline — not deferred, not LIFO |
-| 5.7 `eventually if cond { }` | ⚠️ | **Rejected** |
+| 5.1 `@annotation` | :partial: | **Parses, ignored.** One per statement, no arguments |
+| 5.1 `@deprecated` enforcement | :partial: | Not enforced |
+| 5.1 Caller prefixes `sadly`, `for science,`, `knowing this will hurt,` | :partial: | **Rejected** |
+| 5.2 `foreshadow` / `payoff` | :shipped: | **Rejected** — the auditor scans text only |
+| 5.3 `route`, `check route`, `only on` | :v4: | **Rejected** |
+| 5.4 `PLUS ULTRA` `NAKAMA` `FINAL FORM` `TSUNDERE` | :partial: | **Compile**, with different position and semantics |
+| 5.5 `deus_ex_machina` | :partial: | **Rejected** |
+| 5.6 `training arc` | :partial: | **Compiles** |
+| 5.6 `with growth` | :v4: | **Rejected** |
+| 5.7 `isekai { } bringing back { }` | :partial: | **Rejected** |
+| 5.7 `eventually { }` | :partial: | **Compiles**, emitted inline — not deferred, not LIFO |
+| 5.7 `eventually if cond { }` | :partial: | **Rejected** |
 
 > [!warn]
-> The bible marks §5.2 foreshadowing as ✅ Implemented and the
+> The bible marks §5.2 foreshadowing as shipped and the
 > `deus_ex_machina` 20-word minimum as enforced. Both are true of the **Python
 > auditor**, which scans source text. Neither construct parses in the native V3
 > compiler — a file using them audits cleanly and fails to build.
@@ -155,14 +160,14 @@ The four anime operators also diverge in form, not just in enforcement:
 
 | Feature | Bible | V3 |
 |---|---|---|
-| `use module::{names}` | ⚠️ | Line is **replaced with a comment** before parsing |
-| `use module::*` | V4 | Same — stripped |
-| `launch` / `launch(package)` | ⚠️ | **Rejected** |
-| Module-private visibility | ⚠️ | **No visibility system at all** |
-| `hangar.toml` | ⚠️ | Works, but as `[project]` + `[dependencies]` only — not the bible's `[unit]`/`[build]`/`[profile.*]` |
-| `hangar init/add/remove/install/update` | ⚠️ | Work, plus `outdated`, `version`, `audit`, `login`, `publish` |
-| `hangar search` | V4 | Absent |
-| **Consuming an installed package** | ⚠️ | **Impossible** — the build never reads `hangar_modules/` or `[dependencies]` |
+| `use module::{names}` | :partial: | Line is **replaced with a comment** before parsing |
+| `use module::*` | :v4: | Same — stripped |
+| `launch` / `launch(package)` | :partial: | **Rejected** |
+| Module-private visibility | :partial: | **No visibility system at all** |
+| `hangar.toml` | :partial: | Works, but as `[project]` + `[dependencies]` only — not the bible's `[unit]`/`[build]`/`[profile.*]` |
+| `hangar init/add/remove/install/update` | :partial: | Work, plus `outdated`, `version`, `audit`, `login`, `publish` |
+| `hangar search` | :v4: | Absent |
+| **Consuming an installed package** | :partial: | **Impossible** — the build never reads `hangar_modules/` or `[dependencies]` |
 
 > [!warn]
 > V3 has **no module system**. Everything — your file, and every standard
@@ -225,15 +230,15 @@ writing V3 code.
 
 | Section | Bible | V3 |
 |---|---|---|
-| §9 Parser AST nodes | ⚠️ | Core nodes only. No `ErrorNode` / `IncompleteNode`, no node ids, no incremental parsing |
-| §10 Type checker | ⚠️ | Basic inference, arity and type checks, nominal member validation. None of the listed advanced rules |
-| §11 Code generation | ⚠️ | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
-| §12 Build modes | V4 | Absent — only `--opt=0..3` and backend choice |
-| §13 Compiler CLI | ⚠️ | Most commands present; `-o`, `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
-| §14 Error voices | V4 | Absent — generic diagnostics, plus two signature borrow-checker lines |
-| §15 Cheatsheet | ⚠️ | Describes the full language; roughly a fifth applies to V3 |
-| §16 FFI | V4 | Only bare `extern task f(...) -> T`. No blocks, conventions, `link=`, layout attributes, raw pointers or `trust me` |
-| §17 Compiler internals / IDE | V4 | Absent. Parse errors abort; no tolerant AST, no panic infrastructure, no LSP |
+| §9 Parser AST nodes | :partial: | Core nodes only. No `ErrorNode` / `IncompleteNode`, no node ids, no incremental parsing |
+| §10 Type checker | :partial: | Basic inference, arity and type checks, nominal member validation. None of the listed advanced rules |
+| §11 Code generation | :partial: | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
+| §12 Build modes | :v4: | Absent — only `--opt=0..3` and backend choice |
+| §13 Compiler CLI | :partial: | Most commands present; `-o`, `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
+| §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines |
+| §15 Cheatsheet | :partial: | Describes the full language; roughly a fifth applies to V3 |
+| §16 FFI | :v4: | Only bare `extern task f(...) -> T`. No blocks, conventions, `link=`, layout attributes, raw pointers or `trust me` |
+| §17 Compiler internals / IDE | :v4: | Absent. Parse errors abort; no tolerant AST, no panic infrastructure, no LSP |
 
 ## Summary
 

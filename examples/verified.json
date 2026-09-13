@@ -1,6 +1,6 @@
 {
   "compiler": "freak 0.14.2 (Maverick)",
-  "generated_utc": "2026-09-12T16:12:25Z",
+  "generated_utc": "2026-09-13T15:03:24Z",
   "total": 45,
   "compiled": 45,
   "examples": {
@@ -14,7 +14,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7908
+      "elapsed_ms": 9256
     },
     "annotations": {
       "name": "annotations",
@@ -26,7 +26,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7906
+      "elapsed_ms": 9276
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -38,7 +38,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7913
+      "elapsed_ms": 9248
     },
     "array_literal": {
       "name": "array_literal",
@@ -50,7 +50,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8028
+      "elapsed_ms": 9276
     },
     "arrays": {
       "name": "arrays",
@@ -62,7 +62,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7905
+      "elapsed_ms": 9267
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -74,7 +74,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8073
+      "elapsed_ms": 9277
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -86,7 +86,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8054
+      "elapsed_ms": 7660
     },
     "colour": {
       "name": "colour",
@@ -98,7 +98,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7974
+      "elapsed_ms": 7693
     },
     "control_if": {
       "name": "control_if",
@@ -110,7 +110,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8038
+      "elapsed_ms": 7820
     },
     "control_loops": {
       "name": "control_loops",
@@ -122,7 +122,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7894
+      "elapsed_ms": 7833
     },
     "control_when": {
       "name": "control_when",
@@ -134,7 +134,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7885
+      "elapsed_ms": 7722
     },
     "eventually": {
       "name": "eventually",
@@ -146,7 +146,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7754
+      "elapsed_ms": 7685
     },
     "extern": {
       "name": "extern",
@@ -158,7 +158,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8111
+      "elapsed_ms": 8094
     },
     "files": {
       "name": "files",
@@ -170,7 +170,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7975
+      "elapsed_ms": 8084
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -182,7 +182,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7862
+      "elapsed_ms": 8077
     },
     "hello": {
       "name": "hello",
@@ -194,7 +194,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7878
+      "elapsed_ms": 7998
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -206,7 +206,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7953
+      "elapsed_ms": 7994
     },
     "inference": {
       "name": "inference",
@@ -218,7 +218,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7869
+      "elapsed_ms": 8110
     },
     "interpolation": {
       "name": "interpolation",
@@ -230,7 +230,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8144
+      "elapsed_ms": 7473
     },
     "lists": {
       "name": "lists",
@@ -242,7 +242,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7954
+      "elapsed_ms": 7448
     },
     "module_pattern": {
       "name": "module_pattern",
@@ -254,7 +254,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7926
+      "elapsed_ms": 7535
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -266,7 +266,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7976
+      "elapsed_ms": 7386
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -278,7 +278,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7810
+      "elapsed_ms": 7342
     },
     "operators": {
       "name": "operators",
@@ -290,7 +290,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7849
+      "elapsed_ms": 7432
     },
     "pipe": {
       "name": "pipe",
@@ -302,7 +302,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7719
+      "elapsed_ms": 7511
     },
     "process_time": {
       "name": "process_time",
@@ -310,11 +310,11 @@
       "source": "-- Process and clock builtins.\n-- Note: `process::args()` is deliberately rejected by V3. Use the\n-- indexed pair `process::args_count()` / `process::arg(i)` instead.\ntask main() -> void {\n    pilot argc: int = process::args_count()\n    say word_from_int(argc)\n\n    pilot mut i: int = 0\n    repeat argc times {\n        say \"arg {i}: \" + process::arg(i)\n        i += 1\n    }\n\n    pilot started: int = time::now_ms()\n    pilot mut spin: int = 0\n    repeat 1000 times {\n        spin += 1\n    }\n    pilot elapsed: int = time::now_ms() - started\n    say word_from_bool(elapsed >= 0)\n    say word_from_bool(process::env(\"PATH\").length() > 0)\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "3\narg 0: C:\\Users\\cozor\\AppData\\Local\\Temp\\fkdocs_e8et7pyk\\process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
+      "stdout": "3\narg 0: C:\\Users\\cozor\\AppData\\Local\\Temp\\fkdocs_urq_k0q4\\process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7688
+      "elapsed_ms": 7557
     },
     "recursion": {
       "name": "recursion",
@@ -326,7 +326,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7651
+      "elapsed_ms": 7477
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -338,7 +338,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7629
+      "elapsed_ms": 7470
     },
     "same_line": {
       "name": "same_line",
@@ -350,7 +350,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7838
+      "elapsed_ms": 7547
     },
     "shapes": {
       "name": "shapes",
@@ -362,7 +362,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7631
+      "elapsed_ms": 7408
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -374,7 +374,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8079
+      "elapsed_ms": 7352
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -386,7 +386,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8140
+      "elapsed_ms": 7381
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -398,7 +398,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7983
+      "elapsed_ms": 7451
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -410,7 +410,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 8143
+      "elapsed_ms": 7278
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -422,7 +422,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7848
+      "elapsed_ms": 7313
     },
     "strings": {
       "name": "strings",
@@ -434,7 +434,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7865
+      "elapsed_ms": 7432
     },
     "tasks": {
       "name": "tasks",
@@ -446,7 +446,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7887
+      "elapsed_ms": 7405
     },
     "toplevel": {
       "name": "toplevel",
@@ -458,7 +458,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7763
+      "elapsed_ms": 7489
     },
     "training_arc": {
       "name": "training_arc",
@@ -470,7 +470,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7688
+      "elapsed_ms": 7509
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -482,7 +482,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7820
+      "elapsed_ms": 7338
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -494,7 +494,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7833
+      "elapsed_ms": 7348
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -506,7 +506,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 7786
+      "elapsed_ms": 7133
     },
     "variables": {
       "name": "variables",
@@ -518,7 +518,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 6302
+      "elapsed_ms": 5469
     },
     "word_builder": {
       "name": "word_builder",
@@ -530,7 +530,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 6283
+      "elapsed_ms": 5300
     },
     "wordcount": {
       "name": "wordcount",
@@ -542,7 +542,7 @@
       "errors": [],
       "backend": "llvm",
       "exit_code": 0,
-      "elapsed_ms": 6197
+      "elapsed_ms": 5478
     }
   }
 }
