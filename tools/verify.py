@@ -46,6 +46,20 @@ def decode(raw: bytes) -> str:
     return text.replace(chr(13) + chr(10), chr(10))
 
 
+def scrub(text: str, work: Path) -> str:
+    """Replace the throwaway build directory with a stable placeholder.
+
+    An example that prints argv[0] would otherwise bake this machine's
+    username and a random temp directory into published output, and produce
+    a spurious diff on every run.
+    """
+    raw = str(work)
+    for variant in (raw, raw.replace(chr(92), "/"), raw.replace("/", chr(92))):
+        text = text.replace(variant, "/build")
+    # The separator that followed the directory is still platform-native.
+    return text.replace("/build" + chr(92), "/build/")
+
+
 def run(cmd, cwd, timeout=180, stdin_text="", keep_ansi=False):
     proc = subprocess.run(
         cmd,
@@ -112,9 +126,9 @@ def verify_one(freak: Path, src: Path, run_args: list[str]) -> dict:
                                         timeout=60, keep_ansi=True)
                 result["ran"] = rcode == 0
                 result["exit_code"] = rcode
-                result["stdout"] = rout.rstrip("\n")
+                result["stdout"] = scrub(rout, work).rstrip("\n")
                 if rerr.strip():
-                    result["stderr"] = rerr.strip()
+                    result["stderr"] = scrub(rerr, work).strip()
             except subprocess.TimeoutExpired:
                 result["errors"].append("execution timed out")
 
