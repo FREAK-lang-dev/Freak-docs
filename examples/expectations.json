@@ -1,0 +1,228 @@
+{
+  "anime_operators": {
+    "stdout_any_of": [
+      "36\n12\n-6\n8"
+    ]
+  },
+  "annotations": {
+    "stdout_any_of": [
+      "Shirogane Takeru\nold path"
+    ]
+  },
+  "ansi_codes": {
+    "stdout_any_of": [
+      "\u001b[1mbold\u001b[0m\n\u001b[2mdim\u001b[0m\n\u001b[3mitalic\u001b[0m\n\u001b[4munderline\u001b[0m\n\u001b[5mblink\u001b[0m\n\u001b[7mreverse\u001b[0m\n\u001b[8mhidden\u001b[0m\n\u001b[9mstrike\u001b[0m\n\u001b[30mblack\u001b[0m\n\u001b[31mred\u001b[0m\n\u001b[32mgreen\u001b[0m\n\u001b[33myellow\u001b[0m\n\u001b[34mblue\u001b[0m\n\u001b[35mmagenta\u001b[0m\n\u001b[36mcyan\u001b[0m\n\u001b[37mwhite\u001b[0m\n\u001b[91mbright red\u001b[0m\n\u001b[92mbright green\u001b[0m\n\u001b[96mbright cyan\u001b[0m\n\u001b[41mon red\u001b[0m\n\u001b[44mon blue\u001b[0m\n\u001b[103mon bright yellow\u001b[0m\n\u001b[1;4;31mbold + underline + red\u001b[0m\n\u001b[37;45mwhite on magenta\u001b[0m\n\u001b[38;5;208m256 fg 208\u001b[0m\n\u001b[48;5;22m256 bg 22\u001b[0m\n\u001b[38;2;255;100;200mrgb fg\u001b[0m\n\u001b[48;2;20;20;90mrgb bg\u001b[0m\n\u001b[1mbold \u001b[22mnormal again\u001b[0m\n\u001b[31mred \u001b[39mdefault again\u001b[0m"
+    ]
+  },
+  "array_literal": {
+    "stdout_any_of": [
+      "3\nMeiya\n3\n3\n3\nSumika\n1,2,3\n6\n3\n2\n3|2|1\ntrue"
+    ]
+  },
+  "arrays": {
+    "stdout_any_of": [
+      "3\nalpha\ncharlie\nBRAVO\nalpha\nBRAVO\ncharlie"
+    ]
+  },
+  "bounded_search": {
+    "stdout_any_of": [
+      "0\n1\n3\n4\n4\n1000"
+    ]
+  },
+  "bytebuffer": {
+    "stdout_any_of": [
+      "11\n0\nhi\n7\n255\n0\n0"
+    ]
+  },
+  "colour": {
+    "stdout_any_of": [
+      "\u001b[1;31merror\u001b[0m: engine failure\n\u001b[32mok\u001b[0m: all systems nominal\n\u001b[2mhint: check the coolant line\u001b[0m\n\u001b[1m\u001b[36mXM3\u001b[0m reflex link online\n\u001b[38;2;255;100;200mfreak\u001b[0m 0.14.1\n\u001b[38;2;255;180;0mamber warning\u001b[0m"
+    ]
+  },
+  "control_if": {
+    "stdout_any_of": [
+      "over nine thousand\nhigh\nmoderate\nlow"
+    ]
+  },
+  "control_loops": {
+    "stdout_any_of": [
+      "10\n3\n2\n1\n6"
+    ]
+  },
+  "control_when": {
+    "stdout_any_of": [
+      "hold\nawait orders\nin the air"
+    ]
+  },
+  "eventually": {
+    "stdout_any_of": [
+      "engaging\ncleanup\ndisengaged"
+    ]
+  },
+  "extern": {
+    "stdout_any_of": [
+      "41\n41"
+    ]
+  },
+  "files": {
+    "stdout_any_of": [
+      "launch\nengage\ntrue\ntrue\nfalse"
+    ]
+  },
+  "fizzbuzz": {
+    "stdout_any_of": [
+      "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+    ]
+  },
+  "hello": {
+    "stdout_any_of": [
+      "Hello from FREAK"
+    ]
+  },
+  "impl_methods": {
+    "stdout_any_of": [
+      "15\n16\n135\n16"
+    ]
+  },
+  "inference": {
+    "stdout_any_of": [
+      "7\n2.5\ntext\nfalse"
+    ]
+  },
+  "interpolation": {
+    "stdout_any_of": [
+      "callsign=Valkyrie sorties=12\nrate=0.75 active=true\nshape: Meiya / 98\nMeiya scored 98\nliteral {1 + 2} braces"
+    ]
+  },
+  "lists": {
+    "stdout_any_of": [
+      "3\nMeiya\n99\n2.5\ntrue\nBETA-1\n4\n3\n3\n3\n30\n2\n8\n64\n0\nTakeru\nMeiya\nSumika"
+    ]
+  },
+  "module_pattern": {
+    "stdout_any_of": [
+      "7\nnegotiate"
+    ]
+  },
+  "nested_shapes": {
+    "stdout_any_of": [
+      "Takemikazuchi\n880\nTakemikazuchi thrust=880"
+    ]
+  },
+  "operator_overload": {
+    "stdout_any_of": [
+      "(11, 22)"
+    ]
+  },
+  "operators": {
+    "stdout_any_of": [
+      "22\n12\n85\n3\n2\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\n5"
+    ]
+  },
+  "pipe": {
+    "stdout_any_of": [
+      "10\n8\n11"
+    ]
+  },
+  "process_time": {
+    "stdout_any_of": [
+      "3\narg 0: /build/process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
+      "3\narg 0: /build/process_time\narg 1: alpha\narg 2: bravo\ntrue\ntrue"
+    ]
+  },
+  "recursion": {
+    "stdout_any_of": [
+      "720\n144"
+    ]
+  },
+  "reserved_words": {
+    "stdout_any_of": [
+      "V-1\npositive\n100"
+    ]
+  },
+  "same_line": {
+    "stdout_any_of": [
+      "loading: 0 1 2 3 4\nsquadron: V-1 V-2 V-3\ncalculating...\r\u001b[Kdone          \nprogress   0%\n\u001b[1A\r\u001b[Kprogress  33%\n\u001b[1A\r\u001b[Kprogress  66%\n\u001b[1A\r\u001b[Kprogress 100%\nfinished"
+    ]
+  },
+  "shapes": {
+    "stdout_any_of": [
+      "3\n4\n10\nValkyries\n4\ntrue"
+    ]
+  },
+  "stdlib_convert": {
+    "stdout_any_of": [
+      "ff\n1010\n100\n7\n0\n123\ntrue"
+    ]
+  },
+  "stdlib_json": {
+    "stdout_any_of": [
+      "o\n3\ntrue\nValkyries\n4\ntrue\n3\n20"
+    ]
+  },
+  "stdlib_math": {
+    "stdout_any_of": [
+      "12\n1024\n3\n4\n0\n1\n9\n8\n3\n10\n256\n6\n12\n720\n144\ntrue\n-1"
+    ]
+  },
+  "stdlib_string": {
+    "stdout_any_of": [
+      "hahaha\nKAERF\n2\n0007\n7...\n5\ntrue\ntrue\ntrue"
+    ]
+  },
+  "stdlib_version": {
+    "stdout_any_of": [
+      "2\n14\n1\nrc.1\nbuild7\n2.14.1-rc.1+build7\nfalse\ntrue\ntrue\ntrue\nfalse"
+    ]
+  },
+  "strings": {
+    "stdout_any_of": [
+      "Muv-Luv Alternative\n23\nMUV-LUV ALTERNATIVE\nmuv-luv alternative\ntrue\ntrue\ntrue\nMuv-Love Alternative\nMuv\nM\nMuv-Luv\nXM3\n108\n2.5\nF"
+    ]
+  },
+  "tasks": {
+    "stdout_any_of": [
+      "42\nSTAND BY\nnegative\nzero\npositive"
+    ]
+  },
+  "toplevel": {
+    "stdout_any_of": [
+      "booting\nValkyries x4\nValkyries x5"
+    ]
+  },
+  "training_arc": {
+    "stdout_any_of": [
+      "100\n4"
+    ]
+  },
+  "tut_cli": {
+    "stdout_any_of": [
+      "\u001b[36m\u001b[1mreport\u001b[0m\u001b[2m for tut_sample.txt\u001b[0m\n  \u001b[2mlines     \u001b[0m \u001b[1m3\u001b[0m\n  \u001b[2mwords     \u001b[0m \u001b[1m12\u001b[0m\n  \u001b[2mcharacters\u001b[0m \u001b[1m70\u001b[0m\n  \u001b[32mok\u001b[0m enough material to work with"
+    ]
+  },
+  "tut_greet": {
+    "stdout_any_of": [
+      "Shirogane Takeru - 12 sorties, rank regular\nlogged as: regular\ncleared for the next operation"
+    ]
+  },
+  "tut_roster": {
+    "stdout_any_of": [
+      "Valkyrie-1  Takemikazuchi  thrust 880  sorties 24\nValkyrie-2  Shiranui  thrust 640  sorties 8\nValkyrie-3  Gekishin  thrust 520  sorties 31\ntotal sorties: 63\nsquadron size: 3\n  member 0: Valkyrie-1\n  member 1: Valkyrie-2\n  member 2: Valkyrie-3\nveterans: 2\nsorted sorties: 8, 24, 31\nbusiest pilot flew 31"
+    ]
+  },
+  "variables": {
+    "stdout_any_of": [
+      "42\n3.5\nShirogane\ntrue\n12\n15"
+    ]
+  },
+  "word_builder": {
+    "stdout_any_of": [
+      "20\nMission: Valkyries 4\nreused"
+    ]
+  },
+  "wordcount": {
+    "stdout_any_of": [
+      "total=7 longest=negotiate\n7\nNEGOTIATE"
+    ]
+  }
+}

@@ -120,6 +120,7 @@ F</code></pre>
 <p><code>.snapshot_escape()</code>, <code>.snapshot_unescape()</code>, <code>.snapshot_line_count()</code>, <code>.snapshot_line(i)</code>, <code>.snapshot_lines()</code>, <code>.snapshot_field_count()</code>, <code>.snapshot_field_raw(i)</code>.</p>
 <h2 id="checked-parsing">Checked parsing<a class="anchor" href="#checked-parsing" aria-label="Link to this section">#</a></h2>
 <p><code>.to_int()</code> and <code>.to_num()</code> convert silently — a word that is not a number yields <code>0</code>, indistinguishable from parsing <code>&quot;0&quot;</code>. As of v0.14.2 there is a checked pair that reports failure out of band:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-str">&quot;42&quot;</span>.<span class="c-fn">parse_int</span>())      <span class="c-com">-- 42</span>
 <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">parse_status</span>())        <span class="c-com">-- 0, clean</span>
 
@@ -130,9 +131,11 @@ F</code></pre>
 <p>The status is global and <strong>sticky</strong> — it stays set until you clear it — so check it immediately after the parse you care about, exactly as with <code>ByteBuffer.status()</code>. This is V3&#x27;s substitute for <code>maybe&lt;int&gt;</code>, which does not exist.</p>
 <p><code>std/convert.fk</code> also offers <code>word_to_int_safe(s)</code>, which returns <code>0</code> on failure without touching any status.</p>
 <h2 id="concatenation-and-conversion">Concatenation and conversion<a class="anchor" href="#concatenation-and-conversion" aria-label="Link to this section">#</a></h2>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;Muv&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;-&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;Luv&quot;</span>      <span class="c-com">-- operator</span>
 <span class="c-kw">say</span> <span class="c-fn">word_concat</span>(<span class="c-str">&quot;XM&quot;</span>, <span class="c-str">&quot;3&quot;</span>)   <span class="c-com">-- builtin, identical</span></code></pre></div>
 <p><code>+</code> on two words concatenates, and <code>+=</code> appends in place as of v0.14.2. <code>+</code> on a word and a number is a type error — convert first:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">42</span>
 <span class="c-kw">say</span> <span class="c-str">&quot;answer: &quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(n)
 <span class="c-kw">say</span> <span class="c-str">&quot;answer: <span class="c-interp">{n}</span>&quot;</span>              <span class="c-com">-- or interpolate</span></code></pre></div>
@@ -140,6 +143,7 @@ F</code></pre>
 <p><code>format_num</code> prints a <code>num</code> without a trailing <code>.0</code> when it is integral — <code>format_num(12.0)</code> gives <code>12</code>.</p>
 <h2 id="indexing">Indexing<a class="anchor" href="#indexing" aria-label="Link to this section">#</a></h2>
 <p><code>word[i]</code> yields a one-character <code>word</code>. It is the only indexable type in V3.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> s<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;abc&quot;</span>
 <span class="c-kw">say</span> s[<span class="c-num">1</span>]           <span class="c-com">-- b</span>
 <span class="c-kw">say</span> s.<span class="c-fn">char_at</span>(<span class="c-num">1</span>)   <span class="c-com">-- b, identical</span></code></pre></div>
@@ -350,10 +354,9 @@ NEGOTIATE</code></pre>
 </figure>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#literals-and-escapes">Literals and escapes</a></li><li><a href="#methods">Methods</a></li><li><a href="#checked-parsing">Checked parsing</a></li><li><a href="#concatenation-and-conversion">Concatenation and conversion</a></li><li><a href="#indexing">Indexing</a></li><li><a href="#interpolation">Interpolation</a></li><li><a href="#printing-without-a-newline">Printing without a newline</a></li><li><a href="#building-words-incrementally">Building words incrementally</a></li><li><a href="#standard-library-word-tasks">Standard-library word tasks</a></li><li><a href="#splitting-into-an-array">Splitting into an array</a></li></ul></aside>

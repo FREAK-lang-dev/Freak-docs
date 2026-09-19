@@ -220,10 +220,9 @@ mv build/combined.exe build/app.exe</code></pre></div>
 <p>Real imports need the module system from §6 and §17 of the specification — <code>launch</code> visibility, <code>use module::{names}</code>, <code>launch(package)</code>, glob imports, namespace collision rules. All of that is V4 work; <code>launch</code> does not currently parse at all. Until then, Hangar is useful for versioning and distributing source, and <code>cat</code> is the linker.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#what-does-get-linked">What does get linked</a></li><li><a href="#commands">Commands</a></li><li><a href="#hangartoml">hangar.toml</a></li><li><a href="#reusing-code-for-real">Reusing code, for real</a></li><li><a href="#the-concatenated-pattern">The concatenated pattern</a></li><li><a href="#conventions-that-make-it-survivable">Conventions that make it survivable</a></li><li><a href="#a-makefile-shaped-example">A Makefile-shaped example</a></li><li><a href="#what-ships-when-this-is-fixed">What ships when this is fixed</a></li></ul></aside>

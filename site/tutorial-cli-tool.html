@@ -60,6 +60,7 @@
 <p>Start from <a href="tutorial-first-program.html">Tutorial 1</a> if you have not written any FREAK yet.</p>
 <h2 id="step-1-arguments">Step 1 — Arguments<a class="anchor" href="#step-1-arguments" aria-label="Link to this section">#</a></h2>
 <p>There is no <code>process::args()</code> returning a list. V3 rejects it deliberately rather than handing you the runtime&#x27;s raw <code>argv</code> as a fake handle. Use the indexed pair instead:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(process<span class="c-op">::</span><span class="c-fn">args_count</span>())
 
@@ -73,6 +74,7 @@
 <p>That loop is the standard V3 iteration idiom: a counted <code>repeat</code> plus a manual index. There is no <code>for each</code>.</p>
 <h2 id="step-2-reading-a-file">Step 2 — Reading a file<a class="anchor" href="#step-2-reading-a-file" aria-label="Link to this section">#</a></h2>
 <p><code>fs::*</code> are builtins. There is no <code>result&lt;T,E&gt;</code> anywhere in V3, so failures come back as sentinel values — an empty <code>word</code>, or <code>false</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> path<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;notes.txt&quot;</span>
 
@@ -88,6 +90,7 @@
 <div class="callout note"><div class="callout-title">Note</div><p><code>fs::delete</code> returns <code>true</code> when the file is gone, whether this call removed it or it was already absent. It only returns <code>false</code> when the path could not be unlinked.</p></div>
 <h2 id="step-3-making-the-tool-self-contained">Step 3 — Making the tool self-contained<a class="anchor" href="#step-3-making-the-tool-self-contained" aria-label="Link to this section">#</a></h2>
 <p>So it always has something to work on, write a sample when no argument is given:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">sample_path</span>() <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">pilot</span> path<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;sample.txt&quot;</span>
     fs<span class="c-op">::</span><span class="c-fn">write</span>(path, <span class="c-str">&quot;the beta do not negotiate\nhumanity answers with steel\n&quot;</span>)
@@ -102,6 +105,7 @@
 }</code></pre></div>
 <h2 id="step-4-counting">Step 4 — Counting<a class="anchor" href="#step-4-counting" aria-label="Link to this section">#</a></h2>
 <p>No regex, no <code>.split()</code> into a list. Walk the characters:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">count_words</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> in_word<span class="c-op">:</span> <span class="c-type">bool</span> <span class="c-op">=</span> <span class="c-lit">false</span>
@@ -122,6 +126,7 @@
 }</code></pre></div>
 <p><code>.char_at(i)</code> returns a one-character <code>word</code> — there is no <code>char</code> type. Note <code>and</code> / <code>or</code> take <code>bool</code> only; there is no truthiness, so <code>if count</code> is an error where <code>if count &gt; 0</code> is fine.</p>
 <p>Counting lines is the same shape of loop, with one adjustment so a trailing newline does not invent an extra line:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">count_lines</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
     <span class="c-kw">if</span> text.<span class="c-fn">length</span>() <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-num">0</span> }
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
@@ -135,16 +140,19 @@
 }</code></pre></div>
 <h2 id="step-5-colour">Step 5 — Colour<a class="anchor" href="#step-5-colour" aria-label="Link to this section">#</a></h2>
 <p>There is no colour library. You build ANSI escape sequences as <code>word</code> values. <code>\x1b</code> is the ESC byte:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-type">C_BOLD</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-type">C_RED</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-type">C_GREEN</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[32m&quot;</span></code></pre></div>
 <p>Then concatenate:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-type">C_RED</span> <span class="c-op">+</span> <span class="c-str">&quot;error&quot;</span> <span class="c-op">+</span> <span class="c-type">C_RESET</span> <span class="c-op">+</span> <span class="c-str">&quot;: no such file&quot;</span></code></pre></div>
 <p>Windows consoles are switched into ANSI mode automatically — the runtime calls <code>freak_enable_ansi()</code> at the start of every FREAK program, on both backends. You do not need to do anything platform-specific.</p>
 <p>The full code tables — attributes, 16 colours, backgrounds, 256-colour, truecolour, cursor control — are in <a href="console.html">Coloured output</a>.</p>
 <h2 id="step-6-respecting-no-color">Step 6 — Respecting NO_COLOR<a class="anchor" href="#step-6-respecting-no-color" aria-label="Link to this section">#</a></h2>
 <p>Nothing does this for you. The trick the CLI uses is to make the constants <code>pilot mut</code> and blank them, so every call site keeps working unchanged:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RED</span>   <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
 
@@ -279,10 +287,9 @@ NO_COLOR=1 freak run wordcount.fk README.md</code></pre></div>
 <p>See <a href="not-in-v3.html">Not in V3</a> for substitutes.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#step-1-arguments">Step 1 — Arguments</a></li><li><a href="#step-2-reading-a-file">Step 2 — Reading a file</a></li><li><a href="#step-3-making-the-tool-self-contained">Step 3 — Making the tool self-contained</a></li><li><a href="#step-4-counting">Step 4 — Counting</a></li><li><a href="#step-5-colour">Step 5 — Colour</a></li><li><a href="#step-6-respecting-no-color">Step 6 — Respecting NO_COLOR</a></li><li><a href="#the-finished-tool">The finished tool</a></li><li><a href="#what-you-would-reach-for-next-and-cannot">What you would reach for next, and cannot</a></li></ul></aside>

@@ -57,6 +57,7 @@
 <h1 id="tasks">Tasks<a class="anchor" href="#tasks" aria-label="Link to this section">#</a></h1>
 <p class="lede">Functions are called tasks. One declaration form, one return keyword, no shorthands.</p>
 <h2 id="declaring-a-task">Declaring a task<a class="anchor" href="#declaring-a-task" aria-label="Link to this section">#</a></h2>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">name</span>(param<span class="c-op">:</span> type, param<span class="c-op">:</span> type) <span class="c-op">-&gt;</span> returntype {
     body
 }</code></pre></div>
@@ -102,6 +103,7 @@ positive</code></pre>
 <h2 id="give-back"><code>give back</code><a class="anchor" href="#give-back" aria-label="Link to this section">#</a></h2>
 <p><code>give back expr</code> returns a value. <code>give back</code> on its own returns from a <code>void</code> task.</p>
 <p>There is <strong>no implicit tail return</strong>. A bare expression at the end of a block is evaluated and discarded. Every path that must produce a value needs its own <code>give back</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">area</span>(r<span class="c-op">:</span> <span class="c-type">num</span>) <span class="c-op">-&gt;</span> <span class="c-type">num</span> {
     math<span class="c-op">::</span><span class="c-fn">pow</span>(r, <span class="c-num">2.0</span>) <span class="c-op">*</span> <span class="c-num">3.14159</span>    <span class="c-com">-- computed, then thrown away</span>
 }
@@ -112,6 +114,7 @@ positive</code></pre>
 <p>The checker reports a missing return on a value-returning task, pointing at the <code>task</code> keyword of the offending declaration.</p>
 <div class="callout v4"><div class="callout-title">Not in V3</div><p>The arrow shorthand <code>task square(x: num) =&gt; x * x</code> is in the bible but does <strong>not</strong> parse in V3 — you get <code>expected &#x27;{&#x27;, found &#x27;=&gt;&#x27;</code>. Neither does the <code>done</code> block terminator: <code>task f() -&gt; int</code> … <code>done</code> fails with <code>expected &#x27;{&#x27;, found &#x27;give back&#x27;</code>. Braces are the only block delimiter.</p></div>
 <h2 id="calling">Calling<a class="anchor" href="#calling" aria-label="Link to this section">#</a></h2>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">add</span>(<span class="c-num">1</span>, <span class="c-num">2</span>))
 }</code></pre></div>
@@ -150,6 +153,7 @@ positive</code></pre>
 <p>If a task called <code>main</code> exists it becomes the program entry point. If it does not, top-level statements are the program. You can have both — top-level statements run first, then <code>main</code>.</p>
 <h2 id="parameters-are-by-value">Parameters are by value<a class="anchor" href="#parameters-are-by-value" aria-label="Link to this section">#</a></h2>
 <p>There is no <code>lend</code> / <code>lend mut</code> in V3: the borrow syntax from the bible does not parse in a parameter list. Every parameter is passed by value.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- does not parse in V3:</span>
 <span class="c-com">--   task show(lend p: Point) -&gt; void { say word_from_int(p.x) }</span>
 
@@ -185,15 +189,15 @@ positive</code></pre>
 <p><code>x |&gt; f()</code> is exactly <code>f(x)</code>, and <code>x |&gt; f(y)</code> is exactly <code>f(x, y)</code>. The right side must be a plain task name — you cannot pipe into a method or a shape constructor.</p>
 <h2 id="extern-tasks"><code>extern</code> tasks<a class="anchor" href="#extern-tasks" aria-label="Link to this section">#</a></h2>
 <p>A task implemented in C is declared with <code>extern</code>, on one line, with no body. See <a href="ffi.html">extern &amp; FFI</a>.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">extern</span> <span class="c-kw">task</span> <span class="c-fn">abs</span>(v<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span></code></pre></div>
 <h2 id="what-tasks-cannot-do">What tasks cannot do<a class="anchor" href="#what-tasks-cannot-do" aria-label="Link to this section">#</a></h2>
 <div class="tablewrap"><table><thead><tr><th>Feature</th><th>Status</th></tr></thead><tbody><tr><td>Generic parameters <code>task f&lt;T&gt;(...)</code></td><td>V4 — <code>expected &#x27;(&#x27;, found &#x27;&lt;&#x27;</code></td></tr><tr><td>Named call arguments</td><td>V4</td></tr><tr><td>Default parameter values</td><td>V4</td></tr><tr><td>Variadic parameters</td><td>V4</td></tr><tr><td>Closures / lambdas <code>|x| =&gt; x * 2</code></td><td>V4 — <code>|</code> cannot start an expression</td></tr><tr><td>Arrow bodies <code>=&gt; expr</code></td><td>V4</td></tr><tr><td><code>done</code> as a block terminator</td><td>V4</td></tr><tr><td>Returning <code>maybe&lt;T&gt;</code> or <code>result&lt;T,E&gt;</code></td><td>V4 — no such types</td></tr><tr><td><code>?</code> error propagation, <code>or else</code></td><td>V4</td></tr><tr><td>Visibility modifiers <code>launch</code> / <code>launch(package)</code></td><td>V4</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-a-task">Declaring a task</a></li><li><a href="#give-back">`give back`</a></li><li><a href="#calling">Calling</a></li><li><a href="#order-does-not-matter">Order does not matter</a></li><li><a href="#main">`main`</a></li><li><a href="#parameters-are-by-value">Parameters are by value</a></li><li><a href="#instance-and-associated-methods">Instance and associated methods</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#extern-tasks">`extern` tasks</a></li><li><a href="#what-tasks-cannot-do">What tasks cannot do</a></li></ul></aside>

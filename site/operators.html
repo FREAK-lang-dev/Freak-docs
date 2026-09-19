@@ -113,11 +113,13 @@ true
 <p>Two consequences worth internalising:</p>
 <ul><li>**<code>%</code> is integer-only.** <code>7.5 % 2.0</code> is a type error, not a float remainder.</li><li>**<code>and</code> / <code>or</code> do not coerce.** There is no truthiness. <code>if count and flag</code> is an error unless <code>count</code> is already <code>bool</code>.</li></ul>
 <p><code>+</code> is the only overloaded operator: numeric addition and word concatenation.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;Muv&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;-&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;Luv&quot;</span>
 <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-num">2</span> <span class="c-op">+</span> <span class="c-num">3</span>)</code></pre></div>
 <div class="callout v4"><div class="callout-title">Not in V3</div><p><code>**</code> (exponent) does not exist — you get <code>expected &#x27;,&#x27;, found &#x27;**&#x27;</code>. Use <code>math::pow(base, exp)</code> for <code>num</code>, or <code>std_pow(base, exp)</code> for <code>int</code>.</p></div>
 <h2 id="negative-numbers">Negative numbers<a class="anchor" href="#negative-numbers" aria-label="Link to this section">#</a></h2>
 <p>There is no negative literal. <code>-5</code> is unary minus applied to <code>5</code>. In an initialiser position, write the subtraction the compiler&#x27;s own source uses:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> below<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">5</span>
 <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-op">-</span>below)</code></pre></div>
 <h2 id="the-anime-operators">The anime operators<a class="anchor" href="#the-anime-operators" aria-label="Link to this section">#</a></h2>
@@ -224,10 +226,9 @@ x |&gt; f() |&gt; g() is  g(f(x))</code></pre></div>
 <div class="tablewrap"><table><thead><tr><th>Operator</th><th>Status</th></tr></thead><tbody><tr><td><code>**</code> exponent</td><td>V4 — use <code>math::pow</code> / <code>std_pow</code></td></tr><tr><td><code>?</code> error propagation</td><td>V4</td></tr><tr><td><code>or else</code> fallback</td><td>V4</td></tr><tr><td><code>||</code> as an xm3 branch separator</td><td>V4 — lexes as one token but has no grammar</td></tr><tr><td><code>as?</code> downcast</td><td>V4</td></tr><tr><td><code>*ptr</code>, <code>.read()</code>, <code>.write()</code>, <code>.offset()</code>, <code>.cast&lt;U&gt;()</code></td><td>V4</td></tr><tr><td><code>..</code> ranges</td><td>V4</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#precedence">Precedence</a></li><li><a href="#type-rules">Type rules</a></li><li><a href="#negative-numbers">Negative numbers</a></li><li><a href="#the-anime-operators">The anime operators</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#postfix-forms">Postfix forms</a></li><li><a href="#operator-overloading">Operator overloading</a></li><li><a href="#not-implemented">Not implemented</a></li></ul></aside>

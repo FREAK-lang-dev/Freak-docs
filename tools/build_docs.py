@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from evidence import validate
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
@@ -353,11 +354,11 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
             out.append(
                 '<div class="summary-card">'
                 f'<div class="sc-num">{data["compiled"]}/{data["total"]}</div>'
-                '<div class="sc-body"><strong>documentation examples compile</strong>'
+                '<div class="sc-body"><strong>executable examples compile and pass</strong>'
                 f'<span>Verified with {html.escape(data["compiler"])} on '
                 f'{html.escape(data["generated_utc"])}. Every code block on this '
-                'site marked <em>compiles</em> was built by that compiler and, '
-                'where it produces output, executed.</span></div></div>'
+                'site marked <em>compiles</em> was built, executed, and checked '
+                'against its reviewed expected output.</span></div></div>'
             )
             i += 1
             continue
@@ -394,6 +395,9 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
             rendered = highlight_fk(code) if lang == "fk" else html.escape(code)
             label = {"fk": "FREAK", "sh": "shell", "text": "", "toml": "TOML"}.get(lang, lang)
             tag = f'<span class="code-lang">{label}</span>' if label else ""
+            if lang == 'fk':
+                out.append('<p class="snippet-note"><small>Illustrative snippet; not independently verified. '
+                           'Use the badged executable examples for tested programs.</small></p>')
             out.append(f'<div class="codeblock">{tag}'
                        f'<pre class="code"><code>{rendered}</code></pre></div>')
             continue
@@ -546,10 +550,9 @@ PAGE = """<!doctype html>
 {body}
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>{compiler}</strong>,
-      built from source with a verified self-host fixed point.
-      {compiled}/{total} examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>{compiler}</strong>.
+      {compiled}/{total} examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   {toc}
@@ -561,6 +564,16 @@ PAGE = """<!doctype html>
 """
 
 
+def validate_navigation(content: Path, nav: list) -> None:
+    slugs = [slug for _, items in nav for slug, _ in items]
+    if len(slugs) != len(set(slugs)):
+        raise ValueError('duplicate content page in NAV')
+    actual = {path.stem for path in content.glob('*.md')}
+    if set(slugs) != actual:
+        raise ValueError(f'NAV/content mismatch: missing files {sorted(set(slugs) - actual)}, '
+                         f'unlisted pages {sorted(actual - set(slugs))}')
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fragments", metavar="DIR",
@@ -569,6 +582,12 @@ def main() -> int:
     args = ap.parse_args()
 
     data = json.loads(VERIFIED.read_text(encoding="utf-8"))
+    try:
+        validate(data, ROOT)
+        validate_navigation(CONTENT, NAV)
+    except (ValueError, KeyError, TypeError) as exc:
+        print(f'Refusing to publish: {exc}', file=sys.stderr)
+        return 1
     ASSETS.mkdir(parents=True, exist_ok=True)
 
     frag_dir = Path(args.fragments).resolve() if args.fragments else None
@@ -633,9 +652,13 @@ def main() -> int:
     if frag_dir:
         (frag_dir / "manifest.json").write_text(json.dumps({
             "compiler": data["compiler"],
+            "generation": data["generation"],
+            "channel": data["channel"],
+            "provenance": data["provenance"],
             "generated_utc": data["generated_utc"],
             "examples_total": data["total"],
             "examples_compiled": data["compiled"],
+            "examples_passed": data["passed"],
             "groups": [g for g, _ in NAV],
             "pages": manifest,
         }, indent=2), encoding="utf-8")

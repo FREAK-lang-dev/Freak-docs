@@ -20,10 +20,11 @@ The V3 compiler implements a **much smaller** language than the bible. Not a
 slightly smaller one — a fundamentally smaller one. Roughly a fifth of the
 bible's surface compiles today.
 
-Every page here documents only what V3 accepts, and proves it: each FREAK
-snippet on this site is a real file under `examples/`, compiled by a real V3
-binary, and — where it produces output — executed, with the output captured
-verbatim. Nothing here is aspirational.
+Badged executable examples are real files under `examples/`, compiled by the
+released V3 compiler, executed, and checked against reviewed expected output.
+Inline illustrative fragments are labelled separately; they are not independently
+verified programs. Proposed or unsupported syntax must not borrow a working
+example's verification badge.
 
 For the feature-by-feature comparison against the specification, see
 [Bible vs V3](conformance.html). For what to write instead of the features that

@@ -1,0 +1,94 @@
+name: Verify and refresh V3 documentation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '20 6 * * *'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Optional stable V3 tag (vX.Y.Z), or latest; blank uses v3-release.txt'
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verified-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install native linker toolchain
+        run: sudo apt-get update && sudo apt-get install -y clang
+      - name: Test verification and publication gates
+        run: python -m unittest discover -s tests -v
+      - name: Require an up-to-date committed publication
+        if: github.event_name == 'pull_request'
+        run: python tools/check_publication.py
+      - name: Compile, execute, check expected output, and render
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE: ${{ inputs.release }}
+        run: python tools/refresh.py --release "$RELEASE" --jobs 4 --fragments .work/fragments
+      - name: Upload verified website import bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-v3-verified
+          path: .work/fragments/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload generated source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-v3-source-update
+          path: |
+            examples/verified.json
+            site/
+          if-no-files-found: error
+          retention-days: 30
+
+  propose-update:
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.DOCS_UPDATE_PRS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs-v3-source-update
+          path: .
+      - name: Open generated documentation update PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/verified-v3-docs
+          title: 'chore: refresh verified V3 release documentation'
+          commit-message: 'chore: refresh verified V3 release documentation'
+          body: >-
+            Recompiled and executed every example with a checksummed stable V3
+            release distribution, checked reviewed output expectations, and rebuilt
+            the documentation. The report records the compiler release, source commit,
+            binary/archive hashes and documentation input hash. Review output changes
+            before merging. A failing example blocks generation and upload.
+          add-paths: |
+            examples/verified.json
+            site/

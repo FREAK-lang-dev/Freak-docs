@@ -7,7 +7,8 @@ binary and records its stdout. Results land in examples/verified.json, which the
 site generator embeds so every published snippet carries a real verdict.
 
 Usage:
-    python tools/verify.py --freak <path-to-freak.exe> [--jobs N] [--only NAME]
+    python tools/verify.py --freak <path-to-freak.exe> --provenance <metadata.json> [--jobs N]
+    # Partial debug runs also require --only NAME --output <separate-report.json>.
 """
 
 from __future__ import annotations
@@ -23,6 +24,8 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+
+from evidence import expectations, file_hash, input_hash
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
@@ -61,12 +64,19 @@ def scrub(text: str, work: Path) -> str:
 
 
 def run(cmd, cwd, timeout=180, stdin_text="", keep_ansi=False):
+    environment = os.environ.copy()
+    if keep_ansi:
+        # Documentation captures the colour-enabled tutorial output regardless
+        # of a developer terminal or CI runner's presentation preferences.
+        environment.pop("NO_COLOR", None)
+        environment.pop("FORCE_COLOR", None)
     proc = subprocess.run(
         cmd,
         cwd=str(cwd),
         input=stdin_text.encode() if stdin_text else None,
         capture_output=True,
         timeout=timeout,
+        env=environment,
     )
     out = decode(proc.stdout or b"")
     err = decode(proc.stderr or b"")
@@ -85,7 +95,7 @@ def diagnostics(text: str) -> list[str]:
     return lines[:6]
 
 
-def verify_one(freak: Path, src: Path, run_args: list[str]) -> dict:
+def verify_one(freak: Path, src: Path, run_args: list[str], expectation: dict) -> dict:
     started = time.time()
     result = {
         "name": src.stem,
@@ -96,6 +106,7 @@ def verify_one(freak: Path, src: Path, run_args: list[str]) -> dict:
         "stdout": "",
         "errors": [],
         "backend": "llvm",
+        "passed": False,
     }
 
     with tempfile.TemporaryDirectory(prefix="fkdocs_") as tmp:
@@ -105,8 +116,8 @@ def verify_one(freak: Path, src: Path, run_args: list[str]) -> dict:
 
         try:
             code, out, err = run([str(freak), "build", src.name], work)
-        except subprocess.TimeoutExpired:
-            result["errors"] = ["build timed out"]
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            result["errors"] = [f"build failed: {type(exc).__name__}"]
             return result
 
         combined = out + "\n" + err
@@ -126,12 +137,19 @@ def verify_one(freak: Path, src: Path, run_args: list[str]) -> dict:
                                         timeout=60, keep_ansi=True)
                 result["ran"] = rcode == 0
                 result["exit_code"] = rcode
-                result["stdout"] = scrub(rout, work).rstrip("\n")
+                result["stdout"] = scrub(rout, work).removesuffix("\n")
+                if rcode != 0:
+                    result["errors"].append(f"execution exited with status {rcode}")
+                elif result["stdout"] not in expectation["stdout_any_of"]:
+                    result["errors"].append("stdout differs from the reviewed expectation")
                 if rerr.strip():
                     result["stderr"] = scrub(rerr, work).strip()
-            except subprocess.TimeoutExpired:
-                result["errors"].append("execution timed out")
+            except (subprocess.TimeoutExpired, OSError) as exc:
+                result["errors"].append(f"execution failed: {type(exc).__name__}")
+        else:
+            result["errors"].append("compiler reported success but produced no executable")
 
+    result["passed"] = result["compiled"] and result["ran"] and not result["errors"]
     result["elapsed_ms"] = int((time.time() - started) * 1000)
     return result
 
@@ -141,12 +159,26 @@ def main() -> int:
     ap.add_argument("--freak", required=True, help="path to the V3 freak binary")
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--only", default=None)
+    ap.add_argument("--output", type=Path, default=OUT)
+    ap.add_argument("--provenance", type=Path, required=True,
+                    help="compiler provenance from tools/fetch_compiler.py")
     args = ap.parse_args()
+    if args.jobs < 1:
+        ap.error("--jobs must be positive")
+    if args.only and args.output.resolve() == OUT.resolve():
+        ap.error("--only requires a separate --output; partial evidence must not replace the full report")
+    expected = expectations(ROOT)
+    provenance = json.loads(args.provenance.read_text(encoding="utf-8"))
+    provenance.pop("binary", None)  # Do not publish local filesystem paths.
 
     freak = Path(args.freak).resolve()
     if not freak.exists():
         print(f"compiler not found: {freak}", file=sys.stderr)
         return 2
+    if file_hash(freak) != provenance.get("compiler_sha256"):
+        print("compiler does not match provenance", file=sys.stderr)
+        return 2
+    initial_input_hash = input_hash(ROOT)
 
     # Examples that want command-line arguments when executed.
     run_args = {"process_time": ["alpha", "bravo"]}
@@ -159,35 +191,64 @@ def main() -> int:
         return 2
 
     code, ver_out, _ = run([str(freak), "--version"], ROOT)
+    if code != 0 or not ver_out.strip():
+        print("compiler version probe failed", file=sys.stderr)
+        return 2
     compiler_version = ver_out.strip().splitlines()[0] if ver_out.strip() else "unknown"
+    if 'Maverick' not in compiler_version or provenance['release'].lstrip('v') not in compiler_version:
+        print("release is not the matching V3 Maverick compiler; refusing to mix generations", file=sys.stderr)
+        return 2
 
     results = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         futures = {
-            pool.submit(verify_one, freak, src, run_args.get(src.stem, [])): src
+            pool.submit(verify_one, freak, src, run_args.get(src.stem, []), expected[src.stem]): src
             for src in sources
         }
         for fut in concurrent.futures.as_completed(futures):
             res = fut.result()
             results[res["name"]] = res
-            mark = "PASS" if res["compiled"] else "FAIL"
-            extra = "" if res["compiled"] else "  :: " + "; ".join(res["errors"])
+            mark = "PASS" if res["passed"] else "FAIL"
+            extra = "" if res["passed"] else "  :: " + "; ".join(res["errors"])
             print(f"{mark}  {res['name']}{extra}", flush=True)
 
     ordered = {k: results[k] for k in sorted(results)}
     payload = {
+        "schema_version": 1,
+        "generation": "v3",
+        "channel": "release",
+        "provenance": provenance,
+        "input_sha256": initial_input_hash,
         "compiler": compiler_version,
         "generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "total": len(ordered),
         "compiled": sum(1 for r in ordered.values() if r["compiled"]),
+        "passed": sum(1 for r in ordered.values() if r["passed"]),
         "examples": ordered,
     }
-    OUT.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    if input_hash(ROOT) != initial_input_hash:
+        print("inputs changed during verification; refusing to save evidence", file=sys.stderr)
+        return 2
+    # Rechecking the same inputs should not open daily timestamp-only update PRs.
+    # Keep previous evidence only after the fresh run has passed in full.
+    if args.output.exists() and payload["passed"] == payload["total"]:
+        previous = json.loads(args.output.read_text(encoding="utf-8"))
+        from evidence import validate
+        try:
+            validate(previous, ROOT)
+        except (ValueError, KeyError, TypeError):
+            pass
+        else:
+            if previous.get("provenance") == provenance:
+                print("Fresh verification passed; existing publication evidence is unchanged")
+                return 0
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
-    failed = payload["total"] - payload["compiled"]
-    print(f"\n{payload['compiled']}/{payload['total']} examples compiled "
+    failed = payload["total"] - payload["passed"]
+    print(f"\n{payload['passed']}/{payload['total']} examples compiled, ran, and matched expected output "
           f"with {compiler_version}")
-    print(f"wrote {OUT.relative_to(ROOT)}")
+    print(f"wrote {args.output}")
     return 1 if failed else 0
 
 
