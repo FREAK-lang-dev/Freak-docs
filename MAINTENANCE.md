@@ -26,11 +26,18 @@ compiler exit alone does not prove a runnable example works.
 2. Compile **every** program in a fresh directory with the matching distribution.
    Run the produced executable with a timeout; require exit zero and matching
    output. Missing executables, crashes, timeouts and wrong output fail the run.
+   Normalize CRLF and omit at most one customary final newline; extra trailing
+   blank lines and standalone carriage returns remain significant.
 3. `verified.json` must cover the exact current sources and documentation/tooling
    input hash. A partial `--only` run must use a separate report and cannot pass
    the publication gate. Do not reuse old green results after changing inputs.
 4. Build the site and import fragments only after the gate passes. Check search
    and the host site's rendering/navigation separately from compiler correctness.
+   Every content page must appear exactly once in NAV. PRs first validate the
+   committed report and rebuild from it; stale evidence or differences from the
+   committed site fail CI before the independent fresh compiler run. This keeps
+   Vercel's committed static publication current without comparing Linux binary
+   hashes or timings against a report generated on Windows.
 5. Review and merge generated update PRs, then deploy the host site using its
    normal process. A failed run retains the last verified publication and needs
    investigation; it must not silently delete, skip or rewrite the failing case.
@@ -45,10 +52,12 @@ any compiler failure (including a crash) as proof of rejection.
 ## Refresh cadence and ownership
 
 The `verified-docs.yml` workflow checks every PR, every push to `main`, daily,
-and on demand. It resolves the latest stable release unless a maintainer selects
-a specific stable V3 tag. A compiler without the V3 Maverick identity is rejected;
-when release streams diverge, select the final V3 tag rather than feeding a V4
-release to this lane. Future V4 updates must retain their separate snapshot job.
+and on demand. Unattended runs use the stable V3 tag committed in `v3-release.txt`.
+Advance that pin and regenerate the report/site together when adopting a newer
+V3 release. Manual dispatch or `--release` can override it for evaluation (even
+with `latest`), but PR publication evidence must match the committed pin.
+A compiler without the V3 Maverick identity is rejected. Future V4 releases
+cannot change the V3 selection; V4 retains its separate snapshot job.
 
 Successful trusted runs upload `docs-v3-verified` for the host site's sync job
 and propose changes to the committed report/site on `chore/verified-v3-docs`.
@@ -69,6 +78,8 @@ to the default branch. They do not auto-merge or deploy.
 ```sh
 python tools/refresh.py --release v0.14.2 --jobs 6
 python -m unittest discover -s tests -v
+# After committing regenerated files, check the exact static publication:
+python tools/check_publication.py
 # Optional host output:
 python tools/build_docs.py --fragments ../freaklang.dev/apps/main-site/public/docs-v3
 ```

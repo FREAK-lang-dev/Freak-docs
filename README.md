@@ -96,9 +96,14 @@ Use the official stable V3 release distribution, including its matching runtime
 and standard library. Requires Python 3.12+, Node.js, GitHub CLI and Clang.
 
 ```sh
-python tools/refresh.py --release v0.14.2 --jobs 6
+python tools/refresh.py --jobs 6
 python -m unittest discover -s tests -v
 ```
+
+The default compiler is pinned in `v3-release.txt`. To adopt a newer stable V3
+release, update that file and commit the regenerated report and site together.
+`--release vX.Y.Z` remains available for manual evaluation. PR CI rejects stale
+committed output before running the compiler again.
 
 `verify.py` copies each example into a clean temporary directory, runs
 `freak build` with the default LLVM backend, executes the binary, checks its

@@ -7,7 +7,8 @@ binary and records its stdout. Results land in examples/verified.json, which the
 site generator embeds so every published snippet carries a real verdict.
 
 Usage:
-    python tools/verify.py --freak <path-to-freak.exe> [--jobs N] [--only NAME]
+    python tools/verify.py --freak <path-to-freak.exe> --provenance <metadata.json> [--jobs N]
+    # Partial debug runs also require --only NAME --output <separate-report.json>.
 """
 
 from __future__ import annotations
@@ -136,7 +137,7 @@ def verify_one(freak: Path, src: Path, run_args: list[str], expectation: dict) -
                                         timeout=60, keep_ansi=True)
                 result["ran"] = rcode == 0
                 result["exit_code"] = rcode
-                result["stdout"] = scrub(rout, work).rstrip("\n")
+                result["stdout"] = scrub(rout, work).removesuffix("\n")
                 if rcode != 0:
                     result["errors"].append(f"execution exited with status {rcode}")
                 elif result["stdout"] not in expectation["stdout_any_of"]:

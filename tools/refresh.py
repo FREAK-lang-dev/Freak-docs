@@ -7,7 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from evidence import file_hash
+from evidence import file_hash, pinned_release
 from fetch_compiler import fetch
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -15,11 +15,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--release', default='latest')
+    parser.add_argument('--release', default='', help='override v3-release.txt (manual runs only)')
     parser.add_argument('--jobs', type=int, default=4)
     parser.add_argument('--fragments', type=Path, default=ROOT / '.work/fragments')
     args = parser.parse_args()
-    metadata = fetch(args.release, ROOT / '.work/compiler')
+    metadata = fetch(args.release or pinned_release(ROOT), ROOT / '.work/compiler')
     provenance = ROOT / '.work/compiler.json'
     provenance.write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
     subprocess.run([sys.executable, str(ROOT / 'tools/verify.py'), '--freak', metadata['binary'],

@@ -11,10 +11,17 @@ def file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def pinned_release(root: Path) -> str:
+    release = (root / 'v3-release.txt').read_text(encoding='utf-8').strip()
+    if not re.fullmatch(r'v\d+\.\d+\.\d+', release):
+        raise ValueError('v3-release.txt must pin a stable vX.Y.Z release')
+    return release
+
+
 def input_hash(root: Path) -> str:
     digest = hashlib.sha256()
     paths = [*root.glob('content/*.md'), *root.glob('examples/*.fk'),
-             *root.glob('tools/*.py'), root / 'examples/expectations.json']
+             *root.glob('tools/*.py'), root / 'examples/expectations.json', root / 'v3-release.txt']
     for path in sorted(paths):
         digest.update(path.relative_to(root).as_posix().encode() + b'\0')
         digest.update(path.read_text(encoding='utf-8').replace('\r\n', '\n').encode() + b'\0')
@@ -38,6 +45,9 @@ def expectations(root: Path) -> dict:
 def validate(data: dict, root: Path) -> None:
     if data.get('schema_version') != 1 or data.get('generation') != 'v3' or data.get('channel') != 'release':
         raise ValueError('V3 publication requires release evidence (schema 1); re-run verification')
+    for field in ['compiler', 'generated_utc']:
+        if not isinstance(data.get(field), str) or not data[field].strip():
+            raise ValueError(f'missing or invalid {field}')
     provenance = data.get('provenance', {})
     for key, length in [('compiler_commit', 40), ('compiler_sha256', 64), ('archive_sha256', 64)]:
         if not re.fullmatch(f'[a-f0-9]{{{length}}}', provenance.get(key, '')):

@@ -564,6 +564,16 @@ PAGE = """<!doctype html>
 """
 
 
+def validate_navigation(content: Path, nav: list) -> None:
+    slugs = [slug for _, items in nav for slug, _ in items]
+    if len(slugs) != len(set(slugs)):
+        raise ValueError('duplicate content page in NAV')
+    actual = {path.stem for path in content.glob('*.md')}
+    if set(slugs) != actual:
+        raise ValueError(f'NAV/content mismatch: missing files {sorted(set(slugs) - actual)}, '
+                         f'unlisted pages {sorted(actual - set(slugs))}')
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fragments", metavar="DIR",
@@ -574,10 +584,7 @@ def main() -> int:
     data = json.loads(VERIFIED.read_text(encoding="utf-8"))
     try:
         validate(data, ROOT)
-        for _, items in NAV:
-            for slug, _ in items:
-                if not (CONTENT / f'{slug}.md').is_file():
-                    raise ValueError(f'missing content/{slug}.md')
+        validate_navigation(CONTENT, NAV)
     except (ValueError, KeyError, TypeError) as exc:
         print(f'Refusing to publish: {exc}', file=sys.stderr)
         return 1
