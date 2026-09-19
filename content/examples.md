@@ -9,14 +9,14 @@ whether it compiled and ran, and the program's captured output. Reproduce the
 whole set with:
 
 ```sh
-python tools/verify.py --freak /path/to/freak
-python tools/build_docs.py
+python tools/refresh.py --jobs 6
 ```
 
 The harness copies each example into a clean temporary directory, runs
 `freak build` with the default LLVM backend, executes the resulting binary, and
-records stdout verbatim. A failure is recorded with its diagnostics rather than
-hidden.
+checks stdout against reviewed expectations. It normalizes CRLF and omits at
+most one final newline; extra blank lines and standalone carriage returns remain
+significant. A failure is recorded with its diagnostics and blocks publication.
 
 ## Basics
 
