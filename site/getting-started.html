@@ -191,10 +191,9 @@ freak doctor --json</code></pre></div>
 <div class="tablewrap"><table><thead><tr><th>Message</th><th>Cause</th></tr></thead><tbody><tr><td><code>unexpected &#x27;use&#x27; — this token cannot start an expression</code></td><td>You ran <code>freak check</code>, which does not strip <code>use</code> lines or load the standard library. Use <code>freak build</code> or <code>freak run</code>.</td></tr><tr><td><code>expected an identifier for shape name, found &#x27;Pilot&#x27;</code></td><td>Keywords are case-insensitive; <code>Pilot</code> is the <code>pilot</code> keyword. Rename.</td></tr><tr><td><code>unknown callable &#x27;string_reverse&#x27;</code></td><td>Same cause — <code>freak check</code> compiles your file alone, without <code>std/</code>.</td></tr><tr><td><code>ABI MISMATCH</code></td><td><code>runtime/freak_abi</code> or <code>std/freak_abi</code> does not match the compiler&#x27;s expected marker. Reinstall the payload.</td></tr><tr><td><code>expected &#x27;=&#x27;, found &#x27;&lt;&#x27;</code></td><td>Generic type syntax. V3 has none — see <a href="not-in-v3.html">Not in V3</a>.</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#what-you-need">What you need</a></li><li><a href="#build-the-compiler-from-source">Build the compiler from source</a></li><li><a href="#build-the-freak-cli">Build the `freak` CLI</a></li><li><a href="#install-the-payload">Install the payload</a></li><li><a href="#your-first-program">Your first program</a></li><li><a href="#a-program-with-a-bit-more-to-it">A program with a bit more to it</a></li><li><a href="#check-your-setup">Check your setup</a></li><li><a href="#common-first-errors">Common first errors</a></li></ul></aside>

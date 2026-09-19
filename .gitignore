@@ -18,6 +18,7 @@ venv/
 
 # Vercel
 .vercel/
+.work/
 
 # Local agent/session config
 .claude/

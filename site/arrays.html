@@ -161,6 +161,7 @@ Sumika</code></pre>
 <h3 id="growing-a-list">Growing a list<a class="anchor" href="#growing-a-list" aria-label="Link to this section">#</a></h3>
 <p>As of <strong>v0.14.2</strong> lists grow. This is the biggest change to the type since it was introduced, and it removes most reasons to reach for the legacy handle.</p>
 <div class="tablewrap"><table><thead><tr><th>Method</th><th>Signature</th><th>Notes</th></tr></thead><tbody><tr><td><code>.push(value)</code></td><td><code>T -&gt; void</code></td><td>Append</td></tr><tr><td><code>.pop()</code></td><td><code>-&gt; T</code></td><td>Remove and return the last element</td></tr><tr><td><code>.length()</code></td><td><code>-&gt; int</code></td><td></td></tr><tr><td><code>.capacity()</code></td><td><code>-&gt; int</code></td><td>Allocated slots; starts at 8 and doubles</td></tr><tr><td><code>.reserve(n)</code></td><td><code>int -&gt; void</code></td><td>Grow the capacity up front</td></tr><tr><td><code>.clear()</code></td><td><code>-&gt; void</code></td><td>Length to zero, capacity kept</td></tr></tbody></table></div>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> xs<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
 xs.<span class="c-fn">push</span>(<span class="c-num">10</span>)
 xs.<span class="c-fn">push</span>(<span class="c-num">20</span>)
@@ -278,6 +279,7 @@ true</code></pre>
   </div>
 </figure>
 <p>The rule that follows from the table above: <strong>builtins bridge, library tasks do not.</strong></p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> names<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">word</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-str">&quot;b&quot;</span>, <span class="c-str">&quot;a&quot;</span>]
 
 <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">array_len</span>(names))   <span class="c-com">-- fine: builtin, accepts word-array</span>
@@ -289,6 +291,7 @@ true</code></pre>
 <p>If you need the library helpers, build a legacy handle with <code>array_new()</code>.</p>
 <h2 id="iterating">Iterating<a class="anchor" href="#iterating" aria-label="Link to this section">#</a></h2>
 <p>There is no <code>for each</code> in either surface. Keep an index and use a counted loop:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> items.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
     <span class="c-kw">say</span> items[i]
@@ -304,6 +307,7 @@ true</code></pre>
 <p><code>List&lt;T&gt;</code> values have no explicit release call.</p>
 <h2 id="passing-collections-to-tasks">Passing collections to tasks<a class="anchor" href="#passing-collections-to-tasks" aria-label="Link to this section">#</a></h2>
 <p>A legacy handle is just an <code>int</code>, so it passes freely and the callee mutates the caller&#x27;s array — the standard way to return a collection:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">fill</span>(out<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-fn">array_push</span>(out, <span class="c-str">&quot;alpha&quot;</span>)
     <span class="c-fn">array_push</span>(out, <span class="c-str">&quot;bravo&quot;</span>)
@@ -320,10 +324,9 @@ true</code></pre>
 <p>Still none. <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code> and <code>Lineup&lt;T&gt;</code> do not exist, and the <code>{ &quot;k&quot;: v }</code> map literal does not parse. For small lookups, use two parallel collections and <code>array_find</code>.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#the-list-type">The List type</a></li><li><a href="#the-legacy-handle">The legacy handle</a></li><li><a href="#mixing-the-two">Mixing the two</a></li><li><a href="#iterating">Iterating</a></li><li><a href="#stdalgorithmfk-helpers">std/algorithm.fk helpers</a></li><li><a href="#memory">Memory</a></li><li><a href="#passing-collections-to-tasks">Passing collections to tasks</a></li><li><a href="#maps-and-sets">Maps and sets</a></li></ul></aside>

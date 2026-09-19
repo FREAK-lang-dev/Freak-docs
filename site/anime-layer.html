@@ -197,6 +197,7 @@ freak foreshadow-audit   # unpaid `foreshadow` bindings</code></pre></div>
 <p>They shell out to <code>python -m freakc</code>, so they need the Python bootstrap package and the repository&#x27;s audit inputs. They scan source text — which means they can report on constructs the native V3 compiler cannot compile. A file full of <code>foreshadow</code> declarations will audit cleanly and fail to build.</p>
 <h2 id="writing-anime-flavoured-v3-today">Writing anime-flavoured V3 today<a class="anchor" href="#writing-anime-flavoured-v3-today" aria-label="Link to this section">#</a></h2>
 <p>The layer you can actually use is narrow, but it is not nothing:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-attr">@protagonist</span>
 <span class="c-kw">task</span> <span class="c-fn">engage</span>(power<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> charge<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> power
@@ -215,10 +216,9 @@ freak foreshadow-audit   # unpaid `foreshadow` bindings</code></pre></div>
 <p>Bounded loops, prefix power scaling, a cleanup section and decorative annotations. Everything else is <a href="not-in-v3.html">V4</a>.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#what-compiles">What compiles</a></li><li><a href="#training-arc">training arc</a></li><li><a href="#eventually">eventually</a></li><li><a href="#annotations">Annotations</a></li><li><a href="#the-anime-operators">The anime operators</a></li><li><a href="#what-does-not-parse">What does not parse</a></li><li><a href="#the-audit-commands">The audit commands</a></li><li><a href="#writing-anime-flavoured-v3-today">Writing anime-flavoured V3 today</a></li></ul></aside>

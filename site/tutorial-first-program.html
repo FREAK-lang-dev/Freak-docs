@@ -59,16 +59,19 @@
 <p>This assumes you have a working <code>freak</code> on your PATH. If not, do <a href="getting-started.html">Getting started</a> first — you need to build the compiler from source, because V3 is self-hosted.</p>
 <h2 id="step-1-say-something">Step 1 — Say something<a class="anchor" href="#step-1-say-something" aria-label="Link to this section">#</a></h2>
 <p>Create <code>greet.fk</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, launch&quot;</span>
 }</code></pre></div>
 <p>Run it:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run greet.fk</code></pre></div>
 <p>Two things are already worth noticing. <code>say</code> needs no import — it is a compiler builtin, always in scope. And <code>main</code> is optional: statements written at the top level of a file run in order, so this would work too:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, launch&quot;</span></code></pre></div>
 <p>Use <code>main</code> anyway. It gives you somewhere to put local bindings.</p>
 <h2 id="step-2-bindings">Step 2 — Bindings<a class="anchor" href="#step-2-bindings" aria-label="Link to this section">#</a></h2>
 <p><code>pilot</code> introduces a binding. Add a couple:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> callsign<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>
     <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
@@ -81,6 +84,7 @@
 <div class="callout warn"><div class="callout-title">Careful</div><p>**Do not name anything <code>Pilot</code>.** V3 matches keywords case-insensitively, so <code>Pilot</code>, <code>PILOT</code> and <code>pilot</code> are the same token, and none can be an identifier. The same trap catches <code>Result</code>, <code>Max</code>, <code>Check</code>, <code>Route</code>, <code>Move</code>, <code>Copy</code>, <code>Some</code>, <code>Ok</code>, <code>Err</code> and <code>Done</code>. Pick a synonym — this tutorial uses <code>Aviator</code>.</p></div>
 <h2 id="step-3-interpolation">Step 3 — Interpolation<a class="anchor" href="#step-3-interpolation" aria-label="Link to this section">#</a></h2>
 <p>Instead of converting and concatenating, put the value in the string:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> callsign<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>
     <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
@@ -91,6 +95,7 @@
 <div class="callout warn"><div class="callout-title">Careful</div><p>Interpolation substitutes paths, <strong>never calls</strong>. <code>&quot;{rank()}&quot;</code> prints those characters literally rather than calling anything. Compute into a binding first — this is the single most common surprise in V3.</p></div>
 <h2 id="step-4-a-task-of-your-own">Step 4 — A task of your own<a class="anchor" href="#step-4-a-task-of-your-own" aria-label="Link to this section">#</a></h2>
 <p><code>task</code> declares a function; <code>give back</code> returns from it.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">rank_for</span>(sorties<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;veteran&quot;</span> }
     <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">10</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;regular&quot;</span> }
@@ -104,6 +109,7 @@
 <p>Order does not matter: every task is indexed before any body is checked, so <code>main</code> can call a task declared below it.</p>
 <h2 id="step-5-a-shape">Step 5 — A shape<a class="anchor" href="#step-5-a-shape" aria-label="Link to this section">#</a></h2>
 <p><code>shape</code> is V3&#x27;s record type, and the only user-defined type there is.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Aviator</span> {
     name<span class="c-op">:</span> <span class="c-type">word</span>
     sorties<span class="c-op">:</span> <span class="c-type">int</span>
@@ -117,6 +123,7 @@
 <p>Every field must be supplied by name at construction. Fields are readable and assignable, and they chain: <code>unit.frame.thrust</code>.</p>
 <h2 id="step-6-methods">Step 6 — Methods<a class="anchor" href="#step-6-methods" aria-label="Link to this section">#</a></h2>
 <p><code>impl</code> attaches tasks to a shape. Whether the first parameter is <code>self</code> decides how you call it.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">impl</span> <span class="c-type">Aviator</span> {
     <span class="c-com">-- No self: an associated method, called Aviator::recruit(...)</span>
     <span class="c-kw">task</span> <span class="c-fn">recruit</span>(name<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">Aviator</span> {
@@ -132,6 +139,7 @@
 <p>Write <code>self</code> bare, never <code>self: Aviator</code> — the compiler fills in the owning shape.</p>
 <h2 id="step-7-loops">Step 7 — Loops<a class="anchor" href="#step-7-loops" aria-label="Link to this section">#</a></h2>
 <p>Three forms, no <code>for each</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-num">12</span> <span class="c-kw">times</span> { takeru.sorties <span class="c-op">+=</span> <span class="c-num">1</span> }     <span class="c-com">-- counted</span>
 <span class="c-kw">repeat</span> <span class="c-kw">until</span> <span class="c-kw">done</span> { <span class="c-fn">work</span>() }                 <span class="c-com">-- condition, tested first</span>
 <span class="c-kw">training arc</span> <span class="c-kw">until</span> ready <span class="c-kw">max</span> <span class="c-num">8</span> <span class="c-kw">sessions</span> { }  <span class="c-com">-- bounded, cannot spin forever</span></code></pre></div>
@@ -206,10 +214,9 @@ cleared for the next operation</code></pre>
 <ul><li><a href="tutorial-cli-tool.html">Tutorial 2</a> — a real command-line tool with files and colour</li><li><a href="tutorial-data.html">Tutorial 3</a> — lists, and modelling data properly</li><li><a href="control-flow.html">Control flow</a> — the loop and branch forms in detail</li><li><a href="not-in-v3.html">Not in V3</a> — what to write instead of the features the specification promises</li></ul>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#step-1-say-something">Step 1 — Say something</a></li><li><a href="#step-2-bindings">Step 2 — Bindings</a></li><li><a href="#step-3-interpolation">Step 3 — Interpolation</a></li><li><a href="#step-4-a-task-of-your-own">Step 4 — A task of your own</a></li><li><a href="#step-5-a-shape">Step 5 — A shape</a></li><li><a href="#step-6-methods">Step 6 — Methods</a></li><li><a href="#step-7-loops">Step 7 — Loops</a></li><li><a href="#the-finished-program">The finished program</a></li><li><a href="#where-to-go-next">Where to go next</a></li></ul></aside>

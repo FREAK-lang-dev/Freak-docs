@@ -130,6 +130,7 @@ in the air</code></pre>
 <p>Rules:</p>
 <ul><li>Each arm is <code>pattern -&gt; statement</code>. One statement — wrap several in a block.</li><li>Arms are separated by nothing at all; newlines are enough.</li><li>The subject may be <code>int</code>, <code>word</code>, <code>bool</code> or <code>num</code>.</li><li>Arm patterns are <strong>expressions compared for equality</strong>, not patterns. There is no destructuring, no binding, no guards, no ranges.</li><li>Exhaustiveness is not checked. Without a <code>_</code> arm and with no match, nothing runs.</li><li><code>when</code> is a <strong>statement</strong>, not an expression. It cannot appear on the right of <code>=</code> or inside <code>give back</code>.</li></ul>
 <p>To produce a value from a match, assign inside the arms:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> code<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">2</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> label<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
@@ -184,17 +185,21 @@ in the air</code></pre>
   </div>
 </figure>
 <h3 id="repeat-n-times">repeat N times<a class="anchor" href="#repeat-n-times" aria-label="Link to this section">#</a></h3>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-type">COUNT</span> <span class="c-kw">times</span> { body }</code></pre></div>
 <p><code>COUNT</code> is any <code>int</code> expression, evaluated <strong>once</strong> before the loop. There is no loop variable — keep your own counter if you need the index.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
     <span class="c-kw">say</span> <span class="c-fn">array_get</span>(items, i)
     i <span class="c-op">+=</span> <span class="c-num">1</span>
 }</code></pre></div>
 <h3 id="repeat-until">repeat until<a class="anchor" href="#repeat-until" aria-label="Link to this section">#</a></h3>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-kw">until</span> <span class="c-type">CONDITION</span> { body }</code></pre></div>
 <p>The condition is tested <strong>before</strong> each pass, so the body may run zero times. Note the sense: the loop continues while the condition is <em>false</em>.</p>
 <h3 id="training-arc">training arc<a class="anchor" href="#training-arc" aria-label="Link to this section">#</a></h3>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">training arc</span> <span class="c-kw">until</span> <span class="c-type">CONDITION</span> <span class="c-kw">max</span> <span class="c-type">N</span> <span class="c-kw">sessions</span> { body }</code></pre></div>
 <p>A loop with a compulsory iteration cap. It stops when the condition becomes true <strong>or</strong> when the cap is reached — whichever comes first — so it cannot spin forever.</p>
 <figure class="example">
@@ -283,6 +288,7 @@ while (!(CONDITION) &amp;&amp; sessions &lt; N) {
 <div class="callout v4"><div class="callout-title">Not in V3</div><p>The <code>with growth</code> variant — which makes the compiler verify that the body actually mutates the condition&#x27;s subject — is V4. Plain <code>training arc</code> is fully supported.</p></div>
 <h2 id="break-and-continue">break and continue<a class="anchor" href="#break-and-continue" aria-label="Link to this section">#</a></h2>
 <p>Both work in all three loop forms.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-num">10</span> <span class="c-kw">times</span> {
     <span class="c-kw">if</span> should_skip { <span class="c-kw">continue</span> }
     <span class="c-kw">if</span> should_stop { <span class="c-kw">break</span> }
@@ -290,6 +296,7 @@ while (!(CONDITION) &amp;&amp; sessions &lt; N) {
 }</code></pre></div>
 <h2 id="bare-blocks">Bare blocks<a class="anchor" href="#bare-blocks" aria-label="Link to this section">#</a></h2>
 <p>A <code>{ ... }</code> on its own is a statement. It groups code but does <strong>not</strong> create a new scope for bindings — a <code>pilot</code> declared inside remains visible afterwards.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> x<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>
     {
@@ -329,6 +336,7 @@ disengaged</code></pre>
 <p><code>for each</code> lexes as a keyword but has no grammar in V3:</p>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;for each&#x27; — this token cannot start an expression</code></pre></div>
 <p>Iterate with an index instead:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
     <span class="c-kw">say</span> <span class="c-fn">array_get</span>(items, i)
@@ -338,10 +346,9 @@ disengaged</code></pre>
 <div class="tablewrap"><table><thead><tr><th>Construct</th><th>Status</th></tr></thead><tbody><tr><td><code>for each x in list</code></td><td>V4</td></tr><tr><td><code>for each (i, x) in list.enumerate()</code></td><td>V4</td></tr><tr><td><code>check</code> over <code>maybe</code> / <code>result</code></td><td>V4</td></tr><tr><td><code>check route</code></td><td>V4</td></tr><tr><td><code>when</code> with destructuring or guards</td><td>V4</td></tr><tr><td><code>when</code> in expression position</td><td>V4</td></tr><tr><td><code>training arc ... with growth</code></td><td>V4</td></tr><tr><td><code>xm3 { a || b }</code> and all squadron concurrency</td><td>V4</td></tr><tr><td><code>prob[0.3] chance { }</code>, <code>prob_when</code></td><td>V4</td></tr><tr><td><code>isekai { } bringing back { }</code></td><td>V4</td></tr><tr><td><code>eventually if cond { }</code></td><td>V4</td></tr><tr><td>True deferred <code>eventually</code></td><td>V4</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#if-else-if-else">if / else if / else</a></li><li><a href="#when">when</a></li><li><a href="#loops">Loops</a></li><li><a href="#break-and-continue">break and continue</a></li><li><a href="#bare-blocks">Bare blocks</a></li><li><a href="#eventually">eventually</a></li><li><a href="#no-for-each">No `for each`</a></li><li><a href="#summary-of-what-is-missing">Summary of what is missing</a></li></ul></aside>

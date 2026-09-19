@@ -57,6 +57,7 @@
 <h1 id="shapes-impl">Shapes &amp; impl<a class="anchor" href="#shapes-impl" aria-label="Link to this section">#</a></h1>
 <p class="lede"><code>shape</code> is the only user-defined type in V3. <code>impl</code> attaches methods to it.</p>
 <h2 id="declaring-a-shape">Declaring a shape<a class="anchor" href="#declaring-a-shape" aria-label="Link to this section">#</a></h2>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Name</span> {
     field<span class="c-op">:</span> type
     field<span class="c-op">:</span> type
@@ -106,10 +107,12 @@ true</code></pre>
   </div>
 </figure>
 <h2 id="construction">Construction<a class="anchor" href="#construction" aria-label="Link to this section">#</a></h2>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> v<span class="c-op">:</span> <span class="c-type">Vector2</span> <span class="c-op">=</span> <span class="c-type">Vector2</span> { x<span class="c-op">:</span> <span class="c-num">3</span>, y<span class="c-op">:</span> <span class="c-num">4</span> }</code></pre></div>
 <p>Every field must be supplied, by name, in any order. Field labels are checked against the declaration; an unknown or missing field is a compile error.</p>
 <div class="callout note"><div class="callout-title">Note</div><p>The parser only treats <code>Name { ... }</code> as a constructor when <code>Name</code> is already a <strong>registered shape</strong>. A shape must therefore be declared before it is constructed in the token stream. Declaring shapes at the top of the file, as every example here does, keeps this from ever mattering.</p></div>
 <h2 id="field-access-and-assignment">Field access and assignment<a class="anchor" href="#field-access-and-assignment" aria-label="Link to this section">#</a></h2>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(v.x)
 v.x <span class="c-op">=</span> <span class="c-num">10</span></code></pre></div>
 <p>Compound assignment works on fields too: <code>v.x += 1</code>.</p>
@@ -259,6 +262,7 @@ Takemikazuchi thrust=880</code></pre>
 <p>Shapes live in runtime storage and are handled by reference. Two consequences:</p>
 <ul><li>Passing a shape to a task and mutating a field inside is <strong>visible to the caller</strong>. There is no implicit copy.</li><li>Assigning one shape binding to another aliases the same storage.</li></ul>
 <p>To get an independent value, construct a new one — a small <code>copy</code> associated method is the usual idiom:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">impl</span> <span class="c-type">Rect</span> {
     <span class="c-kw">task</span> <span class="c-fn">copy_of</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">Rect</span> {
         <span class="c-kw">give back</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> <span class="c-type">self</span>.w, h<span class="c-op">:</span> <span class="c-type">self</span>.h }
@@ -272,10 +276,9 @@ Takemikazuchi thrust=880</code></pre>
 <div class="tablewrap"><table><thead><tr><th>Feature</th><th>Status</th></tr></thead><tbody><tr><td>Generic fields <code>shape Pair&lt;A, B&gt;</code></td><td>V4</td></tr><tr><td>Field default values</td><td>V4</td></tr><tr><td><code>variant</code> sum types</td><td>V4</td></tr><tr><td><code>alias</code> type aliases</td><td>V4</td></tr><tr><td><code>doctrine</code> declarations</td><td>V4</td></tr><tr><td>Doctrine bounds on generics</td><td>V4</td></tr><tr><td><code>dyn Doctrine</code> and vtables</td><td>V4</td></tr><tr><td>Real operator dispatch through <code>Add</code> etc.</td><td>V4</td></tr><tr><td>Field visibility / <code>launch</code> on fields</td><td>V4</td></tr><tr><td><code>@layout(C)</code>, <code>@repr(u32)</code></td><td>V4</td></tr><tr><td><code>Shared&lt;T&gt;</code> / <code>Weak&lt;T&gt;</code></td><td>V4</td></tr><tr><td>A destructor or <code>drop</code> hook</td><td>V4</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-a-shape">Declaring a shape</a></li><li><a href="#construction">Construction</a></li><li><a href="#field-access-and-assignment">Field access and assignment</a></li><li><a href="#methods">Methods</a></li><li><a href="#operator-doctrines">Operator doctrines</a></li><li><a href="#shapes-as-values">Shapes as values</a></li><li><a href="#backend-support">Backend support</a></li><li><a href="#what-shapes-cannot-do">What shapes cannot do</a></li></ul></aside>

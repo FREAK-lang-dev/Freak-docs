@@ -115,6 +115,7 @@
 <p><code>\x1b</code> is the only part that needs escaping; <code>[</code>, the digits, the semicolons and the final letter are ordinary characters.</p>
 <p>Sequences ending in <code>m</code> are <strong>SGR</strong> (Select Graphic Rendition) — colour and text style. Everything else moves the cursor or edits the screen.</p>
 <p>Multiple parameters combine in one sequence, which is cheaper and more reliable than emitting several:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1;4;31m&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;bold underlined red&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;\x1b[0m&quot;</span></code></pre></div>
 <figure class="example">
   <figcaption>
@@ -232,10 +233,12 @@ blink
 <p>The 256-colour index is laid out in three blocks:</p>
 <div class="tablewrap"><table><thead><tr><th>Range</th><th>Contents</th></tr></thead><tbody><tr><td><code>0</code>–<code>7</code></td><td>The standard colours, same as <code>30</code>–<code>37</code></td></tr><tr><td><code>8</code>–<code>15</code></td><td>The bright colours, same as <code>90</code>–<code>97</code></td></tr><tr><td><code>16</code>–<code>231</code></td><td>A 6×6×6 RGB cube</td></tr><tr><td><code>232</code>–<code>255</code></td><td>24 greys, dark to light</td></tr></tbody></table></div>
 <p>The cube index is <code>16 + 36*r + 6*g + b</code>, where each of <code>r</code>, <code>g</code>, <code>b</code> is 0–5:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">cube</span>(r<span class="c-op">:</span> <span class="c-type">int</span>, g<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">give back</span> <span class="c-str">&quot;\x1b[38;5;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(<span class="c-num">16</span> <span class="c-op">+</span> <span class="c-num">36</span> <span class="c-op">*</span> r <span class="c-op">+</span> <span class="c-num">6</span> <span class="c-op">*</span> g <span class="c-op">+</span> b) <span class="c-op">+</span> <span class="c-str">&quot;m&quot;</span>
 }</code></pre></div>
 <p>Truecolour is the simplest option when you know the exact shade you want:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">rgb</span>(r<span class="c-op">:</span> <span class="c-type">int</span>, g<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">give back</span> <span class="c-str">&quot;\x1b[38;2;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(r) <span class="c-op">+</span> <span class="c-str">&quot;;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(g) <span class="c-op">+</span> <span class="c-str">&quot;;&quot;</span> <span class="c-op">+</span> <span class="c-fn">word_from_int</span>(b) <span class="c-op">+</span> <span class="c-str">&quot;m&quot;</span>
 }</code></pre></div>
@@ -320,6 +323,7 @@ finished</code></pre>
 </figure>
 <h3 id="1-build-the-line-then-say-it-once">1. Build the line, then say it once<a class="anchor" href="#1-build-the-line-then-say-it-once" aria-label="Link to this section">#</a></h3>
 <p>The usual answer, and the one to reach for first. Nothing reaches the terminal until the <code>say</code>, so the pieces land on one line.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> row<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;loading:&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-num">5</span> <span class="c-kw">times</span> {
@@ -330,10 +334,12 @@ finished</code></pre>
 <p><code>word += word</code> works as of v0.14.2. For many pieces, prefer [<code>word_builder</code>](words.html#building-words-incrementally), which does not re-copy the accumulated word on every concatenation.</p>
 <h3 id="2-carriage-return-within-one-say">2. Carriage return, within one say<a class="anchor" href="#2-carriage-return-within-one-say" aria-label="Link to this section">#</a></h3>
 <p><code>\r</code> moves the cursor to column 0. Anything after it in the <em>same</em> <code>say</code> overwrites what came before, on the same physical line:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;calculating...\r\x1b[Kdone&quot;</span></code></pre></div>
 <p><code>\x1b[K</code> erases to end of line, which matters when the new text is shorter than the old — without it, the tail of <code>calculating...</code> would still be showing.</p>
 <h3 id="3-cursor-up-to-redraw-a-line-you-already-finished">3. Cursor-up, to redraw a line you already finished<a class="anchor" href="#3-cursor-up-to-redraw-a-line-you-already-finished" aria-label="Link to this section">#</a></h3>
 <p>Once <code>say</code> has emitted its newline the cursor is on the next row, but you can go back:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;progress   0%&quot;</span>
 <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress  33%&quot;</span>
 <span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1A\r\x1b[Kprogress 100%&quot;</span></code></pre></div>
@@ -354,11 +360,13 @@ finished</code></pre>
 <p><code>src/cli/version.fk</code> declares its whole palette as top-level <code>pilot</code> bindings. That file is plain FREAK compiled by V3, so it is a worked example you can copy.</p>
 <div class="tablewrap"><table><thead><tr><th>Group</th><th>Constants</th></tr></thead><tbody><tr><td>Styles</td><td><code>C_RESET</code> <code>C_BOLD</code> <code>C_DIM</code> <code>C_ITALIC</code> <code>C_ULINE</code> <code>C_BLINK</code> <code>C_STRIKE</code></td></tr><tr><td>Standard</td><td><code>C_RED</code> <code>C_GREEN</code> <code>C_YELLOW</code> <code>C_BLUE</code> <code>C_MAGENTA</code> <code>C_CYAN</code> <code>C_WHITE</code></td></tr><tr><td>Bold</td><td><code>C_BRED</code> <code>C_BGREEN</code> <code>C_BYELLOW</code> <code>C_BBLUE</code> <code>C_BMAGENTA</code> <code>C_BCYAN</code> <code>C_BWHITE</code></td></tr><tr><td>Truecolour gradient</td><td><code>C_G1</code>…<code>C_G6</code> — pink → purple → blue → cyan</td></tr><tr><td>Background</td><td><code>C_BG_DARK</code> = <code>\x1b[48;2;20;20;30m</code></td></tr></tbody></table></div>
 <p>The gradient is what produces the banner from <code>freak help</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-type">C_G1</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;255;100;200m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-type">C_G2</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;220;80;220m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-type">C_G3</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[38;2;180;70;240m&quot;</span></code></pre></div>
 <h2 id="box-drawing-and-symbols">Box drawing and symbols<a class="anchor" href="#box-drawing-and-symbols" aria-label="Link to this section">#</a></h2>
 <p>The same file declares Unicode decorations as raw UTF-8 <strong>byte</strong> escapes, because V3 has no <code>char</code> type and no <code>\u</code> escape — you spell out the encoding:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-type">BOX_TL</span> <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x95\xad&quot;</span>      <span class="c-com">-- U+256D  round corner</span>
 <span class="c-kw">pilot</span> <span class="c-type">BOX_H</span>  <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x94\x80&quot;</span>      <span class="c-com">-- U+2500  horizontal</span>
 <span class="c-kw">pilot</span> <span class="c-type">BOX_V</span>  <span class="c-op">=</span> <span class="c-str">&quot;\xe2\x94\x82&quot;</span>      <span class="c-com">-- U+2502  vertical</span>
@@ -366,6 +374,7 @@ finished</code></pre>
 <div class="callout note"><div class="callout-title">Note</div><p><code>.length()</code> counts characters, not bytes, so a box-drawing character is one character even though it is three bytes. Padding maths built on <code>.length()</code> stays correct.</p></div>
 <h2 id="respecting-the-users-terminal">Respecting the user&#x27;s terminal<a class="anchor" href="#respecting-the-users-terminal" aria-label="Link to this section">#</a></h2>
 <p>The CLI honours the <code>NO_COLOR</code> convention in <code>cli_configure_output()</code>. Nothing does this for you automatically — the runtime enables ANSI, it does not decide whether you <em>should</em> use it. Copy the pattern:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_RESET</span> <span class="c-op">=</span> <span class="c-str">&quot;\x1b[0m&quot;</span>
 <span class="c-kw">pilot</span> <span class="c-kw">mut</span> <span class="c-type">C_BRED</span>  <span class="c-op">=</span> <span class="c-str">&quot;\x1b[1;31m&quot;</span>
 
@@ -387,6 +396,7 @@ finished</code></pre>
 <div class="callout note"><div class="callout-title">Note</div><p>There is no TTY detection anywhere. Neither the CLI nor your program can tell whether stdout is a pipe, so escapes are emitted even when output is redirected. That is why tooling around FREAK — including this site&#x27;s verification harness — has to strip ANSI from captured compiler output.</p></div>
 <h2 id="the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics<a class="anchor" href="#the-compilers-own-diagnostics" aria-label="Link to this section">#</a></h2>
 <p>V3 hardcodes red for errors rather than using the palette, because the compiler files are concatenated <em>ahead</em> of the CLI&#x27;s constants:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">say</span> <span class="c-str">&quot;\x1b[1;31merror\x1b[0m: &quot;</span> <span class="c-op">+</span> msg</code></pre></div>
 <p>That line is in <code>src/compiler/v3/helpers.fk</code>, with variants in <code>parser.fk</code> (the</p>
 <p class="lede">100-error bail-out) and <code>main.fk</code> (the abort summary). The caret line under a</p>
@@ -395,10 +405,9 @@ finished</code></pre>
 <ul><li><strong>Always reset.</strong> An unclosed sequence leaks into the shell prompt after your program exits.</li><li><strong>Safe floor:</strong> the 8 standard colours and <code>1</code>/<code>4</code>/<code>0</code>. Universally supported.</li><li><strong>Widely safe:</strong> bright colours, backgrounds, 256-colour, truecolour, <code>2</code>, <code>3</code>, <code>7</code>, <code>9</code>.</li><li><strong>Patchy:</strong> <code>5</code>/<code>6</code> blink (often ignored), <code>8</code> conceal, <code>21</code> double underline, <code>51</code>–<code>55</code> framed/encircled/overlined, <code>58</code> underline colour.</li><li><strong>Combine parameters</strong> in one sequence rather than emitting several.</li><li>Colour goes through <code>say</code>, which writes to stdout. There is no stderr writer in V3, so diagnostics and normal output share one stream.</li></ul>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#anatomy-of-a-sequence">Anatomy of a sequence</a></li><li><a href="#sgr-attributes">SGR: attributes</a></li><li><a href="#sgr-foreground-colour">SGR: foreground colour</a></li><li><a href="#sgr-background-colour">SGR: background colour</a></li><li><a href="#sgr-extended-colour">SGR: extended colour</a></li><li><a href="#cursor-and-screen-control">Cursor and screen control</a></li><li><a href="#printing-on-the-same-line">Printing on the same line</a></li><li><a href="#ansi-is-enabled-for-you">ANSI is enabled for you</a></li><li><a href="#the-escape-itself">The escape itself</a></li><li><a href="#the-clis-palette">The CLI&#x27;s palette</a></li><li><a href="#box-drawing-and-symbols">Box drawing and symbols</a></li><li><a href="#respecting-the-users-terminal">Respecting the user&#x27;s terminal</a></li><li><a href="#the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics</a></li><li><a href="#support-and-practical-notes">Support and practical notes</a></li></ul></aside>

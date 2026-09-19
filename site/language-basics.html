@@ -133,6 +133,7 @@ false</code></pre>
 <p>There is no <code>uint</code>, <code>tiny</code>, <code>char</code>, <code>big</code>, <code>float</code>, <code>float32</code> or <code>never</code>; and no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code>, tuple, fixed array or raw pointer.</p>
 <h3 id="the-type-annotation-grammar">The type-annotation grammar<a class="anchor" href="#the-type-annotation-grammar" aria-label="Link to this section">#</a></h3>
 <p>The parser takes one identifier, plus a single special case for <code>List</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> a<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">1</span>                       <span class="c-com">-- fine</span>
 <span class="c-kw">pilot</span> b<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;x&quot;</span>                    <span class="c-com">-- fine</span>
 <span class="c-kw">pilot</span> c<span class="c-op">:</span> <span class="c-type">Rect</span> <span class="c-op">=</span> <span class="c-type">Rect</span> { w<span class="c-op">:</span> <span class="c-num">1</span>, h<span class="c-op">:</span> <span class="c-num">2</span> }    <span class="c-com">-- fine, Rect is a shape</span>
@@ -149,14 +150,17 @@ false</code></pre>
 <div class="callout note"><div class="callout-title">Note</div><p><code>List&lt;T&gt;</code> and <code>ByteBuffer</code> are recent additions to V3. Much of the rest of the language still assumes the older untyped <code>int</code> handle, so the two surfaces coexist — see <a href="arrays.html">Lists &amp; arrays</a> for which calls accept which.</p></div>
 <h3 id="numeric-literals">Numeric literals<a class="anchor" href="#numeric-literals" aria-label="Link to this section">#</a></h3>
 <p>A literal with a <code>.</code> is <code>num</code>; otherwise <code>int</code>.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> i <span class="c-op">=</span> <span class="c-num">42</span>        <span class="c-com">-- int</span>
 <span class="c-kw">pilot</span> f <span class="c-op">=</span> <span class="c-num">42.0</span>      <span class="c-com">-- num</span></code></pre></div>
 <p>There is <strong>no negative literal</strong>. <code>-5</code> parses as unary minus applied to <code>5</code>, which is fine inside an expression but not as an initialiser in every position. The idiom used throughout the compiler&#x27;s own source is a subtraction:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> below_zero<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">5</span>
 <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-op">-</span>below_zero)</code></pre></div>
 <p>There are also no numeric suffixes: <code>42u</code>, <code>3.14f</code>, <code>42t</code> and <code>999b</code> are all V4.</p>
 <h3 id="mixing-int-and-num">Mixing int and num<a class="anchor" href="#mixing-int-and-num" aria-label="Link to this section">#</a></h3>
 <p>Arithmetic that involves a <code>num</code> on either side produces <code>num</code>. Convert explicitly at the boundary:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> n<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">7</span>
 <span class="c-kw">pilot</span> f<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> n.<span class="c-fn">to_num</span>()
 <span class="c-kw">pilot</span> back<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> f.<span class="c-fn">to_int</span>()</code></pre></div>
@@ -250,14 +254,14 @@ Valkyries x5</code></pre>
 <div class="callout note"><div class="callout-title">Note</div><p>This is a real difference from the bible, which forbids arbitrary executable statements at root scope and requires root bindings to be <code>fixed pilot</code> constants. V3 allows both.</p></div>
 <h2 id="comments">Comments<a class="anchor" href="#comments" aria-label="Link to this section">#</a></h2>
 <p><code>--</code> starts a comment that runs to the end of the line. There is no block comment form.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- a whole-line comment</span>
 <span class="c-kw">pilot</span> x <span class="c-op">=</span> <span class="c-num">1</span>    <span class="c-com">-- a trailing comment</span></code></pre></div>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#bindings">Bindings</a></li><li><a href="#type-inference">Type inference</a></li><li><a href="#the-type-table">The type table</a></li><li><a href="#reserved-words-are-case-insensitive">Reserved words are case-insensitive</a></li><li><a href="#top-level-code">Top-level code</a></li><li><a href="#comments">Comments</a></li></ul></aside>

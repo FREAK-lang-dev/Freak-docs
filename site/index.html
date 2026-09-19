@@ -57,11 +57,11 @@
 <h1 id="freak-v3">FREAK V3<a class="anchor" href="#freak-v3" aria-label="Link to this section">#</a></h1>
 <p class="lede">The complete, verified reference for the language the shipping FREAK V3 compiler actually accepts.</p>
 <p>FREAK is a programming language written entirely by AI. Its compiler is self-hosted: the compiler that builds FREAK programs is itself written in FREAK. This site documents <strong>V3 &quot;Maverick&quot;</strong> — the shipping, self-hosted generation that lives in <code>src/compiler/v3/</code>.</p>
-<div class="summary-card"><div class="sc-num">45/45</div><div class="sc-body"><strong>documentation examples compile</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-09-13T15:07:32Z. Every code block on this site marked <em>compiles</em> was built by that compiler and, where it produces output, executed.</span></div></div>
+<div class="summary-card"><div class="sc-num">45/45</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-09-19T17:34:24Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <h2 id="why-this-site-exists">Why this site exists<a class="anchor" href="#why-this-site-exists" aria-label="Link to this section">#</a></h2>
 <p>The project ships a specification, <code>freak-full-bible.md</code>, that describes the <em>complete</em> language: variants, doctrines, closures, generics, lifetimes, squadron concurrency, probability types, and more. That document is explicit that it describes the destination, not the present.</p>
 <p>The V3 compiler implements a <strong>much smaller</strong> language than the bible. Not a slightly smaller one — a fundamentally smaller one. Roughly a fifth of the bible&#x27;s surface compiles today.</p>
-<p>Every page here documents only what V3 accepts, and proves it: each FREAK snippet on this site is a real file under <code>examples/</code>, compiled by a real V3 binary, and — where it produces output — executed, with the output captured verbatim. Nothing here is aspirational.</p>
+<p>Badged executable examples are real files under <code>examples/</code>, compiled by the released V3 compiler, executed, and checked against reviewed expected output. Inline illustrative fragments are labelled separately; they are not independently verified programs. Proposed or unsupported syntax must not borrow a working example&#x27;s verification badge.</p>
 <p>For the feature-by-feature comparison against the specification, see <a href="conformance.html">Bible vs V3</a>. For what to write instead of the features that are missing, see <a href="not-in-v3.html">Not in V3</a>.</p>
 <h2 id="hello-freak">Hello, FREAK<a class="anchor" href="#hello-freak" aria-label="Link to this section">#</a></h2>
 <figure class="example">
@@ -82,6 +82,7 @@
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run hello.fk</code></pre></div>
 <h2 id="the-language-in-one-screen">The language in one screen<a class="anchor" href="#the-language-in-one-screen" aria-label="Link to this section">#</a></h2>
 <p>This is close to the whole language. If a construct is not on this list, check <a href="not-in-v3.html">Not in V3</a> before reaching for it.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- comments start with a double dash</span>
 
 <span class="c-kw">pilot</span> x <span class="c-op">=</span> <span class="c-num">42</span>                    <span class="c-com">-- binding, type inferred</span>
@@ -135,10 +136,9 @@
 <ul><li><a href="getting-started.html">Getting started</a> — build the compiler and run a program</li><li><a href="language-basics.html">Bindings &amp; types</a> — the value model</li><li><a href="shapes.html">Shapes &amp; impl</a> — the only user-defined type</li><li><a href="arrays.html">Lists &amp; arrays</a> — the two collection surfaces</li><li><a href="console.html">Coloured output</a> — ANSI escapes and terminal handling</li><li><a href="stdlib.html">Standard library</a> — the complete callable surface</li><li><a href="conformance.html">Bible vs V3</a> — the specification comparison</li></ul>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#why-this-site-exists">Why this site exists</a></li><li><a href="#hello-freak">Hello, FREAK</a></li><li><a href="#the-language-in-one-screen">The language in one screen</a></li><li><a href="#what-makes-v3-unusual">What makes V3 unusual</a></li><li><a href="#two-backends">Two backends</a></li><li><a href="#where-to-go-next">Where to go next</a></li></ul></aside>

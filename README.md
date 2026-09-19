@@ -5,12 +5,14 @@ self-hosted generation in
 [`src/compiler/v3/`](https://github.com/FREAK-lang-dev/Freak-lang/tree/main/src/compiler/v3).
 
 Written against what the compiler **actually accepts**, not what the
-specification promises. Every FREAK snippet on the site is a real file in
-[`examples/`](examples/), compiled by a real V3 binary and — where it produces
-output — executed, with stdout captured verbatim into the page.
+specification promises. Badged executable examples are real files in
+[`examples/`](examples/), compiled by a released V3 binary, executed, and checked
+against reviewed expected output. Inline illustrative fragments are labelled
+separately and do not carry a verification claim.
 
-**45 / 45 examples compile and run** under `freak 0.14.2 (Maverick)`, built
-from source with a verified self-host fixed point.
+See `examples/verified.json` for the current compiler release, exact provenance,
+and per-example results. [MAINTENANCE.md](MAINTENANCE.md) defines the V3 release
+policy and the separate development-snapshot policy for future V4 docs.
 
 ---
 
@@ -90,23 +92,21 @@ no manual configuration.
 
 ## Regenerating
 
-You need a V3 `freak` binary built from the **same checkout** you are
-documenting — see the caveat below.
+Use the official stable V3 release distribution, including its matching runtime
+and standard library. Requires Python 3.12+, Node.js, GitHub CLI and Clang.
 
 ```sh
-# in a Freak-lang checkout
-python -u tests/v3_fixed_point.py
-
-# back here
-python tools/verify.py --freak /path/to/freak --jobs 6
-python tools/build_docs.py
-node tools/search_smoke.js
+python tools/refresh.py --release v0.14.2 --jobs 6
+python -m unittest discover -s tests -v
 ```
 
 `verify.py` copies each example into a clean temporary directory, runs
-`freak build` with the default LLVM backend, executes the binary, and writes
-`examples/verified.json`. **It exits non-zero if any example fails to
-compile** — that is the guard that keeps the docs honest.
+`freak build` with the default LLVM backend, executes the binary, checks its
+output against `examples/expectations.json`, and writes `examples/verified.json`.
+**Compilation failures, runtime failures, missing executables, timeouts and wrong
+output all fail the run.** `build_docs.py` independently rejects stale, partial or
+failing evidence before writing any output. `--only` is for debugging and must
+write to a separate `--output` file.
 
 `build_docs.py` renders the site and rebuilds the search index. Coloured
 program output is preserved by the harness and re-rendered as HTML: the
@@ -164,15 +164,16 @@ lists growable (`push`/`pop`/`reserve`/`capacity`/`clear`, `List::new`,
 `parse_status()`, and allowed `+=` on words. An older compiler can no longer
 compile the current `std/`.
 
-So: rebuild the compiler from the checkout you are documenting, and re-run
-`tools/verify.py` after every pull.
+For maintained V3 release docs, use `tools/refresh.py` with the matching release
+distribution and re-run it after changing documented inputs. Do not substitute a
+development build just because it prints the same version number.
 
 ## Contributing
 
 1. Edit `content/*.md`, or add an example under `examples/`.
-2. Run `tools/verify.py` — it must pass before the docs can claim anything.
-3. Run `tools/build_docs.py` and commit the regenerated `site/`.
-4. Run `tools/search_smoke.js`.
+2. Add or review expected output in `examples/expectations.json` for changed programs.
+3. Run `tools/refresh.py` — verification, generation and search checks must pass.
+4. Commit the report and regenerated `site/`. CI rechecks every example with the release.
 
 Prose rule: if a page states that something works, there should be a verified
 example backing it. If something is broken, say so and show the diagnostic.

@@ -65,6 +65,7 @@ error: unexpected &#x27;?&#x27;
 error: unexpected &#x27;or else&#x27;</code></pre></div>
 <p>There is no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>some</code>, <code>nobody</code>, <code>ok</code>, <code>err</code>, <code>?</code> or <code>or else</code>. Signal absence and failure with sentinel values, the way the compiler&#x27;s own source does.</p>
 <p>For parsing specifically, v0.14.2 added a checked pair — <code>w.parse_int()</code> / <code>w.parse_num()</code> plus a global <code>parse_status()</code> — which distinguishes &quot;parsed zero&quot; from &quot;failed&quot;. <code>ByteBuffer.status()</code> follows the same out-of-band pattern. See <a href="words.html#checked-parsing">checked parsing</a>.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- A word task returns &quot;&quot; for &quot;no value&quot;.</span>
 <span class="c-kw">task</span> <span class="c-fn">find_name</span>(id<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">if</span> id <span class="c-op">==</span> <span class="c-num">1</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Takeru&quot;</span> }
@@ -90,6 +91,7 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
     }
 }</code></pre></div>
 <p>For richer errors, return a shape with a status field:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Outcome</span> {
     <span class="c-kw">ok</span><span class="c-op">:</span> <span class="c-type">bool</span>
     value<span class="c-op">:</span> <span class="c-type">int</span>
@@ -99,6 +101,7 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
 <p><code>List&lt;T&gt;</code> <strong>does</strong> exist now — typed, indexable, and growable as of v0.14.2 (<code>push</code>, <code>pop</code>, <code>reserve</code>, <code>capacity</code>, <code>clear</code>). What it still lacks is <code>insert</code>, <code>remove</code>, <code>sort</code> and any iterator, and it does not nest. See <a href="arrays.html">Lists &amp; arrays</a>.</p>
 <p>Still absent: <code>Map&lt;K,V&gt;</code>, <code>Set&lt;T&gt;</code>, <code>Lineup&lt;T&gt;</code>, and the <code>{ &quot;k&quot;: v }</code> map literal.</p>
 <p>For a map, keep two parallel collections:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">map_get</span>(keys<span class="c-op">:</span> <span class="c-type">int</span>, values<span class="c-op">:</span> <span class="c-type">int</span>, key<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">pilot</span> at<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-fn">array_find</span>(keys, key)
     <span class="c-kw">if</span> at <span class="c-op">&lt;</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;&quot;</span> }
@@ -107,6 +110,7 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
 <h2 id="iteration">Iteration<a class="anchor" href="#iteration" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;for each&#x27; — this token cannot start an expression</code></pre></div>
 <p>Use an index and a counted loop:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
     <span class="c-kw">say</span> <span class="c-fn">array_get</span>(items, i)
@@ -116,6 +120,7 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
 <h2 id="closures">Closures<a class="anchor" href="#closures" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;|&#x27; — this token cannot start an expression</code></pre></div>
 <p>No lambdas, no capture modes, no <code>Callable</code> / <code>MutCallable</code> / <code>OneShot</code>. Since tasks cannot be passed as values, the substitute is a named task plus a dispatch <code>when</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">apply</span>(op<span class="c-op">:</span> <span class="c-type">word</span>, value<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
     <span class="c-kw">when</span> op {
         <span class="c-str">&quot;double&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> value <span class="c-op">*</span> <span class="c-num">2</span>
@@ -132,6 +137,7 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;doctrine&#x27; — this token cannot start an expression
 type error: operator &#x27;+&#x27; does not accept Vec2 and Vec2</code></pre></div>
 <p><code>doctrine</code> declarations do not parse. <code>impl D for S { }</code> <strong>does</strong> parse, but <code>D</code> is never validated and the operator token is not rewritten — call the method by name.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">impl</span> <span class="c-type">Add</span> <span class="c-kw">for</span> <span class="c-type">Vec2</span> {
     <span class="c-kw">task</span> <span class="c-fn">add</span>(<span class="c-type">self</span>, other<span class="c-op">:</span> <span class="c-type">Vec2</span>) <span class="c-op">-&gt;</span> <span class="c-type">Vec2</span> { ... }
 }
@@ -142,6 +148,7 @@ type error: operator &#x27;+&#x27; does not accept Vec2 and Vec2</code></pre></d
 <div class="codeblock"><pre class="code"><code>type error: unknown binding &#x27;variant&#x27;
 type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <p>Neither <code>variant</code> nor <code>alias</code> is even a keyword in V3&#x27;s lexer, so they parse as identifiers and fail in the checker. Model a sum type as a shape with a tag:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">shape</span> <span class="c-type">Contact</span> {
     kind<span class="c-op">:</span> <span class="c-type">word</span>        <span class="c-com">-- &quot;soldier&quot; | &quot;laser&quot; | &quot;fort&quot;</span>
     id<span class="c-op">:</span> <span class="c-type">int</span>
@@ -166,6 +173,7 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <h2 id="concurrency">Concurrency<a class="anchor" href="#concurrency" aria-label="Link to this section">#</a></h2>
 <p>Nothing at all. No <code>xm3</code>, <code>sortie</code>, <code>debrief</code>, <code>formation</code>, <code>BriefingRoom</code>, <code>wingman</code>, <code>Comms</code>, <code>std::thread</code>, atomics or channels. None of those words are keywords. <code>||</code> lexes as one token and has no grammar rule.</p>
 <p>Shell out if you must:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> code<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> process<span class="c-op">::</span><span class="c-fn">exec</span>(<span class="c-str">&quot;some-command --flag&quot;</span>)</code></pre></div>
 <h2 id="modules-and-visibility">Modules and visibility<a class="anchor" href="#modules-and-visibility" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;launch&#x27; — this token cannot start an expression</code></pre></div>
@@ -174,6 +182,7 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <ul><li>Name collisions with <code>std/</code> tasks are real. Prefix your tasks.</li><li><code>use std::math3d</code>, <code>use std::zip</code>, <code>use std::ui</code> and <code>use cockpit</code> still matter as <strong>build triggers</strong> — the text switches on linking that module.</li><li><strong>Hangar packages cannot be consumed.</strong> <code>hangar install</code> downloads into <code>hangar_modules/</code>, but the build never reads it. Concatenate the source instead: <code>cat lib/thing.fk src/app.fk &gt; combined.fk &amp;&amp; freak build combined.fk</code>. See <a href="hangar.html">Hangar &amp; packages</a>.</li></ul>
 <h2 id="advanced-types">Advanced types<a class="anchor" href="#advanced-types" aria-label="Link to this section">#</a></h2>
 <p><code>power&lt;N&gt;</code>, <code>prob[lo..hi]</code>, <code>causality&lt;T&gt;</code> and <code>mood</code> do not lex. Model the same intent with ordinary values and runtime checks:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">engage_fort</span>(power_level<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
     <span class="c-kw">if</span> power_level <span class="c-op">&lt;</span> <span class="c-num">7000</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;insufficient power&quot;</span> }
     <span class="c-kw">give back</span> <span class="c-str">&quot;engaging&quot;</span>
@@ -192,10 +201,9 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <p>No language server, no incremental parsing, no tolerant AST, no autocomplete, no <code>test &quot;name&quot; { expect ... }</code> framework, no JIT. Parse errors abort the build. <code>freak test</code> is a shim around a Python regression runner in the source checkout.</p>
     </article>
     <footer class="pagefoot">
-      <p>Every FREAK snippet on this site was compiled by <strong>freak 0.14.2 (Maverick)</strong>,
-      built from source with a verified self-host fixed point.
-      45/45 examples compile; regenerate with
-      <code>python tools/verify.py</code> then <code>python tools/build_docs.py</code>.</p>
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      45/45 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#optional-and-fallible-values">Optional and fallible values</a></li><li><a href="#collections">Collections</a></li><li><a href="#iteration">Iteration</a></li><li><a href="#closures">Closures</a></li><li><a href="#generics">Generics</a></li><li><a href="#doctrines-and-dynamic-dispatch">Doctrines and dynamic dispatch</a></li><li><a href="#variants-and-aliases">Variants and aliases</a></li><li><a href="#borrowing-lifetimes-and-shared-ownership">Borrowing, lifetimes and shared ownership</a></li><li><a href="#concurrency">Concurrency</a></li><li><a href="#modules-and-visibility">Modules and visibility</a></li><li><a href="#advanced-types">Advanced types</a></li><li><a href="#anime-layer">Anime layer</a></li><li><a href="#ffi">FFI</a></li><li><a href="#syntax-shorthands">Syntax shorthands</a></li><li><a href="#build-modes-voices-output-paths">Build modes, voices, output paths</a></li><li><a href="#tooling">Tooling</a></li></ul></aside>
