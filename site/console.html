@@ -331,7 +331,7 @@ finished</code></pre>
     i <span class="c-op">+=</span> <span class="c-num">1</span>
 }
 <span class="c-kw">say</span> row</code></pre></div>
-<p><code>word += word</code> works as of v0.14.2. For many pieces, prefer [<code>word_builder</code>](words.html#building-words-incrementally), which does not re-copy the accumulated word on every concatenation.</p>
+<p><code>word += word</code> works as of v0.14.2. For many pieces, prefer <a href="words.html#building-words-incrementally"><code>word_builder</code></a>, which does not re-copy the accumulated word on every concatenation.</p>
 <h3 id="2-carriage-return-within-one-say">2. Carriage return, within one say<a class="anchor" href="#2-carriage-return-within-one-say" aria-label="Link to this section">#</a></h3>
 <p><code>\r</code> moves the cursor to column 0. Anything after it in the <em>same</em> <code>say</code> overwrites what came before, on the same physical line:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>

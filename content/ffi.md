@@ -38,27 +38,50 @@ generated code can never be shadowed by user names. Two rules follow:
 There are no `std::ffi` aliases in V3 — no `c_int`, `c_size`, `usize`,
 `wchar`. You declare the FREAK type and the backend picks the representation.
 
-| FREAK type | LLVM representation |
-|---|---|
-| `int` | `i64` |
-| `num` | `double` |
-| `bool` | `i64` (0 / 1) |
-| `word` | `i64` handle into the runtime's word table |
-| `void` | `void` |
+| FREAK type | C backend | LLVM backend (default) |
+|---|---|---|
+| `int` | `int64_t` | `i64` |
+| `bool` | `bool` | `i64` (0 / 1) |
+| `void` | `void` | `void` |
+| `num` | `double` | **`i64` — broken, see below** |
+| `word` | `freak_word` struct, by value | `i64` handle |
 
 > [!warn]
-> **`word` is not `char*`.** On the LLVM backend a `word` is an `i64` handle
-> managed by the FREAK runtime, not a pointer to bytes. Declaring
-> `extern task puts(s: word) -> int` will compile and then pass a handle where
-> C expects a pointer.
+> **`num` across `extern` is silently wrong on the LLVM backend**, which is the
+> default. The declaration is emitted as `declare i64 @f(i64)`, so a C function
+> expecting a `double` receives the bit pattern of an unrelated integer and
+> hands back garbage that nothing flags.
+
+Declaring two libm functions and calling them both ways:
+
+```fk
+extern task sqrt(v: num) -> num
+extern task floor(v: num) -> num
+```
+
+| Call | LLVM backend (default) | C backend (`--c`) |
+|---|---|---|
+| `sqrt(2.0)` | `nan` | `1.414213562` |
+| `floor(3.7)` | `4.940656458e-324` | `3` |
+
+Verified on 0.14.2. If you need doubles across the boundary, build with `--c`,
+or pass them as scaled integers.
+
+The dependable subset on **both** backends is `int`, `bool` and `void`.
+
+> [!warn]
+> **`word` is not `char*`** on either backend. Under LLVM it is an `i64` handle
+> into the runtime's word table; under the C backend it is a four-field
+> `freak_word` struct passed by value. Declaring
+> `extern task puts(s: word) -> int` compiles and then hands C something that is
+> not a pointer.
 >
 > This is not hypothetical: `std/algorithm.fk` declares
 > `extern task freak_word_compare(a: word, b: word) -> int` and the resulting
-> `array_sort_word` **segfaults**. Treat `word` across `extern` as unsafe until
-> you have checked the specific runtime function's real C signature.
+> `array_sort_word` **segfaults**.
 
-The safe subset is `int`, `num`, `bool` and `void`. For string work, prefer the
-builtin `word` methods and the runtime functions FREAK already exposes.
+Strings do cross the boundary, but through a shim you write rather than through
+a direct declaration — see [Linking a real C library](#linking-a-real-c-library).
 
 ## Calling
 
@@ -109,6 +132,94 @@ gate — and equally, no honour-level audit trail on the code you actually
 compile. `freak audit-trust` scans source text for `trust me` blocks that the
 compiler itself would reject.
 
+## Linking a real C library
+
+`extern task` resolves a symbol; it does not tell the linker where to find one.
+There is no `link="raylib"`, no `-l` flag on `freak build`, and no way to add
+one. `freak build` links the FREAK runtime and the platform C library and
+nothing else, which is why the `abs` example above works and a third-party
+library does not.
+
+The way through is to stop using `freak build` for the final step. `freak
+transpile` emits the C or LLVM IR, and you link it yourself:
+
+```sh
+freak transpile app.fk --c
+clang -o app app.fk.c       path/to/freakc/runtime/freak_runtime.c       shim.c       -Ipath/to/freakc/runtime       -lraylib -lopengl32 -lgdi32 -lwinmm       -O2 -w -D_CRT_SECURE_NO_WARNINGS -lws2_32
+```
+
+On the LLVM backend the same idea holds — `freak transpile app.fk --llvm`, then
+hand clang `app.fk.ll` plus **both** `freak_runtime.c` and
+`freak_llvm_runtime.c`.
+
+### Why you need a shim
+
+`extern` only speaks `int`, `bool`, `void` and (on the C backend) `num`. Most C
+libraries ask for more than that: `const char*` for names and titles, and small
+structs by value for points, colours and rectangles. Neither crosses a bare
+`extern`.
+
+So put a shim between them — a small C file, compiled and linked alongside,
+that takes the flat scalars FREAK can express and builds the real arguments:
+
+```c
+/* shim.c -- compiled and linked alongside, C backend */
+#include "freak_runtime.h"
+#include <raylib.h>
+
+void shim_window(freak_word title, int64_t w, int64_t h) {
+    InitWindow((int)w, (int)h, freak_word_to_cstr(title));
+}
+
+void shim_circle(int64_t x, int64_t y, int64_t radius,
+                 int64_t r, int64_t g, int64_t b, int64_t a) {
+    Vector2 centre = { (float)x, (float)y };
+    Color colour = { (unsigned char)r, (unsigned char)g,
+                     (unsigned char)b, (unsigned char)a };
+    DrawCircleV(centre, (float)radius, colour);
+}
+```
+
+`freak_word_to_cstr` is declared in `freak_runtime.h` and is the supported way
+to get bytes out of a `word`. Declaring the shim is then ordinary:
+
+```fk
+extern task shim_window(title: word, w: int, h: int) -> void
+extern task shim_circle(x: int, y: int, radius: int,
+                        r: int, g: int, b: int, a: int) -> void
+```
+
+> [!note]
+> A shim written for one backend will not work on the other. The C backend
+> passes a `freak_word` struct; the LLVM backend passes an `i64` handle, which
+> the shim turns into a `freak_word` with
+> `freak_word freak_llvm_word_view(int64_t handle)`. Everything else is the
+> same. Pick a backend and stay on it.
+
+### So, raylib?
+
+Yes, with a shim, and no, not comfortably.
+
+Every raylib call you want needs a line of C: `Vector2`, `Color`, `Rectangle`
+and `Camera2D` are structs by value, `InitWindow` and `DrawText` take
+`const char*`, and `float` is not a FREAK type at all. None of that reaches
+`extern` directly. What you end up with is a hand-written C wrapper for your
+slice of the raylib API, plus a FREAK file of `extern` declarations mirroring
+it, plus a manual clang line. That is a real, working program — the shim
+pattern above is verified end to end against a C library with exactly these
+shapes — but the interesting part of it is C, and it does not survive a
+`freak build`.
+
+There is also no float type. Positions and colours go across as `int` and get
+cast in the shim, which is fine for pixels and 0-255 channels and lossy for
+anything else. `num` would be the answer and it is broken on the default
+backend, as above.
+
+If the goal is to see something on screen from FREAK today, that is the price.
+If the goal is a comfortable binding, wait for V4: `extern` blocks, `link=`,
+`@layout(C)` structs and raw pointers are all specified, and all of them are
+what this section is working around.
+
 ## Practical guidance
 
 Keep the FFI surface to scalars:
@@ -122,8 +233,10 @@ task main() -> void {
 }
 ```
 
-If you need to hand a string to C, do it from the C side instead: add your
-function to `freakc/runtime/freak_runtime.c`, expose it the way the existing
-runtime bridges do, and call it through the builtin table rather than through
-`extern`. That is how `fs::read`, `tcp::send` and the `ui::*` family are wired,
-and it is the only path that handles the `word` representation correctly.
+Anything past scalars belongs in a shim you compile alongside, not in the
+`extern` declaration — see [Linking a real C library](#linking-a-real-c-library).
+
+Forking the runtime is the other option, and a worse one for library work: add
+your function to `freakc/runtime/freak_runtime.c` and wire it through the
+builtin table, the way `fs::read` and `tcp::send` are. That gets you a builtin
+rather than an `extern`, and it means maintaining a patched compiler.

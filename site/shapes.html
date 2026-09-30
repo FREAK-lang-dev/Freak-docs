@@ -63,7 +63,7 @@
     field<span class="c-op">:</span> type
 }</code></pre></div>
 <p>Fields are <code>name: type</code>, where the type is <code>int</code>, <code>num</code>, <code>word</code>, <code>bool</code>, or another shape&#x27;s name. Separators are optional: newlines, commas, or a trailing comma before <code>}</code> all work.</p>
-<div class="callout warn"><div class="callout-title">Careful</div><p>A shape field may <strong>not</strong> hold a <code>List&lt;T&gt;</code>, even though the annotation parses everywhere else: ``<code>text type error: V3 owned shape fields do not yet support List values </code>`<code> Keep the list in a separate binding, or store a legacy </code>int<code> array handle in the field instead. </code>List&lt;T&gt;` <em>is</em> allowed as a task parameter and return type.</p></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>A shape field may <strong>not</strong> hold a <code>List&lt;T&gt;</code>, even though the annotation parses everywhere else:</p><pre class="code"><code>type error: V3 owned shape fields do not yet support List values</code></pre><p>Keep the list in a separate binding, or store a legacy <code>int</code> array handle in the field instead. <code>List&lt;T&gt;</code> <em>is</em> allowed as a task parameter and return type.</p></div>
 <figure class="example">
   <figcaption>
     <span class="ex-name">examples/shapes.fk</span>
@@ -253,7 +253,7 @@ Takemikazuchi thrust=880</code></pre>
     <pre class="stdout"><code>(11, 22)</code></pre>
   </div>
 </figure>
-<div class="callout warn"><div class="callout-title">Careful</div><p><strong>The operator token is not rewritten.</strong> Implementing <code>Add</code> does not make <code>+</code> work on your shape: ``<code>text type error: operator &#x27;+&#x27; does not accept Vec2 and Vec2 </code>`<code> Call the method by name — </code>a.add(b)<code>. The bible&#x27;s </code>pilot v = v1 + v2` dispatch is V4.</p></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p><strong>The operator token is not rewritten.</strong> Implementing <code>Add</code> does not make <code>+</code> work on your shape:</p><pre class="code"><code>type error: operator &#x27;+&#x27; does not accept Vec2 and Vec2</code></pre><p>Call the method by name — <code>a.add(b)</code>. The bible&#x27;s <code>pilot v = v1 + v2</code> dispatch is V4.</p></div>
 <div class="callout note"><div class="callout-title">Note</div><p>The doctrine name is <strong>not validated</strong>. <code>impl Whatever for Vec2 { ... }</code> compiles cleanly — the name is recorded and otherwise ignored. There is no check that the doctrine exists, that its methods are all implemented, or that signatures match. Use <code>Add</code>, <code>Sub</code>, <code>Mul</code>, <code>Div</code>, <code>Neg</code>, <code>Eq</code> by convention, and expect V4 to start enforcing them.</p></div>
 <p><code>doctrine</code> <strong>declarations</strong> do not parse at all:</p>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;doctrine&#x27; — this token cannot start an expression</code></pre></div>

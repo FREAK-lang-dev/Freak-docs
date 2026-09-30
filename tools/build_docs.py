@@ -215,20 +215,81 @@ def split_row(row: str) -> list[str]:
 
 
 def inline(text: str) -> str:
-    """`code`, **bold**, *italic*, [label](href) -- escaping everything else."""
+    """`code`, **bold**, *italic*, [label](href) -- escaping everything else.
+
+    Code spans are lifted out first and put back last. Splitting on them
+    instead would end emphasis at every backtick, so ``**`num` is broken**``
+    would print its own asterisks -- and a `char*` inside a bold run would
+    break the run from the other side.
+    """
     text = text.replace("\\|", "|")
-    parts = re.split(r"(`[^`]+`)", text)
-    rendered = []
-    for part in parts:
-        if part.startswith("`") and part.endswith("`") and len(part) > 1:
-            rendered.append(f"<code>{html.escape(part[1:-1])}</code>")
+
+    spans: list[str] = []
+
+    def stash(match: "re.Match[str]") -> str:
+        spans.append(f"<code>{html.escape(match.group(1))}</code>")
+        return f"\x00{len(spans) - 1}\x00"
+
+    seg = html.escape(re.sub(r"`([^`]+)`", stash, text))
+    seg = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', seg)
+    seg = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", seg)
+    seg = re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"<em>\1</em>", seg)
+    for index, span in enumerate(spans):
+        seg = seg.replace(f"\x00{index}\x00", span)
+    return expand_status_pills(seg)
+
+
+def strip_quote(line: str) -> str:
+    """Drop one level of `> ` quoting, keeping any indentation inside it."""
+    stripped = line.lstrip()
+    if not stripped.startswith(">"):
+        return line.rstrip()
+    rest = stripped[1:]
+    return (rest[1:] if rest.startswith(" ") else rest).rstrip()
+
+
+def render_callout_body(body: list[str]) -> tuple[str, str]:
+    """Render a callout as paragraphs plus fenced code, not one run-on line.
+
+    A fenced block inside a callout used to be joined into the surrounding
+    sentence, which turned it into a line of stray backticks and lost the
+    newlines with it.
+
+    Returns the HTML and the plain text that feeds the search index.
+    """
+    html_parts: list[str] = []
+    plain_parts: list[str] = []
+    para: list[str] = []
+
+    def flush() -> None:
+        text = " ".join(x for x in para if x)
+        para.clear()
+        if text:
+            html_parts.append(f"<p>{inline(text)}</p>")
+            plain_parts.append(text)
+
+    index = 0
+    while index < len(body):
+        line = body[index]
+        fence = re.match(r"```(\w*)", line.strip())
+        if fence:
+            flush()
+            lang = fence.group(1) or "text"
+            index += 1
+            code_lines: list[str] = []
+            while index < len(body) and not body[index].strip().startswith("```"):
+                code_lines.append(body[index])
+                index += 1
+            index += 1  # closing fence
+            code = "\n".join(code_lines)
+            plain_parts.append(code)
+            rendered = highlight_fk(code) if lang == "fk" else html.escape(code)
+            html_parts.append(f'<pre class="code"><code>{rendered}</code></pre>')
             continue
-        seg = html.escape(part)
-        seg = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', seg)
-        seg = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", seg)
-        seg = re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"<em>\1</em>", seg)
-        rendered.append(seg)
-    return expand_status_pills("".join(rendered))
+        para.append(line.strip())
+        index += 1
+    flush()
+    return "".join(html_parts), " ".join(plain_parts)
 
 
 def slugify(text: str) -> str:
@@ -409,14 +470,14 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
             body = [m.group(2)]
             i += 1
             while i < n and lines[i].strip().startswith(">"):
-                body.append(lines[i].strip().lstrip(">").strip())
+                body.append(strip_quote(lines[i]))
                 i += 1
-            text = " ".join(x for x in body if x)
-            buffer_text.append(text)
             titles = {"note": "Note", "warn": "Careful", "v4": "Not in V3", "tip": "Tip"}
+            inner, plain = render_callout_body(body)
+            buffer_text.append(plain)
             out.append(f'<div class="callout {kind}">'
                        f'<div class="callout-title">{titles[kind]}</div>'
-                       f"<p>{inline(text)}</p></div>")
+                       f"{inner}</div>")
             continue
 
         # Page lede: a "> ..." line that is not a callout. Markdown calls it a
