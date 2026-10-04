@@ -63,7 +63,8 @@ exclamation marks outside program output.
 - `task main() { ... }` with no return type in V3 listings; `-> int` in V4
   listings, with the result in the exit code while V4 cannot print values.
 - `pilot mut` for every pilot that is reassigned. Every V3 listing in Part I
-  also builds under `--strict-borrow`.
+  also builds under `--strict-borrow`, checked by `strict_borrow` in its
+  expectation.
 - Interactive programs are verified with reviewed `stdin`, and take any
   non-deterministic input (a secret, a time) from an argument when one is
   given, so that their output can be checked.

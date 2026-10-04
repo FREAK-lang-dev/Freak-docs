@@ -15,7 +15,7 @@ import json
 import re
 from pathlib import Path
 
-EXPECTATION_KEYS = {'stdout_any_of', 'stdin', 'args', 'exit_code'}
+EXPECTATION_KEYS = {'stdout_any_of', 'stdin', 'args', 'exit_code', 'strict_borrow'}
 DIAGNOSTIC_KEYS = {'contains', 'flags'}
 V4_RUN_KEYS = {'stdout_any_of', 'exit_code'}
 V4_REJECT_KEYS = {'rejected_with'}
@@ -65,7 +65,10 @@ def input_hash(root: Path) -> str:
 
 def v4_input_hash(root: Path) -> str:
     paths = [*root.glob('examples-v4/*.fk'), root / 'examples-v4/expectations.json',
-             root / 'v4-snapshot.txt', root / 'tools/verify_v4.py']
+             root / 'v4-snapshot.txt', root / 'tools/verify_v4.py',
+             # verify_v4 takes its pin and expectation parsing from here, and
+             # publication validates the report with it.
+             root / 'tools/evidence.py']
     return _digest(root, paths)
 
 
@@ -93,6 +96,8 @@ def expectations(root: Path) -> dict:
         code = expectation.get('exit_code', 0)
         if isinstance(code, bool) or not isinstance(code, int) or not 0 <= code <= 255:
             raise ValueError(f'{name}: exit_code must be an integer from 0 to 255')
+        if not isinstance(expectation.get('strict_borrow', False), bool):
+            raise ValueError(f'{name}: strict_borrow must be true or false')
     return data
 
 
@@ -180,6 +185,10 @@ def validate(data: dict, root: Path) -> None:
             raise ValueError(f'{name}: output does not match the reviewed expectation')
         if row.get('stdin', '') != expected[name].get('stdin', ''):
             raise ValueError(f'{name}: the program was not run with the reviewed input')
+        if row.get('args', []) != expected[name].get('args', []):
+            raise ValueError(f'{name}: the program was not run with the reviewed arguments')
+        if row.get('strict_borrow', False) is not expected[name].get('strict_borrow', False):
+            raise ValueError(f'{name}: the strict-borrow build was not recorded as reviewed')
     if data.get('compiled') != len(rows) or data.get('passed') != len(rows):
         raise ValueError('verification counts do not match successful results')
     for page, name in _content_refs(root, EXAMPLE_REF):
@@ -194,6 +203,8 @@ def validate(data: dict, root: Path) -> None:
         source = (root / 'diagnostics/v3' / f'{name}.fk').read_text(encoding='utf-8')
         if row.get('source') != source or row.get('file') != f'{name}.fk':
             raise ValueError(f'{name}: source does not match the verified rejected program')
+        if row.get('flags', []) != wanted[name].get('flags', []):
+            raise ValueError(f'{name}: the program was not built with the reviewed flags')
         message = row.get('message')
         if row.get('rejected') is not True or row.get('passed') is not True or not isinstance(message, str):
             raise ValueError(f'{name}: the compiler must reject this program with a diagnostic')

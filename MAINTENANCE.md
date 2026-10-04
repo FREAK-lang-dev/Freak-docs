@@ -31,11 +31,12 @@ compiler exit alone does not prove a runnable example works.
    `examples/expectations.json`. Never automatically accept new output as the
    expected answer simply to make a failing run green. An expectation may add
    `stdin` (the exact text fed to the program), `args` (its command-line
-   arguments) and `exit_code` (0 when omitted); all three are part of the claim
-   and are recorded in the report.
+   arguments), `exit_code` (0 when omitted) and `strict_borrow` (the program
+   must also build with `--strict-borrow`); all four are part of the claim and
+   are recorded in the report.
 2. Compile **every** program in a fresh directory with the matching distribution.
-   Run the produced executable with a timeout; require exit zero and matching
-   output. Missing executables, crashes, timeouts and wrong output fail the run.
+   Run the produced executable with a timeout; require the reviewed exit code
+   (zero unless the expectation says otherwise) and matching output. Missing executables, crashes, timeouts and wrong output fail the run.
    Normalize CRLF and omit at most one customary final newline; extra trailing
    blank lines and standalone carriage returns remain significant.
 3. `verified.json` must cover the exact current sources and documentation/tooling
@@ -82,8 +83,8 @@ Identical inputs and compiler provenance retain the previous publication report
 after a fresh passing run, preventing daily timestamp-only PRs. The Actions run
 is the record that the unchanged examples were checked again.
 
-Repository maintainers own failed checks and update PRs. Require the `verify`
-job through branch protection before merging; workflow code does not configure
+Repository maintainers own failed checks and update PRs. Require both the
+`verify` and `verify-v4` jobs through branch protection before merging; workflow code does not configure
 branch protection. GitHub must also allow Actions to create pull requests, and
 the repository variable `DOCS_UPDATE_PRS_ENABLED` must be `true`, for automatic
 update PRs. That permission is currently disabled in both repositories; the

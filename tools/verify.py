@@ -162,6 +162,18 @@ def verify_one(freak: Path, src: Path, run_args: list[str], expectation: dict) -
         else:
             result["errors"].append("compiler reported success but produced no executable")
 
+        if expectation.get("strict_borrow") and not result["errors"]:
+            # The claim "also builds under --strict-borrow" is checked, not
+            # assumed: the same source must build a second time with the flag.
+            try:
+                scode, sout, serr = run([str(freak), "build", src.name, "--strict-borrow"], work)
+                if scode != 0 or "BUILD SUCCESSFUL" not in sout + "\n" + serr:
+                    result["errors"].append("build under --strict-borrow failed")
+                else:
+                    result["strict_borrow"] = True
+            except (subprocess.TimeoutExpired, OSError) as exc:
+                result["errors"].append(f"strict-borrow build failed: {type(exc).__name__}")
+
     result["passed"] = result["compiled"] and result["ran"] and not result["errors"]
     result["elapsed_ms"] = int((time.time() - started) * 1000)
     return result
@@ -264,9 +276,6 @@ def main() -> int:
         return 2
     initial_input_hash = input_hash(ROOT)
 
-    # Examples that want command-line arguments when executed.
-    run_args = {"process_time": ["alpha", "bravo"]}
-
     sources = sorted(EXAMPLES.glob("*.fk"))
     if args.only:
         sources = [s for s in sources if s.stem == args.only]
@@ -287,7 +296,7 @@ def main() -> int:
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         futures = {
             pool.submit(verify_one, freak, src,
-                        expected[src.stem].get("args", run_args.get(src.stem, [])),
+                        expected[src.stem].get("args", []),
                         expected[src.stem]): src
             for src in sources
         }

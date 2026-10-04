@@ -268,6 +268,21 @@ class ReviewedInputTests(unittest.TestCase):
                 result = verify.verify_one(Path('freak'), source, expectation.get('args', []), expectation)
         return result, seen
 
+    def test_strict_borrow_build_is_run_and_recorded(self):
+        result, _ = self.run_example({'stdout_any_of': ['? 7'], 'strict_borrow': True})
+        self.assertTrue(result['passed'])
+        self.assertIs(result['strict_borrow'], True)
+        result, _ = self.run_example({'stdout_any_of': ['? 7']})
+        self.assertNotIn('strict_borrow', result)
+        with self.assertRaises(ValueError):
+            self.expect({'stdout_any_of': ['x'], 'strict_borrow': 'yes'})
+
+    def test_every_book_listing_claims_the_strict_build(self):
+        reviewed = json.loads((Path(__file__).resolve().parents[1] / 'examples/expectations.json').read_text(encoding='utf-8'))
+        book = {name: row for name, row in reviewed.items() if name.startswith('book_')}
+        self.assertTrue(book)
+        self.assertEqual([name for name, row in book.items() if row.get('strict_borrow') is not True], [])
+
     def test_reviewed_input_and_arguments_reach_the_program(self):
         result, seen = self.run_example({'stdout_any_of': ['? 7'], 'stdin': '7\n', 'args': ['42']})
         self.assertTrue(result['passed'])
@@ -377,6 +392,7 @@ class BookEvidenceTests(unittest.TestCase):
             'hello': {'stdout_any_of': [''], 'exit_code': 0},
             'broken': {'rejected_with': 'unexpected token at top level'}}))
         (self.root / 'tools/verify_v4.py').write_text('# verifier\n')
+        (self.root / 'tools/evidence.py').write_text('# shared rules\n')
         (self.root / 'v4-snapshot.txt').write_text('a' * 40 + '\n')
         (self.root / 'v3-release.txt').write_text('v0.14.2\n')
         (self.root / 'content/index.md').write_text('{{example:hello}}\n{{diagnostic:bad}}\n{{v4:hello}}\n{{v4:broken}}\n')
@@ -411,6 +427,11 @@ class BookEvidenceTests(unittest.TestCase):
         evidence.validate_v4(self.v4, self.root)
         self.assertTrue(evidence.uses_v4(self.root))
 
+    def test_shared_evidence_tooling_is_part_of_the_v4_input_hash(self):
+        (self.root / 'tools/evidence.py').write_text('# changed\n')
+        with self.assertRaisesRegex(ValueError, 'stale'):
+            evidence.validate_v4(self.v4, self.root)
+
     def test_rejected_programs_are_part_of_the_v3_input_hash(self):
         (self.root / 'diagnostics/v3/bad.fk').write_text('say other\n')
         with self.assertRaisesRegex(ValueError, 'stale'):
@@ -421,7 +442,10 @@ class BookEvidenceTests(unittest.TestCase):
                    lambda d: d['diagnostics']['bad'].update(message='type error: something else'),
                    lambda d: d['diagnostics']['bad'].update(rejected=False),
                    lambda d: d['diagnostics']['bad'].update(passed=False),
-                   lambda d: d['diagnostics']['bad'].update(source='say other\n')]
+                   lambda d: d['diagnostics']['bad'].update(source='say other\n'),
+                   lambda d: d['diagnostics']['bad'].update(flags=['--strict-borrow']),
+                   lambda d: d['examples']['hello'].update(args=['42']),
+                   lambda d: d['examples']['hello'].update(strict_borrow=True)]
         for change in changes:
             with self.subTest(change=change):
                 data = copy.deepcopy(self.v3)
