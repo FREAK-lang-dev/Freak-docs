@@ -173,7 +173,8 @@ def validate(data: dict, root: Path) -> None:
             raise ValueError(f'{name}: source does not match the verified program')
         wanted_exit = expected[name].get('exit_code', 0)
         if row.get('compiled') is not True or row.get('ran') is not True \
-                or row.get('exit_code') != wanted_exit or row.get('errors'):
+                or row.get('exit_code') != wanted_exit or row.get('errors') \
+                or row.get('expected_exit_code', 0) != wanted_exit:
             raise ValueError(f'{name}: compilation and successful execution are required')
         if row.get('stdout') not in expected[name]['stdout_any_of']:
             raise ValueError(f'{name}: output does not match the reviewed expectation')

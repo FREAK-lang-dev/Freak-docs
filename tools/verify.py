@@ -146,6 +146,10 @@ def verify_one(freak: Path, src: Path, run_args: list[str], expectation: dict) -
                 rcode, rout, rerr = run([str(binary)] + run_args, work, **options)
                 result["ran"] = rcode == wanted_exit
                 result["exit_code"] = rcode
+                if wanted_exit:
+                    # Recorded so an importer can tell a reviewed non-zero
+                    # exit from a crash without reading expectations.json.
+                    result["expected_exit_code"] = wanted_exit
                 result["stdout"] = scrub(rout, work).removesuffix("\n")
                 if rcode != wanted_exit:
                     result["errors"].append(f"execution exited with status {rcode}")

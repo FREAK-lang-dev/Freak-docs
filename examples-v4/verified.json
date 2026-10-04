@@ -8,7 +8,7 @@
     "commit_date": "2026-10-04T12:28:44+03:00"
   },
   "input_sha256": "05362af0499bef39fae9578ebf6c0f37a8e87651489d3195025c82e0f42deaa1",
-  "generated_utc": "2026-10-04T22:58:07Z",
+  "generated_utc": "2026-10-04T23:30:04Z",
   "total": 46,
   "passed": 46,
   "examples": {
@@ -21,7 +21,7 @@
       "errors": [],
       "exit_code": 25,
       "stdout": "",
-      "elapsed_ms": 5151
+      "elapsed_ms": 6174
     },
     "ask": {
       "name": "ask",
@@ -31,7 +31,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
-      "elapsed_ms": 8026
+      "elapsed_ms": 7867
     },
     "big_type": {
       "name": "big_type",
@@ -41,7 +41,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native type not yet supported: big",
-      "elapsed_ms": 7723
+      "elapsed_ms": 8348
     },
     "conversion_methods": {
       "name": "conversion_methods",
@@ -51,7 +51,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@69:86|receiver has no matching method|int offers no method to_num",
-      "elapsed_ms": 7970
+      "elapsed_ms": 7823
     },
     "declared_later": {
       "name": "declared_later",
@@ -62,7 +62,7 @@
       "errors": [],
       "exit_code": 42,
       "stdout": "",
-      "elapsed_ms": 9725
+      "elapsed_ms": 9560
     },
     "duplicate_local": {
       "name": "duplicate_local",
@@ -72,7 +72,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@45:60|duplicate local declaration|fuel already exists in this scope",
-      "elapsed_ms": 8186
+      "elapsed_ms": 8438
     },
     "else_if_give_back": {
       "name": "else_if_give_back",
@@ -82,7 +82,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@58:202|mir cfg unreachable live block|sign block 5 has no predecessors but still carries live statements or control flow",
-      "elapsed_ms": 8282
+      "elapsed_ms": 8386
     },
     "else_if_trailing": {
       "name": "else_if_trailing",
@@ -93,7 +93,7 @@
       "errors": [],
       "exit_code": 123,
       "stdout": "",
-      "elapsed_ms": 9612
+      "elapsed_ms": 9661
     },
     "fixed_reassigned": {
       "name": "fixed_reassigned",
@@ -104,7 +104,7 @@
       "errors": [],
       "exit_code": 75,
       "stdout": "",
-      "elapsed_ms": 10092
+      "elapsed_ms": 9945
     },
     "for_each": {
       "name": "for_each",
@@ -114,7 +114,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native rvalue not yet supported: List",
-      "elapsed_ms": 8981
+      "elapsed_ms": 8504
     },
     "guess_logic": {
       "name": "guess_logic",
@@ -125,7 +125,7 @@
       "errors": [],
       "exit_code": 7,
       "stdout": "",
-      "elapsed_ms": 10365
+      "elapsed_ms": 10583
     },
     "hello": {
       "name": "hello",
@@ -136,7 +136,7 @@
       "errors": [],
       "exit_code": 0,
       "stdout": "Hello, FREAK!",
-      "elapsed_ms": 10175
+      "elapsed_ms": 10270
     },
     "hex_literal": {
       "name": "hex_literal",
@@ -147,7 +147,7 @@
       "errors": [],
       "exit_code": 7,
       "stdout": "",
-      "elapsed_ms": 10220
+      "elapsed_ms": 10324
     },
     "if_needs_bool": {
       "name": "if_needs_bool",
@@ -157,7 +157,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@45:68|if condition must be bool|got int",
-      "elapsed_ms": 9235
+      "elapsed_ms": 9401
     },
     "int_and_num": {
       "name": "int_and_num",
@@ -168,7 +168,7 @@
       "errors": [],
       "exit_code": 36,
       "stdout": "",
-      "elapsed_ms": 9826
+      "elapsed_ms": 10660
     },
     "keyword_case": {
       "name": "keyword_case",
@@ -179,7 +179,7 @@
       "errors": [],
       "exit_code": 7,
       "stdout": "",
-      "elapsed_ms": 10189
+      "elapsed_ms": 10481
     },
     "loops": {
       "name": "loops",
@@ -190,7 +190,7 @@
       "errors": [],
       "exit_code": 51,
       "stdout": "",
-      "elapsed_ms": 10413
+      "elapsed_ms": 10291
     },
     "main_without_type": {
       "name": "main_without_type",
@@ -200,7 +200,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
-      "elapsed_ms": 9455
+      "elapsed_ms": 9435
     },
     "missing_return": {
       "name": "missing_return",
@@ -210,7 +210,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@0:75|missing return|rank_for must give back int on every route",
-      "elapsed_ms": 8987
+      "elapsed_ms": 8738
     },
     "named_arguments": {
       "name": "named_arguments",
@@ -221,7 +221,7 @@
       "errors": [],
       "exit_code": 11,
       "stdout": "",
-      "elapsed_ms": 10009
+      "elapsed_ms": 9730
     },
     "num_into_int": {
       "name": "num_into_int",
@@ -232,7 +232,7 @@
       "errors": [],
       "exit_code": 30,
       "stdout": "",
-      "elapsed_ms": 9716
+      "elapsed_ms": 9720
     },
     "numeric_types": {
       "name": "numeric_types",
@@ -243,7 +243,7 @@
       "errors": [],
       "exit_code": 3,
       "stdout": "",
-      "elapsed_ms": 10391
+      "elapsed_ms": 10182
     },
     "overflow_wraps": {
       "name": "overflow_wraps",
@@ -254,7 +254,7 @@
       "errors": [],
       "exit_code": 1,
       "stdout": "",
-      "elapsed_ms": 10657
+      "elapsed_ms": 10906
     },
     "pilot_mut": {
       "name": "pilot_mut",
@@ -264,7 +264,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@25:44|unsupported local pattern|use a single name, (a, b, ...), or [a, b, ...]",
-      "elapsed_ms": 9157
+      "elapsed_ms": 9644
     },
     "pipe_ignored": {
       "name": "pipe_ignored",
@@ -275,7 +275,7 @@
       "errors": [],
       "exit_code": 5,
       "stdout": "",
-      "elapsed_ms": 10262
+      "elapsed_ms": 10728
     },
     "reassign": {
       "name": "reassign",
@@ -286,7 +286,7 @@
       "errors": [],
       "exit_code": 80,
       "stdout": "",
-      "elapsed_ms": 10142
+      "elapsed_ms": 10595
     },
     "recursion": {
       "name": "recursion",
@@ -297,7 +297,7 @@
       "errors": [],
       "exit_code": 55,
       "stdout": "",
-      "elapsed_ms": 10402
+      "elapsed_ms": 10837
     },
     "say_needs_literal": {
       "name": "say_needs_literal",
@@ -307,7 +307,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@48:59|say nonliteral is not yet supported|W1 say requires exactly one static word literal; word values, expressions, and methods need the later word runtime slices",
-      "elapsed_ms": 9085
+      "elapsed_ms": 10260
     },
     "semicolon": {
       "name": "semicolon",
@@ -318,7 +318,7 @@
       "errors": [],
       "exit_code": 50,
       "stdout": "",
-      "elapsed_ms": 10042
+      "elapsed_ms": 10709
     },
     "shadow_inner": {
       "name": "shadow_inner",
@@ -328,7 +328,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@68:83|duplicate local declaration|fuel already exists in this scope",
-      "elapsed_ms": 8773
+      "elapsed_ms": 9210
     },
     "task_void": {
       "name": "task_void",
@@ -339,7 +339,7 @@
       "errors": [],
       "exit_code": 0,
       "stdout": "Valkyrie-1, cleared for launch.",
-      "elapsed_ms": 9800
+      "elapsed_ms": 9811
     },
     "task_without_type": {
       "name": "task_without_type",
@@ -349,7 +349,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
-      "elapsed_ms": 8239
+      "elapsed_ms": 9075
     },
     "toplevel_fixed": {
       "name": "toplevel_fixed",
@@ -359,7 +359,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native symbol values currently support only task pointers",
-      "elapsed_ms": 8553
+      "elapsed_ms": 8536
     },
     "toplevel_pilot": {
       "name": "toplevel_pilot",
@@ -369,7 +369,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@0:19|unexpected token at top level|pilot",
-      "elapsed_ms": 8004
+      "elapsed_ms": 8670
     },
     "toplevel_statement": {
       "name": "toplevel_statement",
@@ -379,7 +379,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@68:88|unexpected token at top level|say",
-      "elapsed_ms": 8213
+      "elapsed_ms": 8634
     },
     "training_arc_cap": {
       "name": "training_arc_cap",
@@ -390,7 +390,7 @@
       "errors": [],
       "exit_code": 11,
       "stdout": "",
-      "elapsed_ms": 9269
+      "elapsed_ms": 9589
     },
     "truth_literal_case": {
       "name": "truth_literal_case",
@@ -401,7 +401,7 @@
       "errors": [],
       "exit_code": 7,
       "stdout": "",
-      "elapsed_ms": 10019
+      "elapsed_ms": 9880
     },
     "unknown_name": {
       "name": "unknown_name",
@@ -411,7 +411,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
-      "elapsed_ms": 8826
+      "elapsed_ms": 9129
     },
     "when_default_first": {
       "name": "when_default_first",
@@ -421,7 +421,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@106:120|unreachable when arm|an earlier arm already matches every remaining value\n2|0@0:147|mir cfg unreachable live block|main block 3 has no predecessors but still carries live statements or control flow",
-      "elapsed_ms": 8958
+      "elapsed_ms": 8846
     },
     "when_int": {
       "name": "when_int",
@@ -432,7 +432,7 @@
       "errors": [],
       "exit_code": 119,
       "stdout": "",
-      "elapsed_ms": 9702
+      "elapsed_ms": 10110
     },
     "with_growth": {
       "name": "with_growth",
@@ -443,7 +443,7 @@
       "errors": [],
       "exit_code": 100,
       "stdout": "",
-      "elapsed_ms": 10069
+      "elapsed_ms": 10094
     },
     "with_growth_stalled": {
       "name": "with_growth_stalled",
@@ -453,7 +453,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@67:155|training arc with growth must mutate condition subject|Yuuko found no progress for power",
-      "elapsed_ms": 8484
+      "elapsed_ms": 9010
     },
     "word_pilot": {
       "name": "word_pilot",
@@ -463,7 +463,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "v4-native-contract-error=native words currently support only literal say operands",
-      "elapsed_ms": 9245
+      "elapsed_ms": 8967
     },
     "wrong_arg_count": {
       "name": "wrong_arg_count",
@@ -473,7 +473,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@91:99|call arity mismatch|add expects 2 arguments but got 1",
-      "elapsed_ms": 7860
+      "elapsed_ms": 8041
     },
     "wrong_arg_type": {
       "name": "wrong_arg_type",
@@ -483,7 +483,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@91:105|call argument type mismatch|add argument 2 expects int but got bool",
-      "elapsed_ms": 6211
+      "elapsed_ms": 6742
     },
     "wrong_type": {
       "name": "wrong_type",
@@ -493,7 +493,7 @@
       "passed": true,
       "errors": [],
       "diagnostic": "2|0@25:50|local declaration type mismatch|sorties expects int but got bool",
-      "elapsed_ms": 5540
+      "elapsed_ms": 6251
     }
   }
 }
