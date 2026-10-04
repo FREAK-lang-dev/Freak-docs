@@ -1,0 +1,20 @@
+-- Tasks may be declared in any order, and may call themselves.
+task main() {
+    say factorial(5)
+    say is_even(10)
+}
+
+task factorial(n: int) -> int {
+    if n <= 1 { give back 1 }
+    give back n * factorial(n - 1)
+}
+
+task is_even(n: int) -> bool {
+    if n == 0 { give back true }
+    give back is_odd(n - 1)
+}
+
+task is_odd(n: int) -> bool {
+    if n == 0 { give back false }
+    give back is_even(n - 1)
+}

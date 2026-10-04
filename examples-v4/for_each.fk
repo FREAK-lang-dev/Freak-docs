@@ -1,0 +1,7 @@
+task main() -> int {
+    pilot total = 0
+    for each reading in [12, 7, 30] {
+        total += reading
+    }
+    give back total
+}

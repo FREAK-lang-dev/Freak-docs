@@ -1,0 +1,5 @@
+-- When `main` gives back an int, that number is the program's exit code.
+task main() -> int {
+    say "preflight failed: fuel line"
+    give back 3
+}

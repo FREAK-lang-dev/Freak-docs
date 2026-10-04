@@ -1,0 +1,5 @@
+task main() {
+    pilot fuel = 40
+    pilot state = if fuel > 25 { "cruising" } else { "bingo" }
+    say state
+}

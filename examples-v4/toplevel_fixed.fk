@@ -1,0 +1,5 @@
+fixed pilot MAX_SORTIES: int = 3
+
+task main() -> int {
+    give back MAX_SORTIES
+}

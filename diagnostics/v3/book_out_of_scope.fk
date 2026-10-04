@@ -1,0 +1,6 @@
+task main() {
+    if true {
+        pilot wing = "A-01"
+    }
+    say wing
+}

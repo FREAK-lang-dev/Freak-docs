@@ -1,0 +1,39 @@
+-- collatz.fk: how many steps does a number take to reach 1?
+-- Halve it when it is even; otherwise triple it and add one.
+task collatz_steps(start: int) -> int {
+    pilot mut n = start
+    pilot mut steps = 0
+
+    training arc until n == 1 max 1000 sessions {
+        if n % 2 == 0 {
+            n = n / 2
+        } else {
+            n = 3 * n + 1
+        }
+        steps += 1
+    }
+
+    if n != 1 { give back -1 }         -- ran out of sessions
+    give back steps
+}
+
+task main() {
+    pilot mut start = 1
+    pilot mut longest = 0
+    pilot mut longest_start = 1
+
+    repeat 30 times {
+        pilot steps = collatz_steps(start)
+        if steps > longest {
+            longest = steps
+            longest_start = start
+        }
+        start += 1
+    }
+
+    pilot six = collatz_steps(6)
+    pilot twenty_seven = collatz_steps(27)
+    say "6 takes {six} steps"
+    say "27 takes {twenty_seven} steps"
+    say "below 31, the longest chain starts at {longest_start} ({longest} steps)"
+}

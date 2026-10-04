@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Freak Book &middot; FREAK V3</title>
+<meta name="description" content="Learn FREAK from the first program to the compiler&#x27;s insides, with every listing compiled and run before it was printed.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html" class="active">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="the-freak-book">The Freak Book<a class="anchor" href="#the-freak-book" aria-label="Link to this section">#</a></h1>
+<p class="lede">Learn FREAK from the first program to the compiler&#x27;s insides, with every listing compiled and run before it was printed.</p>
+<p>This is a book you read in order. It starts by installing the compiler and printing one line, and it ends inside the compiler that printed it. Along the way it teaches the language that ships today, shows where the next compiler already behaves differently, and marks clearly the parts of FREAK that exist only on paper so far.</p>
+<p>If you want to look something up instead, the reference pages in the sidebar are organised by topic. This book is organised by what you need to know next.</p>
+<div class="summary-card"><div class="sc-num">83/83</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-10-04T22:56:17Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card v4"><div class="sc-num">46/46</div><div class="sc-body"><strong>V4 notes match the pinned development snapshot</strong><span>Checked against Freak-lang commit <code>7c9a1f3c27</code> (2026-10-04) on 2026-10-04T22:58:07Z. V4 has no release; these notes describe that one commit and nothing newer.</span></div></div>
+<h2 id="three-kinds-of-statement">Three kinds of statement<a class="anchor" href="#three-kinds-of-statement" aria-label="Link to this section">#</a></h2>
+<p>FREAK has two compilers and one specification, and they do not agree yet. The book never blurs them.</p>
+<div class="tablewrap"><table><thead><tr><th>Mark</th><th>Means</th><th>Checked against</th></tr></thead><tbody><tr><td>Ordinary text and listings</td><td>It works in <strong>V3</strong>, the compiler you can install</td><td>The released V3 compiler: each listing was built, run, and its output compared</td></tr><tr><td><strong>In V4</strong> sections and boxes</td><td>The next compiler, <strong>V4</strong>, behaves this way</td><td>One pinned development commit of V4, named on every page</td></tr><tr><td><strong>Planned</strong> boxes</td><td>The specification describes it; no compiler runs it yet</td><td>The specification only. Treat it as a plan, not a promise</td></tr></tbody></table></div>
+<p><a href="book-introduction.html">The introduction</a> explains each of these, and how the checking works.</p>
+<h2 id="part-i-first-sortie">Part I: First sortie<a class="anchor" href="#part-i-first-sortie" aria-label="Link to this section">#</a></h2>
+<p>Everything you need to write small, complete programs.</p>
+<ul><li><a href="book-introduction.html">Introduction</a>: what FREAK is, the two compilers, and how to read this book</li><li><a href="book-getting-started.html">1. Getting started</a>: installing, checking the installation, your first program, your first project</li><li><a href="book-guessing-game.html">2. A guessing game</a>: a whole program built one step at a time</li><li><a href="book-pilots-and-types.html">3. Pilots, values and types</a>: names, numbers, truth values, and the rules that connect them</li><li><a href="book-tasks.html">4. Tasks</a>: defining work, passing values in, giving values back</li><li><a href="book-control-flow.html">5. Control flow</a>: choosing with <code>if</code> and <code>when</code>, repeating with four kinds of loop</li></ul>
+<h2 id="still-to-be-written">Still to be written<a class="anchor" href="#still-to-be-written" aria-label="Link to this section">#</a></h2>
+<p>The remaining parts are planned and listed here so you can see where the book is going. Their chapters appear in the sidebar as they are finished.</p>
+<div class="tablewrap"><table><thead><tr><th>Part</th><th>Chapters</th></tr></thead><tbody><tr><td>II. Working with data</td><td>Words · Shapes · Methods and <code>impl</code> · Lists · Legacy arrays · Bytes</td></tr><tr><td>III. Ownership</td><td>What ownership is · The strict borrow checker in V3 · Meiya, the V4 borrow checker</td></tr><tr><td>IV. Building programs</td><td>Failure without <code>result</code> · Program structure · A tour of the standard library · Input, output and the terminal · Networking · Hangar · Calling C</td></tr><tr><td>V. Projects</td><td>A command-line tool · A squadron roster · A line server</td></tr><tr><td>VI. The anime layer</td><td>Narrative syntax you can run · The audit suite</td></tr><tr><td>VII. The language ahead</td><td>Optional and fallible values · Variants and patterns · Doctrines and generics · Closures and iterators · Collections · Borrowing in full · Concurrency · The advanced types · Modules and visibility · Build modes, voices and tests</td></tr><tr><td>VIII. Inside the compilers</td><td>How V3 works · How V4 works · Reading diagnostics · Contributing</td></tr><tr><td>Appendices</td><td>Reserved words · Operators · Command line · Types and conversions · Grammar · Glossary · V3 to V4 differences · Feature status · How this book is checked</td></tr></tbody></table></div>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#three-kinds-of-statement">Three kinds of statement</a></li><li><a href="#part-i-first-sortie">Part I: First sortie</a></li><li><a href="#still-to-be-written">Still to be written</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

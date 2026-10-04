@@ -1,0 +1,7 @@
+task main() {
+    pilot code = 3
+    when code {
+        1 -> say "launch"
+        "abort" -> say "abort"
+    }
+}

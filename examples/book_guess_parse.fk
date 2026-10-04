@@ -1,0 +1,13 @@
+-- Step 2: turn the typed text into a number, and notice when it is not one.
+task main() {
+    pilot text = ask("Your guess: ")
+
+    pilot guess = text.trim().parse_int()
+    if parse_status() != 0 {
+        parse_clear_status()
+        say "'{text}' is not a whole number."
+    } else {
+        pilot doubled = guess * 2
+        say "Twice your guess is {doubled}."
+    }
+}

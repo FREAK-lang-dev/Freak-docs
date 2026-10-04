@@ -1,0 +1,4 @@
+task main() -> int {
+    pilot huge: big = 999b
+    give back 0
+}

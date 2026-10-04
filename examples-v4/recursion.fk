@@ -1,0 +1,8 @@
+task fib(n: int) -> int {
+    if n < 2 { give back n }
+    give back fib(n - 1) + fib(n - 2)
+}
+
+task main() -> int {
+    give back fib(10)
+}

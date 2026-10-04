@@ -1,0 +1,7 @@
+task rank_for(sorties: int) -> word {
+    if sorties >= 50 { give back "veteran" }
+}
+
+task main() {
+    say rank_for(64)
+}

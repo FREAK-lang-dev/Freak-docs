@@ -1,0 +1,7 @@
+task callsign() -> int {
+    give back "Valkyrie-1"
+}
+
+task main() {
+    say callsign()
+}

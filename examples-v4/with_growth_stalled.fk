@@ -1,0 +1,8 @@
+task main() -> int {
+    pilot power = 0
+    pilot fatigue = 0
+    training arc until power >= 100 max 8 sessions with growth {
+        fatigue += 20
+    }
+    give back fatigue
+}

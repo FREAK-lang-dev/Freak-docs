@@ -1,0 +1,19 @@
+-- Moving a value from one type to another is always written out.
+task main() {
+    pilot sorties: int = 12
+    pilot average: num = 3.75
+
+    say sorties.to_num() / 5.0      -- int  -> num
+    say average.to_int()            -- num  -> int, dropping the fraction
+    say "sorties: " + sorties.to_word()
+    say "average: " + average.to_word()
+    say "ready: " + true.to_word()
+
+    -- The one conversion that happens by itself: an int where a num is wanted.
+    pilot thrust: num = 3
+    say thrust / 2
+
+    say "42".to_int() + 1           -- word -> int
+    say "2.5".to_num() * 2.0        -- word -> num
+    say "forty-two".to_int()        -- not a number: quietly 0
+}

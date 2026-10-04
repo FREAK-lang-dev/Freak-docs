@@ -21,6 +21,15 @@
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
 <div class="nav-group"><div class="nav-group-title">Start here</div><ul>
 <li><a href="index.html">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
@@ -241,9 +250,13 @@ false</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_bool</span>(process<span class="c-op">::</span><span class="c-fn">env</span>(<span class="c-str">&quot;PATH&quot;</span>).<span class="c-fn">length</span>() <span class="c-op">&gt;</span> <span class="c-num">0</span>)
 }</code></pre>
   <div class="ex-out">
+    <div class="ex-out-head">Run with arguments</div>
+    <pre class="stdout"><code>alpha bravo</code></pre>
+  </div>
+  <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: /build/process_time.exe
+arg 0: /build/process_time
 arg 1: alpha
 arg 2: bravo
 true
@@ -418,11 +431,12 @@ false</code></pre>
     </article>
     <footer class="pagefoot">
       <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      45/45 examples match their reviewed expected output. Illustrative snippets
+      83/83 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
-  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#how-modules-are-loaded">How modules are loaded</a></li><li><a href="#prelude-builtins">Prelude builtins</a></li><li><a href="#conversion-builtins">Conversion builtins</a></li><li><a href="#word-methods">`word` methods</a></li><li><a href="#lists-and-arrays">Lists and arrays</a></li><li><a href="#wordbuilder">WordBuilder</a></li><li><a href="#bytebuffer">ByteBuffer</a></li><li><a href="#math-builtins">`math::` builtins</a></li><li><a href="#fs-builtins">`fs::` builtins</a></li><li><a href="#process-builtins">`process::` builtins</a></li><li><a href="#time-builtins">`time::` builtins</a></li><li><a href="#tcp-builtins">`tcp::` builtins</a></li><li><a href="#ui-builtins">`ui::` builtins</a></li><li><a href="#stdmath-integer-maths">`std::math` — integer maths</a></li><li><a href="#stdstring">`std::string`</a></li><li><a href="#stdconvert">`std::convert`</a></li><li><a href="#stdalgorithm">`std::algorithm`</a></li><li><a href="#stdjson">`std::json`</a></li><li><a href="#stdversion">`std::version`</a></li><li><a href="#modules-that-do-not-exist">Modules that do not exist</a></li></ul></aside>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#how-modules-are-loaded">How modules are loaded</a></li><li><a href="#prelude-builtins">Prelude builtins</a></li><li><a href="#conversion-builtins">Conversion builtins</a></li><li><a href="#word-methods"><code>word</code> methods</a></li><li><a href="#lists-and-arrays">Lists and arrays</a></li><li><a href="#wordbuilder">WordBuilder</a></li><li><a href="#bytebuffer">ByteBuffer</a></li><li><a href="#math-builtins"><code>math::</code> builtins</a></li><li><a href="#fs-builtins"><code>fs::</code> builtins</a></li><li><a href="#process-builtins"><code>process::</code> builtins</a></li><li><a href="#time-builtins"><code>time::</code> builtins</a></li><li><a href="#tcp-builtins"><code>tcp::</code> builtins</a></li><li><a href="#ui-builtins"><code>ui::</code> builtins</a></li><li><a href="#stdmath-integer-maths"><code>std::math</code> — integer maths</a></li><li><a href="#stdstring"><code>std::string</code></a></li><li><a href="#stdconvert"><code>std::convert</code></a></li><li><a href="#stdalgorithm"><code>std::algorithm</code></a></li><li><a href="#stdjson"><code>std::json</code></a></li><li><a href="#stdversion"><code>std::version</code></a></li><li><a href="#modules-that-do-not-exist">Modules that do not exist</a></li></ul></aside>
 </div>
 <script src="assets/search-index.js"></script>
 <script src="assets/app.js"></script>

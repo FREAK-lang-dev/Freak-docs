@@ -1,0 +1,7 @@
+task add(a: int, b: int) -> int {
+    give back a + b
+}
+
+task main() -> int {
+    give back add(20, true)
+}

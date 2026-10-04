@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Coloured output &middot; FREAK V3</title>
-<meta name="description" content="There is no colour library. You write ANSI escape sequences into `word` values yourself — so this page is the full code reference.">
+<meta name="description" content="There is no colour library. You write ANSI escape sequences into word values yourself — so this page is the full code reference.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -21,6 +21,15 @@
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
 <div class="nav-group"><div class="nav-group-title">Start here</div><ul>
 <li><a href="index.html">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
@@ -406,8 +415,9 @@ finished</code></pre>
     </article>
     <footer class="pagefoot">
       <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      45/45 examples match their reviewed expected output. Illustrative snippets
+      83/83 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#anatomy-of-a-sequence">Anatomy of a sequence</a></li><li><a href="#sgr-attributes">SGR: attributes</a></li><li><a href="#sgr-foreground-colour">SGR: foreground colour</a></li><li><a href="#sgr-background-colour">SGR: background colour</a></li><li><a href="#sgr-extended-colour">SGR: extended colour</a></li><li><a href="#cursor-and-screen-control">Cursor and screen control</a></li><li><a href="#printing-on-the-same-line">Printing on the same line</a></li><li><a href="#ansi-is-enabled-for-you">ANSI is enabled for you</a></li><li><a href="#the-escape-itself">The escape itself</a></li><li><a href="#the-clis-palette">The CLI&#x27;s palette</a></li><li><a href="#box-drawing-and-symbols">Box drawing and symbols</a></li><li><a href="#respecting-the-users-terminal">Respecting the user&#x27;s terminal</a></li><li><a href="#the-compilers-own-diagnostics">The compiler&#x27;s own diagnostics</a></li><li><a href="#support-and-practical-notes">Support and practical notes</a></li></ul></aside>

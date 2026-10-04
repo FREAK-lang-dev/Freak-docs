@@ -1,0 +1,25 @@
+-- for each: visit every element of a list, in order.
+task main() {
+    pilot squadron = ["Takeru", "Meiya", "Sumika"]
+
+    for each name in squadron {
+        say "{name}, report in"
+    }
+
+    -- The loop gives you the element, not its position. Count it yourself.
+    pilot mut position = 1
+    for each name in squadron {
+        say "{position}. {name}"
+        position += 1
+    }
+
+    -- break and continue work here too.
+    pilot readings = [12, 0, 7, 0, 30, 99]
+    pilot mut total = 0
+    for each reading in readings {
+        if reading == 0 { continue }
+        if reading > 50 { break }
+        total += reading
+    }
+    say total
+}

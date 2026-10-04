@@ -1,0 +1,8 @@
+task greet() -> void {
+    say "Valkyrie-1, cleared for launch."
+}
+
+task main() -> int {
+    greet()
+    give back 0
+}

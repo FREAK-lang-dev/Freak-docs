@@ -25,10 +25,11 @@ import tempfile
 import time
 from pathlib import Path
 
-from evidence import expectations, file_hash, input_hash
+from evidence import diagnostic_expectations, expectations, file_hash, input_hash
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
+REJECTED = ROOT / "diagnostics" / "v3"
 OUT = EXAMPLES / "verified.json"
 
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
@@ -63,7 +64,7 @@ def scrub(text: str, work: Path) -> str:
     return text.replace("/build" + chr(92), "/build/")
 
 
-def run(cmd, cwd, timeout=180, stdin_text="", keep_ansi=False):
+def run(cmd, cwd, timeout=180, stdin_text=None, keep_ansi=False):
     environment = os.environ.copy()
     if keep_ansi:
         # Documentation captures the colour-enabled tutorial output regardless
@@ -73,7 +74,7 @@ def run(cmd, cwd, timeout=180, stdin_text="", keep_ansi=False):
     proc = subprocess.run(
         cmd,
         cwd=str(cwd),
-        input=stdin_text.encode() if stdin_text else None,
+        input=stdin_text.encode() if stdin_text is not None else None,
         capture_output=True,
         timeout=timeout,
         env=environment,
@@ -133,12 +134,20 @@ def verify_one(freak: Path, src: Path, run_args: list[str], expectation: dict) -
             binary = work / src.stem
         if binary.exists():
             try:
-                rcode, rout, rerr = run([str(binary)] + run_args, work,
-                                        timeout=60, keep_ansi=True)
-                result["ran"] = rcode == 0
+                wanted_exit = expectation.get("exit_code", 0)
+                options = {"timeout": 60, "keep_ansi": True}
+                if "stdin" in expectation:
+                    # Reviewed input is part of the claim: an interactive
+                    # program is only verified for the lines it was fed.
+                    options["stdin_text"] = expectation["stdin"]
+                    result["stdin"] = expectation["stdin"]
+                if run_args:
+                    result["args"] = list(run_args)
+                rcode, rout, rerr = run([str(binary)] + run_args, work, **options)
+                result["ran"] = rcode == wanted_exit
                 result["exit_code"] = rcode
                 result["stdout"] = scrub(rout, work).removesuffix("\n")
-                if rcode != 0:
+                if rcode != wanted_exit:
                     result["errors"].append(f"execution exited with status {rcode}")
                 elif result["stdout"] not in expectation["stdout_any_of"]:
                     result["errors"].append("stdout differs from the reviewed expectation")
@@ -151,6 +160,76 @@ def verify_one(freak: Path, src: Path, run_args: list[str], expectation: dict) -
 
     result["passed"] = result["compiled"] and result["ran"] and not result["errors"]
     result["elapsed_ms"] = int((time.time() - started) * 1000)
+    return result
+
+
+DIAGNOSTIC_START = re.compile(r"^(type error|error|borrowck)\b")
+DIAGNOSTIC_END = re.compile(r"(syntax|type/borrow) error\(s\)|BUILD FAILED")
+
+
+def diagnostic_text(output: str) -> str:
+    """The compiler's own diagnostic lines, without the build banner around them."""
+    kept: list[str] = []
+    started = False
+    for raw in output.splitlines():
+        line = raw.rstrip()
+        if not started:
+            if DIAGNOSTIC_START.match(line.strip()):
+                started = True
+                kept.append(line.strip())
+            continue
+        if DIAGNOSTIC_END.search(line):
+            break
+        # Progress ticks such as "Borrow checking (12ms)" are not diagnostics.
+        if re.search(r"\(\d+ms\)\s*$", line):
+            continue
+        kept.append(line)
+    while kept and not kept[-1].strip():
+        kept.pop()
+    return "\n".join(kept)
+
+
+def verify_rejected(freak: Path, src: Path, expectation: dict) -> dict:
+    """A rejected program passes only when the compiler refuses it for the reviewed reason.
+
+    A crash, a timeout, or a different diagnostic is a failure: accepting any
+    non-zero exit would let a compiler bug stand in for a language rule.
+    """
+    flags = list(expectation.get("flags", []))
+    result = {
+        "name": src.stem,
+        "file": src.name,
+        "source": src.read_text(encoding="utf-8"),
+        "flags": flags,
+        "rejected": False,
+        "message": "",
+        "errors": [],
+        "passed": False,
+    }
+    with tempfile.TemporaryDirectory(prefix="fkdocs_") as tmp:
+        work = Path(tmp)
+        shutil.copy2(src, work / src.name)
+        try:
+            code, out, err = run([str(freak), "build", src.name, *flags], work)
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            result["errors"] = [f"build failed: {type(exc).__name__}"]
+            return result
+        combined = out + "\n" + err
+        produced = (work / (src.stem + ".exe")).exists() or (work / src.stem).exists()
+        if "BUILD SUCCESSFUL" in combined or produced:
+            result["errors"] = ["the compiler accepted a program documented as rejected"]
+            return result
+        if code == 0 or "BUILD FAILED" not in combined:
+            result["errors"] = ["the build did not end in an ordinary compiler rejection"]
+            return result
+        result["rejected"] = True
+        result["message"] = scrub(diagnostic_text(combined), work)
+        missing = [part for part in expectation["contains"] if part not in result["message"]]
+        if not result["message"]:
+            result["errors"] = ["no diagnostic text was captured"]
+        elif missing:
+            result["errors"] = ["diagnostic is missing reviewed text: " + " | ".join(missing)]
+    result["passed"] = result["rejected"] and not result["errors"]
     return result
 
 
@@ -168,6 +247,7 @@ def main() -> int:
     if args.only and args.output.resolve() == OUT.resolve():
         ap.error("--only requires a separate --output; partial evidence must not replace the full report")
     expected = expectations(ROOT)
+    rejected_expected = diagnostic_expectations(ROOT)
     provenance = json.loads(args.provenance.read_text(encoding="utf-8"))
     provenance.pop("binary", None)  # Do not publish local filesystem paths.
 
@@ -202,7 +282,9 @@ def main() -> int:
     results = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         futures = {
-            pool.submit(verify_one, freak, src, run_args.get(src.stem, []), expected[src.stem]): src
+            pool.submit(verify_one, freak, src,
+                        expected[src.stem].get("args", run_args.get(src.stem, [])),
+                        expected[src.stem]): src
             for src in sources
         }
         for fut in concurrent.futures.as_completed(futures):
@@ -213,6 +295,21 @@ def main() -> int:
             print(f"{mark}  {res['name']}{extra}", flush=True)
 
     ordered = {k: results[k] for k in sorted(results)}
+
+    rejected = {}
+    if not args.only:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
+            futures = [pool.submit(verify_rejected, freak, REJECTED / f"{name}.fk", rejected_expected[name])
+                       for name in sorted(rejected_expected)]
+            for fut in concurrent.futures.as_completed(futures):
+                res = fut.result()
+                rejected[res["name"]] = res
+                mark = "PASS" if res["passed"] else "FAIL"
+                extra = "" if res["passed"] else "  :: " + "; ".join(res["errors"])
+                print(f"{mark}  rejected/{res['name']}{extra}", flush=True)
+    rejected = {k: rejected[k] for k in sorted(rejected)}
+    rejected_failed = sum(1 for r in rejected.values() if not r["passed"])
+
     payload = {
         "schema_version": 1,
         "generation": "v3",
@@ -225,13 +322,14 @@ def main() -> int:
         "compiled": sum(1 for r in ordered.values() if r["compiled"]),
         "passed": sum(1 for r in ordered.values() if r["passed"]),
         "examples": ordered,
+        "diagnostics": rejected,
     }
     if input_hash(ROOT) != initial_input_hash:
         print("inputs changed during verification; refusing to save evidence", file=sys.stderr)
         return 2
     # Rechecking the same inputs should not open daily timestamp-only update PRs.
     # Keep previous evidence only after the fresh run has passed in full.
-    if args.output.exists() and payload["passed"] == payload["total"]:
+    if args.output.exists() and payload["passed"] == payload["total"] and not rejected_failed:
         previous = json.loads(args.output.read_text(encoding="utf-8"))
         from evidence import validate
         try:
@@ -245,9 +343,11 @@ def main() -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
-    failed = payload["total"] - payload["passed"]
+    failed = payload["total"] - payload["passed"] + rejected_failed
     print(f"\n{payload['passed']}/{payload['total']} examples compiled, ran, and matched expected output "
           f"with {compiler_version}")
+    if rejected:
+        print(f"{len(rejected) - rejected_failed}/{len(rejected)} rejected programs produced their reviewed diagnostic")
     print(f"wrote {args.output}")
     return 1 if failed else 0
 

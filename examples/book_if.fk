@@ -1,0 +1,27 @@
+-- if / else if / else
+task status(fuel: int) -> word {
+    if fuel > 75 {
+        give back "full"
+    } else if fuel > 25 {
+        give back "cruising"
+    } else if fuel > 0 {
+        give back "bingo fuel"
+    } else {
+        give back "dry"
+    }
+}
+
+task main() {
+    say status(90)
+    say status(40)
+    say status(10)
+    say status(0)
+
+    pilot fuel = 40
+    pilot hostile = true
+    if fuel > 25 and not hostile {
+        say "continue patrol"
+    } else {
+        say "return to base"
+    }
+}

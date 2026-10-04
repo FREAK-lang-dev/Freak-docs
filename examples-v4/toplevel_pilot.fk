@@ -1,0 +1,6 @@
+pilot launches = 0
+
+task main() -> int {
+    launches += 1
+    give back launches
+}

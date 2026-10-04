@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A guessing game &middot; FREAK V3</title>
+<meta name="description" content="Build a complete program, one small step at a time: it picks a number, you guess, it tells you higher or lower.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html" class="active">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="a-guessing-game">A guessing game<a class="anchor" href="#a-guessing-game" aria-label="Link to this section">#</a></h1>
+<p class="lede">Build a complete program, one small step at a time: it picks a number, you guess, it tells you higher or lower.</p>
+<p>This chapter does not explain features in order. It builds something, and introduces each feature at the moment the program needs it. You will use pilots, input, conversion from text to numbers, comparison, and loops. The chapters after this one explain each of them thoroughly; here the aim is to see them working together.</p>
+<p>The game is a classic. The program picks a secret number from 1 to 100. You type a guess. The program answers &quot;too low&quot; or &quot;too high&quot;, and you guess again until you find it. A finished session looks like this:</p>
+<div class="codeblock"><pre class="code"><code>Guess the number! It is between 1 and 100.
+Your guess: 50
+Too high.
+Your guess: abc
+&#x27;abc&#x27; is not a whole number. Try again.
+Your guess: 25
+Too low.
+Your guess: 37
+Too low.
+Your guess: 42
+You got it in 4 guesses!</code></pre></div>
+<h2 id="setting-up">Setting up<a class="anchor" href="#setting-up" aria-label="Link to this section">#</a></h2>
+<p>Create a project for the game and move into it:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak init guess
+cd guess</code></pre></div>
+<p>Open <code>main.fk</code> and delete what is there. Each step below replaces the file&#x27;s contents. Run each one with <code>freak run main.fk</code> and see it work before going on.</p>
+<h2 id="step-1-asking-for-a-guess">Step 1: asking for a guess<a class="anchor" href="#step-1-asking-for-a-guess" aria-label="Link to this section">#</a></h2>
+<p>Start with the part that talks to the player: print a greeting, ask for a guess, and repeat it back.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_guess_input.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Step 1: ask a question and keep the answer.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Guess the number!&quot;</span>
+
+    <span class="c-kw">pilot</span> guess <span class="c-op">=</span> <span class="c-fn">ask</span>(<span class="c-str">&quot;Your guess: &quot;</span>)
+    <span class="c-kw">say</span> <span class="c-str">&quot;You guessed: <span class="c-interp">{guess}</span>&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Typed at the prompts</div>
+    <pre class="stdout"><code>50</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Guess the number!
+Your guess: You guessed: 50</code></pre>
+  </div>
+</figure>
+<p>There are two new things here.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">pilot</span> guess <span class="c-op">=</span> <span class="c-fn">ask</span>(<span class="c-str">&quot;Your guess: &quot;</span>)</code></pre></div>
+<p><code>pilot</code> creates a named value. FREAK calls it a pilot, where other languages say variable. The name is <code>guess</code>, and the value comes from the right of the <code>=</code> sign.</p>
+<p><code>ask</code> prints its prompt, waits for the player to type a line and press Enter, and gives back what was typed. The prompt is not followed by a new line, so the player types on the same line as the question. What comes back is a <em>word</em>, FREAK&#x27;s type for text. So <code>guess</code> holds a word.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">say</span> <span class="c-str">&quot;You guessed: <span class="c-interp">{guess}</span>&quot;</span></code></pre></div>
+<p>Inside a word, a name in braces is replaced by that pilot&#x27;s value. This is called interpolation, and it is the usual way to mix values into output.</p>
+<p>Look at the boxes under the listing. <em>Typed at the prompts</em> is the input the program was given when this book checked it. <em>Program output</em> is what the program itself printed. On your screen you would see <code>Your guess: 50</code> and then <code>You guessed: 50</code> on the next line. In the output box they run together, because the <code>50</code> and the Enter that followed it were typed by the player. They were never printed by the program, so they are not in its output.</p>
+<h2 id="step-2-from-a-word-to-a-number">Step 2: from a word to a number<a class="anchor" href="#step-2-from-a-word-to-a-number" aria-label="Link to this section">#</a></h2>
+<p>The player typed <code>50</code>, but the program has the word <code>&quot;50&quot;</code>: two characters, a five and a zero. You cannot compare a word with a number. FREAK will not convert between them unless you ask, so ask.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_guess_parse.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Step 2: turn the typed text into a number, and notice when it is not one.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> text <span class="c-op">=</span> <span class="c-fn">ask</span>(<span class="c-str">&quot;Your guess: &quot;</span>)
+
+    <span class="c-kw">pilot</span> guess <span class="c-op">=</span> text.<span class="c-fn">trim</span>().<span class="c-fn">parse_int</span>()
+    <span class="c-kw">if</span> <span class="c-fn">parse_status</span>() <span class="c-op">!=</span> <span class="c-num">0</span> {
+        <span class="c-fn">parse_clear_status</span>()
+        <span class="c-kw">say</span> <span class="c-str">&quot;&#x27;<span class="c-interp">{text}</span>&#x27; is not a whole number.&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">pilot</span> doubled <span class="c-op">=</span> guess <span class="c-op">*</span> <span class="c-num">2</span>
+        <span class="c-kw">say</span> <span class="c-str">&quot;Twice your guess is <span class="c-interp">{doubled}</span>.&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Typed at the prompts</div>
+    <pre class="stdout"><code>fifty</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Your guess: &#x27;fifty&#x27; is not a whole number.</code></pre>
+  </div>
+</figure>
+<p>Two method calls are chained on the first new line:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">pilot</span> guess <span class="c-op">=</span> text.<span class="c-fn">trim</span>().<span class="c-fn">parse_int</span>()</code></pre></div>
+<p>A dot after a value calls a <em>method</em>, an operation that belongs to that type of value. <code>text.trim()</code> gives back the word with spaces removed from both ends, in case the player typed <code> 50 </code>. Then <code>.parse_int()</code> reads that word as a whole number. FREAK&#x27;s type for whole numbers is <code>int</code>, so <code>guess</code> is now an <code>int</code>.</p>
+<p>You never wrote a type. FREAK works out that <code>text</code> is a word and <code>guess</code> is an int from the values they are given. The types are still there and still checked. They are inferred.</p>
+<h3 id="when-the-player-does-not-type-a-number">When the player does not type a number<a class="anchor" href="#when-the-player-does-not-type-a-number" aria-label="Link to this section">#</a></h3>
+<p>The check ran this step with the input <code>fifty</code>, which is not a number, and the program said so. This is the part that deserves attention:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">if</span> <span class="c-fn">parse_status</span>() <span class="c-op">!=</span> <span class="c-num">0</span> {
+        <span class="c-fn">parse_clear_status</span>()
+        <span class="c-kw">say</span> <span class="c-str">&quot;&#x27;<span class="c-interp">{text}</span>&#x27; is not a whole number.&quot;</span>
+    } <span class="c-kw">else</span> {</code></pre></div>
+<p><code>parse_int</code> always gives back an int. If the word is not a number, it gives back <code>0</code>, and it records that the parse failed. <code>parse_status()</code> reports that record: <code>0</code> means no parse has failed, <code>1</code> means a word was not a number, and <code>2</code> means it was a number too large to hold. <code>!=</code> means &quot;is not equal to&quot;.</p>
+<p>So the pattern is: parse, then ask at once whether it worked. The record stays set until you clear it, which is what <code>parse_clear_status()</code> is for. If you forget to clear it, the next successful parse will still look like a failure.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>There is a shorter method, <code>to_int()</code>, which also converts a word to an int. It is lenient: it reads as many digits as it finds at the start of the word, so <code>&quot;12abc&quot;</code> becomes <code>12</code>, and it gives back <code>0</code> when there are none. It records nothing, so you cannot tell <code>&quot;0&quot;</code> from <code>&quot;zero&quot;</code>. Use <code>parse_int()</code> for anything a person typed.</p></div>
+<p><code>if</code> runs the first block when its condition is true and the <code>else</code> block otherwise. Chapter 5 covers it properly.</p>
+<h3 id="interpolation-takes-names">Interpolation takes names<a class="anchor" href="#interpolation-takes-names" aria-label="Link to this section">#</a></h3>
+<p>In the <code>else</code> block, the program doubles the guess before printing it:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>        <span class="c-kw">pilot</span> doubled <span class="c-op">=</span> guess <span class="c-op">*</span> <span class="c-num">2</span>
+        <span class="c-kw">say</span> <span class="c-str">&quot;Twice your guess is <span class="c-interp">{doubled}</span>.&quot;</span></code></pre></div>
+<p>It would be shorter to write <code>{guess * 2}</code> inside the word. That does not work. Braces interpolate a <em>name</em>: a pilot, or as Part II will show, a field of one. They never interpolate a calculation or a call. If what is inside the braces is not a name, the braces and their contents are printed exactly as written, with no error. Work the value out first, give it a name, and interpolate the name.</p>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification gives conversion a different shape. <code>&quot;42&quot;.to_int()</code> would give back a <code>maybe&lt;int&gt;</code>, a value that is either a number or nothing. You would get the number out with <code>check</code> or <code>or else</code>, both of which make you say what happens when there is none. The status record is how V3 manages without that type. Part VII describes the planned design.</p></div>
+<h2 id="step-3-a-secret-number">Step 3: a secret number<a class="anchor" href="#step-3-a-secret-number" aria-label="Link to this section">#</a></h2>
+<p>The game needs a number the player cannot predict. Most languages have a random-number library. V3 does not have one yet, so this program takes its unpredictability from the clock.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_guess_secret.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Step 3: a secret number between 1 and 100.</span>
+<span class="c-com">-- V3 has no random-number library, so the clock supplies the unpredictability.</span>
+<span class="c-kw">task</span> <span class="c-fn">secret_number</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> micros <span class="c-op">=</span> time<span class="c-op">::</span><span class="c-fn">monotonic_ns</span>() <span class="c-op">/</span> <span class="c-num">1000</span>
+    <span class="c-kw">give back</span> micros <span class="c-op">%</span> <span class="c-num">100</span> <span class="c-op">+</span> <span class="c-num">1</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> secret <span class="c-op">=</span> <span class="c-fn">secret_number</span>()
+    <span class="c-kw">if</span> secret <span class="c-op">&gt;=</span> <span class="c-num">1</span> <span class="c-kw">and</span> secret <span class="c-op">&lt;=</span> <span class="c-num">100</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;The secret is somewhere from 1 to 100.&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;Something is wrong with the secret: <span class="c-interp">{secret}</span>&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>The secret is somewhere from 1 to 100.</code></pre>
+  </div>
+</figure>
+<p><code>time::monotonic_ns()</code> gives back the number of nanoseconds on a clock that only moves forward. The two colons separate a <em>namespace</em> from a name: <code>time</code> is a group of built-in operations to do with clocks, and <code>monotonic_ns</code> is one of them. You will meet <code>process::</code> shortly.</p>
+<p>The value is large, and at the moment a person starts a program its low digits are as good as random. Not every system&#x27;s clock ticks in single nanoseconds, though, and on one that does not, the last few digits are always zero. So the task divides by 1000 first, which leaves microseconds, and takes its digits from there.</p>
+<p><code>%</code> is the remainder operator. <code>micros % 100</code> is what is left after dividing by 100, which is always from 0 to 99. Adding 1 moves that to the range 1 to 100.</p>
+<p>This is the first task of your own that gives something back. Its first line says so:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">secret_number</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {</code></pre></div>
+<p><code>-&gt; int</code> declares that the task gives back an int, and <code>give back</code> is the statement that does it. <code>main</code> calls the task by writing its name with parentheses and keeps the answer in a pilot.</p>
+<p>The listing cannot print the secret, since a different number each run could not be checked against a fixed expected output. It checks that the number is in range instead. <code>and</code> joins two conditions and is true when both are.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>A clock is fine for a game and wrong for anything that must not be guessed. Do not use this technique for passwords, tokens or keys.</p></div>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification includes a <code>std::random</code> module, with <code>random::rand_int_range(lo, hi)</code> for a whole number in a range and <code>random::secure()</code> for randomness from the operating system. Neither compiler has it yet.</p></div>
+<h2 id="step-4-comparing-the-guess">Step 4: comparing the guess<a class="anchor" href="#step-4-comparing-the-guess" aria-label="Link to this section">#</a></h2>
+<p>Now put a secret and a guess side by side. To keep this step easy to check, the secret is fixed at 42 for the moment.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_guess_compare.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Step 4: compare one guess with the secret.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> secret <span class="c-op">=</span> <span class="c-num">42</span>
+
+    <span class="c-kw">pilot</span> text <span class="c-op">=</span> <span class="c-fn">ask</span>(<span class="c-str">&quot;Your guess: &quot;</span>)
+    <span class="c-kw">pilot</span> guess <span class="c-op">=</span> text.<span class="c-fn">trim</span>().<span class="c-fn">parse_int</span>()
+
+    <span class="c-kw">if</span> guess <span class="c-op">&lt;</span> secret {
+        <span class="c-kw">say</span> <span class="c-str">&quot;Too low.&quot;</span>
+    } <span class="c-kw">else</span> <span class="c-kw">if</span> guess <span class="c-op">&gt;</span> secret {
+        <span class="c-kw">say</span> <span class="c-str">&quot;Too high.&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;You got it!&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Typed at the prompts</div>
+    <pre class="stdout"><code>50</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Your guess: Too high.</code></pre>
+  </div>
+</figure>
+<p><code>&lt;</code> and <code>&gt;</code> compare two numbers. An <code>if</code> can be followed by any number of <code>else if</code> branches and one final <code>else</code>. The conditions are tried from the top, and the first true one wins. If the guess is neither lower nor higher than the secret, only one possibility is left, so the last branch needs no condition.</p>
+<p>Both <code>guess</code> and <code>secret</code> are ints. Had you forgotten to parse the guess and tried to compare the word <code>text</code> with <code>secret</code>, the compiler would have refused to build the program. Chapter 3 shows what it says.</p>
+<h2 id="step-5-guessing-until-it-is-right">Step 5: guessing until it is right<a class="anchor" href="#step-5-guessing-until-it-is-right" aria-label="Link to this section">#</a></h2>
+<p>One guess is not much of a game. The program has to keep asking. That needs a loop, and a way to stop.</p>
+<p>Here is the complete program. Read it once, and then go through the notes below.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_guess.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- guess.fk: the finished guessing game.</span>
+<span class="c-com">--</span>
+<span class="c-com">-- Run it with no arguments to play against the clock&#x27;s choice of secret.</span>
+<span class="c-com">-- Pass a number (`./guess 42`) to fix the secret, which is how this</span>
+<span class="c-com">-- program is tested.</span>
+
+<span class="c-kw">task</span> <span class="c-fn">secret_number</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">args_count</span>() <span class="c-op">&gt;</span> <span class="c-num">1</span> {
+        <span class="c-kw">pilot</span> chosen <span class="c-op">=</span> process<span class="c-op">::</span><span class="c-fn">arg</span>(<span class="c-num">1</span>).<span class="c-fn">parse_int</span>()
+        <span class="c-kw">if</span> <span class="c-fn">parse_status</span>() <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> chosen }
+        <span class="c-fn">parse_clear_status</span>()            <span class="c-com">-- not a number: fall back to the clock</span>
+    }
+    <span class="c-kw">pilot</span> micros <span class="c-op">=</span> time<span class="c-op">::</span><span class="c-fn">monotonic_ns</span>() <span class="c-op">/</span> <span class="c-num">1000</span>
+    <span class="c-kw">give back</span> micros <span class="c-op">%</span> <span class="c-num">100</span> <span class="c-op">+</span> <span class="c-num">1</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Guess the number! It is between 1 and 100.&quot;</span>
+
+    <span class="c-kw">pilot</span> secret <span class="c-op">=</span> <span class="c-fn">secret_number</span>()
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> attempts <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> solved <span class="c-op">=</span> <span class="c-lit">false</span>
+
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> solved {
+        <span class="c-kw">pilot</span> text <span class="c-op">=</span> <span class="c-fn">ask</span>(<span class="c-str">&quot;Your guess: &quot;</span>)
+
+        <span class="c-com">-- An empty line means the input ended (or the player just pressed</span>
+        <span class="c-com">-- Enter). Stop instead of asking forever.</span>
+        <span class="c-kw">if</span> text.<span class="c-fn">trim</span>() <span class="c-op">==</span> <span class="c-str">&quot;&quot;</span> {
+            <span class="c-kw">say</span> <span class="c-str">&quot;No guess given. The number was <span class="c-interp">{secret}</span>.&quot;</span>
+            <span class="c-kw">break</span>
+        }
+
+        <span class="c-kw">pilot</span> guess <span class="c-op">=</span> text.<span class="c-fn">trim</span>().<span class="c-fn">parse_int</span>()
+        <span class="c-kw">if</span> <span class="c-fn">parse_status</span>() <span class="c-op">!=</span> <span class="c-num">0</span> {
+            <span class="c-fn">parse_clear_status</span>()
+            <span class="c-kw">say</span> <span class="c-str">&quot;&#x27;<span class="c-interp">{text}</span>&#x27; is not a whole number. Try again.&quot;</span>
+            <span class="c-kw">continue</span>
+        }
+
+        attempts <span class="c-op">+=</span> <span class="c-num">1</span>
+
+        <span class="c-kw">if</span> guess <span class="c-op">&lt;</span> secret {
+            <span class="c-kw">say</span> <span class="c-str">&quot;Too low.&quot;</span>
+        } <span class="c-kw">else</span> <span class="c-kw">if</span> guess <span class="c-op">&gt;</span> secret {
+            <span class="c-kw">say</span> <span class="c-str">&quot;Too high.&quot;</span>
+        } <span class="c-kw">else</span> {
+            solved <span class="c-op">=</span> <span class="c-lit">true</span>
+        }
+    }
+
+    <span class="c-kw">if</span> solved {
+        <span class="c-kw">if</span> attempts <span class="c-op">==</span> <span class="c-num">1</span> {
+            <span class="c-kw">say</span> <span class="c-str">&quot;You got it in one guess!&quot;</span>
+        } <span class="c-kw">else</span> {
+            <span class="c-kw">say</span> <span class="c-str">&quot;You got it in <span class="c-interp">{attempts}</span> guesses!&quot;</span>
+        }
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Run with arguments</div>
+    <pre class="stdout"><code>42</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Typed at the prompts</div>
+    <pre class="stdout"><code>50
+abc
+25
+37
+42</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Guess the number! It is between 1 and 100.
+Your guess: Too high.
+Your guess: &#x27;abc&#x27; is not a whole number. Try again.
+Your guess: Too low.
+Your guess: Too low.
+Your guess: You got it in 4 guesses!</code></pre>
+  </div>
+</figure>
+<h3 id="the-loop">The loop<a class="anchor" href="#the-loop" aria-label="Link to this section">#</a></h3>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> solved <span class="c-op">=</span> <span class="c-lit">false</span>
+
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> solved {</code></pre></div>
+<p><code>repeat until</code> runs its block again and again, and stops when the condition becomes true. The condition here is a pilot, <code>solved</code>, which starts out <code>false</code>. <code>true</code> and <code>false</code> are values of the type <code>bool</code>.</p>
+<p>When the player finds the number, the last branch of the comparison sets <code>solved = true</code>. The loop tests the condition before each pass, finds it true, and stops.</p>
+<h3 id="mut"><code>mut</code><a class="anchor" href="#mut" aria-label="Link to this section">#</a></h3>
+<p><code>solved</code> and <code>attempts</code> are declared with <code>pilot mut</code>. <code>mut</code> marks a pilot whose value will change after it is created. <code>secret</code> never changes, so it is a plain <code>pilot</code>.</p>
+<p><code>attempts += 1</code> is short for <code>attempts = attempts + 1</code>.</p>
+<p>Chapter 3 explains exactly how strictly <code>mut</code> is enforced. For now, the habit to form is simple: if you are going to assign to it again, write <code>mut</code>.</p>
+<h3 id="continue-and-break"><code>continue</code> and <code>break</code><a class="anchor" href="#continue-and-break" aria-label="Link to this section">#</a></h3>
+<p>Two statements change the course of a loop from inside.</p>
+<p><code>continue</code> abandons the rest of the current pass and goes back to the top of the loop. The program uses it after a guess that is not a number: there is nothing to compare, so it asks again. Because <code>continue</code> comes before <code>attempts += 1</code>, a mistyped guess is not counted.</p>
+<p><code>break</code> leaves the loop at once. The program uses it when the player gives no guess at all. That happens when the player presses Enter on an empty line, and also when the input ends, for instance because the program was fed from a file that ran out. Without this check, a program reading from an exhausted input would ask forever.</p>
+<p>After the loop, <code>solved</code> tells the two ways of leaving apart. It is true only if the player actually found the number.</p>
+<h3 id="a-secret-you-can-choose">A secret you can choose<a class="anchor" href="#a-secret-you-can-choose" aria-label="Link to this section">#</a></h3>
+<p>Look again at <code>secret_number</code>:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">secret_number</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> process<span class="c-op">::</span><span class="c-fn">args_count</span>() <span class="c-op">&gt;</span> <span class="c-num">1</span> {
+        <span class="c-kw">pilot</span> chosen <span class="c-op">=</span> process<span class="c-op">::</span><span class="c-fn">arg</span>(<span class="c-num">1</span>).<span class="c-fn">parse_int</span>()
+        <span class="c-kw">if</span> <span class="c-fn">parse_status</span>() <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> chosen }
+        <span class="c-fn">parse_clear_status</span>()            <span class="c-com">-- not a number: fall back to the clock</span>
+    }
+    <span class="c-kw">pilot</span> micros <span class="c-op">=</span> time<span class="c-op">::</span><span class="c-fn">monotonic_ns</span>() <span class="c-op">/</span> <span class="c-num">1000</span>
+    <span class="c-kw">give back</span> micros <span class="c-op">%</span> <span class="c-num">100</span> <span class="c-op">+</span> <span class="c-num">1</span>
+}</code></pre></div>
+<p>A program can be started with arguments, extra words after its name on the command line. <code>process::args_count()</code> says how many there are, and <code>process::arg(1)</code> is the first one. Argument 0 is the program&#x27;s own name, which is why the count has to be greater than 1 for there to be a real argument.</p>
+<p>If an argument is given and it is a number, the task gives it back immediately. A <code>give back</code> ends the task on the spot, so the lines after it run only when there was no usable argument.</p>
+<p>Notice that the argument is parsed with the same care as the player&#x27;s guesses. The parse is checked at once, and a failure is cleared. Without those two lines, starting the game with an argument that is not a number would leave the failure recorded, and the player&#x27;s first perfectly good guess would be reported as not a number.</p>
+<p>This is not a cheat mode for its own sake. A program whose behaviour depends on the clock cannot be tested, because you cannot say in advance what it should print. Giving the secret from outside makes the game repeatable. The listing above was checked exactly that way: started with the argument <code>42</code>, and fed five lines of input.</p>
+<h2 id="playing-it">Playing it<a class="anchor" href="#playing-it" aria-label="Link to this section">#</a></h2>
+<p><code>freak run</code> takes no arguments for your program; it reports an extra word as an unknown flag. To play with a chosen secret, build once and run the program yourself:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build main.fk
+./main 42</code></pre></div>
+<p>To play properly, leave the argument off:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>./main</code></pre></div>
+<p>Try the edges. Type a word instead of a number. Type a number with spaces around it. Press Enter on an empty line. The program has an answer for each.</p>
+<h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
+<p>At the commit this book is pinned to, V4 cannot build this game, for two reasons. It does not know <code>ask</code>, and reports it the way it reports any name it cannot place:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/ask.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> text <span class="c-op">=</span> <span class="c-fn">ask</span>(<span class="c-str">&quot;Your guess: &quot;</span>)
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native type not yet supported: unknown</code></pre>
+  </div>
+</figure>
+<p>And it cannot yet hold a word in a pilot, so there would be nowhere to keep a guess:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/word_pilot.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> callsign <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native words currently support only literal say operands</code></pre>
+  </div>
+</figure>
+<p>What V4 does have is everything the game <em>decides</em> with: ints, comparison, tasks, and loops.</p>
+<p>So here is the game&#x27;s logic with the conversation removed. The program plays against itself. It guesses the middle of the range, uses the verdict to halve the range, and counts its guesses. With nothing to print the count with, it gives the count back from <code>main</code>, where it becomes the exit code.</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/guess_logic.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The heart of the guessing game, without the talking: find a secret by</span>
+<span class="c-com">-- halving the range, and report the number of guesses as the exit code.</span>
+<span class="c-kw">task</span> <span class="c-fn">judge</span>(guess<span class="c-op">:</span> <span class="c-type">int</span>, secret<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> guess <span class="c-op">&lt;</span> secret { <span class="c-kw">give back</span> <span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">1</span> }
+    <span class="c-kw">if</span> guess <span class="c-op">&gt;</span> secret { <span class="c-kw">give back</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> secret <span class="c-op">=</span> <span class="c-num">42</span>
+    <span class="c-kw">pilot</span> low <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">pilot</span> high <span class="c-op">=</span> <span class="c-num">100</span>
+    <span class="c-kw">pilot</span> attempts <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> solved <span class="c-op">=</span> <span class="c-lit">false</span>
+
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> solved {
+        <span class="c-kw">pilot</span> guess <span class="c-op">=</span> (low <span class="c-op">+</span> high) <span class="c-op">/</span> <span class="c-num">2</span>
+        <span class="c-kw">pilot</span> verdict <span class="c-op">=</span> <span class="c-fn">judge</span>(guess, secret)
+        attempts <span class="c-op">+=</span> <span class="c-num">1</span>
+
+        <span class="c-kw">if</span> verdict <span class="c-op">&lt;</span> <span class="c-num">0</span> {
+            low <span class="c-op">=</span> guess <span class="c-op">+</span> <span class="c-num">1</span>
+        } <span class="c-kw">else</span> <span class="c-kw">if</span> verdict <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+            high <span class="c-op">=</span> guess <span class="c-op">-</span> <span class="c-num">1</span>
+        } <span class="c-kw">else</span> {
+            solved <span class="c-op">=</span> <span class="c-lit">true</span>
+        }
+    }
+
+    <span class="c-kw">give back</span> attempts
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 7</div>
+  </div>
+</figure>
+<p>Seven guesses to find 42: it tries 50, 25, 37, 43, 40, 41 and then 42.</p>
+<p>Two details differ from the V3 listing. <code>main</code> declares <code>-&gt; int</code>, as Chapter 1 explained. And the pilots that change are declared without <code>mut</code>. At this commit V4 does not accept <code>pilot mut</code>, and lets every pilot be reassigned:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/pilot_mut.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    <span class="c-kw">give back</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@25:44|unsupported local pattern|use a single name, (a, b, ...), or [a, b, ...]</code></pre>
+  </div>
+</figure>
+<p>V3 in its default mode builds this V4 listing as it stands. V3&#x27;s strict mode does not. It wants <code>mut</code> on a pilot that changes, and this V4 commit rejects the word. It also objects to the way <code>guess</code> is passed to a task, for a reason that belongs to Part III. So this is the first program that cannot be written one way for both.</p>
+<p>The specification does not settle the matter. Its section on pilots says they can be reassigned by default and that <code>fixed pilot</code> is the form that cannot. Its notes on the borrow checker describe V3&#x27;s rule, where only a <code>pilot mut</code> can. Chapter 3 shows what each compiler does today.</p>
+<h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
+<p>You built a complete interactive program. Along the way you used:</p>
+<ul><li><code>pilot</code> to name a value, and <code>pilot mut</code> for one that changes</li><li><code>ask</code> to read a line, and <code>say</code> with <code>{name}</code> interpolation to print</li><li>methods on words: <code>trim()</code> and <code>parse_int()</code>, with <code>parse_status()</code> to learn whether the parse worked</li><li>the types <code>word</code>, <code>int</code> and <code>bool</code>, which you wrote down only once, as a task&#x27;s return type</li><li><code>if</code>, <code>else if</code> and <code>else</code> to choose</li><li><code>repeat until</code> to loop, with <code>continue</code> and <code>break</code> to steer</li><li>a task that gives back a value, built-in operations in the <code>time::</code> and <code>process::</code> namespaces, and command-line arguments to make the program testable</li></ul>
+<p>Each of these was introduced quickly. The next three chapters go back over them with care. <a href="book-pilots-and-types.html">Chapter 3</a> starts with pilots and the types of the values they hold.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#setting-up">Setting up</a></li><li><a href="#step-1-asking-for-a-guess">Step 1: asking for a guess</a></li><li><a href="#step-2-from-a-word-to-a-number">Step 2: from a word to a number</a></li><li><a href="#step-3-a-secret-number">Step 3: a secret number</a></li><li><a href="#step-4-comparing-the-guess">Step 4: comparing the guess</a></li><li><a href="#step-5-guessing-until-it-is-right">Step 5: guessing until it is right</a></li><li><a href="#playing-it">Playing it</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

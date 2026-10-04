@@ -1,0 +1,7 @@
+task main() -> int {
+    pilot fuel = 50
+    if fuel > 25 {
+        pilot fuel = 75
+    }
+    give back fuel
+}

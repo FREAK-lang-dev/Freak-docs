@@ -1,0 +1,9 @@
+-- A truth literal in any capitalisation is still a truth literal in V4,
+-- and it means what it says. Each test that passes adds to the exit code.
+task main() -> int {
+    pilot code = 0
+    if TRUE { code += 1 }
+    if Yes { code += 2 }
+    if not FALSE { code += 4 }
+    give back code
+}

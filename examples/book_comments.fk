@@ -1,0 +1,7 @@
+-- A comment starts with two dashes and runs to the end of the line.
+-- There is no block comment; start every line with its own dashes.
+
+task main() {
+    say "comments are for people"   -- a comment may follow code
+    -- say "this line never runs"
+}

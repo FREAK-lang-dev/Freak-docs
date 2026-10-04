@@ -1,0 +1,7 @@
+-- At this snapshot every pilot can be reassigned; `mut` is not accepted yet.
+task main() -> int {
+    pilot fuel = 50
+    fuel = 75
+    fuel += 5
+    give back fuel
+}

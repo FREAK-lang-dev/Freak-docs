@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introduction &middot; FREAK V3</title>
+<meta name="description" content="What FREAK is, why there are two compilers, and how this book tells you which statements have been checked.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html" class="active">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="introduction">Introduction<a class="anchor" href="#introduction" aria-label="Link to this section">#</a></h1>
+<p class="lede">What FREAK is, why there are two compilers, and how this book tells you which statements have been checked.</p>
+<p>Welcome to <em>The Freak Book</em>. FREAK is a compiled, statically typed programming language. You write a <code>.fk</code> file, the compiler checks it and turns it into a native program, and that program runs on its own with nothing else installed.</p>
+<p>It is also a language with a sense of humour about itself. A variable is a <code>pilot</code>. A function is a <code>task</code>. A function does not return, it will <code>give back</code>. The names come from mecha anime and visual novels, and the compiler signs off every build with a quotation. Underneath the vocabulary is an ordinary, strict language: types are checked before anything runs, there is no hidden conversion between a number and a piece of text, and a task that promises a value has to deliver one on every path.</p>
+<p>This book teaches that language from the beginning.</p>
+<h2 id="who-this-book-is-for">Who this book is for<a class="anchor" href="#who-this-book-is-for" aria-label="Link to this section">#</a></h2>
+<p>You should be comfortable in a terminal: changing directory, running a command, editing a text file. It helps to have written a little code in any language, because the book does not stop to explain what a variable or a loop is for. It does explain exactly how FREAK&#x27;s versions of them behave, including the places where they differ from what you may expect.</p>
+<p>You do not need to know C, LLVM, or anything about compilers. The last part of the book explains how the compilers work, for readers who want that.</p>
+<h2 id="one-language-two-compilers-one-specification">One language, two compilers, one specification<a class="anchor" href="#one-language-two-compilers-one-specification" aria-label="Link to this section">#</a></h2>
+<p>Three things carry the name FREAK, and it matters which one you are talking to.</p>
+<p><strong>V3</strong> is the compiler you can install. It is written in FREAK and compiles itself. Every release so far, including the current one, is V3. When this book says something works, it means it works in V3.</p>
+<p><strong>V4</strong> is the next compiler, being built beside V3 in the same repository. Its project name is Maverick. It is a new design. V3 compiles a program from start to finish in one go. V4 is built from separate stages that each record what they learned, so that an editor can ask questions about your code while you type. V4 has no release yet. It already compiles and runs small programs, and it already differs from V3 in ways you will meet in the first chapter.</p>
+<p><strong>The specification</strong> is a document in the compiler repository, <code>freak-full-bible.md</code>, which everyone calls the bible. It describes the whole language as it is meant to be. Neither compiler implements all of it. V3 implements a small core. V4 understands much more of it than it can run yet.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>The released V3 compiler prints the name Maverick too: <code>freak --version</code> answers <code>freak 0.14.2 (Maverick)</code>. That overlap is historical. In this book &quot;V3&quot; always means the compiler you install, and &quot;V4&quot; always means the new one under development.</p></div>
+<h2 id="how-the-book-marks-what-is-real">How the book marks what is real<a class="anchor" href="#how-the-book-marks-what-is-real" aria-label="Link to this section">#</a></h2>
+<p>A book about a language that is still being built could easily describe three different languages at once without telling you. This one separates them, in the same way on every page.</p>
+<h3 id="ordinary-text-is-v3-and-it-has-been-run">Ordinary text is V3, and it has been run<a class="anchor" href="#ordinary-text-is-v3-and-it-has-been-run" aria-label="Link to this section">#</a></h3>
+<p>Outside the sections and boxes described below, everything you read describes the released V3 compiler. Listings are not typed into the page. Each one is a real file that was compiled with the released compiler and run, and whose output was compared with what the book says it prints. A listing looks like this:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_hello.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- hello.fk: the smallest complete FREAK program.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Hello, FREAK!</code></pre>
+  </div>
+</figure>
+<p>The file name, the two badges and the output all come from that run. If a later release changes what the program prints, this page fails its check and has to be corrected before it can be published again.</p>
+<p>The same applies to mistakes. Much of learning a language is learning what its compiler says when you get something wrong, so the book shows real rejections. A program that must not compile is checked too: the compiler has to refuse it, for the reason the book gives. What you see is the whole message it printed.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_unknown_pilot.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> altitude
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: unknown binding &#x27;altitude&#x27; (line 2)
+ --&gt; book_unknown_pilot.fk:2:1
+2 |     say altitude
+  | ^</code></pre>
+  </div>
+</figure>
+<p>Now and then you will see a short fragment of code with a line above it saying <em>Illustrative snippet; not independently verified.</em> Those are there to show a shape or name a piece of syntax. They are not claims that a complete program runs.</p>
+<h3 id="in-v4-sections-are-one-commit-of-v4">&quot;In V4&quot; sections are one commit of V4<a class="anchor" href="#in-v4-sections-are-one-commit-of-v4" aria-label="Link to this section">#</a></h3>
+<p>V4 changes quickly. A sentence about it is only true of the commit it was checked against, so the book pins exactly one and says which. Each chapter keeps what it has to say about V4 together, under a heading <em>In V4</em> near its end. A V4 listing carries the pinned commit in its badge:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/hello.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The V4 snapshot wants an explicit return type on `main`.</span>
+<span class="c-com">-- An int given back from `main` becomes the exit code.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span>
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Hello, FREAK!</code></pre>
+  </div>
+</figure>
+<p>When V4 rejects a program, the listing shows the diagnostic V4 printed. When V4 has not caught up with V3 yet, the section says so plainly. Read every V4 statement as &quot;at this commit&quot;, never as &quot;in the finished V4&quot;.</p>
+<div class="callout v4"><div class="callout-title">In V4</div><p>Now and then a V4 difference is worth a mention in the middle of a chapter. It appears in a box like this one, and is backed by a V4 listing in the same chapter.</p></div>
+<h3 id="planned-boxes-are-the-specification">&quot;Planned&quot; boxes are the specification<a class="anchor" href="#planned-boxes-are-the-specification" aria-label="Link to this section">#</a></h3>
+<div class="callout planned"><div class="callout-title">Planned</div><p>A box like this one describes something the bible specifies and no compiler runs today. It tells you where the language is heading. Nothing in a Planned box has been executed, and details can change before it is built.</p></div>
+<h2 id="what-you-can-rely-on">What you can rely on<a class="anchor" href="#what-you-can-rely-on" aria-label="Link to this section">#</a></h2>
+<p>The book&#x27;s examples were checked on Linux x64. FREAK also publishes builds for Linux arm64, macOS on Apple silicon, and Windows x64. File names and installation paths differ between them, and the book points out the differences it knows about. It does not claim to have run every listing on every platform.</p>
+<p>Two things the checks cannot tell you: whether an explanation is clear, and whether a design is good. Where V3 does something surprising, the book says so and shows it, instead of presenting it as intended or pretending it is not there.</p>
+<h2 id="how-to-read-it">How to read it<a class="anchor" href="#how-to-read-it" aria-label="Link to this section">#</a></h2>
+<p>Read Part I in order. Chapter 1 installs the compiler and runs a first program. Chapter 2 builds a small game from start to finish, using things the later chapters then explain properly. Chapters 3, 4 and 5 cover values, tasks and control flow, which is enough to write real programs.</p>
+<p>After that the parts are more independent. <a href="book.html">The contents page</a> lists them all.</p>
+<p>Type the examples in yourself. Change them. Break them on purpose and read what the compiler says. The diagnostics in this book were collected the same way.</p>
+<h2 id="the-vocabulary">The vocabulary<a class="anchor" href="#the-vocabulary" aria-label="Link to this section">#</a></h2>
+<p>FREAK renames a handful of everyday programming terms. You will absorb them quickly, and this table is here for the first few chapters.</p>
+<div class="tablewrap"><table><thead><tr><th>FREAK says</th><th>You may know it as</th><th>Explained in</th></tr></thead><tbody><tr><td><code>pilot</code></td><td>a variable</td><td>Chapter 3</td></tr><tr><td><code>fixed pilot</code></td><td>a constant</td><td>Chapter 3</td></tr><tr><td><code>task</code></td><td>a function</td><td>Chapter 4</td></tr><tr><td><code>give back</code></td><td><code>return</code></td><td>Chapter 4</td></tr><tr><td><code>say</code></td><td>print a line</td><td>Chapter 1</td></tr><tr><td><code>ask</code></td><td>read a line of input</td><td>Chapter 2</td></tr><tr><td><code>word</code></td><td>a string</td><td>Chapter 3, and Part II</td></tr><tr><td><code>num</code></td><td>a floating-point number</td><td>Chapter 3</td></tr><tr><td><code>int</code></td><td>an integer</td><td>Chapter 3</td></tr><tr><td><code>when</code></td><td><code>switch</code> or <code>match</code></td><td>Chapter 5</td></tr><tr><td><code>training arc</code></td><td>a loop that must end</td><td>Chapter 5</td></tr><tr><td><code>shape</code></td><td>a struct or record</td><td>Part II</td></tr><tr><td>Hangar</td><td>the package manager</td><td>Chapter 1, and Part IV</td></tr><tr><td>the bible</td><td>the language specification</td><td>this page</td></tr></tbody></table></div>
+<h2 id="a-word-on-how-freak-is-made">A word on how FREAK is made<a class="anchor" href="#a-word-on-how-freak-is-made" aria-label="Link to this section">#</a></h2>
+<p>The compiler repository states it openly, and so will this book: parts of FREAK, including code, diagnostics, tests and documentation, were produced with AI coding assistance, working with human maintainers who reviewed and directed the work and take responsibility for it. This book was written the same way. That is one reason every listing in it is executed rather than trusted.</p>
+<p>Turn to <a href="book-getting-started.html">Chapter 1</a> to install the compiler.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#who-this-book-is-for">Who this book is for</a></li><li><a href="#one-language-two-compilers-one-specification">One language, two compilers, one specification</a></li><li><a href="#how-the-book-marks-what-is-real">How the book marks what is real</a></li><li><a href="#what-you-can-rely-on">What you can rely on</a></li><li><a href="#how-to-read-it">How to read it</a></li><li><a href="#the-vocabulary">The vocabulary</a></li><li><a href="#a-word-on-how-freak-is-made">A word on how FREAK is made</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

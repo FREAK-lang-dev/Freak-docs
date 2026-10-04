@@ -1,0 +1,8 @@
+-- `main` calls a task that is declared below it.
+task main() -> int {
+    give back double(21)
+}
+
+task double(n: int) -> int {
+    give back n * 2
+}

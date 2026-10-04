@@ -1,0 +1,26 @@
+-- repeat until CONDITION: the test comes first, and the loop stops
+-- when the condition is true.
+task main() {
+    pilot mut countdown = 3
+    repeat until countdown == 0 {
+        say countdown
+        countdown -= 1
+    }
+    say "launch"
+
+    -- Already true: the body does not run even once.
+    pilot mut laps = 0
+    repeat until true {
+        laps += 1
+    }
+    say laps
+
+    -- How many times can 1000 be halved before it reaches 1?
+    pilot mut value = 1000
+    pilot mut halvings = 0
+    repeat until value <= 1 {
+        value = value / 2
+        halvings += 1
+    }
+    say halvings
+}

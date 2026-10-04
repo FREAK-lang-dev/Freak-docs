@@ -1,0 +1,6 @@
+-- `fixed` is accepted, and not enforced at this commit.
+task main() -> int {
+    fixed pilot fuel = 50
+    fuel = 75
+    give back fuel
+}

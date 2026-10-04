@@ -1,0 +1,25 @@
+-- word: a piece of text.
+task main() {
+    pilot title = "Muv" + "-" + "Luv"      -- + joins two words
+    say title
+    say title.length()                     -- 7: one for each of these letters
+
+    pilot mut system = "XM"
+    system += "3"                          -- += appends
+    say system
+
+    say title == "Muv-Luv"                 -- words compare with == and !=
+
+    -- A name in braces is replaced by its value. It works for
+    -- word, int, num and bool pilots.
+    pilot sorties = 12
+    pilot ratio = 0.75
+    pilot cleared = true
+    say "{title}: {sorties} sorties, ratio {ratio}, cleared {cleared}"
+
+    -- Braces around anything that is not a name are printed as they are.
+    say "{sorties + 1} is not worked out"
+
+    -- A backslash introduces a character that is awkward to type.
+    say "tab:[\t] quote:[\"] backslash:[\\]"
+}

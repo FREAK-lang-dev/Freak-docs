@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started &middot; FREAK V3</title>
+<meta name="description" content="Install the compiler, check that it works, write and run a first program, and create a first project.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html" class="active">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="getting-started">Getting started<a class="anchor" href="#getting-started" aria-label="Link to this section">#</a></h1>
+<p class="lede">Install the compiler, check that it works, write and run a first program, and create a first project.</p>
+<p>This chapter gets you from nothing to a running program. It covers:</p>
+<ul><li>installing FREAK on Linux, macOS and Windows</li><li>checking the installation with <code>freak doctor</code></li><li>writing a program that prints <code>Hello, FREAK!</code></li><li>the difference between running, building and checking a program</li><li>creating a project with <code>freak init</code></li></ul>
+<h2 id="installing-freak">Installing FREAK<a class="anchor" href="#installing-freak" aria-label="Link to this section">#</a></h2>
+<p>FREAK is installed by a script that downloads the latest release, checks it, and unpacks it into your home directory. FREAK itself is not installed system-wide and needs no administrator rights.</p>
+<p>On Linux, or on a Mac with Apple silicon, run this in a terminal:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/FREAK-lang-dev/Freak-lang/main/install.sh | bash</code></pre></div>
+<p>The installer does not support Macs with Intel processors. On Windows, run this in PowerShell:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>irm https://raw.githubusercontent.com/FREAK-lang-dev/Freak-lang/main/install.ps1 | iex</code></pre></div>
+<p>On Linux the installer prints something close to this, with your own home directory in place of <code>/home/you</code>:</p>
+<div class="codeblock"><pre class="code"><code>&gt; Detected platform: linux-x64
+&gt; Clang is available
+&gt; Fetching latest release...
+&gt; Release: v0.14.2
+&gt; Downloading freak-linux-x64.tar.gz...
+&gt; Verified SHA-256 for freak-linux-x64.tar.gz
+&gt; Extracting distribution...
+&gt; Added /home/you/.freak/bin to PATH in /home/you/.bashrc
+&gt;
+&gt; FREAK v0.14.2 installed successfully!
+&gt;   Compiler: /home/you/.freak/bin/freak
+&gt;   Hangar:   /home/you/.freak/bin/hangar
+&gt;   Runtime:  /home/you/.freak/runtime/
+&gt;   Std lib:  /home/you/.freak/std/
+&gt; Restart your shell or run:
+&gt;   export PATH=&quot;/home/you/.freak/bin:$PATH&quot;
+&gt; Then verify the complete toolchain with: freak doctor
+&gt; &quot;It was always going to end this way.&quot;</code></pre></div>
+<p>Do what the lines before the closing quotation say: open a new terminal, or run the <code>export</code> line in the one you have, so that the <code>freak</code> command can be found.</p>
+<h3 id="what-was-installed">What was installed<a class="anchor" href="#what-was-installed" aria-label="Link to this section">#</a></h3>
+<p>Everything lives in one directory, <code>~/.freak</code>. On Windows the installer uses <code>%APPDATA%\freak</code> instead.</p>
+<div class="tablewrap"><table><thead><tr><th>Path</th><th>What it is</th></tr></thead><tbody><tr><td><code>bin/freak</code></td><td>The compiler and its command-line tools</td></tr><tr><td><code>bin/hangar</code></td><td>The package manager, also reachable as <code>freak hangar</code></td></tr><tr><td><code>runtime/</code></td><td>C source that is compiled into every program you build</td></tr><tr><td><code>std/</code></td><td>The standard library, written in FREAK</td></tr></tbody></table></div>
+<p>The installer also appends a short block, a comment and one <code>export</code> line, to the shell startup files it finds, so that <code>~/.freak/bin</code> is on your <code>PATH</code>. It looks for <code>.zshrc</code> and <code>.bashrc</code>, and for <code>.bash_profile</code> when there is no <code>.bashrc</code>. It does not create a file that is missing. If you have none of them, as on a new macOS account, nothing is added and the <code>Added ... to PATH</code> line does not appear. In that case put the <code>export</code> line in your shell&#x27;s startup file yourself.</p>
+<p>On Linux and macOS, that block and the <code>~/.freak</code> directory are the whole installation. To remove FREAK, delete both. On Windows the installer changes your user <code>PATH</code> and, when it finds Clang, sets a user variable named <code>FREAK_CLANG</code>.</p>
+<h3 id="freak-needs-clang">FREAK needs Clang<a class="anchor" href="#freak-needs-clang" aria-label="Link to this section">#</a></h3>
+<p>The FREAK compiler does not produce machine code by itself. It translates your program into LLVM IR, a lower-level form, and then runs Clang to turn that into a native program. Clang therefore has to be installed.</p>
+<p>The installer checks for it. In the output above it reported <code>Clang is available</code>. If Clang is missing, the installer still installs FREAK, warns you that programs cannot be built without Clang, and leaves your system&#x27;s packages alone. You can then install Clang with your system&#x27;s package manager, or ask the FREAK installer to do it:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/FREAK-lang-dev/Freak-lang/main/install.sh | bash -s -- --with-deps</code></pre></div>
+<p>On Windows, set <code>$env:FREAK_INSTALL_DEPS = &quot;1&quot;</code> before running the PowerShell line, and the installer fetches a self-contained toolchain.</p>
+<h2 id="checking-the-installation">Checking the installation<a class="anchor" href="#checking-the-installation" aria-label="Link to this section">#</a></h2>
+<p>Ask the compiler for its version:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak --version</code></pre></div>
+<div class="codeblock"><pre class="code"><code>freak 0.14.2 (Maverick)</code></pre></div>
+<p>If your shell answers <code>command not found</code>, the <code>PATH</code> change has not taken effect yet. Open a new terminal and try again. If it still fails, the installer found no startup file to change, and you need to add the <code>export</code> line by hand.</p>
+<p>A version number only proves the <code>freak</code> program starts. To check that the whole toolchain works, run the doctor:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak doctor</code></pre></div>
+<p>The doctor makes five checks and reports each one. The end of its output, shortened here, looks like this:</p>
+<div class="codeblock"><pre class="code"><code>  [3/5] Checking runtime
+        ✓ /home/you/.freak/runtime
+        ✓ source runtime fallback available
+        ✓ LLVM runtime available
+
+  [4/5] Checking standard library
+        ✓ 11/11 modules in /home/you/.freak/std
+
+  [5/5] Checking compile pipeline
+        ✓ compile, link, and execution work
+
+  ╭──────────────────────────────────────────────────╮
+  │  ✨ ALL SYSTEMS GO  5/5 passed
+  ├──────────────────────────────────────────────────┤
+  │   Get started:  freak build hello.fk
+  ╰──────────────────────────────────────────────────╯</code></pre></div>
+<p>The five checks are Clang, the optional LLD linker, the runtime files, the standard library, and a complete trial run: the doctor compiles a small FREAK program, links it, and executes it. If that last check passes, your installation can build programs.</p>
+<p>If a check fails, <code>freak doctor --fix</code> tries to repair it, by installing missing dependencies or restoring missing runtime and library files. <code>freak doctor --json</code> prints the same report in a form that scripts and editors can read.</p>
+<h3 id="updating">Updating<a class="anchor" href="#updating" aria-label="Link to this section">#</a></h3>
+<p>When a new release comes out, <code>freak upgrade</code> downloads and installs it in place of the one you have.</p>
+<h3 id="editor-support">Editor support<a class="anchor" href="#editor-support" aria-label="Link to this section">#</a></h3>
+<p>Syntax highlighting and snippets for VS Code and Zed are maintained in the <a href="https://github.com/FREAK-lang-dev/freak-editors">freak-editors</a> repository. They colour your code and complete common constructs. Checking by the compiler itself is not part of them yet; to find type errors you run the compiler.</p>
+<h2 id="hello-freak">Hello, FREAK<a class="anchor" href="#hello-freak" aria-label="Link to this section">#</a></h2>
+<p>Make a directory for your programs and move into it:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>mkdir freak-book
+cd freak-book</code></pre></div>
+<p>Create a file named <code>hello.fk</code>. FREAK source files always end in <code>.fk</code>. Put these lines in it:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_hello.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- hello.fk: the smallest complete FREAK program.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span>
+}</code></pre>
+</figure>
+<p>Save the file and run it:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run hello.fk</code></pre></div>
+<p>The compiler reports what it is doing, then your program runs:</p>
+<div class="codeblock"><pre class="code"><code>  ╭─────────────────────────────────────────────╮
+  │  ⚡ FREAK  hello.fk
+  │    Backend: LLVM IR  Profile: O2
+  ╰─────────────────────────────────────────────╯
+
+Source length: 51423
+  ✓  Lexing (41ms)
+  ✓  Parsing (18ms)
+  ✓  Type checking (10ms)
+  ✓  Emit LLVM IR (617ms)
+  ⚙  Compiling native binary...
+  ✓  Native binary (2521ms)
+
+  ╭─────────────────────────────────────────────╮
+  │  ✨ BUILD SUCCESSFUL
+  ├─────────────────────────────────────────────┤
+  │   Binary: hello
+  │   Time:   3243ms
+  ╰─────────────────────────────────────────────╯
+
+  &quot;The only ones who should kill are those prepared to be killed.&quot;
+
+  ╭─────────────────────────────────────────────╮
+  │  ▸ RUNNING  hello
+  ╰─────────────────────────────────────────────╯
+
+Hello, FREAK!
+
+  ✓ DONE (3ms)</code></pre></div>
+<p><code>Hello, FREAK!</code> is your program&#x27;s output. Everything around it comes from the compiler. The quotation changes from build to build; yours will differ.</p>
+<p>You have written, compiled and run a FREAK program.</p>
+<h3 id="anatomy-of-the-program">Anatomy of the program<a class="anchor" href="#anatomy-of-the-program" aria-label="Link to this section">#</a></h3>
+<p>Look at the program again, one piece at a time.</p>
+<p>The first line is a comment. Two dashes start a comment, and it runs to the end of the line. The compiler ignores it.</p>
+<p>The second line begins a task:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {</code></pre></div>
+<p><code>task</code> declares a task, which is FREAK&#x27;s word for a function: a named piece of work. This one is named <code>main</code>. The empty parentheses mean it takes no inputs. The opening brace starts its body, and the closing brace on the last line ends it.</p>
+<p><code>main</code> is special. It is the entry point: when the program starts, it runs the task called <code>main</code>, and when <code>main</code> finishes, the program ends.</p>
+<p>Inside the body is one statement:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span></code></pre></div>
+<p><code>say</code> prints a value followed by a new line. Here the value is a piece of text in double quotes. FREAK calls a piece of text a <em>word</em>, whatever its length. <code>say</code> is part of the language. There is nothing to import.</p>
+<p>Notice what is absent. There is no semicolon at the end of the statement: FREAK code does not use them, and V3 treats one as an error. The body is indented by four spaces, which is the convention in FREAK code, but indentation is for readers. The compiler finds the structure from the braces.</p>
+<h3 id="reading-the-build-report">Reading the build report<a class="anchor" href="#reading-the-build-report" aria-label="Link to this section">#</a></h3>
+<p>The lines between the first two boxes are the stages your program went through.</p>
+<div class="tablewrap"><table><thead><tr><th>Stage</th><th>What happens</th></tr></thead><tbody><tr><td>Lexing</td><td>The text is cut into tokens: names, numbers, words, punctuation</td></tr><tr><td>Parsing</td><td>The tokens are arranged into the structure of the program</td></tr><tr><td>Type checking</td><td>Every value is checked to have the type its use requires</td></tr><tr><td>Emit LLVM IR</td><td>The checked program is written out in LLVM&#x27;s intermediate form</td></tr><tr><td>Native binary</td><td>Clang turns that into a program your machine can run</td></tr></tbody></table></div>
+<p>Look at the line <code>Source length: 51423</code>. Your file is 90 characters long. Before compiling, <code>freak run</code> places the standard library in front of your program and compiles the two together as one text. That is why standard-library tasks are available without importing anything, and it has consequences for how names work that Chapter 4 and Part IV come back to.</p>
+<h3 id="when-something-is-wrong">When something is wrong<a class="anchor" href="#when-something-is-wrong" aria-label="Link to this section">#</a></h3>
+<p>Compilers are met mostly through their complaints, so make some mistakes on purpose. Delete the closing quote:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_unterminated_word.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!
+}</span></code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: unterminated string literal
+ --&gt; book_unterminated_word.fk:2:9
+  |
+2 |     say &quot;Hello, FREAK!
+  |         ^ add a closing quote
+
+error: unexpected end of file — missing &#x27;}&#x27;
+ --&gt; book_unterminated_word.fk:1:13
+  |
+1 | task main() {
+  |             ^ block opened here</code></pre>
+  </div>
+</figure>
+<p>The compiler names the problem, points at the place with a caret, and suggests the fix. It also reports a second error, the missing brace. The second is a consequence of the first: without the closing quote, the rest of the file was read as part of the word, brace included. When you get several errors, fix the first one and build again.</p>
+<p>Now misspell <code>say</code>:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_misspelled_say.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    sya <span class="c-str">&quot;Hello, FREAK!&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: unknown binding &#x27;sya&#x27; (line 2)
+ --&gt; book_misspelled_say.fk:2:1
+2 |     sya &quot;Hello, FREAK!&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<p>The compiler does not know <code>sya</code>, so it takes it for the name of a value you never created. &quot;Binding&quot; is the compiler&#x27;s word for a named value. You will see <code>unknown binding</code> whenever the name of a value is misspelled, and <code>unknown callable</code> when it is the name of a task.</p>
+<p>One mistake produces no message at all. The entry point is the task named <code>main</code>, in lowercase. Name it anything else and the program builds, starts, finds nothing to do, and ends:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_no_entry.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The entry point is the task named `main`, in lowercase.</span>
+<span class="c-com">-- This file has no such task, so the program starts, does nothing, and ends.</span>
+<span class="c-kw">task</span> <span class="c-fn">Main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
+}</code></pre>
+</figure>
+<div class="callout warn"><div class="callout-title">Careful</div><p>If a program builds and prints nothing, check the spelling of <code>main</code> first.</p></div>
+<h2 id="building-running-and-checking">Building, running and checking<a class="anchor" href="#building-running-and-checking" aria-label="Link to this section">#</a></h2>
+<p><code>freak run</code> did two things: it built a program and then started it. You can do them separately.</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build hello.fk</code></pre></div>
+<p>This stops after the build. Look at the directory afterwards:</p>
+<div class="codeblock"><pre class="code"><code>hello
+hello.fk
+hello.fk.ll</code></pre></div>
+<p><code>hello</code> is the program. It is an ordinary native executable, and you can run it directly:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>./hello</code></pre></div>
+<div class="codeblock"><pre class="code"><code>Hello, FREAK!</code></pre></div>
+<p>On Windows the file is named <code>hello.exe</code> and you run it as <code>.\hello.exe</code>.</p>
+<p>The program does not need FREAK or Clang to run. You can copy <code>hello</code> to another machine with the same operating system and processor, and it runs there using only the system libraries that every program on that machine uses.</p>
+<p><code>hello.fk.ll</code> is the LLVM IR the compiler produced on the way. It is safe to delete, and interesting to read once you know the language. After <code>freak run</code> you will also find <code>hello.freak-run-cache</code>. It lets a second <code>freak run</code> of an unchanged file skip the build and start the program at once.</p>
+<p>The third command neither builds nor runs:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak check hello.fk</code></pre></div>
+<div class="codeblock"><pre class="code"><code>  ⚙ CHECKING hello.fk
+
+Source length: 90
+  ✓  Lexing (0ms)
+  ✓  Parsing (0ms)
+  ✓  Type checking (0ms)
+
+  ✨ PASSED -- no type errors found</code></pre></div>
+<p><code>check</code> runs the first three stages and stops. It is fast, because it never calls Clang. Compare the source length with the earlier one: <code>check</code> looks at your 90 characters alone, without the standard library in front of them.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Because <code>freak check</code> does not load the standard library, it rejects a correct program that uses a standard-library task, with <code>unknown callable</code>. For such programs, use <code>freak build</code> to find errors. Every listing in Part I uses only what is built into the compiler, so <code>check</code> works on all of them.</p></div>
+<div class="tablewrap"><table><thead><tr><th>Command</th><th>Builds</th><th>Runs</th><th>Standard library</th></tr></thead><tbody><tr><td><code>freak run hello.fk</code></td><td>yes</td><td>yes</td><td>loaded</td></tr><tr><td><code>freak build hello.fk</code></td><td>yes</td><td>no</td><td>loaded</td></tr><tr><td><code>freak check hello.fk</code></td><td>no</td><td>no</td><td>not loaded</td></tr></tbody></table></div>
+<h2 id="comments">Comments<a class="anchor" href="#comments" aria-label="Link to this section">#</a></h2>
+<p>You have seen one comment already. The rules are short.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_comments.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A comment starts with two dashes and runs to the end of the line.</span>
+<span class="c-com">-- There is no block comment; start every line with its own dashes.</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;comments are for people&quot;</span>   <span class="c-com">-- a comment may follow code</span>
+    <span class="c-com">-- say &quot;this line never runs&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>comments are for people</code></pre>
+  </div>
+</figure>
+<p>A comment starts at <code>--</code> and ends at the end of the line. It can have a line to itself or follow code. There is no form of comment that spans several lines; write <code>--</code> at the start of each one. Putting <code>--</code> in front of a line of code is the usual way to switch it off for a moment.</p>
+<h2 id="a-first-project">A first project<a class="anchor" href="#a-first-project" aria-label="Link to this section">#</a></h2>
+<p>A single file is fine for learning. A program you intend to keep deserves a directory of its own and a file that describes it. <code>freak init</code> creates both:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak init sortie</code></pre></div>
+<div class="codeblock"><pre class="code"><code>  ✨ Creating project: sortie
+
+  ✓ sortie/main.fk
+  ✓ sortie/hangar.toml
+
+  Get started:
+    cd sortie
+    freak run main.fk</code></pre></div>
+<p>The project is called <code>sortie</code>, a mission flown by a single unit. The command made a directory with two files in it.</p>
+<p><code>hangar.toml</code> is the project&#x27;s description:</p>
+<div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[project]
+name = &quot;sortie&quot;
+version = &quot;0.1.0&quot;
+
+[dependencies]</code></pre></div>
+<p>It records the project&#x27;s name and version, and has an empty section for the packages the project depends on. The file belongs to Hangar, FREAK&#x27;s package manager, which is why it carries that name.</p>
+<p><code>main.fk</code> is a starting program:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- sortie</span>
+<span class="c-com">-- Created with FREAK 0.14.2</span>
+
+<span class="c-kw">say</span> <span class="c-str">&quot;Hello from sortie!&quot;</span></code></pre></div>
+<p>This program has no <code>main</code> task. In V3, a file without <code>main</code> runs the statements written at its top level, in order. That is convenient for a three-line script. This book writes <code>main</code> in every program anyway, because once a file has a <code>main</code>, statements outside it are not run at all, and it is easier to keep one habit than two. Chapter 4 shows that rule in action.</p>
+<p>Run the project the same way as before:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>cd sortie
+freak run main.fk</code></pre></div>
+<div class="codeblock"><pre class="code"><code>Hello from sortie!</code></pre></div>
+<div class="callout note"><div class="callout-title">Note</div><p>The dependencies section is less useful than it looks. In V3, Hangar can download a package, but the compiler does not yet read downloaded packages when it builds. The chapter on Hangar in Part IV explains what works and what to do instead.</p></div>
+<h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
+<p>V4 has no installer and no release. To try it you need a copy of the compiler repository and Python, and you build programs with a script from that repository:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python src/compiler/v4/build_v4.py hello.fk -o hello
+./hello</code></pre></div>
+<p>At the commit this book is pinned to, V4 builds and runs this version of the first program:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/hello.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The V4 snapshot wants an explicit return type on `main`.</span>
+<span class="c-com">-- An int given back from `main` becomes the exit code.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span>
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Hello, FREAK!</code></pre>
+  </div>
+</figure>
+<p>It is not quite the program you wrote for V3. The differences are the first concrete things to know about V4.</p>
+<p><strong>A task must state what it gives back.</strong> <code>-&gt; int</code> after the parentheses says that <code>main</code> gives back a whole number, and <code>give back 0</code> does it. That number becomes the program&#x27;s exit code, the value the operating system receives when the program ends. Zero means success. V4 also accepts <code>-&gt; void</code>, meaning nothing is given back. The form with no arrow at all, which V3 accepts, is turned away. This is true of every task at this commit, and <code>main</code> is where you meet it first:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/main_without_type.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native type not yet supported: unknown</code></pre>
+  </div>
+</figure>
+<p>A line beginning <code>v4-native-contract-error=</code> comes from the last stage of V4, the one that generates code. It is how that stage says it has met something it cannot build yet. The message is worded as &quot;not yet supported&quot;: it marks a gap in this commit, not a rule of the language.</p>
+<p><strong>Statements must be inside a task.</strong> The specification says that only declarations may appear at the top level of a file, and V4 enforces it. The program that <code>freak init</code> generates does not build in V4:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/toplevel_statement.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V4 follows the specification here: no statements outside a task.</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span></code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@68:88|unexpected token at top level|say</code></pre>
+  </div>
+</figure>
+<p>V4&#x27;s diagnostics look different from V3&#x27;s. The fields are separated by bars: <code>2</code> is the severity, <code>0@68:88</code> is file 0 from position 68 to position 88, then come the message and a detail or hint. V4 is built to hand these to an editor, which turns the positions into underlines. A readable command-line presentation is still to come.</p>
+<p>**<code>say</code> accepts a literal word only.** This commit can print text written directly in the program, and nothing else yet. The listing creates a named value with <code>pilot</code>, which Chapter 2 introduces, and tries to print it:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/say_needs_literal.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> sorties <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">say</span> sorties
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@48:59|say nonliteral is not yet supported|W1 say requires exactly one static word literal; word values, expressions, and methods need the later word runtime slices</code></pre>
+  </div>
+</figure>
+<p>That limits what the V4 listings in the next few chapters can show on screen. Most of them report their result through the exit code instead.</p>
+<p><strong>A semicolon is accepted.</strong> V3 rejects one at the end of a statement. V4 allows it, as the specification does:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/semicolon.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V4 accepts a semicolon at the end of a statement. V3 rejects it.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>;
+    <span class="c-kw">give back</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 50</div>
+  </div>
+</figure>
+<h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
+<p>You installed FREAK and confirmed the installation with <code>freak doctor</code>. You wrote a program with one task, <code>main</code>, containing one statement, <code>say</code>, and saw that a FREAK program is built into a native executable by way of LLVM and Clang. You know three commands: <code>freak run</code> to build and run, <code>freak build</code> to build only, and <code>freak check</code> to look for errors quickly without the standard library. You created a project with <code>freak init</code>.</p>
+<p>You also met V4 for the first time, and saw that it insists on tasks with a declared result and on keeping statements inside tasks.</p>
+<p><a href="book-guessing-game.html">Chapter 2</a> puts these pieces to work in a real program: a number-guessing game that reads what you type.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#installing-freak">Installing FREAK</a></li><li><a href="#checking-the-installation">Checking the installation</a></li><li><a href="#hello-freak">Hello, FREAK</a></li><li><a href="#building-running-and-checking">Building, running and checking</a></li><li><a href="#comments">Comments</a></li><li><a href="#a-first-project">A first project</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

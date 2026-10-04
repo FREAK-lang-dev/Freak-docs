@@ -1,0 +1,15 @@
+-- Step 4: compare one guess with the secret.
+task main() {
+    pilot secret = 42
+
+    pilot text = ask("Your guess: ")
+    pilot guess = text.trim().parse_int()
+
+    if guess < secret {
+        say "Too low."
+    } else if guess > secret {
+        say "Too high."
+    } else {
+        say "You got it!"
+    }
+}

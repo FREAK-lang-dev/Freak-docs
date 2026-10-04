@@ -1,0 +1,6 @@
+task main() {
+    task helper() {
+        say "nested"
+    }
+    helper()
+}

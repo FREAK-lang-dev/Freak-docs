@@ -1,0 +1,4 @@
+task main() -> int {
+    pilot callsign = "Valkyrie-1"
+    give back 0
+}

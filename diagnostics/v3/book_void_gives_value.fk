@@ -1,0 +1,7 @@
+task greet() {
+    give back "Valkyries, launch."
+}
+
+task main() {
+    greet()
+}

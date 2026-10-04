@@ -1,0 +1,8 @@
+-- V3 gives 11 for this: double(5) is 10, offset(10, 1) is 11.
+-- This V4 snapshot accepts the pipes and ignores them, leaving 5.
+task double(n: int) -> int { give back n * 2 }
+task offset(n: int, by: int) -> int { give back n + by }
+
+task main() -> int {
+    give back 5 |> double() |> offset(1)
+}

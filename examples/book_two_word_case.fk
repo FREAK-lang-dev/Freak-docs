@@ -1,0 +1,16 @@
+-- V3 accepts its two-word keywords in any letter case.
+-- Write them in lowercase anyway.
+task double(n: int) -> int {
+    Give Back n * 2
+}
+
+task main() {
+    pilot mut total = 0
+    For Each reading in [1, 2, 3] {
+        total += reading
+    }
+    Training Arc until total >= 10 max 5 sessions {
+        total += 2
+    }
+    say double(total)
+}

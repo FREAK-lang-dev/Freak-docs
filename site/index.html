@@ -21,6 +21,15 @@
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
 <div class="nav-group"><div class="nav-group-title">Start here</div><ul>
 <li><a href="index.html" class="active">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
@@ -57,7 +66,7 @@
 <h1 id="freak-v3">FREAK V3<a class="anchor" href="#freak-v3" aria-label="Link to this section">#</a></h1>
 <p class="lede">The complete, verified reference for the language the shipping FREAK V3 compiler actually accepts.</p>
 <p>FREAK is a programming language written entirely by AI. Its compiler is self-hosted: the compiler that builds FREAK programs is itself written in FREAK. This site documents <strong>V3 &quot;Maverick&quot;</strong> — the shipping, self-hosted generation that lives in <code>src/compiler/v3/</code>.</p>
-<div class="summary-card"><div class="sc-num">45/45</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-09-19T17:59:55Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card"><div class="sc-num">83/83</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-10-04T22:56:17Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <h2 id="why-this-site-exists">Why this site exists<a class="anchor" href="#why-this-site-exists" aria-label="Link to this section">#</a></h2>
 <p>The project ships a specification, <code>freak-full-bible.md</code>, that describes the <em>complete</em> language: variants, doctrines, closures, generics, lifetimes, squadron concurrency, probability types, and more. That document is explicit that it describes the destination, not the present.</p>
 <p>The V3 compiler implements a <strong>much smaller</strong> language than the bible. Not a slightly smaller one — a fundamentally smaller one. Roughly a fifth of the bible&#x27;s surface compiles today.</p>
@@ -137,8 +146,9 @@
     </article>
     <footer class="pagefoot">
       <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      45/45 examples match their reviewed expected output. Illustrative snippets
+      83/83 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#why-this-site-exists">Why this site exists</a></li><li><a href="#hello-freak">Hello, FREAK</a></li><li><a href="#the-language-in-one-screen">The language in one screen</a></li><li><a href="#what-makes-v3-unusual">What makes V3 unusual</a></li><li><a href="#two-backends">Two backends</a></li><li><a href="#where-to-go-next">Where to go next</a></li></ul></aside>

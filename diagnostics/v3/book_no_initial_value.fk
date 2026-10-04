@@ -1,0 +1,5 @@
+task main() {
+    pilot fuel: int
+    fuel = 50
+    say fuel
+}

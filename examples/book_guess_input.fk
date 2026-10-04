@@ -1,0 +1,7 @@
+-- Step 1: ask a question and keep the answer.
+task main() {
+    say "Guess the number!"
+
+    pilot guess = ask("Your guess: ")
+    say "You guessed: {guess}"
+}

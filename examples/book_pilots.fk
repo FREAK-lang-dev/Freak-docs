@@ -1,0 +1,18 @@
+-- Pilots: named values.
+task main() {
+    pilot callsign = "Valkyrie-1"     -- the type is inferred: word
+    pilot sorties: int = 12           -- or written out after a colon
+    pilot fuel = 87.5                 -- num
+    pilot cleared = true              -- bool
+
+    say callsign
+    say sorties
+    say fuel
+    say cleared
+
+    -- A pilot you intend to change is declared with `mut`.
+    pilot mut altitude = 0
+    altitude = 3000
+    altitude += 500
+    say altitude
+}

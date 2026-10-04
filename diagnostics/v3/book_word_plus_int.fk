@@ -1,0 +1,4 @@
+task main() {
+    pilot sorties = 12
+    say "sorties: " + sorties
+}

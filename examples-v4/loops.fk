@@ -1,0 +1,19 @@
+-- Three of V3's loops, with break and continue, on V4.
+task main() -> int {
+    pilot total = 0
+
+    repeat 4 times { total += 10 }              -- 40
+
+    pilot n = 0
+    repeat until n >= 6 {
+        n += 1
+        if n == 2 { continue }                  -- skips 2
+        if n == 5 { break }                     -- stops before 5
+        total += n                              -- adds 1, 3, 4
+    }
+
+    pilot drills = 0
+    training arc until drills >= 3 max 10 sessions { drills += 1 }
+
+    give back total + drills                    -- 40 + 8 + 3
+}

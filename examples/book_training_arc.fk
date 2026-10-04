@@ -1,0 +1,16 @@
+-- training arc: a condition loop with a compulsory upper bound.
+task main() {
+    -- Stops when the condition becomes true...
+    pilot mut power = 0
+    training arc until power >= 100 max 8 sessions {
+        power += 20
+    }
+    say power
+
+    -- ...or when the sessions run out, whichever comes first.
+    pilot mut stuck = 0
+    training arc until stuck > 1000 max 4 sessions {
+        stuck += 1
+    }
+    say stuck
+}

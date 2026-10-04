@@ -1,0 +1,173 @@
+{
+  "book_assign_wrong_type": {
+    "contains": [
+      "cannot assign word to int"
+    ]
+  },
+  "book_chained_comparison": {
+    "contains": [
+      "operator '<' does not accept bool and int"
+    ]
+  },
+  "book_compare_int_word": {
+    "contains": [
+      "operator '==' does not accept word and int"
+    ]
+  },
+  "book_duplicate_pilot": {
+    "contains": [
+      "duplicate binding 'fuel' in the same scope"
+    ]
+  },
+  "book_for_each_word": {
+    "contains": [
+      "for each requires a list with a known element type"
+    ]
+  },
+  "book_if_is_not_a_value": {
+    "contains": [
+      "unexpected 'if'",
+      "this token cannot start an expression"
+    ]
+  },
+  "book_if_needs_bool": {
+    "contains": [
+      "if condition must have type bool, got int"
+    ]
+  },
+  "book_if_needs_braces": {
+    "contains": [
+      "expected '{', found 'say'"
+    ]
+  },
+  "book_keyword_name": {
+    "contains": [
+      "expected an identifier for binding name, found 'Max'"
+    ]
+  },
+  "book_missing_give_back": {
+    "contains": [
+      "task 'rank_for' may finish without giving back word"
+    ]
+  },
+  "book_misspelled_say": {
+    "contains": [
+      "unknown binding 'sya'"
+    ]
+  },
+  "book_nested_task": {
+    "contains": [
+      "declaration is valid only at top level"
+    ]
+  },
+  "book_no_initial_value": {
+    "contains": [
+      "expected '=', found 'fuel'"
+    ]
+  },
+  "book_num_into_int": {
+    "contains": [
+      "cannot initialize int binding 'sorties' with num"
+    ]
+  },
+  "book_out_of_scope": {
+    "contains": [
+      "unknown binding 'wing'"
+    ]
+  },
+  "book_reassign_strict": {
+    "flags": [
+      "--strict-borrow"
+    ],
+    "contains": [
+      "This binding was sworn to silence. It cannot be reassigned. 'fuel'"
+    ]
+  },
+  "book_remainder_num": {
+    "contains": [
+      "operator '%' does not accept num and num"
+    ]
+  },
+  "book_repeat_needs_int": {
+    "contains": [
+      "repeat count must have type int, got num"
+    ]
+  },
+  "book_reserved_task_name": {
+    "contains": [
+      "expected an identifier for task name, found 'launch'"
+    ]
+  },
+  "book_semicolon": {
+    "contains": [
+      "unexpected ';'"
+    ]
+  },
+  "book_store_void": {
+    "contains": [
+      "binding initializer cannot have type void"
+    ]
+  },
+  "book_task_name_taken": {
+    "contains": [
+      "callable 'string_reverse' conflicts with another task or extern declaration"
+    ]
+  },
+  "book_unknown_pilot": {
+    "contains": [
+      "unknown binding 'altitude'"
+    ]
+  },
+  "book_unterminated_word": {
+    "contains": [
+      "unterminated string literal",
+      "add a closing quote",
+      "unexpected end of file — missing '}'"
+    ]
+  },
+  "book_void_gives_value": {
+    "contains": [
+      "void task 'greet' cannot give back a value"
+    ]
+  },
+  "book_when_needs_literal": {
+    "contains": [
+      "when case must be a literal or '_'"
+    ]
+  },
+  "book_when_wrong_type": {
+    "contains": [
+      "when case type word does not match target type int"
+    ]
+  },
+  "book_word_plus_int": {
+    "contains": [
+      "operator '+' does not accept word and int"
+    ]
+  },
+  "book_wrong_arg_count": {
+    "contains": [
+      "call to 'add' expects 2 argument(s), got 1"
+    ]
+  },
+  "book_wrong_arg_type": {
+    "contains": [
+      "call to 'add' argument 2 expects int, got word"
+    ]
+  },
+  "book_wrong_return_type": {
+    "contains": [
+      "task 'callsign' must give back int, got word"
+    ]
+  },
+  "book_wrong_type": {
+    "contains": [
+      "cannot initialize int binding 'sorties' with word"
+    ]
+  },
+  "book_give_back_trap": {
+    "contains": [
+      "unexpected 'give back'"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+-- break leaves the loop; continue skips to its next pass.
+task main() {
+    pilot mut n = 0
+    repeat 10 times {
+        n += 1
+        if n % 2 == 0 { continue }     -- skip the even numbers
+        if n > 7 { break }             -- and stop after 7
+        say n
+    }
+    say "stopped at {n}"
+
+    -- In nested loops, both act on the innermost loop only.
+    pilot mut row = 1
+    repeat 3 times {
+        pilot mut column = 1
+        repeat 3 times {
+            if column > row { break }
+            say "{row},{column}"
+            column += 1
+        }
+        row += 1
+    }
+}

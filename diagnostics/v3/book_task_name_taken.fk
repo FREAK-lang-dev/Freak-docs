@@ -1,0 +1,7 @@
+task string_reverse(text: word) -> word {
+    give back text
+}
+
+task main() {
+    say string_reverse("abc")
+}

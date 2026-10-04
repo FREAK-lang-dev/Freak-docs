@@ -1,0 +1,5 @@
+task main() -> int {
+    pilot mut fuel = 50
+    fuel = 75
+    give back fuel
+}

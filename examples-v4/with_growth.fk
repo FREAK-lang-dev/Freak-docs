@@ -1,0 +1,8 @@
+-- `with growth`: the body must change the pilot the condition tests.
+task main() -> int {
+    pilot power = 0
+    training arc until power >= 100 max 8 sessions with growth {
+        power += 20
+    }
+    give back power
+}

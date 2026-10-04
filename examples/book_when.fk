@@ -1,0 +1,35 @@
+-- `when` picks one arm by comparing a value with literals.
+task order_for(code: int) -> word {
+    when code {
+        1 -> give back "launch"
+        2 -> give back "hold"
+        3 -> give back "abort"
+        _ -> give back "unknown order"
+    }
+}
+
+task main() {
+    say order_for(1)
+    say order_for(9)
+
+    pilot rank = "ace"
+    when rank {
+        "rookie" -> say "simulator only"
+        "ace" -> {
+            say "cleared for sortie"
+            say "lead element"
+        }
+        _ -> say "report to the briefing room"
+    }
+
+    -- No arm matches and there is no `_`: nothing runs.
+    when rank {
+        "cadet" -> say "never printed"
+    }
+
+    -- Arms are tried from the top, and the first match wins.
+    when rank {
+        _ -> say "the catch-all came first, so it always wins"
+        "ace" -> say "never printed"
+    }
+}

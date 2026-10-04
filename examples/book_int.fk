@@ -1,0 +1,16 @@
+-- int: a 64-bit signed whole number.
+task main() {
+    say 7 + 2
+    say 7 - 2
+    say 7 * 2
+    say 7 / 2            -- division between ints drops the fraction
+    say 7 % 2            -- and % gives the remainder
+    say -7 / 2           -- rounding is toward zero, not downward
+    say -7 % 2           -- so the remainder takes the sign of the left side
+    say 1 + 2 * 3        -- * / % bind tighter than + -
+    say (1 + 2) * 3
+
+    pilot largest: int = 9223372036854775807
+    say largest
+    say largest + 1      -- past the largest value, V3 wraps around silently
+}

@@ -1,0 +1,23 @@
+-- repeat N times
+task main() {
+    repeat 3 times {
+        say "Valkyries, sound off"
+    }
+
+    -- There is no loop counter; keep one yourself when you need it.
+    pilot mut number = 1
+    repeat 3 times {
+        say "Valkyrie-{number}"
+        number += 1
+    }
+
+    -- The count is worked out once, before the first pass.
+    pilot mut passes = 2
+    repeat passes times {
+        passes += 10
+        say "pass (passes is now {passes})"
+    }
+
+    -- Zero or a negative count means the body never runs.
+    repeat 0 times { say "never printed" }
+}

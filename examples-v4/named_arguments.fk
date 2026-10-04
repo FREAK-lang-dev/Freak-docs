@@ -1,0 +1,8 @@
+-- V4 lets a call name its arguments, in any order.
+task offset(n: int, by: int) -> int {
+    give back n + by
+}
+
+task main() -> int {
+    give back offset(by: 1, n: 10)
+}

@@ -1,0 +1,5 @@
+task main() -> int {
+    pilot sorties = 12
+    say sorties
+    give back 0
+}

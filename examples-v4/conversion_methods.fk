@@ -1,0 +1,6 @@
+task main() -> int {
+    pilot sorties = 12
+    pilot average: num = sorties.to_num() / 5.0
+    if average > 2.0 { give back 1 }
+    give back 0
+}
