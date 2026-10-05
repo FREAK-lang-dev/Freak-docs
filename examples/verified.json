@@ -6,16 +6,16 @@
     "release": "v0.14.2",
     "repository": "FREAK-lang-dev/Freak-lang",
     "compiler_commit": "cedc022a2fca6b0ad8b6ea4b3c93ab3099006cc0",
-    "archive": "freak-windows-x64.zip",
-    "archive_sha256": "d045ae257e4149d4386650b17615458b22282f162fef399858007fc400830b96",
-    "compiler_sha256": "7d4dce4c5d2e74c220da0e5da1a49cb069c9107be029f10e55738d6b59260dd3"
+    "archive": "freak-linux-x64.tar.gz",
+    "archive_sha256": "f1a81c1dc411d642081946cd9733bfd76566fc2ec46bfbc1e45c21002a3a7a32",
+    "compiler_sha256": "253f1aab65aef20fb7954a5afead30405f8e6d40907444be025d274e2bf976e3"
   },
-  "input_sha256": "7cefaf9dbe0871236418fc7c22e9a2873927b2e1d8f85aa85f4f32aaffb584f7",
+  "input_sha256": "412f4fbff8bdd07b5b75c5285f71cc1b84e94d2571bd2816421ed891d80be174",
   "compiler": "freak 0.14.2 (Maverick)",
-  "generated_utc": "2026-09-19T17:59:55Z",
-  "total": 45,
-  "compiled": 45,
-  "passed": 45,
+  "generated_utc": "2026-10-05T00:02:10Z",
+  "total": 83,
+  "compiled": 83,
+  "passed": 83,
   "examples": {
     "anime_operators": {
       "name": "anime_operators",
@@ -28,7 +28,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16525
+      "elapsed_ms": 6733
     },
     "annotations": {
       "name": "annotations",
@@ -41,7 +41,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16567
+      "elapsed_ms": 6628
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -54,7 +54,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16758
+      "elapsed_ms": 6768
     },
     "array_literal": {
       "name": "array_literal",
@@ -67,7 +67,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16574
+      "elapsed_ms": 6527
     },
     "arrays": {
       "name": "arrays",
@@ -80,7 +80,547 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16772
+      "elapsed_ms": 6510
+    },
+    "book_bool": {
+      "name": "book_bool",
+      "file": "book_bool.fk",
+      "source": "-- bool: true or false.\ntask announce(tag: word, value: bool) -> bool {\n    say \"checking {tag}\"\n    give back value\n}\n\ntask main() {\n    pilot fueled = true\n    pilot armed = false\n\n    say fueled and armed\n    say fueled or armed\n    say not armed\n    say 3 < 5\n    say \"A-01\" == \"A-01\"\n\n    -- `not` binds tightest, then `and`, then `or`.\n    say true or false and false        -- true or (false and false)\n    say not false and false            -- (not false) and false\n\n    -- Three pairs of literals mean the same two values.\n    say yes\n    say hai\n    say iie\n\n    -- `and` and `or` stop as soon as the answer is known.\n    if announce(\"fuel\", false) and announce(\"weapons\", true) {\n        say \"launch\"\n    }\n    if announce(\"radar\", true) or announce(\"visual\", true) {\n        say \"contact\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "false\ntrue\ntrue\ntrue\ntrue\ntrue\nfalse\ntrue\ntrue\nfalse\nchecking fuel\nchecking radar\ncontact",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13634
+    },
+    "book_break_continue": {
+      "name": "book_break_continue",
+      "file": "book_break_continue.fk",
+      "source": "-- break leaves the loop; continue skips to its next pass.\ntask main() {\n    pilot mut n = 0\n    repeat 10 times {\n        n += 1\n        if n % 2 == 0 { continue }     -- skip the even numbers\n        if n > 7 { break }             -- and stop after 7\n        say n\n    }\n    say \"stopped at {n}\"\n\n    -- In nested loops, both act on the innermost loop only.\n    pilot mut row = 1\n    repeat 3 times {\n        pilot mut column = 1\n        repeat 3 times {\n            if column > row { break }\n            say \"{row},{column}\"\n            column += 1\n        }\n        row += 1\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "1\n3\n5\n7\nstopped at 9\n1,1\n2,1\n2,2\n3,1\n3,2\n3,3",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 14481
+    },
+    "book_by_value": {
+      "name": "book_by_value",
+      "file": "book_by_value.fk",
+      "source": "-- A task receives its own copy of each number, word and bool it is given.\ntask refuel(level: int) -> int {\n    level = level + 40          -- changes the copy\n    give back level\n}\n\ntask main() {\n    pilot fuel = 50\n    pilot after = refuel(fuel)\n\n    say fuel                    -- still 50\n    say after\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "50\n90",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 14832
+    },
+    "book_collatz": {
+      "name": "book_collatz",
+      "file": "book_collatz.fk",
+      "source": "-- collatz.fk: how many steps does a number take to reach 1?\n-- Halve it when it is even; otherwise triple it and add one.\ntask collatz_steps(start: int) -> int {\n    pilot mut n = start\n    pilot mut steps = 0\n\n    training arc until n == 1 max 1000 sessions {\n        if n % 2 == 0 {\n            n = n / 2\n        } else {\n            n = 3 * n + 1\n        }\n        steps += 1\n    }\n\n    if n != 1 { give back -1 }         -- ran out of sessions\n    give back steps\n}\n\ntask main() {\n    pilot mut start = 1\n    pilot mut longest = 0\n    pilot mut longest_start = 1\n\n    repeat 30 times {\n        pilot steps = collatz_steps(start)\n        if steps > longest {\n            longest = steps\n            longest_start = start\n        }\n        start += 1\n    }\n\n    pilot six = collatz_steps(6)\n    pilot twenty_seven = collatz_steps(27)\n    say \"6 takes {six} steps\"\n    say \"27 takes {twenty_seven} steps\"\n    say \"below 31, the longest chain starts at {longest_start} ({longest} steps)\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "6 takes 8 steps\n27 takes 111 steps\nbelow 31, the longest chain starts at 27 (111 steps)",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 14550
+    },
+    "book_comments": {
+      "name": "book_comments",
+      "file": "book_comments.fk",
+      "source": "-- A comment starts with two dashes and runs to the end of the line.\n-- There is no block comment; start every line with its own dashes.\n\ntask main() {\n    say \"comments are for people\"   -- a comment may follow code\n    -- say \"this line never runs\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "comments are for people",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13364
+    },
+    "book_constants": {
+      "name": "book_constants",
+      "file": "book_constants.fk",
+      "source": "-- Pilots declared outside every task are visible to all of them.\nfixed pilot MAX_SORTIES: int = 3\nfixed pilot SQUADRON: word = \"Valkyries\"\n\ntask briefing() {\n    say \"{SQUADRON}: at most {MAX_SORTIES} sorties today\"\n}\n\ntask main() {\n    briefing()\n    say MAX_SORTIES * 2\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Valkyries: at most 3 sorties today\n6",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12930
+    },
+    "book_contextual_words": {
+      "name": "book_contextual_words",
+      "file": "book_contextual_words.fk",
+      "source": "-- These words are used by the language and are not reserved.\n-- The program builds. It is here as a warning, not as a model.\ntask twice(int: int) -> int {\n    pilot give = int * 2\n    give back give\n}\n\ntask main() {\n    pilot mut training = 0\n    pilot arc = 3\n    training arc until training >= arc max 10 sessions {\n        training += 1\n    }\n    pilot ask = twice(training)\n    say \"training {training}, ask {ask}\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "training 3, ask 6",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 14166
+    },
+    "book_conversions": {
+      "name": "book_conversions",
+      "file": "book_conversions.fk",
+      "source": "-- Moving a value from one type to another is always written out.\ntask main() {\n    pilot sorties: int = 12\n    pilot average: num = 3.75\n\n    say sorties.to_num() / 5.0      -- int  -> num\n    say average.to_int()            -- num  -> int, dropping the fraction\n    say \"sorties: \" + sorties.to_word()\n    say \"average: \" + average.to_word()\n    say \"ready: \" + true.to_word()\n\n    -- The one conversion that happens by itself: an int where a num is wanted.\n    pilot thrust: num = 3\n    say thrust / 2\n\n    say \"42\".to_int() + 1           -- word -> int\n    say \"2.5\".to_num() * 2.0        -- word -> num\n    say \"forty-two\".to_int()        -- not a number: quietly 0\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "2.4\n3\nsorties: 12\naverage: 3.75\nready: true\n1.5\n43\n5\n0",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12483
+    },
+    "book_exit_code": {
+      "name": "book_exit_code",
+      "file": "book_exit_code.fk",
+      "source": "-- When `main` gives back an int, that number is the program's exit code.\ntask main() -> int {\n    say \"preflight failed: fuel line\"\n    give back 3\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "preflight failed: fuel line",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 3,
+      "expected_exit_code": 3,
+      "strict_borrow": true,
+      "elapsed_ms": 13378
+    },
+    "book_fizzbuzz": {
+      "name": "book_fizzbuzz",
+      "file": "book_fizzbuzz.fk",
+      "source": "-- fizzbuzz.fk: count from 1 to 15. Multiples of 3 say Fizz, multiples of 5\n-- say Buzz, and multiples of both say FizzBuzz.\ntask label(n: int) -> word {\n    if n % 15 == 0 { give back \"FizzBuzz\" }\n    if n % 3 == 0 { give back \"Fizz\" }\n    if n % 5 == 0 { give back \"Buzz\" }\n    give back n.to_word()\n}\n\ntask main() {\n    pilot mut n = 1\n    repeat 15 times {\n        say label(n)\n        n += 1\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12816
+    },
+    "book_for_each": {
+      "name": "book_for_each",
+      "file": "book_for_each.fk",
+      "source": "-- for each: visit every element of a list, in order.\ntask main() {\n    pilot squadron = [\"Takeru\", \"Meiya\", \"Sumika\"]\n\n    for each name in squadron {\n        say \"{name}, report in\"\n    }\n\n    -- The loop gives you the element, not its position. Count it yourself.\n    pilot mut position = 1\n    for each name in squadron {\n        say \"{position}. {name}\"\n        position += 1\n    }\n\n    -- break and continue work here too.\n    pilot readings = [12, 0, 7, 0, 30, 99]\n    pilot mut total = 0\n    for each reading in readings {\n        if reading == 0 { continue }\n        if reading > 50 { break }\n        total += reading\n    }\n    say total\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Takeru, report in\nMeiya, report in\nSumika, report in\n1. Takeru\n2. Meiya\n3. Sumika\n49",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13285
+    },
+    "book_give_back": {
+      "name": "book_give_back",
+      "file": "book_give_back.fk",
+      "source": "-- `give back` leaves the task at once, from wherever it is.\ntask rank_for(sorties: int) -> word {\n    if sorties >= 50 { give back \"veteran\" }\n    if sorties >= 10 { give back \"regular\" }\n    give back \"rookie\"\n}\n\n-- In a task with no return type, a bare `give back` simply leaves early.\ntask announce(message: word) {\n    if message == \"\" { give back }\n    say message.to_upper()\n}\n\ntask main() {\n    say rank_for(64)\n    say rank_for(12)\n    say rank_for(3)\n\n    announce(\"\")\n    announce(\"all units, stand by\")\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "veteran\nregular\nrookie\nALL UNITS, STAND BY",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13380
+    },
+    "book_guess": {
+      "name": "book_guess",
+      "file": "book_guess.fk",
+      "source": "-- guess.fk: the finished guessing game.\n--\n-- Run it with no arguments to play against the clock's choice of secret.\n-- Pass a number (`./guess 42`) to fix the secret, which is how this\n-- program is tested.\n\ntask secret_number() -> int {\n    if process::args_count() > 1 {\n        pilot chosen = process::arg(1).parse_int()\n        if parse_status() == 0 { give back chosen }\n        parse_clear_status()            -- not a number: fall back to the clock\n    }\n    pilot micros = time::monotonic_ns() / 1000\n    give back micros % 100 + 1\n}\n\ntask main() {\n    say \"Guess the number! It is between 1 and 100.\"\n\n    pilot secret = secret_number()\n    pilot mut attempts = 0\n    pilot mut solved = false\n\n    repeat until solved {\n        pilot text = ask(\"Your guess: \")\n\n        -- An empty line means the input ended (or the player just pressed\n        -- Enter). Stop instead of asking forever.\n        if text.trim() == \"\" {\n            say \"No guess given. The number was {secret}.\"\n            break\n        }\n\n        pilot guess = text.trim().parse_int()\n        if parse_status() != 0 {\n            parse_clear_status()\n            say \"'{text}' is not a whole number. Try again.\"\n            continue\n        }\n\n        attempts += 1\n\n        if guess < secret {\n            say \"Too low.\"\n        } else if guess > secret {\n            say \"Too high.\"\n        } else {\n            solved = true\n        }\n    }\n\n    if solved {\n        if attempts == 1 {\n            say \"You got it in one guess!\"\n        } else {\n            say \"You got it in {attempts} guesses!\"\n        }\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Guess the number! It is between 1 and 100.\nYour guess: Too high.\nYour guess: 'abc' is not a whole number. Try again.\nYour guess: Too low.\nYour guess: Too low.\nYour guess: You got it in 4 guesses!",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "stdin": "50\nabc\n25\n37\n42\n",
+      "args": [
+        "42"
+      ],
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12977
+    },
+    "book_guess_compare": {
+      "name": "book_guess_compare",
+      "file": "book_guess_compare.fk",
+      "source": "-- Step 4: compare one guess with the secret.\ntask main() {\n    pilot secret = 42\n\n    pilot text = ask(\"Your guess: \")\n    pilot guess = text.trim().parse_int()\n\n    if guess < secret {\n        say \"Too low.\"\n    } else if guess > secret {\n        say \"Too high.\"\n    } else {\n        say \"You got it!\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Your guess: Too high.",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "stdin": "50\n",
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12665
+    },
+    "book_guess_input": {
+      "name": "book_guess_input",
+      "file": "book_guess_input.fk",
+      "source": "-- Step 1: ask a question and keep the answer.\ntask main() {\n    say \"Guess the number!\"\n\n    pilot guess = ask(\"Your guess: \")\n    say \"You guessed: {guess}\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Guess the number!\nYour guess: You guessed: 50",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "stdin": "50\n",
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13015
+    },
+    "book_guess_parse": {
+      "name": "book_guess_parse",
+      "file": "book_guess_parse.fk",
+      "source": "-- Step 2: turn the typed text into a number, and notice when it is not one.\ntask main() {\n    pilot text = ask(\"Your guess: \")\n\n    pilot guess = text.trim().parse_int()\n    if parse_status() != 0 {\n        parse_clear_status()\n        say \"'{text}' is not a whole number.\"\n    } else {\n        pilot doubled = guess * 2\n        say \"Twice your guess is {doubled}.\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Your guess: 'fifty' is not a whole number.",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "stdin": "fifty\n",
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12633
+    },
+    "book_guess_secret": {
+      "name": "book_guess_secret",
+      "file": "book_guess_secret.fk",
+      "source": "-- Step 3: a secret number between 1 and 100.\n-- V3 has no random-number library, so the clock supplies the unpredictability.\ntask secret_number() -> int {\n    pilot micros = time::monotonic_ns() / 1000\n    give back micros % 100 + 1\n}\n\ntask main() {\n    pilot secret = secret_number()\n    if secret >= 1 and secret <= 100 {\n        say \"The secret is somewhere from 1 to 100.\"\n    } else {\n        say \"Something is wrong with the secret: {secret}\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "The secret is somewhere from 1 to 100.",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12451
+    },
+    "book_hello": {
+      "name": "book_hello",
+      "file": "book_hello.fk",
+      "source": "-- hello.fk: the smallest complete FREAK program.\ntask main() {\n    say \"Hello, FREAK!\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Hello, FREAK!",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13111
+    },
+    "book_if": {
+      "name": "book_if",
+      "file": "book_if.fk",
+      "source": "-- if / else if / else\ntask status(fuel: int) -> word {\n    if fuel > 75 {\n        give back \"full\"\n    } else if fuel > 25 {\n        give back \"cruising\"\n    } else if fuel > 0 {\n        give back \"bingo fuel\"\n    } else {\n        give back \"dry\"\n    }\n}\n\ntask main() {\n    say status(90)\n    say status(40)\n    say status(10)\n    say status(0)\n\n    pilot fuel = 40\n    pilot hostile = true\n    if fuel > 25 and not hostile {\n        say \"continue patrol\"\n    } else {\n        say \"return to base\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "full\ncruising\nbingo fuel\ndry\nreturn to base",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13028
+    },
+    "book_int": {
+      "name": "book_int",
+      "file": "book_int.fk",
+      "source": "-- int: a 64-bit signed whole number.\ntask main() {\n    say 7 + 2\n    say 7 - 2\n    say 7 * 2\n    say 7 / 2            -- division between ints drops the fraction\n    say 7 % 2            -- and % gives the remainder\n    say -7 / 2           -- rounding is toward zero, not downward\n    say -7 % 2           -- so the remainder takes the sign of the left side\n    say 1 + 2 * 3        -- * / % bind tighter than + -\n    say (1 + 2) * 3\n\n    pilot largest: int = 9223372036854775807\n    say largest\n    say largest + 1      -- past the largest value, V3 wraps around silently\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "9\n5\n14\n3\n1\n-3\n-1\n7\n9\n9223372036854775807\n-9223372036854775808",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12851
+    },
+    "book_keyword_case": {
+      "name": "book_keyword_case",
+      "file": "book_keyword_case.fk",
+      "source": "-- Single-word keywords work only in lowercase. The truth literals are the\n-- dangerous case: a capitalised spelling is accepted, and it does not mean\n-- what it says.\ntask main() {\n    pilot lowercase = true\n    pilot uppercase = TRUE\n\n    say lowercase\n    say uppercase\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "true\nfalse",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13293
+    },
+    "book_loop_forever": {
+      "name": "book_loop_forever",
+      "file": "book_loop_forever.fk",
+      "source": "-- A loop with no natural end, left with `break`.\ntask main() {\n    pilot mut altitude = 0\n\n    repeat until false {\n        altitude += 2500\n        say \"climbing through {altitude}\"\n        if altitude >= 10000 { break }\n    }\n\n    say \"level at {altitude}\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "climbing through 2500\nclimbing through 5000\nclimbing through 7500\nclimbing through 10000\nlevel at 10000",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12609
+    },
+    "book_no_entry": {
+      "name": "book_no_entry",
+      "file": "book_no_entry.fk",
+      "source": "-- The entry point is the task named `main`, in lowercase.\n-- This file has no such task, so the program starts, does nothing, and ends.\ntask Main() {\n    say \"never printed\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13367
+    },
+    "book_num": {
+      "name": "book_num",
+      "file": "book_num.fk",
+      "source": "-- num: a 64-bit floating-point number.\ntask main() {\n    pilot thrust = 2.5\n    say thrust * 2.0       -- 5, printed without a trailing .0\n    say 10.0 / 4.0\n    say 1.0 / 3.0          -- at most ten significant digits are printed\n    say 0.1 + 0.2\n    say 0.1 + 0.2 == 0.3   -- false: the stored values differ beyond the digits shown\n\n    -- An int and a num can be mixed; the result is a num.\n    say 7 / 2\n    say 7 / 2.0\n    say 3 * 1.5\n\n    say 123456789012.5     -- large and small values switch to scientific notation\n    say 0.000001234\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "5\n2.5\n0.3333333333\n0.3\nfalse\n3\n3.5\n4.5\n1.23456789e+11\n1.234e-06",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13051
+    },
+    "book_order": {
+      "name": "book_order",
+      "file": "book_order.fk",
+      "source": "-- Tasks may be declared in any order, and may call themselves.\ntask main() {\n    say factorial(5)\n    say is_even(10)\n}\n\ntask factorial(n: int) -> int {\n    if n <= 1 { give back 1 }\n    give back n * factorial(n - 1)\n}\n\ntask is_even(n: int) -> bool {\n    if n == 0 { give back true }\n    give back is_odd(n - 1)\n}\n\ntask is_odd(n: int) -> bool {\n    if n == 0 { give back false }\n    give back is_even(n - 1)\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "120\ntrue",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13325
+    },
+    "book_pilots": {
+      "name": "book_pilots",
+      "file": "book_pilots.fk",
+      "source": "-- Pilots: named values.\ntask main() {\n    pilot callsign = \"Valkyrie-1\"     -- the type is inferred: word\n    pilot sorties: int = 12           -- or written out after a colon\n    pilot fuel = 87.5                 -- num\n    pilot cleared = true              -- bool\n\n    say callsign\n    say sorties\n    say fuel\n    say cleared\n\n    -- A pilot you intend to change is declared with `mut`.\n    pilot mut altitude = 0\n    altitude = 3000\n    altitude += 500\n    say altitude\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Valkyrie-1\n12\n87.5\ntrue\n3500",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13577
+    },
+    "book_pipe": {
+      "name": "book_pipe",
+      "file": "book_pipe.fk",
+      "source": "-- |> passes the value on its left as the first argument of the call on its right.\ntask double(n: int) -> int { give back n * 2 }\ntask offset(n: int, by: int) -> int { give back n + by }\n\ntask main() {\n    say offset(double(5), 1)          -- nested: read from the inside out\n    say 5 |> double() |> offset(1)    -- piped: read from left to right\n\n    say 5 |> double()                 -- double(5)\n    say 5 |> offset(3)                -- offset(5, 3)\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "11\n11\n10\n8",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13128
+    },
+    "book_repeat_times": {
+      "name": "book_repeat_times",
+      "file": "book_repeat_times.fk",
+      "source": "-- repeat N times\ntask main() {\n    repeat 3 times {\n        say \"Valkyries, sound off\"\n    }\n\n    -- There is no loop counter; keep one yourself when you need it.\n    pilot mut number = 1\n    repeat 3 times {\n        say \"Valkyrie-{number}\"\n        number += 1\n    }\n\n    -- The count is worked out once, before the first pass.\n    pilot mut passes = 2\n    repeat passes times {\n        passes += 10\n        say \"pass (passes is now {passes})\"\n    }\n\n    -- Zero or a negative count means the body never runs.\n    repeat 0 times { say \"never printed\" }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Valkyries, sound off\nValkyries, sound off\nValkyries, sound off\nValkyrie-1\nValkyrie-2\nValkyrie-3\npass (passes is now 12)\npass (passes is now 22)",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12936
+    },
+    "book_repeat_until": {
+      "name": "book_repeat_until",
+      "file": "book_repeat_until.fk",
+      "source": "-- repeat until CONDITION: the test comes first, and the loop stops\n-- when the condition is true.\ntask main() {\n    pilot mut countdown = 3\n    repeat until countdown == 0 {\n        say countdown\n        countdown -= 1\n    }\n    say \"launch\"\n\n    -- Already true: the body does not run even once.\n    pilot mut laps = 0\n    repeat until true {\n        laps += 1\n    }\n    say laps\n\n    -- How many times can 1000 be halved before it reaches 1?\n    pilot mut value = 1000\n    pilot mut halvings = 0\n    repeat until value <= 1 {\n        value = value / 2\n        halvings += 1\n    }\n    say halvings\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "3\n2\n1\nlaunch\n0\n9",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12875
+    },
+    "book_scope": {
+      "name": "book_scope",
+      "file": "book_scope.fk",
+      "source": "-- A pilot lives from its declaration to the end of the block it is in.\ntask main() {\n    pilot squadron = \"Valkyries\"\n\n    if true {\n        pilot wing = \"A-01\"            -- exists only inside these braces\n        say \"{squadron} / {wing}\"\n\n        pilot squadron = \"Isumi\"       -- a new pilot that hides the outer one\n        say squadron\n    }\n\n    say squadron                       -- the outer pilot was never changed\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Valkyries / A-01\nIsumi\nValkyries",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13073
+    },
+    "book_shared_pilot": {
+      "name": "book_shared_pilot",
+      "file": "book_shared_pilot.fk",
+      "source": "-- A top-level pilot is shared by every task in the file.\npilot mut sorties_flown = 0\n\ntask scramble(callsign: word) {\n    sorties_flown += 1\n    say \"{callsign} away (sortie {sorties_flown})\"\n}\n\ntask main() {\n    scramble(\"Valkyrie-1\")\n    scramble(\"Valkyrie-2\")\n    say sorties_flown\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Valkyrie-1 away (sortie 1)\nValkyrie-2 away (sortie 2)\n2",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13104
+    },
+    "book_statements": {
+      "name": "book_statements",
+      "file": "book_statements.fk",
+      "source": "-- A call can stand on its own line; its result is simply dropped.\ntask log_and_count(message: word) -> int {\n    say message\n    give back message.length()\n}\n\ntask main() {\n    log_and_count(\"contact, bearing 270\")\n    pilot length = log_and_count(\"engaging\")\n    say length\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "contact, bearing 270\nengaging\n8",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12663
+    },
+    "book_tasks": {
+      "name": "book_tasks",
+      "file": "book_tasks.fk",
+      "source": "-- Tasks: named pieces of work.\ntask greet() {\n    say \"Valkyries, launch.\"\n}\n\ntask report(callsign: word, sorties: int) {\n    say \"{callsign} has flown {sorties} sorties\"\n}\n\ntask add(a: int, b: int) -> int {\n    give back a + b\n}\n\ntask area(width: num, height: num) -> num {\n    give back width * height\n}\n\ntask main() {\n    greet()\n    report(\"Valkyrie-1\", 12)\n\n    pilot total = add(20, 22)\n    say total\n    say add(add(1, 2), 3)        -- a call can be an argument of another call\n\n    say area(3, 2.5)             -- the int 3 is accepted where a num is wanted\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Valkyries, launch.\nValkyrie-1 has flown 12 sorties\n42\n6\n7.5",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13277
+    },
+    "book_toplevel_main": {
+      "name": "book_toplevel_main",
+      "file": "book_toplevel_main.fk",
+      "source": "-- With a `main`, the top level is for declarations.\npilot squadron = \"Valkyries\"\n\nsay \"this top-level statement is never run\"\n\ntask main() {\n    say \"main sees {squadron}\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "main sees Valkyries",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12918
+    },
+    "book_training_arc": {
+      "name": "book_training_arc",
+      "file": "book_training_arc.fk",
+      "source": "-- training arc: a condition loop with a compulsory upper bound.\ntask main() {\n    -- Stops when the condition becomes true...\n    pilot mut power = 0\n    training arc until power >= 100 max 8 sessions {\n        power += 20\n    }\n    say power\n\n    -- ...or when the sessions run out, whichever comes first.\n    pilot mut stuck = 0\n    training arc until stuck > 1000 max 4 sessions {\n        stuck += 1\n    }\n    say stuck\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "100\n4",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13680
+    },
+    "book_two_word_case": {
+      "name": "book_two_word_case",
+      "file": "book_two_word_case.fk",
+      "source": "-- V3 accepts its two-word keywords in any letter case.\n-- Write them in lowercase anyway.\ntask double(n: int) -> int {\n    Give Back n * 2\n}\n\ntask main() {\n    pilot mut total = 0\n    For Each reading in [1, 2, 3] {\n        total += reading\n    }\n    Training Arc until total >= 10 max 5 sessions {\n        total += 2\n    }\n    say double(total)\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "20",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 13465
+    },
+    "book_when": {
+      "name": "book_when",
+      "file": "book_when.fk",
+      "source": "-- `when` picks one arm by comparing a value with literals.\ntask order_for(code: int) -> word {\n    when code {\n        1 -> give back \"launch\"\n        2 -> give back \"hold\"\n        3 -> give back \"abort\"\n        _ -> give back \"unknown order\"\n    }\n}\n\ntask main() {\n    say order_for(1)\n    say order_for(9)\n\n    pilot rank = \"ace\"\n    when rank {\n        \"rookie\" -> say \"simulator only\"\n        \"ace\" -> {\n            say \"cleared for sortie\"\n            say \"lead element\"\n        }\n        _ -> say \"report to the briefing room\"\n    }\n\n    -- No arm matches and there is no `_`: nothing runs.\n    when rank {\n        \"cadet\" -> say \"never printed\"\n    }\n\n    -- Arms are tried from the top, and the first match wins.\n    when rank {\n        _ -> say \"the catch-all came first, so it always wins\"\n        \"ace\" -> say \"never printed\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "launch\nunknown order\ncleared for sortie\nlead element\nthe catch-all came first, so it always wins",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12454
+    },
+    "book_words_intro": {
+      "name": "book_words_intro",
+      "file": "book_words_intro.fk",
+      "source": "-- word: a piece of text.\ntask main() {\n    pilot title = \"Muv\" + \"-\" + \"Luv\"      -- + joins two words\n    say title\n    say title.length()                     -- 7: one for each of these letters\n\n    pilot mut system = \"XM\"\n    system += \"3\"                          -- += appends\n    say system\n\n    say title == \"Muv-Luv\"                 -- words compare with == and !=\n\n    -- A name in braces is replaced by its value. It works for\n    -- word, int, num and bool pilots.\n    pilot sorties = 12\n    pilot ratio = 0.75\n    pilot cleared = true\n    say \"{title}: {sorties} sorties, ratio {ratio}, cleared {cleared}\"\n\n    -- Braces around anything that is not a name are printed as they are.\n    say \"{sorties + 1} is not worked out\"\n\n    -- A backslash introduces a character that is awkward to type.\n    say \"tab:[\\t] quote:[\\\"] backslash:[\\\\]\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "Muv-Luv\n7\nXM3\ntrue\nMuv-Luv: 12 sorties, ratio 0.75, cleared true\n{sorties + 1} is not worked out\ntab:[\t] quote:[\"] backslash:[\\]",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 12116
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -93,7 +633,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16772
+      "elapsed_ms": 6192
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -106,7 +646,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17869
+      "elapsed_ms": 6528
     },
     "colour": {
       "name": "colour",
@@ -119,7 +659,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17963
+      "elapsed_ms": 6547
     },
     "control_if": {
       "name": "control_if",
@@ -132,7 +672,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17873
+      "elapsed_ms": 6258
     },
     "control_loops": {
       "name": "control_loops",
@@ -145,7 +685,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17601
+      "elapsed_ms": 6242
     },
     "control_when": {
       "name": "control_when",
@@ -158,7 +698,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17747
+      "elapsed_ms": 6464
     },
     "eventually": {
       "name": "eventually",
@@ -171,7 +711,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17754
+      "elapsed_ms": 6331
     },
     "extern": {
       "name": "extern",
@@ -184,7 +724,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17573
+      "elapsed_ms": 6072
     },
     "files": {
       "name": "files",
@@ -197,7 +737,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17272
+      "elapsed_ms": 5907
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -210,7 +750,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17523
+      "elapsed_ms": 6393
     },
     "hello": {
       "name": "hello",
@@ -223,7 +763,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17050
+      "elapsed_ms": 6404
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -236,7 +776,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17175
+      "elapsed_ms": 6579
     },
     "inference": {
       "name": "inference",
@@ -249,7 +789,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17085
+      "elapsed_ms": 6542
     },
     "interpolation": {
       "name": "interpolation",
@@ -262,7 +802,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16972
+      "elapsed_ms": 6055
     },
     "lists": {
       "name": "lists",
@@ -275,7 +815,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17548
+      "elapsed_ms": 6481
     },
     "module_pattern": {
       "name": "module_pattern",
@@ -288,7 +828,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17210
+      "elapsed_ms": 6107
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -301,7 +841,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 24988
+      "elapsed_ms": 6080
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -314,7 +854,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 17077
+      "elapsed_ms": 6373
     },
     "operators": {
       "name": "operators",
@@ -327,7 +867,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 16697
+      "elapsed_ms": 6618
     },
     "pipe": {
       "name": "pipe",
@@ -340,7 +880,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 22758
+      "elapsed_ms": 6312
     },
     "process_time": {
       "name": "process_time",
@@ -348,12 +888,16 @@
       "source": "-- Process and clock builtins.\n-- Note: `process::args()` is deliberately rejected by V3. Use the\n-- indexed pair `process::args_count()` / `process::arg(i)` instead.\ntask main() -> void {\n    pilot argc: int = process::args_count()\n    say word_from_int(argc)\n\n    pilot mut i: int = 0\n    repeat argc times {\n        say \"arg {i}: \" + process::arg(i)\n        i += 1\n    }\n\n    pilot started: int = time::now_ms()\n    pilot mut spin: int = 0\n    repeat 1000 times {\n        spin += 1\n    }\n    pilot elapsed: int = time::now_ms() - started\n    say word_from_bool(elapsed >= 0)\n    say word_from_bool(process::env(\"PATH\").length() > 0)\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "3\narg 0: /build/process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
+      "stdout": "3\narg 0: /build/process_time\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
       "errors": [],
       "backend": "llvm",
       "passed": true,
+      "args": [
+        "alpha",
+        "bravo"
+      ],
       "exit_code": 0,
-      "elapsed_ms": 22537
+      "elapsed_ms": 6270
     },
     "recursion": {
       "name": "recursion",
@@ -366,7 +910,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 22292
+      "elapsed_ms": 6181
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -379,7 +923,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 22283
+      "elapsed_ms": 6135
     },
     "same_line": {
       "name": "same_line",
@@ -392,7 +936,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 22130
+      "elapsed_ms": 6226
     },
     "shapes": {
       "name": "shapes",
@@ -405,7 +949,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 22800
+      "elapsed_ms": 6179
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -418,7 +962,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14661
+      "elapsed_ms": 6415
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -431,7 +975,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14916
+      "elapsed_ms": 6074
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -444,7 +988,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14233
+      "elapsed_ms": 6197
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -457,7 +1001,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14608
+      "elapsed_ms": 5973
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -470,7 +1014,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14432
+      "elapsed_ms": 6452
     },
     "strings": {
       "name": "strings",
@@ -483,7 +1027,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 13922
+      "elapsed_ms": 6909
     },
     "tasks": {
       "name": "tasks",
@@ -496,7 +1040,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14089
+      "elapsed_ms": 6474
     },
     "toplevel": {
       "name": "toplevel",
@@ -509,7 +1053,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14083
+      "elapsed_ms": 6643
     },
     "training_arc": {
       "name": "training_arc",
@@ -522,7 +1066,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14332
+      "elapsed_ms": 6582
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -535,7 +1079,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 13788
+      "elapsed_ms": 6733
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -548,7 +1092,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14445
+      "elapsed_ms": 6362
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -561,7 +1105,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11097
+      "elapsed_ms": 6637
     },
     "variables": {
       "name": "variables",
@@ -574,7 +1118,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7409
+      "elapsed_ms": 6305
     },
     "word_builder": {
       "name": "word_builder",
@@ -587,7 +1131,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7875
+      "elapsed_ms": 3977
     },
     "wordcount": {
       "name": "wordcount",
@@ -600,7 +1144,341 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8099
+      "elapsed_ms": 3529
+    }
+  },
+  "diagnostics": {
+    "book_assign_wrong_type": {
+      "name": "book_assign_wrong_type",
+      "file": "book_assign_wrong_type.fk",
+      "source": "task main() {\n    pilot mut sorties = 12\n    sorties = \"thirteen\"\n    say sorties\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: cannot assign word to int (line 3)\n --> book_assign_wrong_type.fk:3:1\n3 |     sorties = \"thirteen\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_chained_comparison": {
+      "name": "book_chained_comparison",
+      "file": "book_chained_comparison.fk",
+      "source": "task main() {\n    pilot fuel = 40\n    if 25 < fuel < 75 {\n        say \"cruising\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: operator '<' does not accept bool and int (line 3)\n --> book_chained_comparison.fk:3:1\n3 |     if 25 < fuel < 75 {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_compare_int_word": {
+      "name": "book_compare_int_word",
+      "file": "book_compare_int_word.fk",
+      "source": "task main() {\n    pilot guess = \"42\"\n    pilot secret = 42\n    if guess == secret {\n        say \"You got it!\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: operator '==' does not accept word and int (line 4)\n --> book_compare_int_word.fk:4:1\n4 |     if guess == secret {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_duplicate_pilot": {
+      "name": "book_duplicate_pilot",
+      "file": "book_duplicate_pilot.fk",
+      "source": "task main() {\n    pilot fuel = 50\n    pilot fuel = 75\n    say fuel\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: duplicate binding 'fuel' in the same scope (line 3)\n --> book_duplicate_pilot.fk:3:1\n3 |     pilot fuel = 75\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_for_each_word": {
+      "name": "book_for_each_word",
+      "file": "book_for_each_word.fk",
+      "source": "task main() {\n    for each letter in \"Takeru\" {\n        say letter\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: for each requires a list with a known element type (line 2)\n --> book_for_each_word.fk:2:1\n2 |     for each letter in \"Takeru\" {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_give_back_trap": {
+      "name": "book_give_back_trap",
+      "file": "book_give_back_trap.fk",
+      "source": "task main() {\n    pilot give = 1\n    pilot mut back = 2\n    say give\n    back = 3\n    say back\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: unexpected 'give back' \u2014 this token cannot start an expression\n --> book_give_back_trap.fk:4:9\n  |\n4 |     say give\n  |         ^\n\nerror: unexpected '=' \u2014 this token cannot start an expression\n --> book_give_back_trap.fk:5:10\n  |\n5 |     back = 3\n  |          ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_if_is_not_a_value": {
+      "name": "book_if_is_not_a_value",
+      "file": "book_if_is_not_a_value.fk",
+      "source": "task main() {\n    pilot fuel = 40\n    pilot state = if fuel > 25 { \"cruising\" } else { \"bingo\" }\n    say state\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: unexpected 'if' \u2014 this token cannot start an expression\n --> book_if_is_not_a_value.fk:3:19\n  |\n3 |     pilot state = if fuel > 25 { \"cruising\" } else { \"bingo\" }\n  |                   ^\n\nerror: unexpected 'else' \u2014 this token cannot start an expression\n --> book_if_is_not_a_value.fk:3:47\n  |\n3 |     pilot state = if fuel > 25 { \"cruising\" } else { \"bingo\" }\n  |                                               ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_if_needs_bool": {
+      "name": "book_if_needs_bool",
+      "file": "book_if_needs_bool.fk",
+      "source": "task main() {\n    pilot fuel = 40\n    if fuel {\n        say \"fuel remaining\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: if condition must have type bool, got int (line 3)\n --> book_if_needs_bool.fk:3:1\n3 |     if fuel {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_if_needs_braces": {
+      "name": "book_if_needs_braces",
+      "file": "book_if_needs_braces.fk",
+      "source": "task main() {\n    pilot fuel = 40\n    if fuel > 25 say \"cruising\"\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: expected '{', found 'say'\n --> book_if_needs_braces.fk:3:18\n  |\n3 |     if fuel > 25 say \"cruising\"\n  |                  ^\n\nerror: unexpected end of file \u2014 missing '}'\n --> book_if_needs_braces.fk:1:13\n  |\n1 | task main() {\n  |             ^ block opened here",
+      "errors": [],
+      "passed": true
+    },
+    "book_keyword_name": {
+      "name": "book_keyword_name",
+      "file": "book_keyword_name.fk",
+      "source": "task main() {\n    pilot Max = 9000\n    say Max\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: expected an identifier for binding name, found 'Max'\n --> book_keyword_name.fk:2:11\n  |\n2 |     pilot Max = 9000\n  |           ^ use an identifier here\n\nerror: unexpected 'Max' \u2014 this token cannot start an expression\n --> book_keyword_name.fk:3:9\n  |\n3 |     say Max\n  |         ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_missing_give_back": {
+      "name": "book_missing_give_back",
+      "file": "book_missing_give_back.fk",
+      "source": "task rank_for(sorties: int) -> word {\n    if sorties >= 50 { give back \"veteran\" }\n}\n\ntask main() {\n    say rank_for(64)\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: task 'rank_for' may finish without giving back word (line 1)\n --> book_missing_give_back.fk:1:1\n1 | task rank_for(sorties: int) -> word {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_misspelled_say": {
+      "name": "book_misspelled_say",
+      "file": "book_misspelled_say.fk",
+      "source": "task main() {\n    sya \"Hello, FREAK!\"\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: unknown binding 'sya' (line 2)\n --> book_misspelled_say.fk:2:1\n2 |     sya \"Hello, FREAK!\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_nested_task": {
+      "name": "book_nested_task",
+      "file": "book_nested_task.fk",
+      "source": "task main() {\n    task helper() {\n        say \"nested\"\n    }\n    helper()\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: declaration is valid only at top level (line 2)\n --> book_nested_task.fk:2:1\n2 |     task helper() {\n  | ^\ntype error: unknown callable 'helper' (line 5)\n --> book_nested_task.fk:5:1\n5 |     helper()\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_no_initial_value": {
+      "name": "book_no_initial_value",
+      "file": "book_no_initial_value.fk",
+      "source": "task main() {\n    pilot fuel: int\n    fuel = 50\n    say fuel\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: expected '=', found 'fuel'\n --> book_no_initial_value.fk:3:5\n  |\n3 |     fuel = 50\n  |     ^\n\nerror: unexpected '=' \u2014 this token cannot start an expression\n --> book_no_initial_value.fk:3:10\n  |\n3 |     fuel = 50\n  |          ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_num_into_int": {
+      "name": "book_num_into_int",
+      "file": "book_num_into_int.fk",
+      "source": "task main() {\n    pilot sorties: int = 2.5\n    say sorties\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: cannot initialize int binding 'sorties' with num (line 2)\n --> book_num_into_int.fk:2:1\n2 |     pilot sorties: int = 2.5\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_out_of_scope": {
+      "name": "book_out_of_scope",
+      "file": "book_out_of_scope.fk",
+      "source": "task main() {\n    if true {\n        pilot wing = \"A-01\"\n    }\n    say wing\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: unknown binding 'wing' (line 5)\n --> book_out_of_scope.fk:5:1\n5 |     say wing\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_reassign_strict": {
+      "name": "book_reassign_strict",
+      "file": "book_reassign_strict.fk",
+      "source": "task main() {\n    pilot fuel = 50\n    fuel = 75\n    say fuel\n}\n",
+      "flags": [
+        "--strict-borrow"
+      ],
+      "rejected": true,
+      "message": "borrowck: This binding was sworn to silence. It cannot be reassigned. 'fuel' (line 3)\n --> book_reassign_strict.fk:3:1\n3 |     fuel = 75\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_remainder_num": {
+      "name": "book_remainder_num",
+      "file": "book_remainder_num.fk",
+      "source": "task main() {\n    say 7.5 % 2.0\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: operator '%' does not accept num and num (line 2)\n --> book_remainder_num.fk:2:1\n2 |     say 7.5 % 2.0\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_repeat_needs_int": {
+      "name": "book_repeat_needs_int",
+      "file": "book_repeat_needs_int.fk",
+      "source": "task main() {\n    repeat 2.5 times {\n        say \"again\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: repeat count must have type int, got num (line 2)\n --> book_repeat_needs_int.fk:2:1\n2 |     repeat 2.5 times {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_reserved_task_name": {
+      "name": "book_reserved_task_name",
+      "file": "book_reserved_task_name.fk",
+      "source": "task launch(callsign: word) {\n    say \"{callsign} away\"\n}\n\ntask main() {\n    launch(\"Valkyrie-1\")\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: expected an identifier for task name, found 'launch'\n --> book_reserved_task_name.fk:1:6\n  |\n1 | task launch(callsign: word) {\n  |      ^ use an identifier here\n\nerror: unexpected 'launch' \u2014 this token cannot start an expression\n --> book_reserved_task_name.fk:6:5\n  |\n6 |     launch(\"Valkyrie-1\")\n  |     ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_semicolon": {
+      "name": "book_semicolon",
+      "file": "book_semicolon.fk",
+      "source": "task main() {\n    pilot fuel = 50;\n    say fuel\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: unexpected ';' \u2014 this token cannot start an expression\n --> book_semicolon.fk:2:20\n  |\n2 |     pilot fuel = 50;\n  |                    ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_store_void": {
+      "name": "book_store_void",
+      "file": "book_store_void.fk",
+      "source": "task greet() {\n    say \"Valkyries, launch.\"\n}\n\ntask main() {\n    pilot reply = greet()\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: binding initializer cannot have type void (line 6)\n --> book_store_void.fk:6:1\n6 |     pilot reply = greet()\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_task_name_taken": {
+      "name": "book_task_name_taken",
+      "file": "book_task_name_taken.fk",
+      "source": "task string_reverse(text: word) -> word {\n    give back text\n}\n\ntask main() {\n    say string_reverse(\"abc\")\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: callable 'string_reverse' conflicts with another task or extern declaration\n --> book_task_name_taken.fk:1:1\n1 | task string_reverse(text: word) -> word {\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_unknown_pilot": {
+      "name": "book_unknown_pilot",
+      "file": "book_unknown_pilot.fk",
+      "source": "task main() {\n    say altitude\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: unknown binding 'altitude' (line 2)\n --> book_unknown_pilot.fk:2:1\n2 |     say altitude\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_unterminated_word": {
+      "name": "book_unterminated_word",
+      "file": "book_unterminated_word.fk",
+      "source": "task main() {\n    say \"Hello, FREAK!\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: unterminated string literal\n --> book_unterminated_word.fk:2:9\n  |\n2 |     say \"Hello, FREAK!\n  |         ^ add a closing quote\n\nerror: unexpected end of file \u2014 missing '}'\n --> book_unterminated_word.fk:1:13\n  |\n1 | task main() {\n  |             ^ block opened here",
+      "errors": [],
+      "passed": true
+    },
+    "book_void_gives_value": {
+      "name": "book_void_gives_value",
+      "file": "book_void_gives_value.fk",
+      "source": "task greet() {\n    give back \"Valkyries, launch.\"\n}\n\ntask main() {\n    greet()\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: void task 'greet' cannot give back a value (line 2)\n --> book_void_gives_value.fk:2:1\n2 |     give back \"Valkyries, launch.\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_when_needs_literal": {
+      "name": "book_when_needs_literal",
+      "file": "book_when_needs_literal.fk",
+      "source": "task main() {\n    pilot code = 3\n    pilot abort_code = 3\n    when code {\n        abort_code -> say \"abort\"\n        _ -> say \"continue\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: when case must be a literal or '_' (line 5)\n --> book_when_needs_literal.fk:5:1\n5 |         abort_code -> say \"abort\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_when_wrong_type": {
+      "name": "book_when_wrong_type",
+      "file": "book_when_wrong_type.fk",
+      "source": "task main() {\n    pilot code = 3\n    when code {\n        1 -> say \"launch\"\n        \"abort\" -> say \"abort\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: when case type word does not match target type int (line 5)\n --> book_when_wrong_type.fk:5:1\n5 |         \"abort\" -> say \"abort\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_word_plus_int": {
+      "name": "book_word_plus_int",
+      "file": "book_word_plus_int.fk",
+      "source": "task main() {\n    pilot sorties = 12\n    say \"sorties: \" + sorties\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: operator '+' does not accept word and int (line 3)\n --> book_word_plus_int.fk:3:1\n3 |     say \"sorties: \" + sorties\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_wrong_arg_count": {
+      "name": "book_wrong_arg_count",
+      "file": "book_wrong_arg_count.fk",
+      "source": "task add(a: int, b: int) -> int {\n    give back a + b\n}\n\ntask main() {\n    say add(20)\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: call to 'add' expects 2 argument(s), got 1 (line 6)\n --> book_wrong_arg_count.fk:6:1\n6 |     say add(20)\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_wrong_arg_type": {
+      "name": "book_wrong_arg_type",
+      "file": "book_wrong_arg_type.fk",
+      "source": "task add(a: int, b: int) -> int {\n    give back a + b\n}\n\ntask main() {\n    say add(20, \"22\")\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: call to 'add' argument 2 expects int, got word (line 6)\n --> book_wrong_arg_type.fk:6:1\n6 |     say add(20, \"22\")\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_wrong_return_type": {
+      "name": "book_wrong_return_type",
+      "file": "book_wrong_return_type.fk",
+      "source": "task callsign() -> int {\n    give back \"Valkyrie-1\"\n}\n\ntask main() {\n    say callsign()\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: task 'callsign' must give back int, got word (line 2)\n --> book_wrong_return_type.fk:2:1\n2 |     give back \"Valkyrie-1\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_wrong_type": {
+      "name": "book_wrong_type",
+      "file": "book_wrong_type.fk",
+      "source": "task main() {\n    pilot sorties: int = \"twelve\"\n    say sorties\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: cannot initialize int binding 'sorties' with word (line 2)\n --> book_wrong_type.fk:2:1\n2 |     pilot sorties: int = \"twelve\"\n  | ^",
+      "errors": [],
+      "passed": true
     }
   }
 }

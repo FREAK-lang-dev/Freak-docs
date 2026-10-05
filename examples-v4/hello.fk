@@ -1,0 +1,6 @@
+-- The V4 snapshot wants an explicit return type on `main`.
+-- An int given back from `main` becomes the exit code.
+task main() -> int {
+    say "Hello, FREAK!"
+    give back 0
+}

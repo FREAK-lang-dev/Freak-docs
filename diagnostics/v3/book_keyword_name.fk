@@ -1,0 +1,4 @@
+task main() {
+    pilot Max = 9000
+    say Max
+}

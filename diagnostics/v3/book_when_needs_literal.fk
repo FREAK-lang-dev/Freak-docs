@@ -1,0 +1,8 @@
+task main() {
+    pilot code = 3
+    pilot abort_code = 3
+    when code {
+        abort_code -> say "abort"
+        _ -> say "continue"
+    }
+}

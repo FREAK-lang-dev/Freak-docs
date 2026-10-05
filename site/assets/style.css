@@ -403,3 +403,12 @@ pre.stdout.term {
                   border-color: color-mix(in srgb, var(--v4) 30%, transparent); }
 .status-planned { color: var(--fg-faint); background: var(--bg-alt);
                   border-color: var(--border); }
+
+/* ---------------- the book: V4 snapshot and planned markers ---------------- */
+
+.callout.planned { border-left-color: var(--fg-faint); border-left-style: dashed; background: var(--bg-alt); }
+.callout.planned .callout-title { color: var(--fg-dim); }
+.badge.v4 { background: var(--v4-soft); color: var(--v4); border-color: color-mix(in srgb, var(--v4) 30%, transparent); }
+.badge.flag { background: var(--bg-alt); color: var(--fg-dim); border-color: var(--border-strong); font-family: var(--mono); text-transform: none; letter-spacing: 0; }
+.example.v4 { border-color: color-mix(in srgb, var(--v4) 35%, var(--border)); }
+.summary-card.v4 .sc-num { color: var(--v4); }

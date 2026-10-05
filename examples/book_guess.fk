@@ -1,0 +1,59 @@
+-- guess.fk: the finished guessing game.
+--
+-- Run it with no arguments to play against the clock's choice of secret.
+-- Pass a number (`./guess 42`) to fix the secret, which is how this
+-- program is tested.
+
+task secret_number() -> int {
+    if process::args_count() > 1 {
+        pilot chosen = process::arg(1).parse_int()
+        if parse_status() == 0 { give back chosen }
+        parse_clear_status()            -- not a number: fall back to the clock
+    }
+    pilot micros = time::monotonic_ns() / 1000
+    give back micros % 100 + 1
+}
+
+task main() {
+    say "Guess the number! It is between 1 and 100."
+
+    pilot secret = secret_number()
+    pilot mut attempts = 0
+    pilot mut solved = false
+
+    repeat until solved {
+        pilot text = ask("Your guess: ")
+
+        -- An empty line means the input ended (or the player just pressed
+        -- Enter). Stop instead of asking forever.
+        if text.trim() == "" {
+            say "No guess given. The number was {secret}."
+            break
+        }
+
+        pilot guess = text.trim().parse_int()
+        if parse_status() != 0 {
+            parse_clear_status()
+            say "'{text}' is not a whole number. Try again."
+            continue
+        }
+
+        attempts += 1
+
+        if guess < secret {
+            say "Too low."
+        } else if guess > secret {
+            say "Too high."
+        } else {
+            solved = true
+        }
+    }
+
+    if solved {
+        if attempts == 1 {
+            say "You got it in one guess!"
+        } else {
+            say "You got it in {attempts} guesses!"
+        }
+    }
+}

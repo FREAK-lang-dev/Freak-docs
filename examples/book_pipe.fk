@@ -1,0 +1,11 @@
+-- |> passes the value on its left as the first argument of the call on its right.
+task double(n: int) -> int { give back n * 2 }
+task offset(n: int, by: int) -> int { give back n + by }
+
+task main() {
+    say offset(double(5), 1)          -- nested: read from the inside out
+    say 5 |> double() |> offset(1)    -- piped: read from left to right
+
+    say 5 |> double()                 -- double(5)
+    say 5 |> offset(3)                -- offset(5, 3)
+}

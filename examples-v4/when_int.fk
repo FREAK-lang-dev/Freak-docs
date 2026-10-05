@@ -1,0 +1,13 @@
+task order_code(code: int) -> int {
+    pilot answer = 0
+    when code {
+        1 -> answer = 10
+        2 -> answer = 20
+        _ -> answer = 99
+    }
+    give back answer
+}
+
+task main() -> int {
+    give back order_code(2) + order_code(7)
+}

@@ -1,0 +1,12 @@
+-- Pilots declared outside every task are visible to all of them.
+fixed pilot MAX_SORTIES: int = 3
+fixed pilot SQUADRON: word = "Valkyries"
+
+task briefing() {
+    say "{SQUADRON}: at most {MAX_SORTIES} sorties today"
+}
+
+task main() {
+    briefing()
+    say MAX_SORTIES * 2
+}

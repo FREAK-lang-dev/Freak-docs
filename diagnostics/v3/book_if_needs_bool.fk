@@ -1,0 +1,6 @@
+task main() {
+    pilot fuel = 40
+    if fuel {
+        say "fuel remaining"
+    }
+}

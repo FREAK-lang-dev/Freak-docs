@@ -1,0 +1,16 @@
+-- These words are used by the language and are not reserved.
+-- The program builds. It is here as a warning, not as a model.
+task twice(int: int) -> int {
+    pilot give = int * 2
+    give back give
+}
+
+task main() {
+    pilot mut training = 0
+    pilot arc = 3
+    training arc until training >= arc max 10 sessions {
+        training += 1
+    }
+    pilot ask = twice(training)
+    say "training {training}, ask {ask}"
+}

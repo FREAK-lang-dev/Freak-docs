@@ -1,0 +1,14 @@
+-- A pilot lives from its declaration to the end of the block it is in.
+task main() {
+    pilot squadron = "Valkyries"
+
+    if true {
+        pilot wing = "A-01"            -- exists only inside these braces
+        say "{squadron} / {wing}"
+
+        pilot squadron = "Isumi"       -- a new pilot that hides the outer one
+        say squadron
+    }
+
+    say squadron                       -- the outer pilot was never changed
+}

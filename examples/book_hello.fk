@@ -1,0 +1,4 @@
+-- hello.fk: the smallest complete FREAK program.
+task main() {
+    say "Hello, FREAK!"
+}

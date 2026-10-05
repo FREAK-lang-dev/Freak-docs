@@ -1,0 +1,8 @@
+-- With a `main`, the top level is for declarations.
+pilot squadron = "Valkyries"
+
+say "this top-level statement is never run"
+
+task main() {
+    say "main sees {squadron}"
+}

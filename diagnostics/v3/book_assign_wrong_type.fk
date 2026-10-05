@@ -1,0 +1,5 @@
+task main() {
+    pilot mut sorties = 12
+    sorties = "thirteen"
+    say sorties
+}

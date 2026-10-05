@@ -1,0 +1,6 @@
+-- A task whose body is one expression, written with `=>` and no braces.
+task square(x: int) -> int => x * x
+
+task main() -> int {
+    give back square(3) + square(4)
+}

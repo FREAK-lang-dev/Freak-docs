@@ -1,0 +1,7 @@
+task greet() {
+    say "Valkyries, launch."
+}
+
+task main() {
+    pilot reply = greet()
+}

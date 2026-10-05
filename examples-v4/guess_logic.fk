@@ -1,0 +1,31 @@
+-- The heart of the guessing game, without the talking: find a secret by
+-- halving the range, and report the number of guesses as the exit code.
+task judge(guess: int, secret: int) -> int {
+    if guess < secret { give back 0 - 1 }
+    if guess > secret { give back 1 }
+    give back 0
+}
+
+task main() -> int {
+    pilot secret = 42
+    pilot low = 1
+    pilot high = 100
+    pilot attempts = 0
+    pilot solved = false
+
+    repeat until solved {
+        pilot guess = (low + high) / 2
+        pilot verdict = judge(guess, secret)
+        attempts += 1
+
+        if verdict < 0 {
+            low = guess + 1
+        } else if verdict > 0 {
+            high = guess - 1
+        } else {
+            solved = true
+        }
+    }
+
+    give back attempts
+}

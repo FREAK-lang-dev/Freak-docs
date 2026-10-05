@@ -1,0 +1,21 @@
+-- `give back` leaves the task at once, from wherever it is.
+task rank_for(sorties: int) -> word {
+    if sorties >= 50 { give back "veteran" }
+    if sorties >= 10 { give back "regular" }
+    give back "rookie"
+}
+
+-- In a task with no return type, a bare `give back` simply leaves early.
+task announce(message: word) {
+    if message == "" { give back }
+    say message.to_upper()
+}
+
+task main() {
+    say rank_for(64)
+    say rank_for(12)
+    say rank_for(3)
+
+    announce("")
+    announce("all units, stand by")
+}

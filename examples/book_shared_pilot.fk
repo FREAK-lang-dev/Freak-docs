@@ -1,0 +1,13 @@
+-- A top-level pilot is shared by every task in the file.
+pilot mut sorties_flown = 0
+
+task scramble(callsign: word) {
+    sorties_flown += 1
+    say "{callsign} away (sortie {sorties_flown})"
+}
+
+task main() {
+    scramble("Valkyrie-1")
+    scramble("Valkyrie-2")
+    say sorties_flown
+}

@@ -1,0 +1,33 @@
+-- bool: true or false.
+task announce(tag: word, value: bool) -> bool {
+    say "checking {tag}"
+    give back value
+}
+
+task main() {
+    pilot fueled = true
+    pilot armed = false
+
+    say fueled and armed
+    say fueled or armed
+    say not armed
+    say 3 < 5
+    say "A-01" == "A-01"
+
+    -- `not` binds tightest, then `and`, then `or`.
+    say true or false and false        -- true or (false and false)
+    say not false and false            -- (not false) and false
+
+    -- Three pairs of literals mean the same two values.
+    say yes
+    say hai
+    say iie
+
+    -- `and` and `or` stop as soon as the answer is known.
+    if announce("fuel", false) and announce("weapons", true) {
+        say "launch"
+    }
+    if announce("radar", true) or announce("visual", true) {
+        say "contact"
+    }
+}

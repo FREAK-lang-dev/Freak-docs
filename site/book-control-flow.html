@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control flow &middot; FREAK V3</title>
+<meta name="description" content="Choose between paths with if and when, and repeat work with four kinds of loop.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html" class="active">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="control-flow">Control flow<a class="anchor" href="#control-flow" aria-label="Link to this section">#</a></h1>
+<p class="lede">Choose between paths with <code>if</code> and <code>when</code>, and repeat work with four kinds of loop.</p>
+<p>A program that only ran its statements from top to bottom could do very little. This chapter covers the statements that decide what runs next:</p>
+<ul><li><code>if</code>, <code>else if</code> and <code>else</code></li><li><code>when</code>, for choosing by value</li><li><code>repeat ... times</code>, for a known number of passes</li><li><code>repeat until</code>, for looping on a condition</li><li><code>training arc</code>, a condition loop that is guaranteed to end</li><li><code>for each</code>, for visiting the elements of a list</li><li><code>break</code> and <code>continue</code></li></ul>
+<h2 id="if"><code>if</code><a class="anchor" href="#if" aria-label="Link to this section">#</a></h2>
+<p><code>if</code> runs a block when a condition is true.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_if.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- if / else if / else</span>
+<span class="c-kw">task</span> <span class="c-fn">status</span>(fuel<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">75</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;full&quot;</span>
+    } <span class="c-kw">else</span> <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">25</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;cruising&quot;</span>
+    } <span class="c-kw">else</span> <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;bingo fuel&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">give back</span> <span class="c-str">&quot;dry&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">status</span>(<span class="c-num">90</span>)
+    <span class="c-kw">say</span> <span class="c-fn">status</span>(<span class="c-num">40</span>)
+    <span class="c-kw">say</span> <span class="c-fn">status</span>(<span class="c-num">10</span>)
+    <span class="c-kw">say</span> <span class="c-fn">status</span>(<span class="c-num">0</span>)
+
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">40</span>
+    <span class="c-kw">pilot</span> hostile <span class="c-op">=</span> <span class="c-lit">true</span>
+    <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">25</span> <span class="c-kw">and</span> <span class="c-kw">not</span> hostile {
+        <span class="c-kw">say</span> <span class="c-str">&quot;continue patrol&quot;</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;return to base&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>full
+cruising
+bingo fuel
+dry
+return to base</code></pre>
+  </div>
+</figure>
+<p>The condition comes straight after <code>if</code>, without parentheses. The block is always in braces, even when it holds a single statement:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_if_needs_braces.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">40</span>
+    <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">25</span> <span class="c-kw">say</span> <span class="c-str">&quot;cruising&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: expected &#x27;{&#x27;, found &#x27;say&#x27;
+ --&gt; book_if_needs_braces.fk:3:18
+  |
+3 |     if fuel &gt; 25 say &quot;cruising&quot;
+  |                  ^
+
+error: unexpected end of file — missing &#x27;}&#x27;
+ --&gt; book_if_needs_braces.fk:1:13
+  |
+1 | task main() {
+  |             ^ block opened here</code></pre>
+  </div>
+</figure>
+<p>An <code>if</code> can be followed by <code>else</code>, whose block runs when the condition is false. In between you can put any number of <code>else if</code> branches. The conditions are tested from the top, the first true one has its block run, and the rest are skipped. In <code>status</code>, a fuel level of 40 fails the first test, passes the second, and the remaining two branches are never looked at.</p>
+<p>That order matters. Had the tests been written the other way round, with `fuel</p>
+<p class="lede">0` first, every positive level would have been caught by it and reported as</p>
+<p>bingo fuel.</p>
+<h3 id="the-condition-must-be-a-bool">The condition must be a bool<a class="anchor" href="#the-condition-must-be-a-bool" aria-label="Link to this section">#</a></h3>
+<p>Some languages treat zero as false and anything else as true. FREAK does not. A condition has to be a <code>bool</code>, and nothing else is accepted in its place:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_if_needs_bool.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">40</span>
+    <span class="c-kw">if</span> fuel {
+        <span class="c-kw">say</span> <span class="c-str">&quot;fuel remaining&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: if condition must have type bool, got int (line 3)
+ --&gt; book_if_needs_bool.fk:3:1
+3 |     if fuel {
+  | ^</code></pre>
+  </div>
+</figure>
+<p>Say what you mean: <code>if fuel &gt; 0</code>.</p>
+<p>Comparisons cannot be chained the way they are in mathematics, either:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_chained_comparison.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">40</span>
+    <span class="c-kw">if</span> <span class="c-num">25</span> <span class="c-op">&lt;</span> fuel <span class="c-op">&lt;</span> <span class="c-num">75</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;cruising&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: operator &#x27;&lt;&#x27; does not accept bool and int (line 3)
+ --&gt; book_chained_comparison.fk:3:1
+3 |     if 25 &lt; fuel &lt; 75 {
+  | ^</code></pre>
+  </div>
+</figure>
+<p>The message makes sense once you see how the expression is read. <code>25 &lt; fuel</code> is worked out first and gives a bool. The compiler is then asked to compare that bool with 75. Write the two comparisons separately and join them: <code>if 25 &lt; fuel and fuel &lt; 75</code>.</p>
+<h3 id="if-is-a-statement"><code>if</code> is a statement<a class="anchor" href="#if-is-a-statement" aria-label="Link to this section">#</a></h3>
+<p>An <code>if</code> does something. It does not produce a value, so it cannot stand on the right of an <code>=</code>:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_if_is_not_a_value.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">40</span>
+    <span class="c-kw">pilot</span> state <span class="c-op">=</span> <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">25</span> { <span class="c-str">&quot;cruising&quot;</span> } <span class="c-kw">else</span> { <span class="c-str">&quot;bingo&quot;</span> }
+    <span class="c-kw">say</span> state
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: unexpected &#x27;if&#x27; — this token cannot start an expression
+ --&gt; book_if_is_not_a_value.fk:3:19
+  |
+3 |     pilot state = if fuel &gt; 25 { &quot;cruising&quot; } else { &quot;bingo&quot; }
+  |                   ^
+
+error: unexpected &#x27;else&#x27; — this token cannot start an expression
+ --&gt; book_if_is_not_a_value.fk:3:47
+  |
+3 |     pilot state = if fuel &gt; 25 { &quot;cruising&quot; } else { &quot;bingo&quot; }
+  |                                               ^</code></pre>
+  </div>
+</figure>
+<p>There are two ways to get the same effect. Declare the pilot first and assign to it in each branch:</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> state <span class="c-op">=</span> <span class="c-str">&quot;&quot;</span>
+    <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">25</span> {
+        state <span class="c-op">=</span> <span class="c-str">&quot;cruising&quot;</span>
+    } <span class="c-kw">else</span> {
+        state <span class="c-op">=</span> <span class="c-str">&quot;bingo&quot;</span>
+    }</code></pre></div>
+<p>Or put the decision in a task and give the answer back, as <code>status</code> does in the first listing. The second way is usually cleaner, because the pilot that receives the answer does not need to be <code>mut</code>.</p>
+<h2 id="when"><code>when</code><a class="anchor" href="#when" aria-label="Link to this section">#</a></h2>
+<p>A chain of <code>else if</code> that compares one value against several possibilities is better written as a <code>when</code>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_when.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `when` picks one arm by comparing a value with literals.</span>
+<span class="c-kw">task</span> <span class="c-fn">order_for</span>(code<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">when</span> code {
+        <span class="c-num">1</span> <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> <span class="c-str">&quot;launch&quot;</span>
+        <span class="c-num">2</span> <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> <span class="c-str">&quot;hold&quot;</span>
+        <span class="c-num">3</span> <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> <span class="c-str">&quot;abort&quot;</span>
+        _ <span class="c-op">-&gt;</span> <span class="c-kw">give back</span> <span class="c-str">&quot;unknown order&quot;</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">order_for</span>(<span class="c-num">1</span>)
+    <span class="c-kw">say</span> <span class="c-fn">order_for</span>(<span class="c-num">9</span>)
+
+    <span class="c-kw">pilot</span> rank <span class="c-op">=</span> <span class="c-str">&quot;ace&quot;</span>
+    <span class="c-kw">when</span> rank {
+        <span class="c-str">&quot;rookie&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;simulator only&quot;</span>
+        <span class="c-str">&quot;ace&quot;</span> <span class="c-op">-&gt;</span> {
+            <span class="c-kw">say</span> <span class="c-str">&quot;cleared for sortie&quot;</span>
+            <span class="c-kw">say</span> <span class="c-str">&quot;lead element&quot;</span>
+        }
+        _ <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;report to the briefing room&quot;</span>
+    }
+
+    <span class="c-com">-- No arm matches and there is no `_`: nothing runs.</span>
+    <span class="c-kw">when</span> rank {
+        <span class="c-str">&quot;cadet&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
+    }
+
+    <span class="c-com">-- Arms are tried from the top, and the first match wins.</span>
+    <span class="c-kw">when</span> rank {
+        _ <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;the catch-all came first, so it always wins&quot;</span>
+        <span class="c-str">&quot;ace&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>launch
+unknown order
+cleared for sortie
+lead element
+the catch-all came first, so it always wins</code></pre>
+  </div>
+</figure>
+<p><code>when</code> takes a value, called the subject, and a list of <em>arms</em>. Each arm is a literal value, an arrow, and one statement. The subject is compared with each arm&#x27;s value in turn, and the first arm that is equal has its statement run. The arm written <code>_</code> matches anything. It is the catch-all.</p>
+<p>The listing shows the rest of the rules.</p>
+<p>An arm holds one statement. To run several, put them in a block, as the <code>&quot;ace&quot;</code> arm does.</p>
+<p>If no arm matches and there is no <code>_</code>, nothing happens, and the program carries on after the <code>when</code>. The compiler does not insist that you cover every case, so a missing arm fails silently. Unless you are certain the listed values are the only ones possible, end with <code>_</code>.</p>
+<p>Arms are tried in order. The last <code>when</code> in the listing puts <code>_</code> first, and so its second arm can never run. The compiler does not warn about this. Keep the catch-all at the bottom.</p>
+<p>The subject can be an int, a word, a bool or a num.</p>
+<h3 id="arms-are-literals">Arms are literals<a class="anchor" href="#arms-are-literals" aria-label="Link to this section">#</a></h3>
+<p>An arm&#x27;s value has to be written out as a literal. It cannot be a pilot or a calculation:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_when_needs_literal.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> code <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">pilot</span> abort_code <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">when</span> code {
+        abort_code <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;abort&quot;</span>
+        _ <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;continue&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: when case must be a literal or &#x27;_&#x27; (line 5)
+ --&gt; book_when_needs_literal.fk:5:1
+5 |         abort_code -&gt; say &quot;abort&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<p>When the values you are comparing against are not known until the program runs, use <code>if</code> and <code>else if</code>.</p>
+<p>The literal also has to be of the subject&#x27;s type:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_when_wrong_type.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> code <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">when</span> code {
+        <span class="c-num">1</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;launch&quot;</span>
+        <span class="c-str">&quot;abort&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;abort&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: when case type word does not match target type int (line 5)
+ --&gt; book_when_wrong_type.fk:5:1
+5 |         &quot;abort&quot; -&gt; say &quot;abort&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<h3 id="when-in-a-task-that-gives-back"><code>when</code> in a task that gives back<a class="anchor" href="#when-in-a-task-that-gives-back" aria-label="Link to this section">#</a></h3>
+<p>Like <code>if</code>, a <code>when</code> is a statement and has no value. Like <code>if</code>, it pairs well with <code>give back</code>. In <code>order_for</code>, each arm gives back a word, and because the <code>_</code> arm covers everything else, the compiler accepts that every path through the task gives something back.</p>
+<h2 id="repeat-times"><code>repeat ... times</code><a class="anchor" href="#repeat-times" aria-label="Link to this section">#</a></h2>
+<p>The simplest loop runs a block a set number of times.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_repeat_times.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- repeat N times</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, sound off&quot;</span>
+    }
+
+    <span class="c-com">-- There is no loop counter; keep one yourself when you need it.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> number <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;Valkyrie-<span class="c-interp">{number}</span>&quot;</span>
+        number <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-com">-- The count is worked out once, before the first pass.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> passes <span class="c-op">=</span> <span class="c-num">2</span>
+    <span class="c-kw">repeat</span> passes <span class="c-kw">times</span> {
+        passes <span class="c-op">+=</span> <span class="c-num">10</span>
+        <span class="c-kw">say</span> <span class="c-str">&quot;pass (passes is now <span class="c-interp">{passes}</span>)&quot;</span>
+    }
+
+    <span class="c-com">-- Zero or a negative count means the body never runs.</span>
+    <span class="c-kw">repeat</span> <span class="c-num">0</span> <span class="c-kw">times</span> { <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span> }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyries, sound off
+Valkyries, sound off
+Valkyries, sound off
+Valkyrie-1
+Valkyrie-2
+Valkyrie-3
+pass (passes is now 12)
+pass (passes is now 22)</code></pre>
+  </div>
+</figure>
+<p>The count is any int: a literal, a pilot, a calculation. It is worked out once, before the first pass. The third loop in the listing changes <code>passes</code> inside its own body, and still makes exactly the two passes it started with.</p>
+<p>There is no loop counter. If the body needs to know which pass it is on, keep a <code>pilot mut</code> beside the loop and increase it yourself, as the second loop does. This is the standard way to count in V3.</p>
+<p>A count of zero, or a negative count, means the body does not run at all.</p>
+<p>The count must be an int. A num is refused even if its value is whole:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_repeat_needs_int.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">repeat</span> <span class="c-num">2.5</span> <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;again&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: repeat count must have type int, got num (line 2)
+ --&gt; book_repeat_needs_int.fk:2:1
+2 |     repeat 2.5 times {
+  | ^</code></pre>
+  </div>
+</figure>
+<h2 id="repeat-until"><code>repeat until</code><a class="anchor" href="#repeat-until" aria-label="Link to this section">#</a></h2>
+<p>When you do not know the number of passes in advance, loop on a condition.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_repeat_until.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- repeat until CONDITION: the test comes first, and the loop stops</span>
+<span class="c-com">-- when the condition is true.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> countdown <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> countdown <span class="c-op">==</span> <span class="c-num">0</span> {
+        <span class="c-kw">say</span> countdown
+        countdown <span class="c-op">-=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> <span class="c-str">&quot;launch&quot;</span>
+
+    <span class="c-com">-- Already true: the body does not run even once.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> laps <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> <span class="c-lit">true</span> {
+        laps <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> laps
+
+    <span class="c-com">-- How many times can 1000 be halved before it reaches 1?</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> value <span class="c-op">=</span> <span class="c-num">1000</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> halvings <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> value <span class="c-op">&lt;=</span> <span class="c-num">1</span> {
+        value <span class="c-op">=</span> value <span class="c-op">/</span> <span class="c-num">2</span>
+        halvings <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> halvings
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>3
+2
+1
+launch
+0
+9</code></pre>
+  </div>
+</figure>
+<p>Two things about <code>repeat until</code> are easy to get backwards.</p>
+<p><strong>The loop runs while the condition is false.</strong> <code>until</code> gives the condition for <em>stopping</em>. <code>repeat until countdown == 0</code> keeps going as long as <code>countdown</code> is not zero. If you are used to <code>while</code> loops, this is the opposite sense.</p>
+<p><strong>The condition is tested before each pass, including the first.</strong> If it is already true, the body never runs. The second loop in the listing shows this: <code>laps</code> is still zero afterwards.</p>
+<p>For the loop to end, something in the body has to move the condition toward true. In the third loop, <code>value</code> is halved on every pass, so sooner or later it reaches 1.</p>
+<h3 id="a-loop-with-no-end">A loop with no end<a class="anchor" href="#a-loop-with-no-end" aria-label="Link to this section">#</a></h3>
+<p>Sometimes the natural place to stop is in the middle of the body. Then write a condition that is never true, and leave with <code>break</code>:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_loop_forever.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A loop with no natural end, left with `break`.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> altitude <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> <span class="c-lit">false</span> {
+        altitude <span class="c-op">+=</span> <span class="c-num">2500</span>
+        <span class="c-kw">say</span> <span class="c-str">&quot;climbing through <span class="c-interp">{altitude}</span>&quot;</span>
+        <span class="c-kw">if</span> altitude <span class="c-op">&gt;=</span> <span class="c-num">10000</span> { <span class="c-kw">break</span> }
+    }
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;level at <span class="c-interp">{altitude}</span>&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>climbing through 2500
+climbing through 5000
+climbing through 7500
+climbing through 10000
+level at 10000</code></pre>
+  </div>
+</figure>
+<p><code>repeat until false</code> loops forever by itself. The <code>if</code> inside decides when to stop. This is useful when the decision depends on something the body has just done, and you saw it in Chapter 2, where the game loop was left from the middle when the input ran out.</p>
+<h2 id="training-arc"><code>training arc</code><a class="anchor" href="#training-arc" aria-label="Link to this section">#</a></h2>
+<p>A loop that depends on a condition can fail to end. If the body never makes the condition true, the program hangs. FREAK has a loop that rules this out.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_training_arc.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- training arc: a condition loop with a compulsory upper bound.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-com">-- Stops when the condition becomes true...</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> power <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> power <span class="c-op">&gt;=</span> <span class="c-num">100</span> <span class="c-kw">max</span> <span class="c-num">8</span> <span class="c-kw">sessions</span> {
+        power <span class="c-op">+=</span> <span class="c-num">20</span>
+    }
+    <span class="c-kw">say</span> power
+
+    <span class="c-com">-- ...or when the sessions run out, whichever comes first.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> stuck <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> stuck <span class="c-op">&gt;</span> <span class="c-num">1000</span> <span class="c-kw">max</span> <span class="c-num">4</span> <span class="c-kw">sessions</span> {
+        stuck <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> stuck
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>100
+4</code></pre>
+  </div>
+</figure>
+<p>A <code>training arc</code> is a <code>repeat until</code> with a limit. After <code>max</code> you give the largest number of passes, called sessions, that the loop may make. The loop ends when the condition becomes true or when the sessions are used up, whichever happens first.</p>
+<p>In the first loop the condition wins: <code>power</code> reaches 100 on the fifth session and the loop stops with three sessions unused. In the second the limit wins: the condition would need more than a thousand sessions and the loop is allowed four.</p>
+<p>Like <code>repeat until</code>, the condition is tested before each session. The limit can be any int expression.</p>
+<p>After a <code>training arc</code> you often want to know which of the two ended it. Test the condition again:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_collatz.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- collatz.fk: how many steps does a number take to reach 1?</span>
+<span class="c-com">-- Halve it when it is even; otherwise triple it and add one.</span>
+<span class="c-kw">task</span> <span class="c-fn">collatz_steps</span>(start<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> n <span class="c-op">=</span> start
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> steps <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> n <span class="c-op">==</span> <span class="c-num">1</span> <span class="c-kw">max</span> <span class="c-num">1000</span> <span class="c-kw">sessions</span> {
+        <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">2</span> <span class="c-op">==</span> <span class="c-num">0</span> {
+            n <span class="c-op">=</span> n <span class="c-op">/</span> <span class="c-num">2</span>
+        } <span class="c-kw">else</span> {
+            n <span class="c-op">=</span> <span class="c-num">3</span> <span class="c-op">*</span> n <span class="c-op">+</span> <span class="c-num">1</span>
+        }
+        steps <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">if</span> n <span class="c-op">!=</span> <span class="c-num">1</span> { <span class="c-kw">give back</span> <span class="c-op">-</span><span class="c-num">1</span> }         <span class="c-com">-- ran out of sessions</span>
+    <span class="c-kw">give back</span> steps
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> start <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> longest <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> longest_start <span class="c-op">=</span> <span class="c-num">1</span>
+
+    <span class="c-kw">repeat</span> <span class="c-num">30</span> <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> steps <span class="c-op">=</span> <span class="c-fn">collatz_steps</span>(start)
+        <span class="c-kw">if</span> steps <span class="c-op">&gt;</span> longest {
+            longest <span class="c-op">=</span> steps
+            longest_start <span class="c-op">=</span> start
+        }
+        start <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">pilot</span> six <span class="c-op">=</span> <span class="c-fn">collatz_steps</span>(<span class="c-num">6</span>)
+    <span class="c-kw">pilot</span> twenty_seven <span class="c-op">=</span> <span class="c-fn">collatz_steps</span>(<span class="c-num">27</span>)
+    <span class="c-kw">say</span> <span class="c-str">&quot;6 takes <span class="c-interp">{six}</span> steps&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;27 takes <span class="c-interp">{twenty_seven}</span> steps&quot;</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;below 31, the longest chain starts at <span class="c-interp">{longest_start}</span> (<span class="c-interp">{longest}</span> steps)&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>6 takes 8 steps
+27 takes 111 steps
+below 31, the longest chain starts at 27 (111 steps)</code></pre>
+  </div>
+</figure>
+<p><code>collatz_steps</code> follows a famous rule: halve an even number, triple an odd one and add one, and count how many steps it takes to arrive at 1. Nobody has proved that every starting number gets there, so a plain <code>repeat until n == 1</code> would be a loop with no guarantee. The <code>training arc</code> gives it one. If a thousand sessions pass without reaching 1, the loop ends anyway, the test after it sees that <code>n</code> is not 1, and the task gives back -1 to say that it gave up.</p>
+<p>Use a <code>training arc</code> whenever a loop&#x27;s end depends on something you cannot fully control: a search that might not converge, a retry that might never succeed, input that might never be valid.</p>
+<h2 id="for-each"><code>for each</code><a class="anchor" href="#for-each" aria-label="Link to this section">#</a></h2>
+<p>The last loop visits the elements of a list, one after another. Lists are the subject of a chapter in Part II. For now it is enough to know that square brackets around values separated by commas make one.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_for_each.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- for each: visit every element of a list, in order.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> squadron <span class="c-op">=</span> [<span class="c-str">&quot;Takeru&quot;</span>, <span class="c-str">&quot;Meiya&quot;</span>, <span class="c-str">&quot;Sumika&quot;</span>]
+
+    <span class="c-kw">for each</span> name <span class="c-kw">in</span> squadron {
+        <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{name}</span>, report in&quot;</span>
+    }
+
+    <span class="c-com">-- The loop gives you the element, not its position. Count it yourself.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> position <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">for each</span> name <span class="c-kw">in</span> squadron {
+        <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{position}</span>. <span class="c-interp">{name}</span>&quot;</span>
+        position <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-com">-- break and continue work here too.</span>
+    <span class="c-kw">pilot</span> readings <span class="c-op">=</span> [<span class="c-num">12</span>, <span class="c-num">0</span>, <span class="c-num">7</span>, <span class="c-num">0</span>, <span class="c-num">30</span>, <span class="c-num">99</span>]
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">for each</span> reading <span class="c-kw">in</span> readings {
+        <span class="c-kw">if</span> reading <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">continue</span> }
+        <span class="c-kw">if</span> reading <span class="c-op">&gt;</span> <span class="c-num">50</span> { <span class="c-kw">break</span> }
+        total <span class="c-op">+=</span> reading
+    }
+    <span class="c-kw">say</span> total
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Takeru, report in
+Meiya, report in
+Sumika, report in
+1. Takeru
+2. Meiya
+3. Sumika
+49</code></pre>
+  </div>
+</figure>
+<p>After <code>for each</code> comes a name, then <code>in</code>, then the list. On each pass the name holds the next element. It exists only inside the body, like any pilot declared in a block.</p>
+<p><code>for each</code> gives you the element and not its position. When you need both, count alongside the loop, as the second loop in the listing does.</p>
+<p>The thing after <code>in</code> has to be a list. A word is not a list of its letters:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_for_each_word.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">for each</span> letter <span class="c-kw">in</span> <span class="c-str">&quot;Takeru&quot;</span> {
+        <span class="c-kw">say</span> letter
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: for each requires a list with a known element type (line 2)
+ --&gt; book_for_each_word.fk:2:1
+2 |     for each letter in &quot;Takeru&quot; {
+  | ^</code></pre>
+  </div>
+</figure>
+<h2 id="break-and-continue"><code>break</code> and <code>continue</code><a class="anchor" href="#break-and-continue" aria-label="Link to this section">#</a></h2>
+<p>Two statements change the course of any loop from inside its body.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_break_continue.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- break leaves the loop; continue skips to its next pass.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> n <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-num">10</span> <span class="c-kw">times</span> {
+        n <span class="c-op">+=</span> <span class="c-num">1</span>
+        <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">2</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">continue</span> }     <span class="c-com">-- skip the even numbers</span>
+        <span class="c-kw">if</span> n <span class="c-op">&gt;</span> <span class="c-num">7</span> { <span class="c-kw">break</span> }             <span class="c-com">-- and stop after 7</span>
+        <span class="c-kw">say</span> n
+    }
+    <span class="c-kw">say</span> <span class="c-str">&quot;stopped at <span class="c-interp">{n}</span>&quot;</span>
+
+    <span class="c-com">-- In nested loops, both act on the innermost loop only.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> row <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
+        <span class="c-kw">pilot</span> <span class="c-kw">mut</span> column <span class="c-op">=</span> <span class="c-num">1</span>
+        <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
+            <span class="c-kw">if</span> column <span class="c-op">&gt;</span> row { <span class="c-kw">break</span> }
+            <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{row}</span>,<span class="c-interp">{column}</span>&quot;</span>
+            column <span class="c-op">+=</span> <span class="c-num">1</span>
+        }
+        row <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>1
+3
+5
+7
+stopped at 9
+1,1
+2,1
+2,2
+3,1
+3,2
+3,3</code></pre>
+  </div>
+</figure>
+<p><code>break</code> ends the loop. Execution carries on with the first statement after it.</p>
+<p><code>continue</code> ends the current pass. In a <code>repeat ... times</code> loop the next pass begins; in a <code>repeat until</code> or a <code>training arc</code> the condition is tested again; in a <code>for each</code> the loop moves to the next element.</p>
+<p>When loops are nested, <code>break</code> and <code>continue</code> act on the innermost loop that contains them. The second half of the listing prints a triangle: the inner loop is cut short by <code>break</code> when <code>column</code> passes <code>row</code>, and the outer loop carries on to the next row. There is no way to break out of two loops at once. If you need to, put the loops in a task and use <code>give back</code>, which leaves the whole task from any depth.</p>
+<p>Be careful with <code>continue</code> in a loop that keeps its own counter. If the counter is increased at the bottom of the body, <code>continue</code> skips the increase. In the listing, <code>n += 1</code> is the first statement of the body for exactly this reason.</p>
+<h2 id="putting-it-together">Putting it together<a class="anchor" href="#putting-it-together" aria-label="Link to this section">#</a></h2>
+<p>Here is a small program that uses a counted loop, a task that decides with <code>if</code>, and the conversion from Chapter 3.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_fizzbuzz.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- fizzbuzz.fk: count from 1 to 15. Multiples of 3 say Fizz, multiples of 5</span>
+<span class="c-com">-- say Buzz, and multiples of both say FizzBuzz.</span>
+<span class="c-kw">task</span> <span class="c-fn">label</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">15</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;FizzBuzz&quot;</span> }
+    <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">3</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Fizz&quot;</span> }
+    <span class="c-kw">if</span> n <span class="c-op">%</span> <span class="c-num">5</span> <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;Buzz&quot;</span> }
+    <span class="c-kw">give back</span> n.<span class="c-fn">to_word</span>()
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> n <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">repeat</span> <span class="c-num">15</span> <span class="c-kw">times</span> {
+        <span class="c-kw">say</span> <span class="c-fn">label</span>(n)
+        n <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz</code></pre>
+  </div>
+</figure>
+<p><code>label</code> tests the most specific case first. A multiple of 15 is also a multiple of 3 and of 5, so if those tests came first, <code>FizzBuzz</code> would never be given back. Order matters in a chain of tests, as it did at the start of this chapter.</p>
+<p>The task gives back a word in every case, so the number has to be converted with <code>to_word()</code>. All four <code>give back</code> statements must agree on the type.</p>
+<h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
+<p>At the pinned commit V4 runs <code>if</code>, <code>when</code> on ints, <code>repeat ... times</code>, <code>repeat until</code>, <code>break</code> and <code>continue</code>. These two listings give the same results on both compilers:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/loops.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Three of V3&#x27;s loops, with break and continue, on V4.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> total <span class="c-op">=</span> <span class="c-num">0</span>
+
+    <span class="c-kw">repeat</span> <span class="c-num">4</span> <span class="c-kw">times</span> { total <span class="c-op">+=</span> <span class="c-num">10</span> }              <span class="c-com">-- 40</span>
+
+    <span class="c-kw">pilot</span> n <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> <span class="c-kw">until</span> n <span class="c-op">&gt;=</span> <span class="c-num">6</span> {
+        n <span class="c-op">+=</span> <span class="c-num">1</span>
+        <span class="c-kw">if</span> n <span class="c-op">==</span> <span class="c-num">2</span> { <span class="c-kw">continue</span> }                  <span class="c-com">-- skips 2</span>
+        <span class="c-kw">if</span> n <span class="c-op">==</span> <span class="c-num">5</span> { <span class="c-kw">break</span> }                     <span class="c-com">-- stops before 5</span>
+        total <span class="c-op">+=</span> n                              <span class="c-com">-- adds 1, 3, 4</span>
+    }
+
+    <span class="c-kw">pilot</span> drills <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> drills <span class="c-op">&gt;=</span> <span class="c-num">3</span> <span class="c-kw">max</span> <span class="c-num">10</span> <span class="c-kw">sessions</span> { drills <span class="c-op">+=</span> <span class="c-num">1</span> }
+
+    <span class="c-kw">give back</span> total <span class="c-op">+</span> drills                    <span class="c-com">-- 40 + 8 + 3</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 51</div>
+  </div>
+</figure>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/when_int.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">order_code</span>(code<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> answer <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">when</span> code {
+        <span class="c-num">1</span> <span class="c-op">-&gt;</span> answer <span class="c-op">=</span> <span class="c-num">10</span>
+        <span class="c-num">2</span> <span class="c-op">-&gt;</span> answer <span class="c-op">=</span> <span class="c-num">20</span>
+        _ <span class="c-op">-&gt;</span> answer <span class="c-op">=</span> <span class="c-num">99</span>
+    }
+    <span class="c-kw">give back</span> answer
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">order_code</span>(<span class="c-num">2</span>) <span class="c-op">+</span> <span class="c-fn">order_code</span>(<span class="c-num">7</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 119</div>
+  </div>
+</figure>
+<p>It checks conditions as strictly as V3:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/if_needs_bool.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">40</span>
+    <span class="c-kw">if</span> fuel { <span class="c-kw">give back</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@45:68|if condition must be bool|got int</code></pre>
+  </div>
+</figure>
+<p>The rest of this section is what does not match.</p>
+<p><strong>A chain in which every branch gives back does not build.</strong> This is the shape of <code>status</code> in this chapter&#x27;s first listing: an <code>if</code>, its <code>else if</code> branches and an <code>else</code>, each ending in <code>give back</code>.</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/else_if_give_back.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Every branch gives back, so nothing follows the chain.</span>
+<span class="c-kw">task</span> <span class="c-fn">sign</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">give back</span> <span class="c-num">1</span>
+    } <span class="c-kw">else</span> <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">give back</span> <span class="c-num">2</span>
+    } <span class="c-kw">else</span> {
+        <span class="c-kw">give back</span> <span class="c-num">3</span>
+    }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">sign</span>(<span class="c-num">5</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@58:202|mir cfg unreachable live block|sign block 5 has no predecessors but still carries live statements or control flow</code></pre>
+  </div>
+</figure>
+<p>The message comes from inside the compiler, and it is a defect in this commit, not a rule of the language. Until it is fixed, let the last case follow the chain instead of sitting in an <code>else</code>:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/else_if_trailing.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The same decision, with the last case after the chain.</span>
+<span class="c-kw">task</span> <span class="c-fn">sign</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">give back</span> <span class="c-num">1</span>
+    } <span class="c-kw">else</span> <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">give back</span> <span class="c-num">2</span>
+    }
+    <span class="c-kw">give back</span> <span class="c-num">3</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">sign</span>(<span class="c-num">5</span>) <span class="c-op">*</span> <span class="c-num">100</span> <span class="c-op">+</span> <span class="c-fn">sign</span>(<span class="c-num">0</span> <span class="c-op">-</span> <span class="c-num">5</span>) <span class="c-op">*</span> <span class="c-num">10</span> <span class="c-op">+</span> <span class="c-fn">sign</span>(<span class="c-num">0</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 123</div>
+  </div>
+</figure>
+<p>**An arm after <code>_</code> is an error.** V3 accepts a <code>when</code> whose catch-all comes first and never runs the arms below it. V4 refuses the program:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/when_default_first.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> code <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> rank <span class="c-op">=</span> <span class="c-num">5</span>
+    <span class="c-kw">when</span> rank {
+        _ <span class="c-op">-&gt;</span> code <span class="c-op">+=</span> <span class="c-num">2</span>
+        <span class="c-num">5</span> <span class="c-op">-&gt;</span> code <span class="c-op">+=</span> <span class="c-num">4</span>
+    }
+    <span class="c-kw">give back</span> code
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@106:120|unreachable when arm|an earlier arm already matches every remaining value
+2|0@0:147|mir cfg unreachable live block|main block 3 has no predecessors but still carries live statements or control flow</code></pre>
+  </div>
+</figure>
+<p>The first line is the useful one. The second is the compiler tripping over the same arm again.</p>
+<p>**<code>for each</code> is understood and cannot be built yet.** V4 reads the loop and checks it. The stage that generates code has no lists yet:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/for_each.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> total <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">for each</span> reading <span class="c-kw">in</span> [<span class="c-num">12</span>, <span class="c-num">7</span>, <span class="c-num">30</span>] {
+        total <span class="c-op">+=</span> reading
+    }
+    <span class="c-kw">give back</span> total
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native rvalue not yet supported: List</code></pre>
+  </div>
+</figure>
+<p>**The session limit of a <code>training arc</code> is not enforced.**</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/training_arc_cap.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- The condition here needs eleven passes; the cap allows three.</span>
+<span class="c-com">-- V3 stops at 3. This V4 snapshot checks the cap&#x27;s type but does not</span>
+<span class="c-com">-- enforce it, so the loop runs until the condition is true.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> drills <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> drills <span class="c-op">&gt;</span> <span class="c-num">10</span> <span class="c-kw">max</span> <span class="c-num">3</span> <span class="c-kw">sessions</span> {
+        drills <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">give back</span> drills
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 11</div>
+  </div>
+</figure>
+<div class="callout warn"><div class="callout-title">Careful</div><p>This is the serious one, because nothing reports it. V3 stops this loop after three sessions and gives 3. At the pinned commit V4 checks that the limit is a number and then builds an ordinary condition loop, which runs until <code>drills</code> exceeds 10. A <code>training arc</code> whose condition can never become true does not end in this V4 commit. That is the one situation the loop exists to prevent.</p></div>
+<p>**V4 has <code>with growth</code>.** The specification lets a <code>training arc</code> heading end with <code>with growth</code>, which asks the compiler to verify that the body really does change the pilot named in the condition. V3 does not accept it. This V4 commit does:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/with_growth.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `with growth`: the body must change the pilot the condition tests.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> power <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> power <span class="c-op">&gt;=</span> <span class="c-num">100</span> <span class="c-kw">max</span> <span class="c-num">8</span> <span class="c-kw">sessions</span> with growth {
+        power <span class="c-op">+=</span> <span class="c-num">20</span>
+    }
+    <span class="c-kw">give back</span> power
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 100</div>
+  </div>
+</figure>
+<p>And it refuses a loop whose body cannot make progress:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/with_growth_stalled.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> power <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> fatigue <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> power <span class="c-op">&gt;=</span> <span class="c-num">100</span> <span class="c-kw">max</span> <span class="c-num">8</span> <span class="c-kw">sessions</span> with growth {
+        fatigue <span class="c-op">+=</span> <span class="c-num">20</span>
+    }
+    <span class="c-kw">give back</span> fatigue
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@67:155|training arc with growth must mutate condition subject|Yuuko found no progress for power</code></pre>
+  </div>
+</figure>
+<p>The name in that message, Yuuko, is one of the voices the specification gives to the compiler&#x27;s diagnostics. Part VII covers them.</p>
+<h2 id="planned">Planned<a class="anchor" href="#planned" aria-label="Link to this section">#</a></h2>
+<div class="callout planned"><div class="callout-title">Planned</div><p>In the specification, <code>when</code> is much more than a comparison with literals. Its arms are <em>patterns</em> that can take a value apart: match one variant of a type with several forms and name the fields inside it, in one step. The compiler is also to check that the arms cover every possibility. That depends on variants, which V3 does not have. Part VII covers both.</p></div>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification lets <code>for each</code> deliver the position along with the element, written <code>for each (i, item) in list.enumerate()</code>. Until a compiler has it, count with a <code>pilot mut</code>.</p></div>
+<h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
+<p><code>if</code> chooses on a condition, which must be a bool. <code>else if</code> and <code>else</code> extend it, and the first true branch wins. <code>when</code> chooses by comparing one value with literal arms; put <code>_</code> last to catch everything else. Both are statements, not values.</p>
+<p>There are four loops. <code>repeat N times</code> runs a fixed number of passes, counted once at the start. <code>repeat until</code> runs while its condition is false, testing before each pass. <code>training arc</code> is the same with a compulsory limit on the number of passes, so it always ends. <code>for each</code> visits each element of a list.</p>
+<p><code>break</code> leaves the innermost loop and <code>continue</code> skips to its next pass.</p>
+<p>That completes the core of the language. With pilots, tasks and control flow you can write any computation. What you cannot do yet is hold more than one value at a time, or describe data of your own. Part II begins with the type you have used most and understood least: the word.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#if"><code>if</code></a></li><li><a href="#when"><code>when</code></a></li><li><a href="#repeat-times"><code>repeat ... times</code></a></li><li><a href="#repeat-until"><code>repeat until</code></a></li><li><a href="#training-arc"><code>training arc</code></a></li><li><a href="#for-each"><code>for each</code></a></li><li><a href="#break-and-continue"><code>break</code> and <code>continue</code></a></li><li><a href="#putting-it-together">Putting it together</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

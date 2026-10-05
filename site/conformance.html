@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bible vs V3 &middot; FREAK V3</title>
-<meta name="description" content="A section-by-section comparison of `freak-full-bible.md` against what the V3 compiler accepts, established by compiling probe programs.">
+<meta name="description" content="A section-by-section comparison of freak-full-bible.md against what the V3 compiler accepts, established by compiling probe programs.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -21,6 +21,15 @@
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
 <div class="nav-group"><div class="nav-group-title">Start here</div><ul>
 <li><a href="index.html">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
@@ -59,7 +68,7 @@
 <h2 id="method">Method<a class="anchor" href="#method" aria-label="Link to this section">#</a></h2>
 <p>The bible carries its own status table in §0.2, but that table describes the project as a whole — it counts a feature as landed when it works in the <strong>V4</strong> compiler under <code>src/compiler/v4/</code>. Many rows the bible marks partial are entirely absent from the shipping V3 compiler.</p>
 <p>The verdicts below come from a different method: writing a probe program for each feature and running it through a V3 binary built from source. &quot;Compiles&quot; means the frontend accepted it. &quot;Rejected&quot; quotes the actual diagnostic.</p>
-<div class="summary-card"><div class="sc-num">45/45</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-09-19T17:59:55Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card"><div class="sc-num">83/83</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-10-05T00:02:10Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <p>The Bible column below reports the specification&#x27;s own status legend, rendered as: <span class="status-pill status-shipped" role="img" aria-label="Ships"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Ships</span> works end to end, <span class="status-pill status-partial" role="img" aria-label="Partial"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Partial</span> parsed but the guarantee is incomplete, <span class="status-pill status-v4" role="img" aria-label="V4"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>V4</span> specified and not in the shipping compiler.</p>
 <div class="callout note"><div class="callout-title">Note</div><p>A recurring pattern is worth stating once. Many bible features are <strong>lexed but not parsed</strong>: the lexer knows the keyword, so it can never be an identifier, but no grammar rule consumes it. These fail with <em>&quot;unexpected &#x27;X&#x27; — this token cannot start an expression&quot;</em>. The feature is reserved and unusable at the same time.</p></div>
 <h2 id="section-1-syntax">Section 1 — Syntax<a class="anchor" href="#section-1-syntax" aria-label="Link to this section">#</a></h2>
@@ -105,8 +114,9 @@
     </article>
     <footer class="pagefoot">
       <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      45/45 examples match their reviewed expected output. Illustrative snippets
+      83/83 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#method">Method</a></li><li><a href="#section-1-syntax">Section 1 — Syntax</a></li><li><a href="#section-2-advanced-type-system">Section 2 — Advanced type system</a></li><li><a href="#section-3-concurrency">Section 3 — Concurrency</a></li><li><a href="#section-4-borrow-checker">Section 4 — Borrow checker</a></li><li><a href="#section-5-anime-layer">Section 5 — Anime layer</a></li><li><a href="#section-6-modules-and-hangar">Section 6 — Modules and Hangar</a></li><li><a href="#section-7-standard-library">Section 7 — Standard library</a></li><li><a href="#section-8-lexer">Section 8 — Lexer</a></li><li><a href="#sections-917">Sections 9–17</a></li><li><a href="#summary">Summary</a></li></ul></aside>

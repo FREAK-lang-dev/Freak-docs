@@ -1,0 +1,4 @@
+task main() {
+    pilot fuel = 40
+    if fuel > 25 say "cruising"
+}

@@ -19,16 +19,26 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from evidence import validate
+from evidence import uses_v4, validate, validate_v4
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
 SITE = ROOT / "site"
 ASSETS = SITE / "assets"
 VERIFIED = ROOT / "examples" / "verified.json"
+V4_VERIFIED = ROOT / "examples-v4" / "verified.json"
 
 # Sidebar order and grouping. Every entry is a content/<slug>.md file.
 NAV = [
+    ("The Freak Book", [
+        ("book", "Contents"),
+        ("book-introduction", "Introduction"),
+        ("book-getting-started", "1 · Getting started"),
+        ("book-guessing-game", "2 · A guessing game"),
+        ("book-pilots-and-types", "3 · Pilots, values and types"),
+        ("book-tasks", "4 · Tasks"),
+        ("book-control-flow", "5 · Control flow"),
+    ]),
     ("Start here", [
         ("index", "Overview"),
         ("getting-started", "Getting started"),
@@ -83,8 +93,16 @@ MULTIWORD = ["give back", "or else", "trust me", "for each", "for science",
 # FREAK syntax highlighting
 # --------------------------------------------------------------------------
 
-def highlight_fk(code: str) -> str:
-    """Tokenise FREAK source into <span> runs. Operates on raw text."""
+V4_TYPES = {"uint", "tiny", "float", "float32", "char", "big"}
+
+
+def highlight_fk(code: str, v4: bool = False) -> str:
+    """Tokenise FREAK source into <span> runs. Operates on raw text.
+
+    V3 reserves its keywords in every letter case, so the default colours
+    `Max` like `max`. V4 matches keywords by exact lowercase spelling; with
+    v4=True a capitalised keyword is coloured as the ordinary name it is.
+    """
     out = []
     i = 0
     n = len(code)
@@ -151,10 +169,12 @@ def highlight_fk(code: str) -> str:
             low = word.lower()
             if low in LITERALS:
                 cls = "c-lit"
-            elif low in KEYWORDS:
+            elif (word if v4 else low) in KEYWORDS:
                 cls = "c-kw"
-            elif word in ("int", "num", "word", "bool", "void", "self"):
+            elif word in ("int", "num", "word", "bool", "void", "self") or (v4 and word in V4_TYPES):
                 cls = "c-type"
+            elif v4 and low in KEYWORDS:
+                cls = ""
             elif j < n and code[j] == "(":
                 cls = "c-fn"
             elif word[:1].isupper():
@@ -261,6 +281,19 @@ def example_card(name: str, data: dict, mode: str = "full") -> str:
         f'  <pre class="code"><code>{highlight_fk(ex["source"].rstrip())}</code></pre>',
     ]
 
+    if mode == "full" and (ex.get("args") or ex.get("stdin")):
+        if ex.get("args"):
+            shown = " ".join(ex["args"])
+            body.append('  <div class="ex-out">')
+            body.append('    <div class="ex-out-head">Run with arguments</div>')
+            body.append(f'    <pre class="stdout"><code>{html.escape(shown)}</code></pre>')
+            body.append('  </div>')
+        if ex.get("stdin"):
+            body.append('  <div class="ex-out">')
+            body.append('    <div class="ex-out-head">Typed at the prompts</div>')
+            body.append(f'    <pre class="stdout"><code>{html.escape(ex["stdin"].rstrip())}</code></pre>')
+            body.append('  </div>')
+
     if mode == "full" and ex.get("stdout"):
         raw = ex["stdout"]
         coloured = has_ansi(raw)
@@ -272,6 +305,11 @@ def example_card(name: str, data: dict, mode: str = "full") -> str:
         body.append(f'    <pre class="{cls}"><code>{rendered}</code></pre>')
         body.append('  </div>')
 
+    if mode == "full" and ex.get("exit_code"):
+        body.append('  <div class="ex-out">')
+        body.append(f'    <div class="ex-out-head">Exit code {int(ex["exit_code"])}</div>')
+        body.append('  </div>')
+
     if not ok and ex.get("errors"):
         errs = "\n".join(ex["errors"])
         body.append(f'  <pre class="stdout err"><code>{html.escape(errs)}</code></pre>')
@@ -280,15 +318,87 @@ def example_card(name: str, data: dict, mode: str = "full") -> str:
     return "\n".join(body)
 
 
+def diagnostic_card(name: str, data: dict) -> str:
+    """A program the V3 release rejects, with the diagnostic it really printed."""
+    row = data.get("diagnostics", {}).get(name)
+    if row is None:
+        return f'<div class="callout warn"><p>Missing diagnostic: {html.escape(name)}</p></div>'
+    flags = " ".join(row.get("flags", []))
+    badge = '<span class="badge bad">does not compile</span>'
+    if flags:
+        badge += f'<span class="badge flag">{html.escape(flags)}</span>'
+    return "\n".join([
+        '<figure class="example">',
+        '  <figcaption>',
+        f'    <span class="ex-name">diagnostics/v3/{html.escape(row["file"])}</span>',
+        f'    <span class="ex-badges">{badge}</span>',
+        '  </figcaption>',
+        f'  <pre class="code"><code>{highlight_fk(row["source"].rstrip())}</code></pre>',
+        '  <div class="ex-out">',
+        '    <div class="ex-out-head">Compiler diagnostic</div>',
+        f'    <pre class="stdout err"><code>{html.escape(row["message"])}</code></pre>',
+        '  </div>',
+        '</figure>',
+    ])
+
+
+def v4_card(name: str, v4: dict | None) -> str:
+    """A program checked against the pinned V4 development snapshot."""
+    row = (v4 or {}).get("examples", {}).get(name)
+    if row is None:
+        return f'<div class="callout warn"><p>Missing V4 example: {html.escape(name)}</p></div>'
+    short = v4["snapshot"]["commit"][:10]
+    badge = f'<span class="badge v4">V4 snapshot {html.escape(short)}</span>'
+    if row["built"]:
+        badge += '<span class="badge ok">runs</span>'
+    else:
+        badge += '<span class="badge bad">rejected</span>'
+    body = [
+        '<figure class="example v4">',
+        '  <figcaption>',
+        f'    <span class="ex-name">examples-v4/{html.escape(row["file"])}</span>',
+        f'    <span class="ex-badges">{badge}</span>',
+        '  </figcaption>',
+        f'  <pre class="code"><code>{highlight_fk(row["source"].rstrip(), v4=True)}</code></pre>',
+    ]
+    if row["built"]:
+        if row.get("stdout"):
+            body.append('  <div class="ex-out">')
+            body.append('    <div class="ex-out-head">Program output</div>')
+            body.append(f'    <pre class="stdout"><code>{html.escape(row["stdout"])}</code></pre>')
+            body.append('  </div>')
+        if row.get("exit_code"):
+            body.append('  <div class="ex-out">')
+            body.append(f'    <div class="ex-out-head">Exit code {int(row["exit_code"])}</div>')
+            body.append('  </div>')
+    else:
+        body.append('  <div class="ex-out">')
+        body.append('    <div class="ex-out-head">V4 diagnostic</div>')
+        body.append(f'    <pre class="stdout err"><code>{html.escape(row.get("diagnostic", ""))}</code></pre>')
+        body.append('  </div>')
+    body.append("</figure>")
+    return "\n".join(body)
+
+
 # --------------------------------------------------------------------------
 # Block markdown
 # --------------------------------------------------------------------------
 
-CALLOUT_KINDS = {"note": "note", "warn": "warn", "v4": "v4", "tip": "tip"}
+# Markdown name -> (CSS class, title). "v4" is the reference pages' "this is
+# specified but V3 lacks it"; the book adds "maverick" for behaviour checked on
+# the pinned V4 snapshot and "planned" for bible features no compiler runs yet.
+CALLOUT_KINDS = {
+    "note": ("note", "Note"),
+    "warn": ("warn", "Careful"),
+    "v4": ("v4", "Not in V3"),
+    "tip": ("tip", "Tip"),
+    "maverick": ("v4", "In V4"),
+    "planned": ("planned", "Planned"),
+}
 
 
 def render_blocks(lines: list[str], data: dict, headings: list, search_rows: list,
-                  page_slug: str, page_title: str) -> str:
+                  page_slug: str, page_title: str, v4: dict | None = None) -> str:
     out = []
     i = 0
     n = len(lines)
@@ -350,6 +460,38 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
             i += 1
             continue
 
+        m = re.fullmatch(r"\{\{diagnostic:([\w-]+)\}\}", stripped)
+        if m:
+            out.append(diagnostic_card(m.group(1), data))
+            row = data.get("diagnostics", {}).get(m.group(1))
+            if row:
+                buffer_text.append(row["source"] + " " + row["message"])
+            i += 1
+            continue
+
+        m = re.fullmatch(r"\{\{v4:([\w-]+)\}\}", stripped)
+        if m:
+            out.append(v4_card(m.group(1), v4))
+            row = (v4 or {}).get("examples", {}).get(m.group(1))
+            if row:
+                buffer_text.append(row["source"])
+            i += 1
+            continue
+
+        if stripped == "{{v4-snapshot}}":
+            if v4:
+                snap = v4["snapshot"]
+                out.append(
+                    '<div class="summary-card v4">'
+                    f'<div class="sc-num">{v4["passed"]}/{v4["total"]}</div>'
+                    '<div class="sc-body"><strong>V4 notes match the pinned development snapshot</strong>'
+                    f'<span>Checked against Freak-lang commit <code>{html.escape(snap["commit"][:10])}</code> '
+                    f'({html.escape(snap["commit_date"][:10])}) on {html.escape(v4["generated_utc"])}. '
+                    'V4 has no release; these notes describe that one commit and nothing newer.</span></div></div>'
+                )
+            i += 1
+            continue
+
         if stripped == "{{verified-summary}}":
             out.append(
                 '<div class="summary-card">'
@@ -405,7 +547,7 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
         # callout
         m = re.match(r">\s*\[!(\w+)\]\s*(.*)", stripped)
         if m and m.group(1).lower() in CALLOUT_KINDS:
-            kind = CALLOUT_KINDS[m.group(1).lower()]
+            kind, callout_title = CALLOUT_KINDS[m.group(1).lower()]
             body = [m.group(2)]
             i += 1
             while i < n and lines[i].strip().startswith(">"):
@@ -413,9 +555,8 @@ def render_blocks(lines: list[str], data: dict, headings: list, search_rows: lis
                 i += 1
             text = " ".join(x for x in body if x)
             buffer_text.append(text)
-            titles = {"note": "Note", "warn": "Careful", "v4": "Not in V3", "tip": "Tip"}
             out.append(f'<div class="callout {kind}">'
-                       f'<div class="callout-title">{titles[kind]}</div>'
+                       f'<div class="callout-title">{callout_title}</div>'
                        f"<p>{inline(text)}</p></div>")
             continue
 
@@ -516,7 +657,7 @@ def toc_html(headings: list) -> str:
     if len(items) < 2:
         return ""
     links = "".join(
-        f'<li><a href="#{h["anchor"]}">{html.escape(h["text"])}</a></li>'
+        f'<li><a href="#{h["anchor"]}">{inline(h["text"])}</a></li>'
         for h in items
     )
     return f'<aside class="toc"><div class="toc-title">On this page</div><ul>{links}</ul></aside>'
@@ -552,7 +693,7 @@ PAGE = """<!doctype html>
     <footer class="pagefoot">
       <p>Badged executable examples were compiled and run with the released <strong>{compiler}</strong>.
       {compiled}/{total} examples match their reviewed expected output. Illustrative snippets
-      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>{v4_foot}
     </footer>
   </main>
   {toc}
@@ -582,10 +723,15 @@ def main() -> int:
     args = ap.parse_args()
 
     data = json.loads(VERIFIED.read_text(encoding="utf-8"))
+    v4 = None
     try:
         validate(data, ROOT)
         validate_navigation(CONTENT, NAV)
-    except (ValueError, KeyError, TypeError) as exc:
+        if uses_v4(ROOT):
+            # V4 notes are published only with their own pinned evidence.
+            v4 = json.loads(V4_VERIFIED.read_text(encoding="utf-8"))
+            validate_v4(v4, ROOT)
+    except (ValueError, KeyError, TypeError, OSError) as exc:
         print(f'Refusing to publish: {exc}', file=sys.stderr)
         return 1
     ASSETS.mkdir(parents=True, exist_ok=True)
@@ -615,17 +761,26 @@ def main() -> int:
                 break
 
         headings: list = []
-        body = render_blocks(lines, data, headings, search_rows, slug, title)
+        body = render_blocks(lines, data, headings, search_rows, slug, title, v4)
+        v4_foot = ""
+        if v4:
+            v4_foot = (
+                "\n      <p>V4 boxes were checked against the development snapshot "
+                f'<strong>{html.escape(v4["snapshot"]["commit"][:10])}</strong> '
+                f'({html.escape(v4["snapshot"]["commit_date"][:10])}); {v4["passed"]}/{v4["total"]} V4 examples '
+                "match their reviewed expectation. Regenerate with "
+                "<code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>")
 
         page = PAGE.format(
             title=html.escape(title),
-            desc=html.escape(desc or f"FREAK V3 documentation: {title}"),
+            desc=html.escape((desc or f"FREAK V3 documentation: {title}").replace("`", "")),
             sidebar=sidebar_html(slug),
             body=body,
             toc=toc_html(headings),
             compiler=html.escape(data["compiler"]),
             compiled=data["compiled"],
             total=data["total"],
+            v4_foot=v4_foot,
         )
         (SITE / f"{slug}.html").write_text(page, encoding="utf-8")
         print(f"  wrote site/{slug}.html")
@@ -659,6 +814,8 @@ def main() -> int:
             "examples_total": data["total"],
             "examples_compiled": data["compiled"],
             "examples_passed": data["passed"],
+            "v4_snapshot": ({**v4["snapshot"], "generated_utc": v4["generated_utc"],
+                             "examples_total": v4["total"], "examples_passed": v4["passed"]} if v4 else None),
             "groups": [g for g, _ in NAV],
             "pages": manifest,
         }, indent=2), encoding="utf-8")

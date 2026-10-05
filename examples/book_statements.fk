@@ -1,0 +1,11 @@
+-- A call can stand on its own line; its result is simply dropped.
+task log_and_count(message: word) -> int {
+    say message
+    give back message.length()
+}
+
+task main() {
+    log_and_count("contact, bearing 270")
+    pilot length = log_and_count("engaging")
+    say length
+}

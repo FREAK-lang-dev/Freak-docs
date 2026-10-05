@@ -1,0 +1,19 @@
+-- Five of the specification's extra types. Three have a literal suffix;
+-- a char is written in single quotes.
+task main() -> int {
+    pilot count: uint = 42u            -- unsigned 64-bit
+    pilot more: uint = count + 8u
+
+    pilot small: tiny = 7t             -- one byte
+    pilot next: tiny = small + 1t
+
+    pilot ratio: float = 3.14f         -- the explicit 64-bit float
+    pilot narrow: float32 = 1.5        -- a 32-bit float; it has no suffix
+    pilot initial: char = 'a'          -- one character, in single quotes
+
+    pilot passed = 0
+    if more == 50u { passed += 1 }
+    if next == 8t { passed += 1 }
+    if ratio > 3.0f { passed += 1 }
+    give back passed
+}

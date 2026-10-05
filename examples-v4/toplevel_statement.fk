@@ -1,0 +1,2 @@
+-- V4 follows the specification here: no statements outside a task.
+say "Hello, FREAK!"

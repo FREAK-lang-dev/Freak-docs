@@ -1,0 +1,499 @@
+{
+  "schema_version": 1,
+  "generation": "v4",
+  "channel": "development",
+  "snapshot": {
+    "repository": "FREAK-lang-dev/Freak-lang",
+    "commit": "7c9a1f3c2778e2fb23dbfd12132ade16b0a2c16d",
+    "commit_date": "2026-10-04T12:28:44+03:00"
+  },
+  "input_sha256": "46875e3cb76bf310f1d0ca6b547a8f0e0eb80744127ec37349552459b733850f",
+  "generated_utc": "2026-10-05T00:04:06Z",
+  "total": 46,
+  "passed": 46,
+  "examples": {
+    "arrow_task": {
+      "name": "arrow_task",
+      "file": "arrow_task.fk",
+      "source": "-- A task whose body is one expression, written with `=>` and no braces.\ntask square(x: int) -> int => x * x\n\ntask main() -> int {\n    give back square(3) + square(4)\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 25,
+      "stdout": "",
+      "elapsed_ms": 5403
+    },
+    "ask": {
+      "name": "ask",
+      "file": "ask.fk",
+      "source": "task main() -> int {\n    pilot text = ask(\"Your guess: \")\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
+      "elapsed_ms": 8808
+    },
+    "big_type": {
+      "name": "big_type",
+      "file": "big_type.fk",
+      "source": "task main() -> int {\n    pilot huge: big = 999b\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native type not yet supported: big",
+      "elapsed_ms": 9068
+    },
+    "conversion_methods": {
+      "name": "conversion_methods",
+      "file": "conversion_methods.fk",
+      "source": "task main() -> int {\n    pilot sorties = 12\n    pilot average: num = sorties.to_num() / 5.0\n    if average > 2.0 { give back 1 }\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@69:86|receiver has no matching method|int offers no method to_num",
+      "elapsed_ms": 8755
+    },
+    "declared_later": {
+      "name": "declared_later",
+      "file": "declared_later.fk",
+      "source": "-- `main` calls a task that is declared below it.\ntask main() -> int {\n    give back double(21)\n}\n\ntask double(n: int) -> int {\n    give back n * 2\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 42,
+      "stdout": "",
+      "elapsed_ms": 10501
+    },
+    "duplicate_local": {
+      "name": "duplicate_local",
+      "file": "duplicate_local.fk",
+      "source": "task main() -> int {\n    pilot fuel = 50\n    pilot fuel = 75\n    give back fuel\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@45:60|duplicate local declaration|fuel already exists in this scope",
+      "elapsed_ms": 8682
+    },
+    "else_if_give_back": {
+      "name": "else_if_give_back",
+      "file": "else_if_give_back.fk",
+      "source": "-- Every branch gives back, so nothing follows the chain.\ntask sign(n: int) -> int {\n    if n > 0 {\n        give back 1\n    } else if n < 0 {\n        give back 2\n    } else {\n        give back 3\n    }\n}\n\ntask main() -> int {\n    give back sign(5)\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@58:202|mir cfg unreachable live block|sign block 5 has no predecessors but still carries live statements or control flow",
+      "elapsed_ms": 8711
+    },
+    "else_if_trailing": {
+      "name": "else_if_trailing",
+      "file": "else_if_trailing.fk",
+      "source": "-- The same decision, with the last case after the chain.\ntask sign(n: int) -> int {\n    if n > 0 {\n        give back 1\n    } else if n < 0 {\n        give back 2\n    }\n    give back 3\n}\n\ntask main() -> int {\n    give back sign(5) * 100 + sign(0 - 5) * 10 + sign(0)\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 123,
+      "stdout": "",
+      "elapsed_ms": 10199
+    },
+    "fixed_reassigned": {
+      "name": "fixed_reassigned",
+      "file": "fixed_reassigned.fk",
+      "source": "-- `fixed` is accepted, and not enforced at this commit.\ntask main() -> int {\n    fixed pilot fuel = 50\n    fuel = 75\n    give back fuel\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 75,
+      "stdout": "",
+      "elapsed_ms": 10360
+    },
+    "for_each": {
+      "name": "for_each",
+      "file": "for_each.fk",
+      "source": "task main() -> int {\n    pilot total = 0\n    for each reading in [12, 7, 30] {\n        total += reading\n    }\n    give back total\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native rvalue not yet supported: List",
+      "elapsed_ms": 9402
+    },
+    "guess_logic": {
+      "name": "guess_logic",
+      "file": "guess_logic.fk",
+      "source": "-- The heart of the guessing game, without the talking: find a secret by\n-- halving the range, and report the number of guesses as the exit code.\ntask judge(guess: int, secret: int) -> int {\n    if guess < secret { give back 0 - 1 }\n    if guess > secret { give back 1 }\n    give back 0\n}\n\ntask main() -> int {\n    pilot secret = 42\n    pilot low = 1\n    pilot high = 100\n    pilot attempts = 0\n    pilot solved = false\n\n    repeat until solved {\n        pilot guess = (low + high) / 2\n        pilot verdict = judge(guess, secret)\n        attempts += 1\n\n        if verdict < 0 {\n            low = guess + 1\n        } else if verdict > 0 {\n            high = guess - 1\n        } else {\n            solved = true\n        }\n    }\n\n    give back attempts\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 7,
+      "stdout": "",
+      "elapsed_ms": 11208
+    },
+    "hello": {
+      "name": "hello",
+      "file": "hello.fk",
+      "source": "-- The V4 snapshot wants an explicit return type on `main`.\n-- An int given back from `main` becomes the exit code.\ntask main() -> int {\n    say \"Hello, FREAK!\"\n    give back 0\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 0,
+      "stdout": "Hello, FREAK!",
+      "elapsed_ms": 10741
+    },
+    "hex_literal": {
+      "name": "hex_literal",
+      "file": "hex_literal.fk",
+      "source": "-- V3 rejects this literal. This V4 commit reads it as 0 and carries on.\ntask main() -> int {\n    pilot mask = 0xFF\n    give back mask + 7\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 7,
+      "stdout": "",
+      "elapsed_ms": 10775
+    },
+    "if_needs_bool": {
+      "name": "if_needs_bool",
+      "file": "if_needs_bool.fk",
+      "source": "task main() -> int {\n    pilot fuel = 40\n    if fuel { give back 1 }\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@45:68|if condition must be bool|got int",
+      "elapsed_ms": 9712
+    },
+    "int_and_num": {
+      "name": "int_and_num",
+      "file": "int_and_num.fk",
+      "source": "task main() -> int {\n    pilot a = 7\n    pilot b = 2\n    pilot thrust: num = 2.5\n\n    -- 7 / 2 is 3 and 7 % 2 is 1, so this part is 31.\n    pilot whole = a / b * 10 + a % b\n\n    if thrust * 2.0 > 4.9 { give back whole + 5 }\n    give back whole\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 36,
+      "stdout": "",
+      "elapsed_ms": 10744
+    },
+    "keyword_case": {
+      "name": "keyword_case",
+      "file": "keyword_case.fk",
+      "source": "-- In V4 only the exact lowercase spelling is a keyword,\n-- so these are ordinary names.\ntask main() -> int {\n    pilot Max = 4\n    pilot Pilot = 3\n    give back Max + Pilot\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 7,
+      "stdout": "",
+      "elapsed_ms": 10777
+    },
+    "loops": {
+      "name": "loops",
+      "file": "loops.fk",
+      "source": "-- Three of V3's loops, with break and continue, on V4.\ntask main() -> int {\n    pilot total = 0\n\n    repeat 4 times { total += 10 }              -- 40\n\n    pilot n = 0\n    repeat until n >= 6 {\n        n += 1\n        if n == 2 { continue }                  -- skips 2\n        if n == 5 { break }                     -- stops before 5\n        total += n                              -- adds 1, 3, 4\n    }\n\n    pilot drills = 0\n    training arc until drills >= 3 max 10 sessions { drills += 1 }\n\n    give back total + drills                    -- 40 + 8 + 3\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 51,
+      "stdout": "",
+      "elapsed_ms": 10787
+    },
+    "main_without_type": {
+      "name": "main_without_type",
+      "file": "main_without_type.fk",
+      "source": "task main() {\n    say \"Hello, FREAK!\"\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
+      "elapsed_ms": 9840
+    },
+    "missing_return": {
+      "name": "missing_return",
+      "file": "missing_return.fk",
+      "source": "task rank_for(sorties: int) -> int {\n    if sorties >= 50 { give back 2 }\n}\n\ntask main() -> int {\n    give back rank_for(64)\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@0:75|missing return|rank_for must give back int on every route",
+      "elapsed_ms": 9297
+    },
+    "named_arguments": {
+      "name": "named_arguments",
+      "file": "named_arguments.fk",
+      "source": "-- V4 lets a call name its arguments, in any order.\ntask offset(n: int, by: int) -> int {\n    give back n + by\n}\n\ntask main() -> int {\n    give back offset(by: 1, n: 10)\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 11,
+      "stdout": "",
+      "elapsed_ms": 10065
+    },
+    "num_into_int": {
+      "name": "num_into_int",
+      "file": "num_into_int.fk",
+      "source": "-- V3 refuses all three of these. This V4 commit drops the fraction\n-- and says nothing.\ntask whole(n: int) -> int {\n    give back n\n}\n\ntask main() -> int {\n    pilot sorties: int = 2.5                    -- becomes 2\n    pilot fuel = 10\n    fuel = 7.9                                  -- becomes 7\n    give back sorties * 10 + fuel + whole(3.99) -- 20 + 7 + 3\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 30,
+      "stdout": "",
+      "elapsed_ms": 10362
+    },
+    "numeric_types": {
+      "name": "numeric_types",
+      "file": "numeric_types.fk",
+      "source": "-- Five of the specification's extra types. Three have a literal suffix;\n-- a char is written in single quotes.\ntask main() -> int {\n    pilot count: uint = 42u            -- unsigned 64-bit\n    pilot more: uint = count + 8u\n\n    pilot small: tiny = 7t             -- one byte\n    pilot next: tiny = small + 1t\n\n    pilot ratio: float = 3.14f         -- the explicit 64-bit float\n    pilot narrow: float32 = 1.5        -- a 32-bit float; it has no suffix\n    pilot initial: char = 'a'          -- one character, in single quotes\n\n    pilot passed = 0\n    if more == 50u { passed += 1 }\n    if next == 8t { passed += 1 }\n    if ratio > 3.0f { passed += 1 }\n    give back passed\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 3,
+      "stdout": "",
+      "elapsed_ms": 10588
+    },
+    "overflow_wraps": {
+      "name": "overflow_wraps",
+      "file": "overflow_wraps.fk",
+      "source": "-- Past the largest int the value wraps around, as it does in V3.\ntask main() -> int {\n    pilot largest: int = 9223372036854775807\n    pilot next = largest + 1\n    if next < 0 { give back 1 }\n    give back 0\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 1,
+      "stdout": "",
+      "elapsed_ms": 10985
+    },
+    "pilot_mut": {
+      "name": "pilot_mut",
+      "file": "pilot_mut.fk",
+      "source": "task main() -> int {\n    pilot mut fuel = 50\n    fuel = 75\n    give back fuel\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@25:44|unsupported local pattern|use a single name, (a, b, ...), or [a, b, ...]",
+      "elapsed_ms": 9598
+    },
+    "pipe_ignored": {
+      "name": "pipe_ignored",
+      "file": "pipe_ignored.fk",
+      "source": "-- V3 gives 11 for this: double(5) is 10, offset(10, 1) is 11.\n-- This V4 snapshot accepts the pipes and ignores them, leaving 5.\ntask double(n: int) -> int { give back n * 2 }\ntask offset(n: int, by: int) -> int { give back n + by }\n\ntask main() -> int {\n    give back 5 |> double() |> offset(1)\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 5,
+      "stdout": "",
+      "elapsed_ms": 10771
+    },
+    "reassign": {
+      "name": "reassign",
+      "file": "reassign.fk",
+      "source": "-- At this snapshot every pilot can be reassigned; `mut` is not accepted yet.\ntask main() -> int {\n    pilot fuel = 50\n    fuel = 75\n    fuel += 5\n    give back fuel\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 80,
+      "stdout": "",
+      "elapsed_ms": 10845
+    },
+    "recursion": {
+      "name": "recursion",
+      "file": "recursion.fk",
+      "source": "task fib(n: int) -> int {\n    if n < 2 { give back n }\n    give back fib(n - 1) + fib(n - 2)\n}\n\ntask main() -> int {\n    give back fib(10)\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 55,
+      "stdout": "",
+      "elapsed_ms": 11011
+    },
+    "say_needs_literal": {
+      "name": "say_needs_literal",
+      "file": "say_needs_literal.fk",
+      "source": "task main() -> int {\n    pilot sorties = 12\n    say sorties\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@48:59|say nonliteral is not yet supported|W1 say requires exactly one static word literal; word values, expressions, and methods need the later word runtime slices",
+      "elapsed_ms": 9671
+    },
+    "semicolon": {
+      "name": "semicolon",
+      "file": "semicolon.fk",
+      "source": "-- V4 accepts a semicolon at the end of a statement. V3 rejects it.\ntask main() -> int {\n    pilot fuel = 50;\n    give back fuel\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 50,
+      "stdout": "",
+      "elapsed_ms": 11391
+    },
+    "shadow_inner": {
+      "name": "shadow_inner",
+      "file": "shadow_inner.fk",
+      "source": "task main() -> int {\n    pilot fuel = 50\n    if fuel > 25 {\n        pilot fuel = 75\n    }\n    give back fuel\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@68:83|duplicate local declaration|fuel already exists in this scope",
+      "elapsed_ms": 9760
+    },
+    "task_void": {
+      "name": "task_void",
+      "file": "task_void.fk",
+      "source": "task greet() -> void {\n    say \"Valkyrie-1, cleared for launch.\"\n}\n\ntask main() -> int {\n    greet()\n    give back 0\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 0,
+      "stdout": "Valkyrie-1, cleared for launch.",
+      "elapsed_ms": 10284
+    },
+    "task_without_type": {
+      "name": "task_without_type",
+      "file": "task_without_type.fk",
+      "source": "-- `greet` has no arrow. V3 reads that as a task that gives nothing back.\ntask greet() {\n    say \"Valkyrie-1, cleared for launch.\"\n}\n\ntask main() -> int {\n    greet()\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
+      "elapsed_ms": 9015
+    },
+    "toplevel_fixed": {
+      "name": "toplevel_fixed",
+      "file": "toplevel_fixed.fk",
+      "source": "fixed pilot MAX_SORTIES: int = 3\n\ntask main() -> int {\n    give back MAX_SORTIES\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native symbol values currently support only task pointers",
+      "elapsed_ms": 8846
+    },
+    "toplevel_pilot": {
+      "name": "toplevel_pilot",
+      "file": "toplevel_pilot.fk",
+      "source": "pilot launches = 0\n\ntask main() -> int {\n    launches += 1\n    give back launches\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@0:19|unexpected token at top level|pilot",
+      "elapsed_ms": 8686
+    },
+    "toplevel_statement": {
+      "name": "toplevel_statement",
+      "file": "toplevel_statement.fk",
+      "source": "-- V4 follows the specification here: no statements outside a task.\nsay \"Hello, FREAK!\"\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@68:88|unexpected token at top level|say",
+      "elapsed_ms": 8480
+    },
+    "training_arc_cap": {
+      "name": "training_arc_cap",
+      "file": "training_arc_cap.fk",
+      "source": "-- The condition here needs eleven passes; the cap allows three.\n-- V3 stops at 3. This V4 snapshot checks the cap's type but does not\n-- enforce it, so the loop runs until the condition is true.\ntask main() -> int {\n    pilot drills = 0\n    training arc until drills > 10 max 3 sessions {\n        drills += 1\n    }\n    give back drills\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 11,
+      "stdout": "",
+      "elapsed_ms": 9893
+    },
+    "truth_literal_case": {
+      "name": "truth_literal_case",
+      "file": "truth_literal_case.fk",
+      "source": "-- A truth literal in any capitalisation is still a truth literal in V4,\n-- and it means what it says. Each test that passes adds to the exit code.\ntask main() -> int {\n    pilot code = 0\n    if TRUE { code += 1 }\n    if Yes { code += 2 }\n    if not FALSE { code += 4 }\n    give back code\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 7,
+      "stdout": "",
+      "elapsed_ms": 10373
+    },
+    "unknown_name": {
+      "name": "unknown_name",
+      "file": "unknown_name.fk",
+      "source": "task main() -> int {\n    give back altitude\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native type not yet supported: unknown",
+      "elapsed_ms": 9236
+    },
+    "when_default_first": {
+      "name": "when_default_first",
+      "file": "when_default_first.fk",
+      "source": "task main() -> int {\n    pilot code = 0\n    pilot rank = 5\n    when rank {\n        _ -> code += 2\n        5 -> code += 4\n    }\n    give back code\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@106:120|unreachable when arm|an earlier arm already matches every remaining value\n2|0@0:147|mir cfg unreachable live block|main block 3 has no predecessors but still carries live statements or control flow",
+      "elapsed_ms": 8735
+    },
+    "when_int": {
+      "name": "when_int",
+      "file": "when_int.fk",
+      "source": "task order_code(code: int) -> int {\n    pilot answer = 0\n    when code {\n        1 -> answer = 10\n        2 -> answer = 20\n        _ -> answer = 99\n    }\n    give back answer\n}\n\ntask main() -> int {\n    give back order_code(2) + order_code(7)\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 119,
+      "stdout": "",
+      "elapsed_ms": 10070
+    },
+    "with_growth": {
+      "name": "with_growth",
+      "file": "with_growth.fk",
+      "source": "-- `with growth`: the body must change the pilot the condition tests.\ntask main() -> int {\n    pilot power = 0\n    training arc until power >= 100 max 8 sessions with growth {\n        power += 20\n    }\n    give back power\n}\n",
+      "built": true,
+      "passed": true,
+      "errors": [],
+      "exit_code": 100,
+      "stdout": "",
+      "elapsed_ms": 10089
+    },
+    "with_growth_stalled": {
+      "name": "with_growth_stalled",
+      "file": "with_growth_stalled.fk",
+      "source": "task main() -> int {\n    pilot power = 0\n    pilot fatigue = 0\n    training arc until power >= 100 max 8 sessions with growth {\n        fatigue += 20\n    }\n    give back fatigue\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@67:155|training arc with growth must mutate condition subject|Yuuko found no progress for power",
+      "elapsed_ms": 9384
+    },
+    "word_pilot": {
+      "name": "word_pilot",
+      "file": "word_pilot.fk",
+      "source": "task main() -> int {\n    pilot callsign = \"Valkyrie-1\"\n    give back 0\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "v4-native-contract-error=native words currently support only literal say operands",
+      "elapsed_ms": 9032
+    },
+    "wrong_arg_count": {
+      "name": "wrong_arg_count",
+      "file": "wrong_arg_count.fk",
+      "source": "task add(a: int, b: int) -> int {\n    give back a + b\n}\n\ntask main() -> int {\n    give back add(20)\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@91:99|call arity mismatch|add expects 2 arguments but got 1",
+      "elapsed_ms": 8101
+    },
+    "wrong_arg_type": {
+      "name": "wrong_arg_type",
+      "file": "wrong_arg_type.fk",
+      "source": "task add(a: int, b: int) -> int {\n    give back a + b\n}\n\ntask main() -> int {\n    give back add(20, true)\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@91:105|call argument type mismatch|add argument 2 expects int but got bool",
+      "elapsed_ms": 5802
+    },
+    "wrong_type": {
+      "name": "wrong_type",
+      "file": "wrong_type.fk",
+      "source": "task main() -> int {\n    pilot sorties: int = true\n    give back sorties\n}\n",
+      "built": false,
+      "passed": true,
+      "errors": [],
+      "diagnostic": "2|0@25:50|local declaration type mismatch|sorties expects int but got bool",
+      "elapsed_ms": 5781
+    }
+  }
+}

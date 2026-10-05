@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pilots, values and types &middot; FREAK V3</title>
+<meta name="description" content="How to name a value, what kinds of value there are, and the strict rules that keep them from being confused with one another.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html" class="active">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="pilots-values-and-types">Pilots, values and types<a class="anchor" href="#pilots-values-and-types" aria-label="Link to this section">#</a></h1>
+<p class="lede">How to name a value, what kinds of value there are, and the strict rules that keep them from being confused with one another.</p>
+<p>Chapter 2 used pilots, numbers, words and truth values without stopping to explain them. This chapter goes back over each one. It covers:</p>
+<ul><li>declaring pilots, and what <code>mut</code> and <code>fixed</code> do</li><li>where a pilot can be seen, and for how long</li><li>the words you cannot use as names</li><li>the four basic types: <code>int</code>, <code>num</code>, <code>bool</code> and <code>word</code></li><li>why FREAK never converts between types unless you ask</li></ul>
+<h2 id="pilots">Pilots<a class="anchor" href="#pilots" aria-label="Link to this section">#</a></h2>
+<p>A pilot is a name for a value. You create one with <code>pilot</code>, a name, an equals sign, and the value it starts with.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_pilots.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Pilots: named values.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> callsign <span class="c-op">=</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>     <span class="c-com">-- the type is inferred: word</span>
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>           <span class="c-com">-- or written out after a colon</span>
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">87.5</span>                 <span class="c-com">-- num</span>
+    <span class="c-kw">pilot</span> cleared <span class="c-op">=</span> <span class="c-lit">true</span>              <span class="c-com">-- bool</span>
+
+    <span class="c-kw">say</span> callsign
+    <span class="c-kw">say</span> sorties
+    <span class="c-kw">say</span> fuel
+    <span class="c-kw">say</span> cleared
+
+    <span class="c-com">-- A pilot you intend to change is declared with `mut`.</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> altitude <span class="c-op">=</span> <span class="c-num">0</span>
+    altitude <span class="c-op">=</span> <span class="c-num">3000</span>
+    altitude <span class="c-op">+=</span> <span class="c-num">500</span>
+    <span class="c-kw">say</span> altitude
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyrie-1
+12
+87.5
+true
+3500</code></pre>
+  </div>
+</figure>
+<p>Every pilot has a <em>type</em>, which says what kind of value it holds. The first four pilots here hold a word, an int, a num and a bool.</p>
+<p>You can let the compiler work the type out from the starting value, as <code>callsign</code>, <code>fuel</code> and <code>cleared</code> do. Or you can write it after the name with a colon, as <code>sorties: int</code> does. The two forms mean the same thing when they agree. Writing the type is useful as a note to the reader, and as a check: if the value is not of the type you wrote, the program does not build.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_wrong_type.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-str">&quot;twelve&quot;</span>
+    <span class="c-kw">say</span> sorties
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: cannot initialize int binding &#x27;sorties&#x27; with word (line 2)
+ --&gt; book_wrong_type.fk:2:1
+2 |     pilot sorties: int = &quot;twelve&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<p>A pilot must be given a value when it is created. There is no way to declare one now and fill it in later:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_no_initial_value.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel<span class="c-op">:</span> <span class="c-type">int</span>
+    fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    <span class="c-kw">say</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: expected &#x27;=&#x27;, found &#x27;fuel&#x27;
+ --&gt; book_no_initial_value.fk:3:5
+  |
+3 |     fuel = 50
+  |     ^
+
+error: unexpected &#x27;=&#x27; — this token cannot start an expression
+ --&gt; book_no_initial_value.fk:3:10
+  |
+3 |     fuel = 50
+  |          ^</code></pre>
+  </div>
+</figure>
+<p>The message is indirect. After <code>pilot fuel: int</code> the compiler expected <code>=</code> and a value. It found the next line instead, and reports that.</p>
+<h3 id="a-pilot-keeps-its-type">A pilot keeps its type<a class="anchor" href="#a-pilot-keeps-its-type" aria-label="Link to this section">#</a></h3>
+<p>Once a pilot holds an int, it holds ints for as long as it exists. You can give it a different int. You cannot give it a word.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_assign_wrong_type.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> sorties <span class="c-op">=</span> <span class="c-num">12</span>
+    sorties <span class="c-op">=</span> <span class="c-str">&quot;thirteen&quot;</span>
+    <span class="c-kw">say</span> sorties
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: cannot assign word to int (line 3)
+ --&gt; book_assign_wrong_type.fk:3:1
+3 |     sorties = &quot;thirteen&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<h3 id="names">Names<a class="anchor" href="#names" aria-label="Link to this section">#</a></h3>
+<p>A name is made of letters, digits and underscores, and does not start with a digit. Only the unaccented letters <code>a</code> to <code>z</code> and <code>A</code> to <code>Z</code> are allowed.</p>
+<p>FREAK code follows two conventions. Ordinary pilots and tasks are written in lowercase with underscores between words: <code>secret_number</code>, <code>sorties_flown</code>. Values that are fixed for the whole program are written in capitals: <code>MAX_SORTIES</code>.</p>
+<h2 id="changing-a-pilot">Changing a pilot<a class="anchor" href="#changing-a-pilot" aria-label="Link to this section">#</a></h2>
+<p>There are three ways to declare a pilot, and they differ in what you intend to do with it afterwards.</p>
+<div class="tablewrap"><table><thead><tr><th>Declaration</th><th>Intent</th></tr></thead><tbody><tr><td><code>pilot x = 1</code></td><td>An ordinary pilot</td></tr><tr><td><code>pilot mut x = 1</code></td><td>A pilot whose value will be changed</td></tr><tr><td><code>fixed pilot x = 1</code></td><td>A pilot whose value must never change</td></tr></tbody></table></div>
+<p>Assignment uses <code>=</code>. For arithmetic on the pilot&#x27;s own value there are shorthand forms: <code>x += 5</code> means <code>x = x + 5</code>, and <code>-=</code>, <code>*=</code>, <code>/=</code> and <code>%=</code> work the same way.</p>
+<p>Now the part that needs care. How strictly these three forms are enforced depends on how you build.</p>
+<p><strong>By default, V3 does not enforce them for simple values.</strong> A plain <code>pilot</code> holding a number can be reassigned, and so can a <code>fixed pilot</code>. The words <code>mut</code> and <code>fixed</code> are accepted and, for numbers, words and bools, ignored.</p>
+<p>**With <code>--strict-borrow</code>, V3 enforces them.** That flag turns on V3&#x27;s ownership checker, which Part III is about. Under it, only a <code>pilot mut</code> may be reassigned:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_reassign_strict.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span><span class="badge flag">--strict-borrow</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    <span class="c-kw">say</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>borrowck: This binding was sworn to silence. It cannot be reassigned. &#x27;fuel&#x27; (line 3)
+ --&gt; book_reassign_strict.fk:3:1
+3 |     fuel = 75
+  | ^</code></pre>
+  </div>
+</figure>
+<p>The same message is given for assigning to a <code>fixed pilot</code>.</p>
+<p>You turn it on by adding the flag to a build:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build main.fk --strict-borrow</code></pre></div>
+<p>So write the declarations as if they were always enforced. Use <code>pilot mut</code> for anything you assign to again, <code>fixed pilot</code> for values that must not change, and plain <code>pilot</code> for everything else. Your code then says what it means, and the strict mode will have no complaint about its assignments. The strict mode has a second set of rules, about values that are handed from one place to another, and those are Part III&#x27;s subject.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>One kind of value is checked even without the flag. A list must be declared <code>pilot mut</code> before you can add to it or change its elements. Part II covers lists.</p></div>
+<h2 id="scope">Scope<a class="anchor" href="#scope" aria-label="Link to this section">#</a></h2>
+<p>A pilot exists from the line that declares it to the end of the block it was declared in. A block is whatever sits between a pair of braces: the body of a task, of an <code>if</code>, of a loop.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_scope.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A pilot lives from its declaration to the end of the block it is in.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> squadron <span class="c-op">=</span> <span class="c-str">&quot;Valkyries&quot;</span>
+
+    <span class="c-kw">if</span> <span class="c-lit">true</span> {
+        <span class="c-kw">pilot</span> wing <span class="c-op">=</span> <span class="c-str">&quot;A-01&quot;</span>            <span class="c-com">-- exists only inside these braces</span>
+        <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{squadron}</span> / <span class="c-interp">{wing}</span>&quot;</span>
+
+        <span class="c-kw">pilot</span> squadron <span class="c-op">=</span> <span class="c-str">&quot;Isumi&quot;</span>       <span class="c-com">-- a new pilot that hides the outer one</span>
+        <span class="c-kw">say</span> squadron
+    }
+
+    <span class="c-kw">say</span> squadron                       <span class="c-com">-- the outer pilot was never changed</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyries / A-01
+Isumi
+Valkyries</code></pre>
+  </div>
+</figure>
+<p><code>wing</code> is created inside the <code>if</code> block and ends with it. Using it afterwards is an error, and the compiler treats it like any other name it has never heard of:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_out_of_scope.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">if</span> <span class="c-lit">true</span> {
+        <span class="c-kw">pilot</span> wing <span class="c-op">=</span> <span class="c-str">&quot;A-01&quot;</span>
+    }
+    <span class="c-kw">say</span> wing
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: unknown binding &#x27;wing&#x27; (line 5)
+ --&gt; book_out_of_scope.fk:5:1
+5 |     say wing
+  | ^</code></pre>
+  </div>
+</figure>
+<h3 id="shadowing">Shadowing<a class="anchor" href="#shadowing" aria-label="Link to this section">#</a></h3>
+<p>The example also declares a second <code>squadron</code> inside the block. This is allowed. The inner pilot is a new one that happens to have the same name, and while it exists it hides the outer one. When the block ends, the inner pilot is gone and the name means the outer pilot again, whose value was never touched.</p>
+<p>That only works across blocks. Declaring the same name twice in the <em>same</em> block is an error:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_duplicate_pilot.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    <span class="c-kw">say</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: duplicate binding &#x27;fuel&#x27; in the same scope (line 3)
+ --&gt; book_duplicate_pilot.fk:3:1
+3 |     pilot fuel = 75
+  | ^</code></pre>
+  </div>
+</figure>
+<p>If you meant to change the existing pilot, drop the second <code>pilot</code> and assign.</p>
+<h2 id="pilots-outside-tasks">Pilots outside tasks<a class="anchor" href="#pilots-outside-tasks" aria-label="Link to this section">#</a></h2>
+<p>A pilot can be declared at the top level of a file, outside every task. It is then visible in all of them.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_constants.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Pilots declared outside every task are visible to all of them.</span>
+<span class="c-kw">fixed</span> <span class="c-kw">pilot</span> <span class="c-type">MAX_SORTIES</span><span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">3</span>
+<span class="c-kw">fixed</span> <span class="c-kw">pilot</span> <span class="c-type">SQUADRON</span><span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-str">&quot;Valkyries&quot;</span>
+
+<span class="c-kw">task</span> <span class="c-fn">briefing</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{SQUADRON}</span>: at most <span class="c-interp">{MAX_SORTIES}</span> sorties today&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-fn">briefing</span>()
+    <span class="c-kw">say</span> <span class="c-type">MAX_SORTIES</span> <span class="c-op">*</span> <span class="c-num">2</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyries: at most 3 sorties today
+6</code></pre>
+  </div>
+</figure>
+<p>This is the right place for values the whole program agrees on: limits, names, settings. Declare them <code>fixed pilot</code> and name them in capitals.</p>
+<p>A top-level pilot can also be changed by the tasks that see it:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_shared_pilot.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A top-level pilot is shared by every task in the file.</span>
+<span class="c-kw">pilot</span> <span class="c-kw">mut</span> sorties_flown <span class="c-op">=</span> <span class="c-num">0</span>
+
+<span class="c-kw">task</span> <span class="c-fn">scramble</span>(callsign<span class="c-op">:</span> <span class="c-type">word</span>) {
+    sorties_flown <span class="c-op">+=</span> <span class="c-num">1</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{callsign}</span> away (sortie <span class="c-interp">{sorties_flown}</span>)&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-fn">scramble</span>(<span class="c-str">&quot;Valkyrie-1&quot;</span>)
+    <span class="c-fn">scramble</span>(<span class="c-str">&quot;Valkyrie-2&quot;</span>)
+    <span class="c-kw">say</span> sorties_flown
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyrie-1 away (sortie 1)
+Valkyrie-2 away (sortie 2)
+2</code></pre>
+  </div>
+</figure>
+<p>Use that sparingly. A value that any task may change is hard to reason about, because to know what it holds you have to know everything that ran before. Passing values into tasks and giving results back, the subject of Chapter 4, keeps programs easier to follow.</p>
+<h2 id="reserved-words">Reserved words<a class="anchor" href="#reserved-words" aria-label="Link to this section">#</a></h2>
+<p>Some words belong to the language and cannot be used as names. In most languages that list is short and obvious. In FREAK it is longer than you would guess, because it includes words the language has reserved for features that are not built yet.</p>
+<p>These 54 words are reserved in V3:</p>
+<div class="codeblock"><pre class="code"><code>pilot   fixed    task       say      shape    impl      doctrine
+launch  use      as         in       lend     mut       move
+copy    break    continue   if       else     when      repeat
+times   until    done       for      each     check     result
+got     nobody   some       ok       err      sessions  max
+foreshadow  payoff   route   sadly   deus_ex_machina    isekai
+eventually  and      or      not     nakama   tsundere  extern
+
+true    false    yes    no    hai    iie</code></pre></div>
+<p>Several of them are words you will reach for naturally: <code>max</code>, <code>result</code>, <code>ok</code>, <code>check</code>, <code>done</code>, <code>times</code>, <code>in</code>, <code>use</code>, <code>copy</code>, <code>move</code>, <code>route</code>, <code>launch</code>. This book&#x27;s own examples ran into it. A task that starts a sortie wanted to be called <code>launch</code>:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_reserved_task_name.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-kw">launch</span>(callsign<span class="c-op">:</span> <span class="c-type">word</span>) {
+    <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{callsign}</span> away&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">launch</span>(<span class="c-str">&quot;Valkyrie-1&quot;</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: expected an identifier for task name, found &#x27;launch&#x27;
+ --&gt; book_reserved_task_name.fk:1:6
+  |
+1 | task launch(callsign: word) {
+  |      ^ use an identifier here
+
+error: unexpected &#x27;launch&#x27; — this token cannot start an expression
+ --&gt; book_reserved_task_name.fk:6:5
+  |
+6 |     launch(&quot;Valkyrie-1&quot;)
+  |     ^</code></pre>
+  </div>
+</figure>
+<p>When you see <code>expected an identifier ... found</code> followed by a word you thought was a perfectly good name, this is why. Pick another: <code>limit</code> for <code>max</code>, <code>outcome</code> for <code>result</code>, <code>ready</code> for <code>ok</code>, <code>scramble</code> for <code>launch</code>.</p>
+<h3 id="words-that-are-not-reserved">Words that are not reserved<a class="anchor" href="#words-that-are-not-reserved" aria-label="Link to this section">#</a></h3>
+<p>In one respect the list is shorter than you might guess. Several words the language uses constantly are missing from it: <code>give</code>, <code>back</code>, <code>training</code>, <code>arc</code>, <code>ask</code>, and the type names <code>int</code>, <code>num</code>, <code>bool</code> and <code>word</code>. V3 recognises those by where they appear, so it accepts them as names too:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_contextual_words.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- These words are used by the language and are not reserved.</span>
+<span class="c-com">-- The program builds. It is here as a warning, not as a model.</span>
+<span class="c-kw">task</span> <span class="c-fn">twice</span>(<span class="c-type">int</span><span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> give <span class="c-op">=</span> <span class="c-type">int</span> <span class="c-op">*</span> <span class="c-num">2</span>
+    <span class="c-kw">give back</span> give
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> training <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">pilot</span> arc <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">training arc</span> <span class="c-kw">until</span> training <span class="c-op">&gt;=</span> arc <span class="c-kw">max</span> <span class="c-num">10</span> <span class="c-kw">sessions</span> {
+        training <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">pilot</span> ask <span class="c-op">=</span> <span class="c-fn">twice</span>(training)
+    <span class="c-kw">say</span> <span class="c-str">&quot;training <span class="c-interp">{training}</span>, ask <span class="c-interp">{ask}</span>&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>training 3, ask 6</code></pre>
+  </div>
+</figure>
+<p>That listing builds, and <code>give back give</code> is reason enough never to write it. There is a trap as well. V3 joins <code>give</code> and <code>back</code> into one keyword wherever the two words follow each other, even across the end of a line:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_give_back_trap.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> give <span class="c-op">=</span> <span class="c-num">1</span>
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> back <span class="c-op">=</span> <span class="c-num">2</span>
+    <span class="c-kw">say</span> <span class="c-kw">give
+    back</span> <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">say</span> back
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: unexpected &#x27;give back&#x27; — this token cannot start an expression
+ --&gt; book_give_back_trap.fk:4:9
+  |
+4 |     say give
+  |         ^
+
+error: unexpected &#x27;=&#x27; — this token cannot start an expression
+ --&gt; book_give_back_trap.fk:5:10
+  |
+5 |     back = 3
+  |          ^</code></pre>
+  </div>
+</figure>
+<p>Line 4 ends with the pilot <code>give</code> and line 5 starts with the pilot <code>back</code>, and the compiler reads the pair as <code>give back</code>. Treat every word the language uses as reserved, whether or not the compiler insists.</p>
+<h3 id="capital-letters-do-not-help">Capital letters do not help<a class="anchor" href="#capital-letters-do-not-help" aria-label="Link to this section">#</a></h3>
+<p>V3 reserves these words in every combination of capital and small letters. <code>Max</code>, <code>MAX</code> and <code>max</code> are all refused as names:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_keyword_name.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">Max</span> <span class="c-op">=</span> <span class="c-num">9000</span>
+    <span class="c-kw">say</span> <span class="c-kw">Max</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: expected an identifier for binding name, found &#x27;Max&#x27;
+ --&gt; book_keyword_name.fk:2:11
+  |
+2 |     pilot Max = 9000
+  |           ^ use an identifier here
+
+error: unexpected &#x27;Max&#x27; — this token cannot start an expression
+ --&gt; book_keyword_name.fk:3:9
+  |
+3 |     say Max
+  |         ^</code></pre>
+  </div>
+</figure>
+<div class="callout warn"><div class="callout-title">Careful</div><p>The reservation covers every spelling, but a single-word <em>keyword</em> works only in lowercase. <code>Pilot x = 1</code> is not a declaration and <code>If</code> does not start a condition; both are syntax errors. The truth literals are the dangerous exception, because a capitalised one is accepted and silently means false.</p></div>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_keyword_case.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Single-word keywords work only in lowercase. The truth literals are the</span>
+<span class="c-com">-- dangerous case: a capitalised spelling is accepted, and it does not mean</span>
+<span class="c-com">-- what it says.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> lowercase <span class="c-op">=</span> <span class="c-lit">true</span>
+    <span class="c-kw">pilot</span> uppercase <span class="c-op">=</span> <span class="c-lit">TRUE</span>
+
+    <span class="c-kw">say</span> lowercase
+    <span class="c-kw">say</span> uppercase
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>true
+false</code></pre>
+  </div>
+</figure>
+<p>The two-word keywords are treated differently. V3 accepts <code>give back</code>, <code>for each</code> and <code>training arc</code> in any letter case:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_two_word_case.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 accepts its two-word keywords in any letter case.</span>
+<span class="c-com">-- Write them in lowercase anyway.</span>
+<span class="c-kw">task</span> <span class="c-fn">double</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">Give Back</span> n <span class="c-op">*</span> <span class="c-num">2</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> total <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">For Each</span> reading <span class="c-kw">in</span> [<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">3</span>] {
+        total <span class="c-op">+=</span> reading
+    }
+    <span class="c-kw">Training Arc</span> <span class="c-kw">until</span> total <span class="c-op">&gt;=</span> <span class="c-num">10</span> <span class="c-kw">max</span> <span class="c-num">5</span> <span class="c-kw">sessions</span> {
+        total <span class="c-op">+=</span> <span class="c-num">2</span>
+    }
+    <span class="c-kw">say</span> <span class="c-fn">double</span>(total)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>20</code></pre>
+  </div>
+</figure>
+<p>Do not rely on that. Write every keyword in lowercase and none of this touches you.</p>
+<h2 id="the-basic-types">The basic types<a class="anchor" href="#the-basic-types" aria-label="Link to this section">#</a></h2>
+<p>V3 has four types of simple value.</p>
+<div class="tablewrap"><table><thead><tr><th>Type</th><th>Holds</th><th>Example values</th></tr></thead><tbody><tr><td><code>int</code></td><td>A whole number</td><td><code>0</code>, <code>42</code>, <code>-7</code></td></tr><tr><td><code>num</code></td><td>A number with a fractional part</td><td><code>2.5</code>, <code>0.75</code>, <code>-3.0</code></td></tr><tr><td><code>bool</code></td><td>A truth value</td><td><code>true</code>, <code>false</code></td></tr><tr><td><code>word</code></td><td>Text</td><td><code>&quot;Valkyrie-1&quot;</code>, <code>&quot;&quot;</code></td></tr></tbody></table></div>
+<p>There is a fifth name, <code>void</code>, for a task that gives nothing back. It is not a type of value: you cannot have a <code>void</code> pilot. Chapter 4 covers it.</p>
+<p>Beyond these, V3 has lists, an older kind of array, a byte buffer, and the shapes you define yourself. Those are Part II.</p>
+<h3 id="int"><code>int</code><a class="anchor" href="#int" aria-label="Link to this section">#</a></h3>
+<p>An <code>int</code> is a whole number stored in 64 bits, with a sign. It ranges from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807. A number written without a decimal point is an int.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_int.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- int: a 64-bit signed whole number.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">+</span> <span class="c-num">2</span>
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">-</span> <span class="c-num">2</span>
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">*</span> <span class="c-num">2</span>
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">/</span> <span class="c-num">2</span>            <span class="c-com">-- division between ints drops the fraction</span>
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">%</span> <span class="c-num">2</span>            <span class="c-com">-- and % gives the remainder</span>
+    <span class="c-kw">say</span> <span class="c-op">-</span><span class="c-num">7</span> <span class="c-op">/</span> <span class="c-num">2</span>           <span class="c-com">-- rounding is toward zero, not downward</span>
+    <span class="c-kw">say</span> <span class="c-op">-</span><span class="c-num">7</span> <span class="c-op">%</span> <span class="c-num">2</span>           <span class="c-com">-- so the remainder takes the sign of the left side</span>
+    <span class="c-kw">say</span> <span class="c-num">1</span> <span class="c-op">+</span> <span class="c-num">2</span> <span class="c-op">*</span> <span class="c-num">3</span>        <span class="c-com">-- * / % bind tighter than + -</span>
+    <span class="c-kw">say</span> (<span class="c-num">1</span> <span class="c-op">+</span> <span class="c-num">2</span>) <span class="c-op">*</span> <span class="c-num">3</span>
+
+    <span class="c-kw">pilot</span> largest<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">9223372036854775807</span>
+    <span class="c-kw">say</span> largest
+    <span class="c-kw">say</span> largest <span class="c-op">+</span> <span class="c-num">1</span>      <span class="c-com">-- past the largest value, V3 wraps around silently</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>9
+5
+14
+3
+1
+-3
+-1
+7
+9
+9223372036854775807
+-9223372036854775808</code></pre>
+  </div>
+</figure>
+<p>Four things in that listing are worth stating as rules.</p>
+<p><strong>Dividing two ints gives an int.</strong> The fractional part is dropped, so <code>7 / 2</code> is <code>3</code>. The result is rounded toward zero, which matters for negative numbers: <code>-7 / 2</code> is <code>-3</code>, where rounding downward would give <code>-4</code>.</p>
+<p>**<code>%</code> gives the remainder** of that division, and takes the sign of the left side: <code>-7 % 2</code> is <code>-1</code>.</p>
+<p><strong>Multiplication, division and remainder are done before addition and subtraction.</strong> Parentheses change the order.</p>
+<p><strong>Arithmetic that goes past the largest int wraps around</strong> to the smallest, with no error and no warning. The same happens to a number literal that is too large to fit. If your numbers can become that large, it is up to you to check before they do.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Dividing an int by zero is not checked either. Depending on the machine and on how the zero got there, the operating system stops the program on the spot or the program carries on with a meaningless value. Neither produces a FREAK message. Test the divisor before you divide by anything that could be zero.</p></div>
+<p>Ints are written in decimal only. There is no hexadecimal form, no separator for grouping digits, and no exponent. The compiler does not say so directly. It reads <code>0xFF</code> as the number <code>0</code> followed by a name, and reports <code>unknown binding &#x27;xFF&#x27;</code>. If you see an unknown binding that looks like the tail of a number, this is the cause.</p>
+<h3 id="num"><code>num</code><a class="anchor" href="#num" aria-label="Link to this section">#</a></h3>
+<p>A <code>num</code> is a floating-point number, stored in 64 bits. A number written with a decimal point is a num. At least one digit must come before the point: <code>0.5</code>, never <code>.5</code>.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_num.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- num: a 64-bit floating-point number.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> thrust <span class="c-op">=</span> <span class="c-num">2.5</span>
+    <span class="c-kw">say</span> thrust <span class="c-op">*</span> <span class="c-num">2.0</span>       <span class="c-com">-- 5, printed without a trailing .0</span>
+    <span class="c-kw">say</span> <span class="c-num">10.0</span> <span class="c-op">/</span> <span class="c-num">4.0</span>
+    <span class="c-kw">say</span> <span class="c-num">1.0</span> <span class="c-op">/</span> <span class="c-num">3.0</span>          <span class="c-com">-- at most ten significant digits are printed</span>
+    <span class="c-kw">say</span> <span class="c-num">0.1</span> <span class="c-op">+</span> <span class="c-num">0.2</span>
+    <span class="c-kw">say</span> <span class="c-num">0.1</span> <span class="c-op">+</span> <span class="c-num">0.2</span> <span class="c-op">==</span> <span class="c-num">0.3</span>   <span class="c-com">-- false: the stored values differ beyond the digits shown</span>
+
+    <span class="c-com">-- An int and a num can be mixed; the result is a num.</span>
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">/</span> <span class="c-num">2</span>
+    <span class="c-kw">say</span> <span class="c-num">7</span> <span class="c-op">/</span> <span class="c-num">2.0</span>
+    <span class="c-kw">say</span> <span class="c-num">3</span> <span class="c-op">*</span> <span class="c-num">1.5</span>
+
+    <span class="c-kw">say</span> <span class="c-num">123456789012.5</span>     <span class="c-com">-- large and small values switch to scientific notation</span>
+    <span class="c-kw">say</span> <span class="c-num">0.000001234</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>5
+2.5
+0.3333333333
+0.3
+false
+3
+3.5
+4.5
+1.23456789e+11
+1.234e-06</code></pre>
+  </div>
+</figure>
+<p><code>say</code> prints a num with up to ten significant digits, and leaves off a fractional part that is zero. So <code>5.0</code> prints as <code>5</code>, and one third prints as <code>0.3333333333</code>. Very large and very small values are printed in scientific notation: <code>1.23456789e+11</code> is 1.23456789 times ten to the eleventh.</p>
+<p>Ten digits is what is <em>printed</em>. The value itself is kept more precisely than that, and this is why <code>0.1 + 0.2</code> prints as <code>0.3</code> and still is not equal to <code>0.3</code>. Neither 0.1 nor 0.2 can be stored exactly in binary, and their sum differs from the stored 0.3 somewhere past the sixteenth digit. This is true of floating-point numbers in every language. The rule that follows from it: do not test nums for exact equality. Test whether they are close enough.</p>
+<p>When an operation has an int on one side and a num on the other, the int is treated as a num and the result is a num. That is why <code>7 / 2.0</code> is <code>3.5</code>.</p>
+<p>The remainder operator is for ints only:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_remainder_num.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-num">7.5</span> <span class="c-op">%</span> <span class="c-num">2.0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: operator &#x27;%&#x27; does not accept num and num (line 2)
+ --&gt; book_remainder_num.fk:2:1
+2 |     say 7.5 % 2.0
+  | ^</code></pre>
+  </div>
+</figure>
+<h3 id="bool"><code>bool</code><a class="anchor" href="#bool" aria-label="Link to this section">#</a></h3>
+<p>A <code>bool</code> is one of two values, <code>true</code> or <code>false</code>. Comparisons produce bools, and <code>if</code> and the loops consume them.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_bool.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- bool: true or false.</span>
+<span class="c-kw">task</span> <span class="c-fn">announce</span>(tag<span class="c-op">:</span> <span class="c-type">word</span>, value<span class="c-op">:</span> <span class="c-type">bool</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;checking <span class="c-interp">{tag}</span>&quot;</span>
+    <span class="c-kw">give back</span> value
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fueled <span class="c-op">=</span> <span class="c-lit">true</span>
+    <span class="c-kw">pilot</span> armed <span class="c-op">=</span> <span class="c-lit">false</span>
+
+    <span class="c-kw">say</span> fueled <span class="c-kw">and</span> armed
+    <span class="c-kw">say</span> fueled <span class="c-kw">or</span> armed
+    <span class="c-kw">say</span> <span class="c-kw">not</span> armed
+    <span class="c-kw">say</span> <span class="c-num">3</span> <span class="c-op">&lt;</span> <span class="c-num">5</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;A-01&quot;</span> <span class="c-op">==</span> <span class="c-str">&quot;A-01&quot;</span>
+
+    <span class="c-com">-- `not` binds tightest, then `and`, then `or`.</span>
+    <span class="c-kw">say</span> <span class="c-lit">true</span> <span class="c-kw">or</span> <span class="c-lit">false</span> <span class="c-kw">and</span> <span class="c-lit">false</span>        <span class="c-com">-- true or (false and false)</span>
+    <span class="c-kw">say</span> <span class="c-kw">not</span> <span class="c-lit">false</span> <span class="c-kw">and</span> <span class="c-lit">false</span>            <span class="c-com">-- (not false) and false</span>
+
+    <span class="c-com">-- Three pairs of literals mean the same two values.</span>
+    <span class="c-kw">say</span> <span class="c-lit">yes</span>
+    <span class="c-kw">say</span> <span class="c-lit">hai</span>
+    <span class="c-kw">say</span> <span class="c-lit">iie</span>
+
+    <span class="c-com">-- `and` and `or` stop as soon as the answer is known.</span>
+    <span class="c-kw">if</span> <span class="c-fn">announce</span>(<span class="c-str">&quot;fuel&quot;</span>, <span class="c-lit">false</span>) <span class="c-kw">and</span> <span class="c-fn">announce</span>(<span class="c-str">&quot;weapons&quot;</span>, <span class="c-lit">true</span>) {
+        <span class="c-kw">say</span> <span class="c-str">&quot;launch&quot;</span>
+    }
+    <span class="c-kw">if</span> <span class="c-fn">announce</span>(<span class="c-str">&quot;radar&quot;</span>, <span class="c-lit">true</span>) <span class="c-kw">or</span> <span class="c-fn">announce</span>(<span class="c-str">&quot;visual&quot;</span>, <span class="c-lit">true</span>) {
+        <span class="c-kw">say</span> <span class="c-str">&quot;contact&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>false
+true
+true
+true
+true
+true
+false
+true
+true
+false
+checking fuel
+checking radar
+contact</code></pre>
+  </div>
+</figure>
+<p>The comparison operators are <code>==</code> (equal), <code>!=</code> (not equal), <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code> and <code>&gt;=</code>. Bools combine with three operators written as words:</p>
+<div class="tablewrap"><table><thead><tr><th>Operator</th><th>True when</th></tr></thead><tbody><tr><td><code>a and b</code></td><td>both are true</td></tr><tr><td><code>a or b</code></td><td>at least one is true</td></tr><tr><td><code>not a</code></td><td><code>a</code> is false</td></tr></tbody></table></div>
+<p><code>not</code> is applied first, then <code>and</code>, then <code>or</code>. When in doubt, use parentheses; the reader will thank you even where the compiler did not need them.</p>
+<p><code>and</code> and <code>or</code> evaluate their right side only when they have to. In the listing, <code>announce(&quot;fuel&quot;, false) and ...</code> already knows the answer is false after its left side, so the right side never runs and <code>checking weapons</code> is never printed. This is called short-circuit evaluation, and you can rely on it.</p>
+<p>FREAK has three spellings for each truth value: <code>true</code>, <code>yes</code> and <code>hai</code> all mean true, and <code>false</code>, <code>no</code> and <code>iie</code> all mean false. They are the same two values. <code>say</code> prints <code>true</code> or <code>false</code> whichever you wrote.</p>
+<h3 id="word"><code>word</code><a class="anchor" href="#word" aria-label="Link to this section">#</a></h3>
+<p>A <code>word</code> is a piece of text of any length, written in double quotes. It is what other languages call a string.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_words_intro.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- word: a piece of text.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> title <span class="c-op">=</span> <span class="c-str">&quot;Muv&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;-&quot;</span> <span class="c-op">+</span> <span class="c-str">&quot;Luv&quot;</span>      <span class="c-com">-- + joins two words</span>
+    <span class="c-kw">say</span> title
+    <span class="c-kw">say</span> title.<span class="c-fn">length</span>()                     <span class="c-com">-- 7: one for each of these letters</span>
+
+    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> system <span class="c-op">=</span> <span class="c-str">&quot;XM&quot;</span>
+    system <span class="c-op">+=</span> <span class="c-str">&quot;3&quot;</span>                          <span class="c-com">-- += appends</span>
+    <span class="c-kw">say</span> system
+
+    <span class="c-kw">say</span> title <span class="c-op">==</span> <span class="c-str">&quot;Muv-Luv&quot;</span>                 <span class="c-com">-- words compare with == and !=</span>
+
+    <span class="c-com">-- A name in braces is replaced by its value. It works for</span>
+    <span class="c-com">-- word, int, num and bool pilots.</span>
+    <span class="c-kw">pilot</span> sorties <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">pilot</span> ratio <span class="c-op">=</span> <span class="c-num">0.75</span>
+    <span class="c-kw">pilot</span> cleared <span class="c-op">=</span> <span class="c-lit">true</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{title}</span>: <span class="c-interp">{sorties}</span> sorties, ratio <span class="c-interp">{ratio}</span>, cleared <span class="c-interp">{cleared}</span>&quot;</span>
+
+    <span class="c-com">-- Braces around anything that is not a name are printed as they are.</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;{sorties + 1} is not worked out&quot;</span>
+
+    <span class="c-com">-- A backslash introduces a character that is awkward to type.</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;tab:[\t] quote:[\&quot;] backslash:[\\]&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Muv-Luv
+7
+XM3
+true
+Muv-Luv: 12 sorties, ratio 0.75, cleared true
+{sorties + 1} is not worked out
+tab:[	] quote:[&quot;] backslash:[\]</code></pre>
+  </div>
+</figure>
+<p>That is enough about words to read the next two chapters. Words have a chapter of their own in Part II, which covers their methods, the exact rules of interpolation, and how to take them apart.</p>
+<h2 id="types-do-not-mix-by-themselves">Types do not mix by themselves<a class="anchor" href="#types-do-not-mix-by-themselves" aria-label="Link to this section">#</a></h2>
+<p>FREAK will not guess what you mean when two types meet. Joining a word and a number is an error:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_word_plus_int.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> sorties <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;sorties: &quot;</span> <span class="c-op">+</span> sorties
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: operator &#x27;+&#x27; does not accept word and int (line 3)
+ --&gt; book_word_plus_int.fk:3:1
+3 |     say &quot;sorties: &quot; + sorties
+  | ^</code></pre>
+  </div>
+</figure>
+<p>So is comparing them:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_compare_int_word.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> guess <span class="c-op">=</span> <span class="c-str">&quot;42&quot;</span>
+    <span class="c-kw">pilot</span> secret <span class="c-op">=</span> <span class="c-num">42</span>
+    <span class="c-kw">if</span> guess <span class="c-op">==</span> secret {
+        <span class="c-kw">say</span> <span class="c-str">&quot;You got it!&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: operator &#x27;==&#x27; does not accept word and int (line 4)
+ --&gt; book_compare_int_word.fk:4:1
+4 |     if guess == secret {
+  | ^</code></pre>
+  </div>
+</figure>
+<p>Read the messages closely, because you will see this form often. <code>operator &#x27;+&#x27; does not accept word and int</code> names the operator and the types it found on its left and right. The fix is always the same: convert one side so that both are the same type.</p>
+<p>A num cannot be stored in an int pilot either, because that would lose the fractional part without your asking:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_num_into_int.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">2.5</span>
+    <span class="c-kw">say</span> sorties
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: cannot initialize int binding &#x27;sorties&#x27; with num (line 2)
+ --&gt; book_num_into_int.fk:2:1
+2 |     pilot sorties: int = 2.5
+  | ^</code></pre>
+  </div>
+</figure>
+<p>There is exactly one conversion FREAK performs for you. Where a num is expected, an int is accepted and converted, since no information is lost. You saw it in <code>7 / 2.0</code>, and it also applies when you give an int to a pilot or a task parameter declared as <code>num</code>.</p>
+<h2 id="converting-between-types">Converting between types<a class="anchor" href="#converting-between-types" aria-label="Link to this section">#</a></h2>
+<p>Every other conversion is written out as a method call on the value.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_conversions.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Moving a value from one type to another is always written out.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">pilot</span> average<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">3.75</span>
+
+    <span class="c-kw">say</span> sorties.<span class="c-fn">to_num</span>() <span class="c-op">/</span> <span class="c-num">5.0</span>      <span class="c-com">-- int  -&gt; num</span>
+    <span class="c-kw">say</span> average.<span class="c-fn">to_int</span>()            <span class="c-com">-- num  -&gt; int, dropping the fraction</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;sorties: &quot;</span> <span class="c-op">+</span> sorties.<span class="c-fn">to_word</span>()
+    <span class="c-kw">say</span> <span class="c-str">&quot;average: &quot;</span> <span class="c-op">+</span> average.<span class="c-fn">to_word</span>()
+    <span class="c-kw">say</span> <span class="c-str">&quot;ready: &quot;</span> <span class="c-op">+</span> <span class="c-lit">true</span>.<span class="c-fn">to_word</span>()
+
+    <span class="c-com">-- The one conversion that happens by itself: an int where a num is wanted.</span>
+    <span class="c-kw">pilot</span> thrust<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">say</span> thrust <span class="c-op">/</span> <span class="c-num">2</span>
+
+    <span class="c-kw">say</span> <span class="c-str">&quot;42&quot;</span>.<span class="c-fn">to_int</span>() <span class="c-op">+</span> <span class="c-num">1</span>           <span class="c-com">-- word -&gt; int</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;2.5&quot;</span>.<span class="c-fn">to_num</span>() <span class="c-op">*</span> <span class="c-num">2.0</span>        <span class="c-com">-- word -&gt; num</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;forty-two&quot;</span>.<span class="c-fn">to_int</span>()        <span class="c-com">-- not a number: quietly 0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>2.4
+3
+sorties: 12
+average: 3.75
+ready: true
+1.5
+43
+5
+0</code></pre>
+  </div>
+</figure>
+<div class="tablewrap"><table><thead><tr><th>From</th><th>To</th><th>Write</th><th>Notes</th></tr></thead><tbody><tr><td><code>int</code></td><td><code>num</code></td><td><code>n.to_num()</code></td><td>Also happens by itself where a num is expected</td></tr><tr><td><code>int</code></td><td><code>word</code></td><td><code>n.to_word()</code></td><td></td></tr><tr><td><code>num</code></td><td><code>int</code></td><td><code>x.to_int()</code></td><td>Drops the fraction: <code>3.75</code> becomes <code>3</code>, <code>-3.75</code> becomes <code>-3</code></td></tr><tr><td><code>num</code></td><td><code>word</code></td><td><code>x.to_word()</code></td><td>Formatted the way <code>say</code> prints it</td></tr><tr><td><code>bool</code></td><td><code>word</code></td><td><code>b.to_word()</code></td><td><code>&quot;true&quot;</code> or <code>&quot;false&quot;</code></td></tr><tr><td><code>word</code></td><td><code>int</code></td><td><code>w.parse_int()</code></td><td>Checked; see Chapter 2</td></tr><tr><td><code>word</code></td><td><code>num</code></td><td><code>w.parse_num()</code></td><td>Checked the same way</td></tr><tr><td><code>word</code></td><td><code>int</code></td><td><code>w.to_int()</code></td><td>Unchecked: reads the digits at the start of the word, and gives <code>0</code> if there are none</td></tr><tr><td><code>word</code></td><td><code>num</code></td><td><code>w.to_num()</code></td><td>Unchecked in the same way</td></tr></tbody></table></div>
+<p>In practice you need the word conversions less often than this table suggests. <code>say</code> prints ints, nums and bools directly, and interpolation puts any of them inside a word. Reach for <code>to_word()</code> when you are building a word with <code>+</code>.</p>
+<h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
+<p>V4 agrees with V3 on the basics, and the following all hold at the pinned commit: ints and nums are 64 bits, int division drops the fraction, and mixed arithmetic produces a num.</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/int_and_num.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> a <span class="c-op">=</span> <span class="c-num">7</span>
+    <span class="c-kw">pilot</span> b <span class="c-op">=</span> <span class="c-num">2</span>
+    <span class="c-kw">pilot</span> thrust<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">2.5</span>
+
+    <span class="c-com">-- 7 / 2 is 3 and 7 % 2 is 1, so this part is 31.</span>
+    <span class="c-kw">pilot</span> whole <span class="c-op">=</span> a <span class="c-op">/</span> b <span class="c-op">*</span> <span class="c-num">10</span> <span class="c-op">+</span> a <span class="c-op">%</span> b
+
+    <span class="c-kw">if</span> thrust <span class="c-op">*</span> <span class="c-num">2.0</span> <span class="c-op">&gt;</span> <span class="c-num">4.9</span> { <span class="c-kw">give back</span> whole <span class="c-op">+</span> <span class="c-num">5</span> }
+    <span class="c-kw">give back</span> whole
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 36</div>
+  </div>
+</figure>
+<p>Int arithmetic wraps at the limits, as in V3:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/overflow_wraps.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Past the largest int the value wraps around, as it does in V3.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> largest<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">9223372036854775807</span>
+    <span class="c-kw">pilot</span> next <span class="c-op">=</span> largest <span class="c-op">+</span> <span class="c-num">1</span>
+    <span class="c-kw">if</span> next <span class="c-op">&lt;</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 1</div>
+  </div>
+</figure>
+<p>V4 also refuses a bool in an int pilot, and a duplicate name in one block:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/wrong_type.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-lit">true</span>
+    <span class="c-kw">give back</span> sorties
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@25:50|local declaration type mismatch|sorties expects int but got bool</code></pre>
+  </div>
+</figure>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/duplicate_local.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    <span class="c-kw">give back</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@45:60|duplicate local declaration|fuel already exists in this scope</code></pre>
+  </div>
+</figure>
+<p>The rest of this section is what differs.</p>
+<p><strong>Keywords are reserved in lowercase only.</strong> V4 matches a keyword by its exact lowercase spelling. The capitalised names that V3 refuses are ordinary names in V4:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/keyword_case.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- In V4 only the exact lowercase spelling is a keyword,</span>
+<span class="c-com">-- so these are ordinary names.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> Max <span class="c-op">=</span> <span class="c-num">4</span>
+    <span class="c-kw">pilot</span> Pilot <span class="c-op">=</span> <span class="c-num">3</span>
+    <span class="c-kw">give back</span> Max <span class="c-op">+</span> Pilot
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 7</div>
+  </div>
+</figure>
+<p>The truth literals are the exception, and here V4 corrects V3. A capitalised truth literal is still a truth literal, so it cannot be a name, and it means what it says:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/truth_literal_case.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A truth literal in any capitalisation is still a truth literal in V4,</span>
+<span class="c-com">-- and it means what it says. Each test that passes adds to the exit code.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> code <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">if</span> <span class="c-lit">TRUE</span> { code <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">if</span> <span class="c-lit">Yes</span> { code <span class="c-op">+=</span> <span class="c-num">2</span> }
+    <span class="c-kw">if</span> <span class="c-kw">not</span> <span class="c-lit">FALSE</span> { code <span class="c-op">+=</span> <span class="c-num">4</span> }
+    <span class="c-kw">give back</span> code
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 7</div>
+  </div>
+</figure>
+<p>V3 fails the first two tests, because it reads <code>TRUE</code> and <code>Yes</code> as false, and gives 4 for this program where V4 gives 7.</p>
+<p>**Every pilot can be reassigned, and <code>mut</code> is not accepted.** Chapter 2 showed <code>pilot mut</code> being rejected. Assignment to a plain pilot works:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/reassign.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- At this snapshot every pilot can be reassigned; `mut` is not accepted yet.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    fuel <span class="c-op">+=</span> <span class="c-num">5</span>
+    <span class="c-kw">give back</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 80</div>
+  </div>
+</figure>
+<p>That much agrees with the specification&#x27;s section on pilots, which says they can be reassigned by default. The same section says a <code>fixed pilot</code> cannot be, and this commit does not enforce that yet:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/fixed_reassigned.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `fixed` is accepted, and not enforced at this commit.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">fixed</span> <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    <span class="c-kw">give back</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 75</div>
+  </div>
+</figure>
+<p><strong>A num is accepted where an int is required.</strong> V3 refuses to store a num in an int pilot, to assign one, or to pass one to an int parameter. This commit accepts all three and drops the fraction without a message:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/num_into_int.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 refuses all three of these. This V4 commit drops the fraction</span>
+<span class="c-com">-- and says nothing.</span>
+<span class="c-kw">task</span> <span class="c-fn">whole</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> n
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> sorties<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">2.5</span>                    <span class="c-com">-- becomes 2</span>
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">10</span>
+    fuel <span class="c-op">=</span> <span class="c-num">7.9</span>                                  <span class="c-com">-- becomes 7</span>
+    <span class="c-kw">give back</span> sorties <span class="c-op">*</span> <span class="c-num">10</span> <span class="c-op">+</span> fuel <span class="c-op">+</span> <span class="c-fn">whole</span>(<span class="c-num">3.99</span>) <span class="c-com">-- 20 + 7 + 3</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 30</div>
+  </div>
+</figure>
+<p><strong>The conversion methods are missing.</strong> <code>to_num()</code>, <code>to_int()</code> and the others in this chapter&#x27;s table are not there yet:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/conversion_methods.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> sorties <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">pilot</span> average<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> sorties.<span class="c-fn">to_num</span>() <span class="c-op">/</span> <span class="c-num">5.0</span>
+    <span class="c-kw">if</span> average <span class="c-op">&gt;</span> <span class="c-num">2.0</span> { <span class="c-kw">give back</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@69:86|receiver has no matching method|int offers no method to_num</code></pre>
+  </div>
+</figure>
+<p><strong>Pilots cannot be declared outside a task.</strong> A plain top-level pilot is a syntax error. The specification allows only declarations and constants at the top level:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/toplevel_pilot.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">pilot</span> launches <span class="c-op">=</span> <span class="c-num">0</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    launches <span class="c-op">+=</span> <span class="c-num">1</span>
+    <span class="c-kw">give back</span> launches
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@0:19|unexpected token at top level|pilot</code></pre>
+  </div>
+</figure>
+<p>A top-level <code>fixed pilot</code> is such a constant. This commit reads it and cannot build it yet:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/toplevel_fixed.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">fixed</span> <span class="c-kw">pilot</span> <span class="c-type">MAX_SORTIES</span><span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">3</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-type">MAX_SORTIES</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native symbol values currently support only task pointers</code></pre>
+  </div>
+</figure>
+<p><strong>A hexadecimal literal is misread silently.</strong> V3 reports <code>0xFF</code> as an unknown binding. This commit takes the leading <code>0</code> as the value and carries on:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/hex_literal.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 rejects this literal. This V4 commit reads it as 0 and carries on.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> mask <span class="c-op">=</span> <span class="c-num">0</span>xFF
+    <span class="c-kw">give back</span> mask <span class="c-op">+</span> <span class="c-num">7</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 7</div>
+  </div>
+</figure>
+<p><strong>A misspelled name is not reported well yet.</strong> V4 notices that something is wrong only when it tries to generate code, and says so in terms of types instead of naming the pilot:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/unknown_name.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> altitude
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native type not yet supported: unknown</code></pre>
+  </div>
+</figure>
+<p><strong>An inner block cannot shadow.</strong> A second <code>pilot</code> with the same name inside a nested block is reported as a duplicate, where V3 allows it:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/shadow_inner.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    <span class="c-kw">if</span> fuel <span class="c-op">&gt;</span> <span class="c-num">25</span> {
+        <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">75</span>
+    }
+    <span class="c-kw">give back</span> fuel
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@68:83|duplicate local declaration|fuel already exists in this scope</code></pre>
+  </div>
+</figure>
+<p><strong>V4 has more basic types.</strong> The specification defines several that V3 lacks, and this commit already builds programs that use five of them. Three have a literal suffix, and a <code>char</code> is written in single quotes:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/numeric_types.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Five of the specification&#x27;s extra types. Three have a literal suffix;</span>
+<span class="c-com">-- a char is written in single quotes.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> count<span class="c-op">:</span> <span class="c-type">uint</span> <span class="c-op">=</span> <span class="c-num">42</span>u            <span class="c-com">-- unsigned 64-bit</span>
+    <span class="c-kw">pilot</span> more<span class="c-op">:</span> <span class="c-type">uint</span> <span class="c-op">=</span> count <span class="c-op">+</span> <span class="c-num">8</span>u
+
+    <span class="c-kw">pilot</span> small<span class="c-op">:</span> <span class="c-type">tiny</span> <span class="c-op">=</span> <span class="c-num">7</span>t             <span class="c-com">-- one byte</span>
+    <span class="c-kw">pilot</span> next<span class="c-op">:</span> <span class="c-type">tiny</span> <span class="c-op">=</span> small <span class="c-op">+</span> <span class="c-num">1</span>t
+
+    <span class="c-kw">pilot</span> ratio<span class="c-op">:</span> <span class="c-type">float</span> <span class="c-op">=</span> <span class="c-num">3.14</span>f         <span class="c-com">-- the explicit 64-bit float</span>
+    <span class="c-kw">pilot</span> narrow<span class="c-op">:</span> <span class="c-type">float32</span> <span class="c-op">=</span> <span class="c-num">1.5</span>        <span class="c-com">-- a 32-bit float; it has no suffix</span>
+    <span class="c-kw">pilot</span> initial<span class="c-op">:</span> <span class="c-type">char</span> <span class="c-op">=</span> &#x27;a&#x27;          <span class="c-com">-- one character, in single quotes</span>
+
+    <span class="c-kw">pilot</span> passed <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">if</span> more <span class="c-op">==</span> <span class="c-num">50</span>u { passed <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">if</span> next <span class="c-op">==</span> <span class="c-num">8</span>t { passed <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">if</span> ratio <span class="c-op">&gt;</span> <span class="c-num">3.0</span>f { passed <span class="c-op">+=</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> passed
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 3</div>
+  </div>
+</figure>
+<p><code>uint</code> is an unsigned 64-bit whole number, <code>tiny</code> is a single byte, <code>float</code> is an explicitly named 64-bit float, <code>float32</code> is a 32-bit float, and <code>char</code> is a single character.</p>
+<h2 id="planned">Planned<a class="anchor" href="#planned" aria-label="Link to this section">#</a></h2>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification defines <code>big</code>, a whole number of any size, which cannot overflow, with literals written like <code>999b</code>. V3 does not have it, and the pinned V4 commit recognises the type and cannot build it yet.</p></div>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/big_type.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">pilot</span> huge<span class="c-op">:</span> <span class="c-type">big</span> <span class="c-op">=</span> <span class="c-num">999</span>b
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native type not yet supported: big</code></pre>
+  </div>
+</figure>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification describes <code>num</code> as the default numeric type, with whole literals narrowing to <code>int</code> where an int is required. V3 does it the other way round: a literal without a decimal point is an <code>int</code>.</p></div>
+<div class="callout planned"><div class="callout-title">Planned</div><p>Two ways of grouping values without declaring a shape are specified and not in V3: tuples, written <code>(42, &quot;hello&quot;)</code>, and fixed-size arrays, written <code>[int; 4]</code>.</p></div>
+<h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
+<p>A pilot is a named value with a type that never changes. The type is inferred from the starting value or written after a colon. Declare a pilot <code>mut</code> if you will reassign it and <code>fixed</code> if it must not change; V3 enforces this under <code>--strict-borrow</code>, and always for lists.</p>
+<p>A pilot lives until the end of its block. An inner block may shadow an outer name; the same block may not declare a name twice. Fifty-four words are reserved in any letter case, and single-word keywords work only in lowercase.</p>
+<p>There are four basic types. <code>int</code> is a 64-bit whole number whose division truncates and whose arithmetic wraps. <code>num</code> is a 64-bit floating-point number, printed to ten significant digits. <code>bool</code> is true or false, combined with <code>and</code>, <code>or</code> and <code>not</code>. <code>word</code> is text.</p>
+<p>Types never mix on their own, with one exception: an int becomes a num where a num is expected. Everything else is converted by calling a method.</p>
+<p><a href="book-tasks.html">Chapter 4</a> is about tasks: how to define them, pass values in, and give values back.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#pilots">Pilots</a></li><li><a href="#changing-a-pilot">Changing a pilot</a></li><li><a href="#scope">Scope</a></li><li><a href="#pilots-outside-tasks">Pilots outside tasks</a></li><li><a href="#reserved-words">Reserved words</a></li><li><a href="#the-basic-types">The basic types</a></li><li><a href="#types-do-not-mix-by-themselves">Types do not mix by themselves</a></li><li><a href="#converting-between-types">Converting between types</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

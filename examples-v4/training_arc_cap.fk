@@ -1,0 +1,10 @@
+-- The condition here needs eleven passes; the cap allows three.
+-- V3 stops at 3. This V4 snapshot checks the cap's type but does not
+-- enforce it, so the loop runs until the condition is true.
+task main() -> int {
+    pilot drills = 0
+    training arc until drills > 10 max 3 sessions {
+        drills += 1
+    }
+    give back drills
+}

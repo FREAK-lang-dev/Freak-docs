@@ -1,0 +1,7 @@
+task main() {
+    pilot guess = "42"
+    pilot secret = 42
+    if guess == secret {
+        say "You got it!"
+    }
+}

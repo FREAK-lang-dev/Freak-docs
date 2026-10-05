@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Words &amp; interpolation &middot; FREAK V3</title>
-<meta name="description" content="`word` is the string type. Its methods are compiler builtins, and `{path}` interpolation has precise rules.">
+<meta name="description" content="word is the string type. Its methods are compiler builtins, and {path} interpolation has precise rules.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -21,6 +21,15 @@
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
 <div class="nav-group"><div class="nav-group-title">Start here</div><ul>
 <li><a href="index.html">Overview</a></li>
 <li><a href="getting-started.html">Getting started</a></li>
@@ -355,8 +364,9 @@ NEGOTIATE</code></pre>
     </article>
     <footer class="pagefoot">
       <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      45/45 examples match their reviewed expected output. Illustrative snippets
+      83/83 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
   <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#literals-and-escapes">Literals and escapes</a></li><li><a href="#methods">Methods</a></li><li><a href="#checked-parsing">Checked parsing</a></li><li><a href="#concatenation-and-conversion">Concatenation and conversion</a></li><li><a href="#indexing">Indexing</a></li><li><a href="#interpolation">Interpolation</a></li><li><a href="#printing-without-a-newline">Printing without a newline</a></li><li><a href="#building-words-incrementally">Building words incrementally</a></li><li><a href="#standard-library-word-tasks">Standard-library word tasks</a></li><li><a href="#splitting-into-an-array">Splitting into an array</a></li></ul></aside>

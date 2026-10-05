@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tasks &middot; FREAK V3</title>
+<meta name="description" content="Define a piece of work once, give it a name, pass values in, and get a value back.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <a class="brand" href="index.html"><span class="brand-mark">FREAK</span><span class="brand-sub">V3 docs</span></a>
+  <div class="searchbox">
+    <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><nav class="sidebar-nav">
+<div class="nav-group"><div class="nav-group-title">The Freak Book</div><ul>
+<li><a href="book.html">Contents</a></li>
+<li><a href="book-introduction.html">Introduction</a></li>
+<li><a href="book-getting-started.html">1 · Getting started</a></li>
+<li><a href="book-guessing-game.html">2 · A guessing game</a></li>
+<li><a href="book-pilots-and-types.html">3 · Pilots, values and types</a></li>
+<li><a href="book-tasks.html" class="active">4 · Tasks</a></li>
+<li><a href="book-control-flow.html">5 · Control flow</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Start here</div><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="getting-started.html">Getting started</a></li>
+<li><a href="cli.html">Compiler CLI</a></li>
+<li><a href="hangar.html">Hangar & packages</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Tutorials</div><ul>
+<li><a href="tutorial-first-program.html">1 · Your first program</a></li>
+<li><a href="tutorial-cli-tool.html">2 · A command-line tool</a></li>
+<li><a href="tutorial-data.html">3 · Modelling data</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Language</div><ul>
+<li><a href="language-basics.html">Bindings & types</a></li>
+<li><a href="tasks.html">Tasks</a></li>
+<li><a href="control-flow.html">Control flow</a></li>
+<li><a href="operators.html">Operators</a></li>
+<li><a href="words.html">Words & interpolation</a></li>
+<li><a href="shapes.html">Shapes & impl</a></li>
+<li><a href="arrays.html">Lists & arrays</a></li>
+<li><a href="console.html">Coloured output</a></li>
+<li><a href="anime-layer.html">Anime layer</a></li>
+<li><a href="ffi.html">extern & FFI</a></li>
+</ul></div>
+<div class="nav-group"><div class="nav-group-title">Reference</div><ul>
+<li><a href="stdlib.html">Standard library</a></li>
+<li><a href="grammar.html">Grammar</a></li>
+<li><a href="conformance.html">Bible vs V3</a></li>
+<li><a href="not-in-v3.html">Not in V3</a></li>
+<li><a href="examples.html">Verified examples</a></li>
+</ul></div>
+</nav></aside>
+  <main id="main">
+    <article class="prose">
+<h1 id="tasks">Tasks<a class="anchor" href="#tasks" aria-label="Link to this section">#</a></h1>
+<p class="lede">Define a piece of work once, give it a name, pass values in, and get a value back.</p>
+<p>A task is FREAK&#x27;s function. You have written one in nearly every program so far, <code>main</code>, and Chapter 2 added a second. This chapter covers:</p>
+<ul><li>declaring a task and calling it</li><li>parameters, and how arguments are checked against them</li><li>giving a value back, and the rule that every path must do so</li><li>what happens to a value you pass in</li><li><code>main</code>, the exit code, and what the top level of a file is for</li><li>the pipe operator</li></ul>
+<h2 id="declaring-and-calling">Declaring and calling<a class="anchor" href="#declaring-and-calling" aria-label="Link to this section">#</a></h2>
+<p>A task declaration has a name, a list of parameters in parentheses, and a body in braces.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_tasks.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Tasks: named pieces of work.</span>
+<span class="c-kw">task</span> <span class="c-fn">greet</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, launch.&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">report</span>(callsign<span class="c-op">:</span> <span class="c-type">word</span>, sorties<span class="c-op">:</span> <span class="c-type">int</span>) {
+    <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{callsign}</span> has flown <span class="c-interp">{sorties}</span> sorties&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}
+
+<span class="c-kw">task</span> <span class="c-fn">area</span>(width<span class="c-op">:</span> <span class="c-type">num</span>, height<span class="c-op">:</span> <span class="c-type">num</span>) <span class="c-op">-&gt;</span> <span class="c-type">num</span> {
+    <span class="c-kw">give back</span> width <span class="c-op">*</span> height
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-fn">greet</span>()
+    <span class="c-fn">report</span>(<span class="c-str">&quot;Valkyrie-1&quot;</span>, <span class="c-num">12</span>)
+
+    <span class="c-kw">pilot</span> total <span class="c-op">=</span> <span class="c-fn">add</span>(<span class="c-num">20</span>, <span class="c-num">22</span>)
+    <span class="c-kw">say</span> total
+    <span class="c-kw">say</span> <span class="c-fn">add</span>(<span class="c-fn">add</span>(<span class="c-num">1</span>, <span class="c-num">2</span>), <span class="c-num">3</span>)        <span class="c-com">-- a call can be an argument of another call</span>
+
+    <span class="c-kw">say</span> <span class="c-fn">area</span>(<span class="c-num">3</span>, <span class="c-num">2.5</span>)             <span class="c-com">-- the int 3 is accepted where a num is wanted</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyries, launch.
+Valkyrie-1 has flown 12 sorties
+42
+6
+7.5</code></pre>
+  </div>
+</figure>
+<p><code>greet</code> takes nothing and gives nothing back. <code>report</code> takes two <em>parameters</em>. Each parameter is a name followed by a colon and a type, and the types are required: unlike a pilot, a parameter has no starting value for the compiler to infer from.</p>
+<p>You run a task by <em>calling</em> it: its name, then the values for its parameters in parentheses. Those values are the <em>arguments</em>. <code>report(&quot;Valkyrie-1&quot;, 12)</code> gives the word to <code>callsign</code> and the int to <code>sorties</code>. Arguments are matched to parameters by position, first to first and second to second.</p>
+<p>Inside the task, a parameter behaves like a pilot that was created with the argument&#x27;s value.</p>
+<h2 id="giving-a-value-back">Giving a value back<a class="anchor" href="#giving-a-value-back" aria-label="Link to this section">#</a></h2>
+<p><code>add</code> and <code>area</code> have something the first two tasks lack: an arrow and a type after the parameter list.</p>
+<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
+<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}</code></pre></div>
+<p><code>-&gt; int</code> is the task&#x27;s <em>return type</em>. It promises that the task produces an int. <code>give back</code> keeps the promise: it evaluates the expression after it, ends the task, and hands the value to the caller.</p>
+<p>A call to such a task is itself a value. You can store it in a pilot, print it, or use it as an argument to another call, as <code>add(add(1, 2), 3)</code> does.</p>
+<p>A task with no arrow gives nothing back. Its return type is <code>void</code>, and you may write that out as <code>-&gt; void</code> if you prefer; the meaning is the same.</p>
+<h3 id="give-back-ends-the-task"><code>give back</code> ends the task<a class="anchor" href="#give-back-ends-the-task" aria-label="Link to this section">#</a></h3>
+<p><code>give back</code> does not have to be the last line. Wherever it runs, the task ends there.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_give_back.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `give back` leaves the task at once, from wherever it is.</span>
+<span class="c-kw">task</span> <span class="c-fn">rank_for</span>(sorties<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;veteran&quot;</span> }
+    <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">10</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;regular&quot;</span> }
+    <span class="c-kw">give back</span> <span class="c-str">&quot;rookie&quot;</span>
+}
+
+<span class="c-com">-- In a task with no return type, a bare `give back` simply leaves early.</span>
+<span class="c-kw">task</span> <span class="c-fn">announce</span>(message<span class="c-op">:</span> <span class="c-type">word</span>) {
+    <span class="c-kw">if</span> message <span class="c-op">==</span> <span class="c-str">&quot;&quot;</span> { <span class="c-kw">give back</span> }
+    <span class="c-kw">say</span> message.<span class="c-fn">to_upper</span>()
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">rank_for</span>(<span class="c-num">64</span>)
+    <span class="c-kw">say</span> <span class="c-fn">rank_for</span>(<span class="c-num">12</span>)
+    <span class="c-kw">say</span> <span class="c-fn">rank_for</span>(<span class="c-num">3</span>)
+
+    <span class="c-fn">announce</span>(<span class="c-str">&quot;&quot;</span>)
+    <span class="c-fn">announce</span>(<span class="c-str">&quot;all units, stand by&quot;</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>veteran
+regular
+rookie
+ALL UNITS, STAND BY</code></pre>
+  </div>
+</figure>
+<p><code>rank_for</code> reads from top to bottom as a series of questions. The first one that is true gives its answer back and the rest are never reached. This style, with the special cases dealt with first and the ordinary case last, is common in FREAK code.</p>
+<p><code>announce</code> shows the same idea in a task that gives nothing back. A <code>give back</code> with no value simply leaves. Here it is used to skip an empty message.</p>
+<h3 id="every-path-must-give-back">Every path must give back<a class="anchor" href="#every-path-must-give-back" aria-label="Link to this section">#</a></h3>
+<p>If a task promises a value, every way through its body has to end in a <code>give back</code>. This task forgets the case where the condition is false:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_missing_give_back.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">rank_for</span>(sorties<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-str">&quot;veteran&quot;</span> }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">rank_for</span>(<span class="c-num">64</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: task &#x27;rank_for&#x27; may finish without giving back word (line 1)
+ --&gt; book_missing_give_back.fk:1:1
+1 | task rank_for(sorties: int) -&gt; word {
+  | ^</code></pre>
+  </div>
+</figure>
+<p><code>may finish without giving back word</code> is exact. When <code>sorties</code> is 50 or more, the task gives back a word. Otherwise it reaches the closing brace with nothing to give. The compiler checks this by following the structure of the body: an <code>if</code> with an <code>else</code> is enough when both branches give back, and an <code>if</code> alone never is.</p>
+<div class="callout warn"><div class="callout-title">Careful</div><p>FREAK has no implicit return. In some languages the last expression in a function is its value. Not here: a value on a line by itself is worked out and thrown away. Only <code>give back</code> returns.</p></div>
+<h3 id="the-value-must-be-of-the-promised-type">The value must be of the promised type<a class="anchor" href="#the-value-must-be-of-the-promised-type" aria-label="Link to this section">#</a></h3>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_wrong_return_type.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">callsign</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;Valkyrie-1&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">callsign</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: task &#x27;callsign&#x27; must give back int, got word (line 2)
+ --&gt; book_wrong_return_type.fk:2:1
+2 |     give back &quot;Valkyrie-1&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<p>And a task that promises nothing cannot give back something:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_void_gives_value.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">greet</span>() {
+    <span class="c-kw">give back</span> <span class="c-str">&quot;Valkyries, launch.&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-fn">greet</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: void task &#x27;greet&#x27; cannot give back a value (line 2)
+ --&gt; book_void_gives_value.fk:2:1
+2 |     give back &quot;Valkyries, launch.&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<p>For the same reason, there is nothing to store from a call to a <code>void</code> task:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_store_void.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">greet</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, launch.&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> reply <span class="c-op">=</span> <span class="c-fn">greet</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: binding initializer cannot have type void (line 6)
+ --&gt; book_store_void.fk:6:1
+6 |     pilot reply = greet()
+  | ^</code></pre>
+  </div>
+</figure>
+<h3 id="ignoring-a-result">Ignoring a result<a class="anchor" href="#ignoring-a-result" aria-label="Link to this section">#</a></h3>
+<p>The reverse is allowed. You may call a task that gives back a value and not use it. The call is then a statement of its own, and the value is dropped.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_statements.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A call can stand on its own line; its result is simply dropped.</span>
+<span class="c-kw">task</span> <span class="c-fn">log_and_count</span>(message<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">say</span> message
+    <span class="c-kw">give back</span> message.<span class="c-fn">length</span>()
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-fn">log_and_count</span>(<span class="c-str">&quot;contact, bearing 270&quot;</span>)
+    <span class="c-kw">pilot</span> length <span class="c-op">=</span> <span class="c-fn">log_and_count</span>(<span class="c-str">&quot;engaging&quot;</span>)
+    <span class="c-kw">say</span> length
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>contact, bearing 270
+engaging
+8</code></pre>
+  </div>
+</figure>
+<h2 id="arguments-are-checked">Arguments are checked<a class="anchor" href="#arguments-are-checked" aria-label="Link to this section">#</a></h2>
+<p>The compiler compares every call with the task&#x27;s declaration. The number of arguments must match:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_wrong_arg_count.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">add</span>(<span class="c-num">20</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: call to &#x27;add&#x27; expects 2 argument(s), got 1 (line 6)
+ --&gt; book_wrong_arg_count.fk:6:1
+6 |     say add(20)
+  | ^</code></pre>
+  </div>
+</figure>
+<p>And each argument must have its parameter&#x27;s type:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_wrong_arg_type.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">add</span>(<span class="c-num">20</span>, <span class="c-str">&quot;22&quot;</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: call to &#x27;add&#x27; argument 2 expects int, got word (line 6)
+ --&gt; book_wrong_arg_type.fk:6:1
+6 |     say add(20, &quot;22&quot;)
+  | ^</code></pre>
+  </div>
+</figure>
+<p>The message counts arguments from 1. <code>argument 2 expects int, got word</code> means the second argument should have been an int and was a word.</p>
+<p>The one automatic conversion from Chapter 3 applies here too. In the first listing, <code>area(3, 2.5)</code> passes the int <code>3</code> to a <code>num</code> parameter, and that is accepted. The opposite, a num where an int is expected, is an error.</p>
+<h2 id="a-task-gets-its-own-copy">A task gets its own copy<a class="anchor" href="#a-task-gets-its-own-copy" aria-label="Link to this section">#</a></h2>
+<p>When you pass a number, a word or a bool to a task, the task receives a copy. Changing the parameter inside the task changes the copy. The caller&#x27;s pilot is untouched.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_by_value.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A task receives its own copy of each number, word and bool it is given.</span>
+<span class="c-kw">task</span> <span class="c-fn">refuel</span>(level<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    level <span class="c-op">=</span> level <span class="c-op">+</span> <span class="c-num">40</span>          <span class="c-com">-- changes the copy</span>
+    <span class="c-kw">give back</span> level
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    <span class="c-kw">pilot</span> after <span class="c-op">=</span> <span class="c-fn">refuel</span>(fuel)
+
+    <span class="c-kw">say</span> fuel                    <span class="c-com">-- still 50</span>
+    <span class="c-kw">say</span> after
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>50
+90</code></pre>
+  </div>
+</figure>
+<p>This is why <code>refuel</code> has to give back the new level. There is no way for it to reach into <code>main</code> and change <code>fuel</code>.</p>
+<div class="callout note"><div class="callout-title">Note</div><p>Shapes and lists, the larger values introduced in Part II, behave differently: a task that receives one can change the caller&#x27;s copy. Part III explains why, and what ownership has to do with it.</p></div>
+<h2 id="order-does-not-matter">Order does not matter<a class="anchor" href="#order-does-not-matter" aria-label="Link to this section">#</a></h2>
+<p>A task can be called from a point in the file above its declaration. The compiler reads all the declarations first and only then checks the bodies.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_order.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Tasks may be declared in any order, and may call themselves.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">factorial</span>(<span class="c-num">5</span>)
+    <span class="c-kw">say</span> <span class="c-fn">is_even</span>(<span class="c-num">10</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">factorial</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&lt;=</span> <span class="c-num">1</span> { <span class="c-kw">give back</span> <span class="c-num">1</span> }
+    <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-fn">factorial</span>(n <span class="c-op">-</span> <span class="c-num">1</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">is_even</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+    <span class="c-kw">if</span> n <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-lit">true</span> }
+    <span class="c-kw">give back</span> <span class="c-fn">is_odd</span>(n <span class="c-op">-</span> <span class="c-num">1</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">is_odd</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">bool</span> {
+    <span class="c-kw">if</span> n <span class="c-op">==</span> <span class="c-num">0</span> { <span class="c-kw">give back</span> <span class="c-lit">false</span> }
+    <span class="c-kw">give back</span> <span class="c-fn">is_even</span>(n <span class="c-op">-</span> <span class="c-num">1</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>120
+true</code></pre>
+  </div>
+</figure>
+<p><code>main</code> comes first here and calls two tasks declared below it. You are free to put the important task at the top of a file and its helpers underneath.</p>
+<p>The same listing shows a task calling itself. <code>factorial(5)</code> needs <code>factorial(4)</code>, which needs <code>factorial(3)</code>, and so on down to 1, where the first line stops the descent. A task that calls itself is <em>recursive</em>, and it must always have a case that does not, or it never ends.</p>
+<p><code>is_even</code> and <code>is_odd</code> call each other. That works for the same reason that calling a task declared later works.</p>
+<h2 id="main-and-the-exit-code"><code>main</code> and the exit code<a class="anchor" href="#main-and-the-exit-code" aria-label="Link to this section">#</a></h2>
+<p>Every program reports a number to the operating system when it ends, its <em>exit code</em>. By convention zero means success and anything else means some kind of failure. Scripts and other programs use it to decide what to do next.</p>
+<p>When <code>main</code> has no return type, the exit code is zero. When <code>main</code> is declared <code>-&gt; int</code>, the int it gives back is the exit code:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_exit_code.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- When `main` gives back an int, that number is the program&#x27;s exit code.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;preflight failed: fuel line&quot;</span>
+    <span class="c-kw">give back</span> <span class="c-num">3</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>preflight failed: fuel line</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 3</div>
+  </div>
+</figure>
+<p>On Linux and macOS you can see the code of the last command with <code>echo $?</code>. An exit code is a small number. On Linux and macOS only values from 0 to 255 survive the journey to the operating system, so use it for a status, not for a result.</p>
+<h2 id="the-top-level-is-for-declarations">The top level is for declarations<a class="anchor" href="#the-top-level-is-for-declarations" aria-label="Link to this section">#</a></h2>
+<p>Chapter 1 mentioned that a file with no <code>main</code> runs the statements at its top level. Once a file has a <code>main</code>, that stops. The program starts at <code>main</code>, and a statement written outside every task is not run at all:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_toplevel_main.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- With a `main`, the top level is for declarations.</span>
+<span class="c-kw">pilot</span> squadron <span class="c-op">=</span> <span class="c-str">&quot;Valkyries&quot;</span>
+
+<span class="c-kw">say</span> <span class="c-str">&quot;this top-level statement is never run&quot;</span>
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;main sees <span class="c-interp">{squadron}</span>&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>main sees Valkyries</code></pre>
+  </div>
+</figure>
+<p>The top-level pilot still works, because a pilot is a declaration. The top-level <code>say</code> is a statement, and it was silently skipped.</p>
+<p>The rule to take from this: in a program with a <code>main</code>, put only declarations at the top level. That means tasks, pilots, and the shapes of Part II.</p>
+<p>Tasks themselves can only be declared at the top level. A task inside a task is an error:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_nested_task.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">task</span> <span class="c-fn">helper</span>() {
+        <span class="c-kw">say</span> <span class="c-str">&quot;nested&quot;</span>
+    }
+    <span class="c-fn">helper</span>()
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: declaration is valid only at top level (line 2)
+ --&gt; book_nested_task.fk:2:1
+2 |     task helper() {
+  | ^
+type error: unknown callable &#x27;helper&#x27; (line 5)
+ --&gt; book_nested_task.fk:5:1
+5 |     helper()
+  | ^</code></pre>
+  </div>
+</figure>
+<h2 id="one-namespace">One namespace<a class="anchor" href="#one-namespace" aria-label="Link to this section">#</a></h2>
+<p>All the tasks in a program share one set of names. Two tasks cannot have the same name, even with different parameters.</p>
+<p>That set includes more than your own file. Chapter 1 showed that the standard library is placed in front of your program before it is compiled. Its tasks are in the same set of names as yours, and you cannot declare a task with a name it already uses:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_task_name_taken.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">string_reverse</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
+    <span class="c-kw">give back</span> text
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">string_reverse</span>(<span class="c-str">&quot;abc&quot;</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: callable &#x27;string_reverse&#x27; conflicts with another task or extern declaration
+ --&gt; book_task_name_taken.fk:1:1
+1 | task string_reverse(text: word) -&gt; word {
+  | ^</code></pre>
+  </div>
+</figure>
+<p><code>string_reverse</code> is a standard-library task. The message does not say where the other declaration is, which makes this confusing the first time. If a task name you have certainly used only once is reported as conflicting, the standard library has it. Choose a more specific name.</p>
+<p>The names of the operations built into the compiler, such as <code>ask</code>, are protected in the same way, with the message <code>conflicts with a compiler builtin</code>.</p>
+<h2 id="the-pipe-operator">The pipe operator<a class="anchor" href="#the-pipe-operator" aria-label="Link to this section">#</a></h2>
+<p>Nested calls are read from the inside out, which is the opposite of the order in which they happen. The pipe operator, <code>|&gt;</code>, lets you write a chain of calls in the order they run.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_pipe.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- |&gt; passes the value on its left as the first argument of the call on its right.</span>
+<span class="c-kw">task</span> <span class="c-fn">double</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-num">2</span> }
+<span class="c-kw">task</span> <span class="c-fn">offset</span>(n<span class="c-op">:</span> <span class="c-type">int</span>, by<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">+</span> by }
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">say</span> <span class="c-fn">offset</span>(<span class="c-fn">double</span>(<span class="c-num">5</span>), <span class="c-num">1</span>)          <span class="c-com">-- nested: read from the inside out</span>
+    <span class="c-kw">say</span> <span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>() <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">1</span>)    <span class="c-com">-- piped: read from left to right</span>
+
+    <span class="c-kw">say</span> <span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>()                 <span class="c-com">-- double(5)</span>
+    <span class="c-kw">say</span> <span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">3</span>)                <span class="c-com">-- offset(5, 3)</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>11
+11
+10
+8</code></pre>
+  </div>
+</figure>
+<p><code>x |&gt; f()</code> means <code>f(x)</code>: the value on the left becomes the first argument of the call on the right. If the call has arguments of its own, the piped value goes in front of them, so <code>5 |&gt; offset(3)</code> means <code>offset(5, 3)</code>. Pipes chain from left to right. The first two lines of <code>main</code> compute the same thing; the second says it in the order it happens.</p>
+<p>The right side has to be a task named plainly, with its remaining arguments if it has any. You cannot pipe into a method.</p>
+<h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
+<p>Tasks are the part of the language where V4 is closest to V3. Declaration, calls, <code>give back</code>, recursion and calling a task declared later all work at the pinned commit.</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/recursion.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">fib</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> n <span class="c-op">&lt;</span> <span class="c-num">2</span> { <span class="c-kw">give back</span> n }
+    <span class="c-kw">give back</span> <span class="c-fn">fib</span>(n <span class="c-op">-</span> <span class="c-num">1</span>) <span class="c-op">+</span> <span class="c-fn">fib</span>(n <span class="c-op">-</span> <span class="c-num">2</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">fib</span>(<span class="c-num">10</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 55</div>
+  </div>
+</figure>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/declared_later.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `main` calls a task that is declared below it.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">double</span>(<span class="c-num">21</span>)
+}
+
+<span class="c-kw">task</span> <span class="c-fn">double</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-num">2</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 42</div>
+  </div>
+</figure>
+<p>There is one condition, which Chapter 1 met in <code>main</code>. Every task has to declare what it gives back. A task with no arrow, V3&#x27;s way of writing a task that gives nothing back, does not build:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/task_without_type.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `greet` has no arrow. V3 reads that as a task that gives nothing back.</span>
+<span class="c-kw">task</span> <span class="c-fn">greet</span>() {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Valkyrie-1, cleared for launch.&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-fn">greet</span>()
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>v4-native-contract-error=native type not yet supported: unknown</code></pre>
+  </div>
+</figure>
+<p>Written with <code>-&gt; void</code>, the same program builds and runs:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/task_void.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">greet</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
+    <span class="c-kw">say</span> <span class="c-str">&quot;Valkyrie-1, cleared for launch.&quot;</span>
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-fn">greet</span>()
+    <span class="c-kw">give back</span> <span class="c-num">0</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>Valkyrie-1, cleared for launch.</code></pre>
+  </div>
+</figure>
+<p>Like V3, V4 checks the number and types of arguments and that every path gives back. It words its findings differently:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/missing_return.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">rank_for</span>(sorties<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">if</span> sorties <span class="c-op">&gt;=</span> <span class="c-num">50</span> { <span class="c-kw">give back</span> <span class="c-num">2</span> }
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">rank_for</span>(<span class="c-num">64</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@0:75|missing return|rank_for must give back int on every route</code></pre>
+  </div>
+</figure>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/wrong_arg_count.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">add</span>(<span class="c-num">20</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@91:99|call arity mismatch|add expects 2 arguments but got 1</code></pre>
+  </div>
+</figure>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/wrong_arg_type.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge bad">rejected</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">add</span>(a<span class="c-op">:</span> <span class="c-type">int</span>, b<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> a <span class="c-op">+</span> b
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">add</span>(<span class="c-num">20</span>, <span class="c-lit">true</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">V4 diagnostic</div>
+    <pre class="stdout err"><code>2|0@91:105|call argument type mismatch|add argument 2 expects int but got bool</code></pre>
+  </div>
+</figure>
+<p>The argument check is looser than V3&#x27;s in one respect. Chapter 3 showed this commit accepting a num for an int parameter and dropping the fraction.</p>
+<p>V4 has two things V3 lacks. A call may name its arguments, and then their order is free:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/named_arguments.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V4 lets a call name its arguments, in any order.</span>
+<span class="c-kw">task</span> <span class="c-fn">offset</span>(n<span class="c-op">:</span> <span class="c-type">int</span>, by<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> n <span class="c-op">+</span> by
+}
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">offset</span>(by<span class="c-op">:</span> <span class="c-num">1</span>, n<span class="c-op">:</span> <span class="c-num">10</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 11</div>
+  </div>
+</figure>
+<p>Named arguments make a call with several parameters of the same type much harder to get wrong. In V3, arguments are positional only.</p>
+<p>And a task whose body is a single expression can be written with <code>=&gt;</code> in place of braces and <code>give back</code>:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/arrow_task.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A task whose body is one expression, written with `=&gt;` and no braces.</span>
+<span class="c-kw">task</span> <span class="c-fn">square</span>(x<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> <span class="c-op">=&gt;</span> x <span class="c-op">*</span> x
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-fn">square</span>(<span class="c-num">3</span>) <span class="c-op">+</span> <span class="c-fn">square</span>(<span class="c-num">4</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 25</div>
+  </div>
+</figure>
+<p>V4 is also missing one thing V3 has:</p>
+<figure class="example v4">
+  <figcaption>
+    <span class="ex-name">examples-v4/pipe_ignored.fk</span>
+    <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- V3 gives 11 for this: double(5) is 10, offset(10, 1) is 11.</span>
+<span class="c-com">-- This V4 snapshot accepts the pipes and ignores them, leaving 5.</span>
+<span class="c-kw">task</span> <span class="c-fn">double</span>(n<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">*</span> <span class="c-num">2</span> }
+<span class="c-kw">task</span> <span class="c-fn">offset</span>(n<span class="c-op">:</span> <span class="c-type">int</span>, by<span class="c-op">:</span> <span class="c-type">int</span>) <span class="c-op">-&gt;</span> <span class="c-type">int</span> { <span class="c-kw">give back</span> n <span class="c-op">+</span> by }
+
+<span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
+    <span class="c-kw">give back</span> <span class="c-num">5</span> <span class="c-op">|&gt;</span> <span class="c-fn">double</span>() <span class="c-op">|&gt;</span> <span class="c-fn">offset</span>(<span class="c-num">1</span>)
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 5</div>
+  </div>
+</figure>
+<div class="callout warn"><div class="callout-title">Careful</div><p>This is a wrong answer, not an error. At the pinned commit V4 reads the pipe operators and then leaves them out of the program it builds, so the result is the value on the far left. Do not use <code>|&gt;</code> with this V4 commit.</p></div>
+<h2 id="planned">Planned<a class="anchor" href="#planned" aria-label="Link to this section">#</a></h2>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification writes the arrow form without a return type, leaving it to be inferred: <code>task square(x: num) =&gt; x * x</code>. The pinned V4 commit builds the arrow form only when the type is written out. The specification also allows a body with no braces at all, ended by the word <code>done</code>, and neither compiler builds that.</p></div>
+<div class="callout planned"><div class="callout-title">Planned</div><p>Three larger features are specified around tasks and are not in V3: generic tasks, which work for more than one type; closures, which are tasks written inline as values; and visibility, which controls whether a task can be used from another file. Each has a chapter in Part VII.</p></div>
+<h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
+<p>A task is declared with <code>task</code>, a name, typed parameters, and a body. A call passes arguments by position, and the compiler checks their number and types.</p>
+<p>A task that gives a value back declares its type after <code>-&gt;</code> and uses <code>give back</code>, which ends the task immediately. Every path through such a task must reach a <code>give back</code>; there is no implicit return. A task without an arrow is <code>void</code>.</p>
+<p>Numbers, words and bools are copied into a task. Tasks may be declared in any order and may call themselves. <code>main</code> is where the program starts, and an int it gives back is the exit code. In a program with a <code>main</code>, top-level statements are not run. All tasks, including the standard library&#x27;s, share one set of names.</p>
+<p><a href="book-control-flow.html">Chapter 5</a> completes the core of the language: making decisions, and repeating work.</p>
+    </article>
+    <footer class="pagefoot">
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
+      83/83 examples match their reviewed expected output. Illustrative snippets
+      are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
+      <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
+    </footer>
+  </main>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-and-calling">Declaring and calling</a></li><li><a href="#giving-a-value-back">Giving a value back</a></li><li><a href="#arguments-are-checked">Arguments are checked</a></li><li><a href="#a-task-gets-its-own-copy">A task gets its own copy</a></li><li><a href="#order-does-not-matter">Order does not matter</a></li><li><a href="#main-and-the-exit-code"><code>main</code> and the exit code</a></li><li><a href="#the-top-level-is-for-declarations">The top level is for declarations</a></li><li><a href="#one-namespace">One namespace</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

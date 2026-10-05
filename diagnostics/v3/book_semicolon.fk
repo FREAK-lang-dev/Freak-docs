@@ -1,0 +1,4 @@
+task main() {
+    pilot fuel = 50;
+    say fuel
+}

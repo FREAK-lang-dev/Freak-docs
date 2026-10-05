@@ -1,0 +1,7 @@
+-- In V4 only the exact lowercase spelling is a keyword,
+-- so these are ordinary names.
+task main() -> int {
+    pilot Max = 4
+    pilot Pilot = 3
+    give back Max + Pilot
+}

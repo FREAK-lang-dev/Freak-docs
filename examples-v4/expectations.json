@@ -1,0 +1,208 @@
+{
+  "ask": {
+    "rejected_with": "native type not yet supported: unknown"
+  },
+  "big_type": {
+    "rejected_with": "native type not yet supported: big"
+  },
+  "declared_later": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 42
+  },
+  "duplicate_local": {
+    "rejected_with": "duplicate local declaration|fuel already exists in this scope"
+  },
+  "for_each": {
+    "rejected_with": "native rvalue not yet supported: List"
+  },
+  "guess_logic": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 7
+  },
+  "hello": {
+    "stdout_any_of": [
+      "Hello, FREAK!"
+    ]
+  },
+  "if_needs_bool": {
+    "rejected_with": "if condition must be bool|got int"
+  },
+  "int_and_num": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 36
+  },
+  "keyword_case": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 7
+  },
+  "loops": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 51
+  },
+  "main_without_type": {
+    "rejected_with": "native type not yet supported: unknown"
+  },
+  "missing_return": {
+    "rejected_with": "missing return|rank_for must give back int on every route"
+  },
+  "named_arguments": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 11
+  },
+  "numeric_types": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 3
+  },
+  "overflow_wraps": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 1
+  },
+  "pilot_mut": {
+    "rejected_with": "unsupported local pattern"
+  },
+  "pipe_ignored": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 5
+  },
+  "reassign": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 80
+  },
+  "recursion": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 55
+  },
+  "say_needs_literal": {
+    "rejected_with": "say nonliteral is not yet supported"
+  },
+  "semicolon": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 50
+  },
+  "shadow_inner": {
+    "rejected_with": "duplicate local declaration|fuel already exists in this scope"
+  },
+  "toplevel_statement": {
+    "rejected_with": "unexpected token at top level|say"
+  },
+  "training_arc_cap": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 11
+  },
+  "truth_literal_case": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 7
+  },
+  "unknown_name": {
+    "rejected_with": "native type not yet supported: unknown"
+  },
+  "when_int": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 119
+  },
+  "with_growth": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 100
+  },
+  "with_growth_stalled": {
+    "rejected_with": "training arc with growth must mutate condition subject"
+  },
+  "word_pilot": {
+    "rejected_with": "native words currently support only literal say operands"
+  },
+  "wrong_arg_count": {
+    "rejected_with": "call arity mismatch|add expects 2 arguments but got 1"
+  },
+  "wrong_arg_type": {
+    "rejected_with": "call argument type mismatch|add argument 2 expects int but got bool"
+  },
+  "wrong_type": {
+    "rejected_with": "local declaration type mismatch|sorties expects int but got bool"
+  },
+  "task_without_type": {
+    "rejected_with": "native type not yet supported: unknown"
+  },
+  "task_void": {
+    "stdout_any_of": [
+      "Valkyrie-1, cleared for launch."
+    ],
+    "exit_code": 0
+  },
+  "num_into_int": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 30
+  },
+  "conversion_methods": {
+    "rejected_with": "receiver has no matching method|int offers no method to_num"
+  },
+  "toplevel_pilot": {
+    "rejected_with": "unexpected token at top level|pilot"
+  },
+  "toplevel_fixed": {
+    "rejected_with": "native symbol values currently support only task pointers"
+  },
+  "fixed_reassigned": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 75
+  },
+  "hex_literal": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 7
+  },
+  "else_if_give_back": {
+    "rejected_with": "mir cfg unreachable live block"
+  },
+  "else_if_trailing": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 123
+  },
+  "when_default_first": {
+    "rejected_with": "unreachable when arm|an earlier arm already matches every remaining value"
+  },
+  "arrow_task": {
+    "stdout_any_of": [
+      ""
+    ],
+    "exit_code": 25
+  }
+}

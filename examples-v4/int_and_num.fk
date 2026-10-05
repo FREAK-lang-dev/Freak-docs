@@ -1,0 +1,11 @@
+task main() -> int {
+    pilot a = 7
+    pilot b = 2
+    pilot thrust: num = 2.5
+
+    -- 7 / 2 is 3 and 7 % 2 is 1, so this part is 31.
+    pilot whole = a / b * 10 + a % b
+
+    if thrust * 2.0 > 4.9 { give back whole + 5 }
+    give back whole
+}

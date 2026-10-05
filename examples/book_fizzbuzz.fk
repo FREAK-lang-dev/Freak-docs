@@ -1,0 +1,16 @@
+-- fizzbuzz.fk: count from 1 to 15. Multiples of 3 say Fizz, multiples of 5
+-- say Buzz, and multiples of both say FizzBuzz.
+task label(n: int) -> word {
+    if n % 15 == 0 { give back "FizzBuzz" }
+    if n % 3 == 0 { give back "Fizz" }
+    if n % 5 == 0 { give back "Buzz" }
+    give back n.to_word()
+}
+
+task main() {
+    pilot mut n = 1
+    repeat 15 times {
+        say label(n)
+        n += 1
+    }
+}

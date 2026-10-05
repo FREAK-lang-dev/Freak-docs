@@ -1,0 +1,27 @@
+-- Tasks: named pieces of work.
+task greet() {
+    say "Valkyries, launch."
+}
+
+task report(callsign: word, sorties: int) {
+    say "{callsign} has flown {sorties} sorties"
+}
+
+task add(a: int, b: int) -> int {
+    give back a + b
+}
+
+task area(width: num, height: num) -> num {
+    give back width * height
+}
+
+task main() {
+    greet()
+    report("Valkyrie-1", 12)
+
+    pilot total = add(20, 22)
+    say total
+    say add(add(1, 2), 3)        -- a call can be an argument of another call
+
+    say area(3, 2.5)             -- the int 3 is accepted where a num is wanted
+}

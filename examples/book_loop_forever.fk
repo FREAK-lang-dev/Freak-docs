@@ -1,0 +1,12 @@
+-- A loop with no natural end, left with `break`.
+task main() {
+    pilot mut altitude = 0
+
+    repeat until false {
+        altitude += 2500
+        say "climbing through {altitude}"
+        if altitude >= 10000 { break }
+    }
+
+    say "level at {altitude}"
+}

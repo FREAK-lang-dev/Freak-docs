@@ -1,0 +1,7 @@
+task launch(callsign: word) {
+    say "{callsign} away"
+}
+
+task main() {
+    launch("Valkyrie-1")
+}

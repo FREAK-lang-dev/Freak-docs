@@ -1,0 +1,5 @@
+-- V3 rejects this literal. This V4 commit reads it as 0 and carries on.
+task main() -> int {
+    pilot mask = 0xFF
+    give back mask + 7
+}

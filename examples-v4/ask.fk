@@ -1,0 +1,4 @@
+task main() -> int {
+    pilot text = ask("Your guess: ")
+    give back 0
+}

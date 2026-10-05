@@ -1,0 +1,5 @@
+-- V4 accepts a semicolon at the end of a statement. V3 rejects it.
+task main() -> int {
+    pilot fuel = 50;
+    give back fuel
+}

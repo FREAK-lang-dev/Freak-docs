@@ -1,0 +1,9 @@
+task main() -> int {
+    pilot code = 0
+    pilot rank = 5
+    when rank {
+        _ -> code += 2
+        5 -> code += 4
+    }
+    give back code
+}

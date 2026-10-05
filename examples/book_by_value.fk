@@ -1,0 +1,13 @@
+-- A task receives its own copy of each number, word and bool it is given.
+task refuel(level: int) -> int {
+    level = level + 40          -- changes the copy
+    give back level
+}
+
+task main() {
+    pilot fuel = 50
+    pilot after = refuel(fuel)
+
+    say fuel                    -- still 50
+    say after
+}

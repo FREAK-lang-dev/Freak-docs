@@ -1,0 +1,12 @@
+-- V3 refuses all three of these. This V4 commit drops the fraction
+-- and says nothing.
+task whole(n: int) -> int {
+    give back n
+}
+
+task main() -> int {
+    pilot sorties: int = 2.5                    -- becomes 2
+    pilot fuel = 10
+    fuel = 7.9                                  -- becomes 7
+    give back sorties * 10 + fuel + whole(3.99) -- 20 + 7 + 3
+}
