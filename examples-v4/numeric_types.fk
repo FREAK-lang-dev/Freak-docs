@@ -1,4 +1,4 @@
--- Four of the specification's extra types. Three have a literal suffix;
+-- Five of the specification's extra types. Three have a literal suffix;
 -- a char is written in single quotes.
 task main() -> int {
     pilot count: uint = 42u            -- unsigned 64-bit
@@ -8,6 +8,7 @@ task main() -> int {
     pilot next: tiny = small + 1t
 
     pilot ratio: float = 3.14f         -- the explicit 64-bit float
+    pilot narrow: float32 = 1.5        -- a 32-bit float; it has no suffix
     pilot initial: char = 'a'          -- one character, in single quotes
 
     pilot passed = 0

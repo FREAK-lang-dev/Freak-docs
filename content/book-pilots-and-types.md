@@ -477,14 +477,14 @@ nested block is reported as a duplicate, where V3 allows it:
 {{v4:shadow_inner}}
 
 **V4 has more basic types.** The specification defines several that V3 lacks,
-and this commit already builds programs that use four of them. Three have a
+and this commit already builds programs that use five of them. Three have a
 literal suffix, and a `char` is written in single quotes:
 
 {{v4:numeric_types}}
 
 `uint` is an unsigned 64-bit whole number, `tiny` is a single byte, `float` is
-an explicitly named 64-bit float, and `char` is a single character. A fifth
-type, `float32`, is accepted too.
+an explicitly named 64-bit float, `float32` is a 32-bit float, and `char` is a
+single character.
 
 ## Planned
 

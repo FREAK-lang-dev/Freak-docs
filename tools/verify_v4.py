@@ -83,6 +83,9 @@ def verify_one(checkout: Path, src: Path, expectation: dict, compiler_opt: int) 
             result["diagnostic"] = diagnostic_lines(output)
             if result["built"]:
                 result["errors"] = ["V4 accepted a program documented as rejected"]
+            elif produced or build.returncode == 0:
+                # A rejection leaves a failing status and no program behind.
+                result["errors"] = ["the build reported failure but left an executable, or success without one"]
             elif "V4 compilation failed" not in output:
                 # A crash or a toolchain failure is not a language rule.
                 result["errors"] = ["the build did not end in an ordinary V4 rejection"]
@@ -127,7 +130,7 @@ def main() -> int:
     pin = pinned_snapshot(ROOT)
     try:
         head = git(checkout, "rev-parse", "HEAD")
-        dirty = git(checkout, "status", "--porcelain", "--untracked-files=no", "--", "src", "freakc")
+        dirty = git(checkout, "status", "--porcelain", "--untracked-files=all", "--", "src", "freakc")
         commit_date = git(checkout, "show", "-s", "--format=%cI", "HEAD")
     except (subprocess.CalledProcessError, OSError):
         print(f"not a usable Freak-lang checkout: {checkout}", file=sys.stderr)
@@ -136,7 +139,8 @@ def main() -> int:
         print(f"checkout is at {head}, but v4-snapshot.txt pins {pin}; refusing to mix snapshots", file=sys.stderr)
         return 2
     if dirty:
-        print("checkout has local compiler changes; V4 evidence must come from the pinned commit", file=sys.stderr)
+        print("checkout has modified or untracked compiler files; V4 evidence must come from the pinned commit",
+              file=sys.stderr)
         return 2
     if not (checkout / BUILD_SCRIPT).exists():
         print("the pinned commit has no src/compiler/v4/build_v4.py", file=sys.stderr)

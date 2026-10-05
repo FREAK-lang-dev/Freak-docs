@@ -1071,13 +1071,13 @@ ready: true
     <pre class="stdout err"><code>2|0@68:83|duplicate local declaration|fuel already exists in this scope</code></pre>
   </div>
 </figure>
-<p><strong>V4 has more basic types.</strong> The specification defines several that V3 lacks, and this commit already builds programs that use four of them. Three have a literal suffix, and a <code>char</code> is written in single quotes:</p>
+<p><strong>V4 has more basic types.</strong> The specification defines several that V3 lacks, and this commit already builds programs that use five of them. Three have a literal suffix, and a <code>char</code> is written in single quotes:</p>
 <figure class="example v4">
   <figcaption>
     <span class="ex-name">examples-v4/numeric_types.fk</span>
     <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- Four of the specification&#x27;s extra types. Three have a literal suffix;</span>
+  <pre class="code"><code><span class="c-com">-- Five of the specification&#x27;s extra types. Three have a literal suffix;</span>
 <span class="c-com">-- a char is written in single quotes.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
     <span class="c-kw">pilot</span> count<span class="c-op">:</span> <span class="c-type">uint</span> <span class="c-op">=</span> <span class="c-num">42</span>u            <span class="c-com">-- unsigned 64-bit</span>
@@ -1087,6 +1087,7 @@ ready: true
     <span class="c-kw">pilot</span> next<span class="c-op">:</span> <span class="c-type">tiny</span> <span class="c-op">=</span> small <span class="c-op">+</span> <span class="c-num">1</span>t
 
     <span class="c-kw">pilot</span> ratio<span class="c-op">:</span> <span class="c-type">float</span> <span class="c-op">=</span> <span class="c-num">3.14</span>f         <span class="c-com">-- the explicit 64-bit float</span>
+    <span class="c-kw">pilot</span> narrow<span class="c-op">:</span> <span class="c-type">float32</span> <span class="c-op">=</span> <span class="c-num">1.5</span>        <span class="c-com">-- a 32-bit float; it has no suffix</span>
     <span class="c-kw">pilot</span> initial<span class="c-op">:</span> <span class="c-type">char</span> <span class="c-op">=</span> &#x27;a&#x27;          <span class="c-com">-- one character, in single quotes</span>
 
     <span class="c-kw">pilot</span> passed <span class="c-op">=</span> <span class="c-num">0</span>
@@ -1099,7 +1100,7 @@ ready: true
     <div class="ex-out-head">Exit code 3</div>
   </div>
 </figure>
-<p><code>uint</code> is an unsigned 64-bit whole number, <code>tiny</code> is a single byte, <code>float</code> is an explicitly named 64-bit float, and <code>char</code> is a single character. A fifth type, <code>float32</code>, is accepted too.</p>
+<p><code>uint</code> is an unsigned 64-bit whole number, <code>tiny</code> is a single byte, <code>float</code> is an explicitly named 64-bit float, <code>float32</code> is a 32-bit float, and <code>char</code> is a single character.</p>
 <h2 id="planned">Planned<a class="anchor" href="#planned" aria-label="Link to this section">#</a></h2>
 <div class="callout planned"><div class="callout-title">Planned</div><p>The specification defines <code>big</code>, a whole number of any size, which cannot overflow, with literals written like <code>999b</code>. V3 does not have it, and the pinned V4 commit recognises the type and cannot build it yet.</p></div>
 <figure class="example v4">

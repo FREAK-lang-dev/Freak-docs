@@ -556,3 +556,19 @@ class BookEvidenceTests(unittest.TestCase):
         ])
         self.assertIn('<a href="#if"><code>if</code></a>', toc)
         self.assertNotIn('`', toc)
+
+    def test_v4_rejection_must_not_leave_an_executable(self):
+        import verify_v4
+        failure = b'V4 compilation failed:\n2|0@0:16|unexpected token at top level|say\n'
+        for leaves_binary, code, passes in [(False, 1, True), (True, 1, False), (False, 0, False)]:
+            with self.subTest(leaves_binary=leaves_binary, code=code), tempfile.TemporaryDirectory() as tmp:
+                source = Path(tmp) / 'broken.fk'
+                source.write_text('say "top level"\n')
+                def build(command, **kwargs):
+                    if leaves_binary:
+                        Path(command[command.index('-o') + 1]).touch()
+                    return subprocess.CompletedProcess(command, code, failure, b'')
+                with patch.object(verify_v4.subprocess, 'run', side_effect=build):
+                    result = verify_v4.verify_one(Path(tmp), source,
+                                                  {'rejected_with': 'unexpected token at top level'}, 2)
+                self.assertIs(result['passed'], passes)
