@@ -152,15 +152,18 @@ The rules are exact:
   type error.
 - Every segment must be a valid identifier — so it cannot be a keyword, in any
   casing.
-- A matched `{...}` whose body is **not** a valid path is left as literal text,
-  braces included. `"literal {1 + 2} braces"` prints exactly that.
-- An unmatched `{` is literal text.
+- A `{...}` whose body is an expression rather than a path is a compile error:
+  *"unsupported interpolation expression"*. That covers `{1 + 2}`, `{f()}`,
+  `{p.sum()}` and `{ n }` with spaces inside the braces.
+- A `{` with no closing `}` is a compile error: *"unterminated interpolation
+  expression"*.
+- To print a brace, escape it: `"\{1 + 2\}"` prints `{1 + 2}`. A `}` on its
+  own, and an empty `{}`, are printed as they are.
 - Unknown bindings are a compile error: *"unknown interpolation binding 'x'"*.
 
 > [!warn]
 > Interpolation substitutes **paths only** — never calls, never expressions.
-> `"{p.sum()}"` is not a call; it is literal text, because `sum()` is not a
-> valid path segment. Compute into a binding first:
+> Compute into a binding first:
 >
 > ```fk
 > pilot total: int = p.sum()

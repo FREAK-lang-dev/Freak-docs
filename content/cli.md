@@ -59,24 +59,24 @@ freak build game.fk --strict-borrow
 ```
 
 > [!v4]
-> `-o output_path` does not exist. The output name is always the source
-> basename plus `.exe` (Windows) or no extension elsewhere. `--voice=`,
-> `--clearance=` and `--build-mode=` are also V4-only.
+> `--voice=`, `--clearance=` and `--build-mode=` are V4-only. The output name
+> can be chosen with `-o NAME` or `--output=NAME`; without it, it is the source
+> basename plus `.exe` (Windows) or no extension elsewhere.
 
 ## `--strict-borrow`
 
-Without this flag V3 does no ownership checking at all. With it, a Phase-1
-checker runs after type checking and enforces three rules:
+Without this flag V3 does no ownership checking. With it, a Phase-1 checker
+runs after type checking and enforces two rules:
 
-- **Immutable bindings.** `pilot x = ...` cannot be reassigned; `pilot mut x = ...` can.
-  Reassigning without `mut` reports *"This binding was sworn to silence."*
 - **Single-owner moves** for `word`, arrays and user shapes. Use after move
   reports *"Shirogane. You gave this away."*
 - **Copy primitives.** `int`, `num` and `bool` are copied on assignment; both
   bindings stay valid.
 
-Nominal member validation — checking that a field or method you name actually
-exists on the shape — always runs, flag or not.
+Mutability is not part of this flag. `fixed` and `grounded` pilots are always
+enforced, and plain pilots can always be reassigned. Nominal member validation
+— checking that a field or method you name actually exists on the shape —
+also always runs, flag or not.
 
 ## Backends compared
 

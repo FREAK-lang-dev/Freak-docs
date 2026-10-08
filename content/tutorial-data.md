@@ -83,8 +83,8 @@ Three rules to internalise:
 
 - **`.length()` is a method**, not a field. `names.length` reports
   *"non-shape value has no fields"*.
-- **Indexed assignment needs `pilot mut`**, otherwise
-  *"indexed assignment requires a mutable list binding"*.
+- **A `fixed` list cannot be changed.** Any other list can, with indexed
+  assignment or its mutating methods.
 - **The literal infers the type.** `[1, 2, 3]` is a `List<int>`; all elements
   must share one type.
 
@@ -98,7 +98,7 @@ tally[0] = 24
 
 Lists grow as of v0.14.2: `.push(v)`, `.pop()`, `.reserve(n)`, `.capacity()`
 and `.clear()`, with `List::new()` and `List::with_capacity(n)` as
-constructors. Mutating methods need `pilot mut`.
+constructors.
 
 ```fk
 pilot mut queue: List<int> = List::new()

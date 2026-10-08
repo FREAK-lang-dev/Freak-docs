@@ -1,5 +1,5 @@
 -- The entry point is the task named `main`, in lowercase.
--- This file has no such task, so the program starts, does nothing, and ends.
+-- This file has no such task and nothing else to run, so it does not build.
 task Main() {
     say "never printed"
 }

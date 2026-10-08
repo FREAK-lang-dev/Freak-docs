@@ -202,9 +202,9 @@ interp-path = identifier { "." identifier }
 ```
 
 A `{...}` whose body matches `interp-path`, where every segment is a valid
-identifier and not a keyword, becomes an interpolated expression. Anything else
-— including `{1 + 2}` and `{f()}` — stays literal text, braces included. An
-unmatched `{` is literal.
+identifier and not a keyword, becomes an interpolated expression. A body that
+is an expression instead, such as `{1 + 2}` or `{f()}`, is an error, and so is
+a `{` with no closing `}`. `\{` and `\}` are literal braces.
 
 The resolved path must have type `word`, `int`, `num` or `bool`.
 

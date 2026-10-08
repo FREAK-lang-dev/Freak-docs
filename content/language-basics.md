@@ -13,15 +13,16 @@ Three forms exist:
 
 | Form | Meaning |
 |---|---|
-| `pilot x = expr` | Ordinary binding |
-| `pilot mut x = expr` | Explicitly reassignable |
+| `pilot x = expr` | Ordinary binding; can be reassigned |
+| `pilot mut x = expr` | The same; `mut` is optional |
 | `fixed pilot x = expr` | Immutable binding |
+| `grounded pilot x = expr` | The same as `fixed` |
 
 > [!note]
-> `mut` and `fixed` only change behaviour under `--strict-borrow`. Without that
-> flag V3 does no ownership or mutability checking, and all three forms behave
-> identically. Write `mut` anyway — it documents intent and it is what the
-> checker will demand when you turn it on.
+> `fixed` and `grounded` are always enforced, for every type and for shape
+> fields: assigning to one reports *"fixed pilot cannot be modified"* (or
+> *"grounded pilot ..."*). Plain pilots can always be reassigned, with or
+> without `mut`, and with or without `--strict-borrow`.
 
 Assignment operators: `=`, `+=`, `-=`, `*=`, `/=`, `%=`.
 

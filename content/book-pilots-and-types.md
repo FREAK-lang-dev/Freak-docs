@@ -5,7 +5,7 @@
 Chapter 2 used pilots, numbers, words and truth values without stopping to
 explain them. This chapter goes back over each one. It covers:
 
-- declaring pilots, and what `mut` and `fixed` do
+- declaring pilots, and keeping one from changing with `fixed`
 - where a pilot can be seen, and for how long
 - the words you cannot use as names
 - the four basic types: `int`, `num`, `bool` and `word`
@@ -56,51 +56,29 @@ Values that are fixed for the whole program are written in capitals:
 
 ## Changing a pilot
 
-There are three ways to declare a pilot, and they differ in what you intend to
-do with it afterwards.
+A pilot can be changed after it is created, unless you say otherwise.
 
-| Declaration | Intent |
+| Declaration | Meaning |
 |---|---|
-| `pilot x = 1` | An ordinary pilot |
-| `pilot mut x = 1` | A pilot whose value will be changed |
+| `pilot x = 1` | A pilot you may change later |
+| `pilot mut x = 1` | The same; `mut` is optional |
 | `fixed pilot x = 1` | A pilot whose value must never change |
+| `grounded pilot x = 1` | The same as `fixed`: a grounded pilot isn't going anywhere |
 
 Assignment uses `=`. For arithmetic on the pilot's own value there are
 shorthand forms: `x += 5` means `x = x + 5`, and `-=`, `*=`, `/=` and `%=`
 work the same way.
 
-Now the part that needs care. How strictly these three forms are enforced
-depends on how you build.
+`fixed` and `grounded` are enforced for every kind of value: numbers, words,
+lists, and the fields of a shape. Assigning to one stops the build, and the
+message uses the word you wrote:
 
-**By default, V3 does not enforce them for simple values.** A plain `pilot`
-holding a number can be reassigned, and so can a `fixed pilot`. The words `mut`
-and `fixed` are accepted and, for numbers, words and bools, ignored.
+{{diagnostic:book_fixed_reassign}}
 
-**With `--strict-borrow`, V3 enforces them.** That flag turns on V3's ownership
-checker, which Part III is about. Under it, only a `pilot mut` may be
-reassigned:
-
-{{diagnostic:book_reassign_strict}}
-
-The same message is given for assigning to a `fixed pilot`.
-
-You turn it on by adding the flag to a build:
-
-```sh
-freak build main.fk --strict-borrow
-```
-
-So write the declarations as if they were always enforced. Use `pilot mut` for
-anything you assign to again, `fixed pilot` for values that must not change,
-and plain `pilot` for everything else. Your code then says what it means, and
-the strict mode will have no complaint about its assignments. The strict mode
-has a second set of rules, about values that are handed from one place to
-another, and those are Part III's subject.
-
-> [!note]
-> One kind of value is checked even without the flag. A list must be declared
-> `pilot mut` before you can add to it or change its elements. Part II covers
-> lists.
+`mut` is accepted for readers coming from languages where values cannot be
+changed by default. It changes nothing, so use it or leave it out as you
+prefer. Mark the values that must not change, and let everything else be a
+plain `pilot`.
 
 ## Scope
 
@@ -156,7 +134,7 @@ languages that list is short and obvious. In FREAK it is longer than you would
 guess, because it includes words the language has reserved for features that
 are not built yet.
 
-These 54 words are reserved in V3:
+These 55 words are reserved in V3:
 
 ```text
 pilot   fixed    task       say      shape    impl      doctrine
@@ -166,6 +144,7 @@ times   until    done       for      each     check     result
 got     nobody   some       ok       err      sessions  max
 foreshadow  payoff   route   sadly   deus_ex_machina    isekai
 eventually  and      or      not     nakama   tsundere  extern
+while
 
 true    false    yes    no    hai    iie
 ```
@@ -185,20 +164,17 @@ was a perfectly good name, this is why. Pick another: `limit` for `max`,
 
 In one respect the list is shorter than you might guess. Several words the
 language uses constantly are missing from it: `give`, `back`, `training`,
-`arc`, `ask`, and the type names `int`, `num`, `bool` and `word`. V3 recognises
-those by where they appear, so it accepts them as names too:
+`arc`, `ask`, `grounded`, `step`, `with`, and the type names `int`, `num`,
+`bool` and `word`. V3 recognises those by where they appear, so it accepts
+them as names too:
 
 {{example:book_contextual_words}}
 
 That listing builds, and `give back give` is reason enough never to write it.
-There is a trap as well. V3 joins `give` and `back` into one keyword wherever
-the two words follow each other, even across the end of a line:
-
-{{diagnostic:book_give_back_trap}}
-
-Line 4 ends with the pilot `give` and line 5 starts with the pilot `back`, and
-the compiler reads the pair as `give back`. Treat every word the language uses
-as reserved, whether or not the compiler insists.
+`give back` is a keyword only as a pair on one line, so a pilot called `give`
+at the end of one line and a pilot called `back` at the start of the next stay
+two pilots. Even so, treat every word the language uses as reserved, whether
+or not the compiler insists.
 
 ### Capital letters do not help
 
@@ -210,8 +186,8 @@ V3 reserves these words in every combination of capital and small letters.
 > [!warn]
 > The reservation covers every spelling, but a single-word *keyword* works
 > only in lowercase. `Pilot x = 1` is not a declaration and `If` does not start
-> a condition; both are syntax errors. The truth literals are the dangerous
-> exception, because a capitalised one is accepted and silently means false.
+> a condition; both are syntax errors. The truth literals are the exception: a
+> capitalised one is accepted and means the same value as the lowercase one.
 
 {{example:book_keyword_case}}
 
@@ -260,17 +236,14 @@ side: `-7 % 2` is `-1`.
 **Multiplication, division and remainder are done before addition and
 subtraction.** Parentheses change the order.
 
-**Arithmetic that goes past the largest int wraps around** to the smallest,
-with no error and no warning. The same happens to a number literal that is too
-large to fit. If your numbers can become that large, it is up to you to check
-before they do.
+**Arithmetic that goes past the largest or smallest int stops the program.**
+The last line of the listing never runs. The program prints `FREAK: integer
+overflow in addition` to the error stream and ends with exit code 1. A number
+literal too large to fit is refused when you build.
 
-> [!warn]
-> Dividing an int by zero is not checked either. Depending on the machine and
-> on how the zero got there, the operating system stops the program on the
-> spot or the program carries on with a meaningless value. Neither produces a
-> FREAK message. Test the divisor before you divide by anything that could be
-> zero.
+**Dividing an int by zero stops the program too**, with `FREAK: integer
+division by zero`, and so does taking a remainder by zero. If a divisor could
+be zero, test it before you divide.
 
 Ints are written in decimal only. There is no hexadecimal form, no separator
 for grouping digits, and no exponent. The compiler does not say so directly.
@@ -340,6 +313,13 @@ what other languages call a string.
 
 {{example:book_words_intro}}
 
+Only a name, or a name followed by `.field`, can go between the braces. A
+calculation cannot, and the program does not build:
+
+{{diagnostic:book_interpolation_expression}}
+
+Work the value out into a pilot first, and put the pilot's name in the braces.
+
 That is enough about words to read the next two chapters. Words have a chapter
 of their own in Part II, which covers their methods, the exact rules of
 interpolation, and how to take them apart.
@@ -400,7 +380,8 @@ arithmetic produces a num.
 
 {{v4:int_and_num}}
 
-Int arithmetic wraps at the limits, as in V3:
+Int arithmetic wraps at the limits at this commit. V3 stops the program
+instead, as the specification says V4 will:
 
 {{v4:overflow_wraps}}
 
@@ -418,23 +399,20 @@ V4:
 
 {{v4:keyword_case}}
 
-The truth literals are the exception, and here V4 corrects V3. A capitalised
+The truth literals are the exception, and here V4 and V3 agree. A capitalised
 truth literal is still a truth literal, so it cannot be a name, and it means
 what it says:
 
 {{v4:truth_literal_case}}
-
-V3 fails the first two tests, because it reads `TRUE` and `Yes` as false, and
-gives 4 for this program where V4 gives 7.
 
 **Every pilot can be reassigned, and `mut` is not accepted.** Chapter 2 showed
 `pilot mut` being rejected. Assignment to a plain pilot works:
 
 {{v4:reassign}}
 
-That much agrees with the specification's section on pilots, which says they
-can be reassigned by default. The same section says a `fixed pilot` cannot be,
-and this commit does not enforce that yet:
+That much agrees with the specification's section on pilots and with V3, both
+of which let a pilot be reassigned by default. The same section says a `fixed
+pilot` cannot be, which V3 enforces and this commit does not yet:
 
 {{v4:fixed_reassigned}}
 
@@ -508,16 +486,15 @@ single character.
 ## Summary
 
 A pilot is a named value with a type that never changes. The type is inferred
-from the starting value or written after a colon. Declare a pilot `mut` if you
-will reassign it and `fixed` if it must not change; V3 enforces this under
-`--strict-borrow`, and always for lists.
+from the starting value or written after a colon. A pilot can be reassigned
+unless it is declared `fixed` or `grounded`, and V3 enforces that.
 
 A pilot lives until the end of its block. An inner block may shadow an outer
-name; the same block may not declare a name twice. Fifty-four words are
+name; the same block may not declare a name twice. Fifty-five words are
 reserved in any letter case, and single-word keywords work only in lowercase.
 
 There are four basic types. `int` is a 64-bit whole number whose division
-truncates and whose arithmetic wraps. `num` is a 64-bit floating-point number,
+truncates, and whose overflow or division by zero stops the program. `num` is a 64-bit floating-point number,
 printed to ten significant digits. `bool` is true or false, combined with
 `and`, `or` and `not`. `word` is text.
 
