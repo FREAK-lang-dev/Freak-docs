@@ -107,7 +107,7 @@ V3 ships **Phase-1 only**, behind `--strict-borrow`:
 
 | Rule | V3 |
 |---|---|
-| `pilot` immutable, `pilot mut` reassignable | Enforced under the flag |
+| `fixed` / `grounded` pilots immutable; `pilot` and `pilot mut` reassignable | **Always on**, flag or not |
 | Single-owner moves for `word`, arrays, shapes | Enforced under the flag |
 | `int` / `num` / `bool` are Copy | Enforced under the flag |
 | Nominal member validation | **Always on**, flag or not |

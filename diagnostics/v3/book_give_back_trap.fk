@@ -1,7 +1,0 @@
-task main() {
-    pilot give = 1
-    pilot mut back = 2
-    say give
-    back = 3
-    say back
-}

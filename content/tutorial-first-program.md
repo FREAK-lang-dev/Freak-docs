@@ -159,9 +159,8 @@ repeat until done { work() }                 -- condition, tested first
 training arc until ready max 8 sessions { }  -- bounded, cannot spin forever
 ```
 
-To reassign a binding you must declare it `pilot mut`. Without `--strict-borrow`
-the compiler will not enforce that, but write it anyway — it documents intent
-and the checker will demand it once you turn the flag on.
+Any pilot can be reassigned unless it is declared `fixed`. Writing `pilot mut`
+is optional; it tells the reader the value will change.
 
 ## The finished program
 

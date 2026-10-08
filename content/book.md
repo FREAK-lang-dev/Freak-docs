@@ -38,7 +38,7 @@ Everything you need to write small, complete programs.
 - [2. A guessing game](book-guessing-game.html): a whole program built one step at a time
 - [3. Pilots, values and types](book-pilots-and-types.html): names, numbers, truth values, and the rules that connect them
 - [4. Tasks](book-tasks.html): defining work, passing values in, giving values back
-- [5. Control flow](book-control-flow.html): choosing with `if` and `when`, repeating with four kinds of loop
+- [5. Control flow](book-control-flow.html): choosing with `if` and `when`, repeating with counting, conditional and list loops
 
 ## Still to be written
 

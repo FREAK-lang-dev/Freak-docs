@@ -1,0 +1,14 @@
+-- `while` runs as long as its condition is true: the opposite of `repeat until`.
+task main() {
+    pilot fuel = 3
+    while fuel > 0 {
+        say "fuel {fuel}"
+        fuel -= 1
+    }
+
+    pilot laps = 0
+    repeat while laps < 2 {
+        laps += 1
+    }
+    say "laps {laps}"
+}

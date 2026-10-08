@@ -9,6 +9,7 @@ task main() {
     say system
 
     say title == "Muv-Luv"                 -- words compare with == and !=
+    say "apple" < "banana"                 -- and are ordered byte by byte
 
     -- A name in braces is replaced by its value. It works for
     -- word, int, num and bool pilots.
@@ -17,8 +18,8 @@ task main() {
     pilot cleared = true
     say "{title}: {sorties} sorties, ratio {ratio}, cleared {cleared}"
 
-    -- Braces around anything that is not a name are printed as they are.
-    say "{sorties + 1} is not worked out"
+    -- A backslash before a brace prints the brace itself.
+    say "\{sorties\} is printed as written"
 
     -- A backslash introduces a character that is awkward to type.
     say "tab:[\t] quote:[\"] backslash:[\\]"
