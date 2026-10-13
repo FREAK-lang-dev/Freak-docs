@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -196,7 +196,7 @@ in the air</code></pre>
 <h3 id="repeat-n-times">repeat N times<a class="anchor" href="#repeat-n-times" aria-label="Link to this section">#</a></h3>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-type">COUNT</span> <span class="c-kw">times</span> { body }</code></pre></div>
-<p><code>COUNT</code> is any <code>int</code> expression, evaluated <strong>once</strong> before the loop. There is no loop variable — keep your own counter if you need the index.</p>
+<p><code>COUNT</code> is any <code>int</code> expression, evaluated <strong>once</strong> before the loop. Add <code>with NAME</code> to get a counter that starts at 0: <code>repeat COUNT times with i { }</code>.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
@@ -341,27 +341,90 @@ disengaged</code></pre>
   </div>
 </figure>
 <div class="callout warn"><div class="callout-title">Careful</div><p>V3 emits the block <strong>inline, where you wrote it</strong>. It is not deferred to the end of scope, it does not run in LIFO order with other <code>eventually</code> blocks, and it does not run on <code>give back</code>, <code>break</code> or <code>panic</code>. Treat it as a labelled section, not as <code>defer</code>. True deferred semantics are V4.</p></div>
-<h2 id="no-for-each">No <code>for each</code><a class="anchor" href="#no-for-each" aria-label="Link to this section">#</a></h2>
-<p><code>for each</code> lexes as a keyword but has no grammar in V3:</p>
-<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;for each&#x27; — this token cannot start an expression</code></pre></div>
-<p>Iterate with an index instead:</p>
-<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
-<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
-<span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
-    <span class="c-kw">say</span> <span class="c-fn">array_get</span>(items, i)
-    i <span class="c-op">+=</span> <span class="c-num">1</span>
-}</code></pre></div>
+<h2 id="for-each-ranges-and-counting-loops">for each, ranges and counting loops<a class="anchor" href="#for-each-ranges-and-counting-loops" aria-label="Link to this section">#</a></h2>
+<p><code>for each NAME in LIST { }</code> visits each element of a list. The same form walks a range of ints: <code>a..b</code> excludes <code>b</code>, <code>a..=b</code> includes it, and <code>step</code> sets the distance between values. <code>repeat N times with NAME { }</code> names the counter of a counted loop, starting at 0. The C-style <code>for (pilot i = 0; i &lt; n; i += 1) { }</code> is also accepted. In every form the loop variable exists only inside the body.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_for_ranges.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Counting loops. A range a..b stops before b; a..=b includes b.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">for each</span> i <span class="c-kw">in</span> <span class="c-num">1..4</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;range <span class="c-interp">{i}</span>&quot;</span>
+    }
+    <span class="c-kw">for each</span> i <span class="c-kw">in</span> <span class="c-num">1..</span><span class="c-op">=</span><span class="c-num">3</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;inclusive <span class="c-interp">{i}</span>&quot;</span>
+    }
+    <span class="c-kw">for each</span> i <span class="c-kw">in</span> <span class="c-num">0..10</span> step <span class="c-num">4</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;step <span class="c-interp">{i}</span>&quot;</span>
+    }
+    <span class="c-kw">repeat</span> <span class="c-num">2</span> <span class="c-kw">times</span> with pass {
+        <span class="c-kw">say</span> <span class="c-str">&quot;pass <span class="c-interp">{pass}</span>&quot;</span>
+    }
+    <span class="c-kw">for</span> (<span class="c-kw">pilot</span> i <span class="c-op">=</span> <span class="c-num">3</span>; i <span class="c-op">&gt;</span> <span class="c-num">0</span>; i <span class="c-op">-=</span> <span class="c-num">1</span>) {
+        <span class="c-kw">say</span> <span class="c-str">&quot;countdown <span class="c-interp">{i}</span>&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>range 1
+range 2
+range 3
+inclusive 1
+inclusive 2
+inclusive 3
+step 0
+step 4
+step 8
+pass 0
+pass 1
+countdown 3
+countdown 2
+countdown 1</code></pre>
+  </div>
+</figure>
+<p>A word is not a list: <code>for each c in &quot;abc&quot;</code> is a type error.</p>
+<h2 id="while">while<a class="anchor" href="#while" aria-label="Link to this section">#</a></h2>
+<p><code>while CONDITION { }</code> runs as long as the condition is true, testing before each pass. <code>repeat while CONDITION { }</code> is the same loop. <code>while</code> is a reserved word.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_while.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `while` runs as long as its condition is true: the opposite of `repeat until`.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">3</span>
+    while fuel <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;fuel <span class="c-interp">{fuel}</span>&quot;</span>
+        fuel <span class="c-op">-=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">pilot</span> laps <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> while laps <span class="c-op">&lt;</span> <span class="c-num">2</span> {
+        laps <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> <span class="c-str">&quot;laps <span class="c-interp">{laps}</span>&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>fuel 3
+fuel 2
+fuel 1
+laps 2</code></pre>
+  </div>
+</figure>
 <h2 id="summary-of-what-is-missing">Summary of what is missing<a class="anchor" href="#summary-of-what-is-missing" aria-label="Link to this section">#</a></h2>
-<div class="tablewrap"><table><thead><tr><th>Construct</th><th>Status</th></tr></thead><tbody><tr><td><code>for each x in list</code></td><td>V4</td></tr><tr><td><code>for each (i, x) in list.enumerate()</code></td><td>V4</td></tr><tr><td><code>check</code> over <code>maybe</code> / <code>result</code></td><td>V4</td></tr><tr><td><code>check route</code></td><td>V4</td></tr><tr><td><code>when</code> with destructuring or guards</td><td>V4</td></tr><tr><td><code>when</code> in expression position</td><td>V4</td></tr><tr><td><code>training arc ... with growth</code></td><td>V4</td></tr><tr><td><code>xm3 { a || b }</code> and all squadron concurrency</td><td>V4</td></tr><tr><td><code>prob[0.3] chance { }</code>, <code>prob_when</code></td><td>V4</td></tr><tr><td><code>isekai { } bringing back { }</code></td><td>V4</td></tr><tr><td><code>eventually if cond { }</code></td><td>V4</td></tr><tr><td>True deferred <code>eventually</code></td><td>V4</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Construct</th><th>Status</th></tr></thead><tbody><tr><td><code>for each (i, x) in list.enumerate()</code></td><td>V4</td></tr><tr><td><code>check</code> over <code>maybe</code> / <code>result</code></td><td>V4</td></tr><tr><td><code>check route</code></td><td>V4</td></tr><tr><td><code>when</code> with destructuring or guards</td><td>V4</td></tr><tr><td><code>when</code> in expression position</td><td>V4</td></tr><tr><td><code>training arc ... with growth</code></td><td>V4</td></tr><tr><td><code>xm3 { a || b }</code> and all squadron concurrency</td><td>V4</td></tr><tr><td><code>prob[0.3] chance { }</code>, <code>prob_when</code></td><td>V4</td></tr><tr><td><code>isekai { } bringing back { }</code></td><td>V4</td></tr><tr><td><code>eventually if cond { }</code></td><td>V4</td></tr><tr><td>True deferred <code>eventually</code></td><td>V4</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
-  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#if-else-if-else">if / else if / else</a></li><li><a href="#when">when</a></li><li><a href="#loops">Loops</a></li><li><a href="#break-and-continue">break and continue</a></li><li><a href="#bare-blocks">Bare blocks</a></li><li><a href="#eventually">eventually</a></li><li><a href="#no-for-each">No <code>for each</code></a></li><li><a href="#summary-of-what-is-missing">Summary of what is missing</a></li></ul></aside>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#if-else-if-else">if / else if / else</a></li><li><a href="#when">when</a></li><li><a href="#loops">Loops</a></li><li><a href="#break-and-continue">break and continue</a></li><li><a href="#bare-blocks">Bare blocks</a></li><li><a href="#eventually">eventually</a></li><li><a href="#for-each-ranges-and-counting-loops">for each, ranges and counting loops</a></li><li><a href="#while">while</a></li><li><a href="#summary-of-what-is-missing">Summary of what is missing</a></li></ul></aside>
 </div>
 <script src="assets/search-index.js"></script>
 <script src="assets/app.js"></script>

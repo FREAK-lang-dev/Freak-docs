@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -116,12 +116,12 @@
 <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
 <span class="c-kw">say</span> names[<span class="c-num">1</span>]</code></pre></div>
 <p>Three rules to internalise:</p>
-<ul><li>**<code>.length()</code> is a method**, not a field. <code>names.length</code> reports <em>&quot;non-shape value has no fields&quot;</em>.</li><li>**Indexed assignment needs <code>pilot mut</code>**, otherwise <em>&quot;indexed assignment requires a mutable list binding&quot;</em>.</li><li><strong>The literal infers the type.</strong> <code>[1, 2, 3]</code> is a <code>List&lt;int&gt;</code>; all elements must share one type.</li></ul>
+<ul><li>**<code>.length()</code> is a method**, not a field. <code>names.length</code> reports <em>&quot;non-shape value has no fields&quot;</em>.</li><li>**A <code>fixed</code> list cannot be changed.** Any other list can, with indexed assignment or its mutating methods.</li><li><strong>The literal infers the type.</strong> <code>[1, 2, 3]</code> is a <code>List&lt;int&gt;</code>; all elements must share one type.</li></ul>
 <p><code>List::filled(value, count)</code> builds a pre-populated list, which is the way to size one up front:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> tally<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">filled</span>(<span class="c-num">0</span>, <span class="c-num">3</span>)
 tally[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">24</span></code></pre></div>
-<p>Lists grow as of v0.14.2: <code>.push(v)</code>, <code>.pop()</code>, <code>.reserve(n)</code>, <code>.capacity()</code> and <code>.clear()</code>, with <code>List::new()</code> and <code>List::with_capacity(n)</code> as constructors. Mutating methods need <code>pilot mut</code>.</p>
+<p>Lists grow as of v0.14.2: <code>.push(v)</code>, <code>.pop()</code>, <code>.reserve(n)</code>, <code>.capacity()</code> and <code>.clear()</code>, with <code>List::new()</code> and <code>List::with_capacity(n)</code> as constructors.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> queue<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
 queue.<span class="c-fn">push</span>(<span class="c-num">10</span>)
@@ -288,8 +288,8 @@ busiest pilot flew 31</code></pre>
 <ul><li><a href="arrays.html">Lists &amp; arrays</a> — the full reference for both surfaces</li><li><a href="shapes.html">Shapes &amp; impl</a> — operator doctrines and backend caveats</li><li><a href="stdlib.html">Standard library</a> — <code>ByteBuffer</code>, <code>word_builder</code>, JSON, semver</li><li><a href="conformance.html">Bible vs V3</a> — how far this is from the specification</li></ul>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

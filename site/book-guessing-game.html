@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -82,7 +82,7 @@ You got it in 4 guesses!</code></pre></div>
 <p>Create a project for the game and move into it:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak init guess
 cd guess</code></pre></div>
-<p>Open <code>main.fk</code> and delete what is there. Each step below replaces the file&#x27;s contents. Run each one with <code>freak run main.fk</code> and see it work before going on.</p>
+<p>Open <code>src/main.fk</code> and delete what is there. Each step below replaces the file&#x27;s contents. Run each one with <code>freak run</code> and see it work before going on.</p>
 <h2 id="step-1-asking-for-a-guess">Step 1: asking for a guess<a class="anchor" href="#step-1-asking-for-a-guess" aria-label="Link to this section">#</a></h2>
 <p>Start with the part that talks to the player: print a greeting, ask for a guess, and repeat it back.</p>
 <figure class="example">
@@ -335,9 +335,8 @@ Your guess: You got it in 4 guesses!</code></pre>
 <p><code>repeat until</code> runs its block again and again, and stops when the condition becomes true. The condition here is a pilot, <code>solved</code>, which starts out <code>false</code>. <code>true</code> and <code>false</code> are values of the type <code>bool</code>.</p>
 <p>When the player finds the number, the last branch of the comparison sets <code>solved = true</code>. The loop tests the condition before each pass, finds it true, and stops.</p>
 <h3 id="mut"><code>mut</code><a class="anchor" href="#mut" aria-label="Link to this section">#</a></h3>
-<p><code>solved</code> and <code>attempts</code> are declared with <code>pilot mut</code>. <code>mut</code> marks a pilot whose value will change after it is created. <code>secret</code> never changes, so it is a plain <code>pilot</code>.</p>
+<p><code>solved</code> and <code>attempts</code> are declared with <code>pilot mut</code>. <code>mut</code> says that the pilot&#x27;s value will change after it is created. It is a note to the reader: a plain <code>pilot</code> can be changed too, and Chapter 3 shows the form that cannot. <code>secret</code> never changes, so it is a plain <code>pilot</code>.</p>
 <p><code>attempts += 1</code> is short for <code>attempts = attempts + 1</code>.</p>
-<p>Chapter 3 explains exactly how strictly <code>mut</code> is enforced. For now, the habit to form is simple: if you are going to assign to it again, write <code>mut</code>.</p>
 <h3 id="continue-and-break"><code>continue</code> and <code>break</code><a class="anchor" href="#continue-and-break" aria-label="Link to this section">#</a></h3>
 <p>Two statements change the course of a loop from inside.</p>
 <p><code>continue</code> abandons the rest of the current pass and goes back to the top of the loop. The program uses it after a guess that is not a number: there is nothing to compare, so it asks again. Because <code>continue</code> comes before <code>attempts += 1</code>, a mistyped guess is not counted.</p>
@@ -360,11 +359,13 @@ Your guess: You got it in 4 guesses!</code></pre>
 <p>Notice that the argument is parsed with the same care as the player&#x27;s guesses. The parse is checked at once, and a failure is cleared. Without those two lines, starting the game with an argument that is not a number would leave the failure recorded, and the player&#x27;s first perfectly good guess would be reported as not a number.</p>
 <p>This is not a cheat mode for its own sake. A program whose behaviour depends on the clock cannot be tested, because you cannot say in advance what it should print. Giving the secret from outside makes the game repeatable. The listing above was checked exactly that way: started with the argument <code>42</code>, and fed five lines of input.</p>
 <h2 id="playing-it">Playing it<a class="anchor" href="#playing-it" aria-label="Link to this section">#</a></h2>
-<p><code>freak run</code> takes no arguments for your program; it reports an extra word as an unknown flag. To play with a chosen secret, build once and run the program yourself:</p>
-<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build main.fk
-./main 42</code></pre></div>
+<p>To play with a chosen secret, pass it after <code>--</code>. Everything after <code>--</code> goes to your program, not to <code>freak</code>:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run -- 42</code></pre></div>
 <p>To play properly, leave the argument off:</p>
-<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>./main</code></pre></div>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run</code></pre></div>
+<p><code>freak build</code> makes a program you can start without <code>freak</code>. In this project it is written next to the source, as <code>src/main</code>:</p>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build
+./src/main 42</code></pre></div>
 <p>Try the edges. Type a word instead of a number. Type a number with spaces around it. Press Enter on an empty line. The program has an answer for each.</p>
 <h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
 <p>At the commit this book is pinned to, V4 cannot build this game, for two reasons. It does not know <code>ask</code>, and reports it the way it reports any name it cannot place:</p>
@@ -456,16 +457,15 @@ Your guess: You got it in 4 guesses!</code></pre>
     <pre class="stdout err"><code>2|0@25:44|unsupported local pattern|use a single name, (a, b, ...), or [a, b, ...]</code></pre>
   </div>
 </figure>
-<p>V3 in its default mode builds this V4 listing as it stands. V3&#x27;s strict mode does not. It wants <code>mut</code> on a pilot that changes, and this V4 commit rejects the word. It also objects to the way <code>guess</code> is passed to a task, for a reason that belongs to Part III. So this is the first program that cannot be written one way for both.</p>
-<p>The specification does not settle the matter. Its section on pilots says they can be reassigned by default and that <code>fixed pilot</code> is the form that cannot. Its notes on the borrow checker describe V3&#x27;s rule, where only a <code>pilot mut</code> can. Chapter 3 shows what each compiler does today.</p>
+<p>V3 builds this V4 listing as it stands, in its strict mode too, and it gives the same exit code. Both follow the specification&#x27;s section on pilots: a pilot can be reassigned unless it is declared <code>fixed</code>. The difference left is <code>mut</code> itself, which V3 accepts as an optional word and this V4 commit rejects.</p>
 <h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
 <p>You built a complete interactive program. Along the way you used:</p>
-<ul><li><code>pilot</code> to name a value, and <code>pilot mut</code> for one that changes</li><li><code>ask</code> to read a line, and <code>say</code> with <code>{name}</code> interpolation to print</li><li>methods on words: <code>trim()</code> and <code>parse_int()</code>, with <code>parse_status()</code> to learn whether the parse worked</li><li>the types <code>word</code>, <code>int</code> and <code>bool</code>, which you wrote down only once, as a task&#x27;s return type</li><li><code>if</code>, <code>else if</code> and <code>else</code> to choose</li><li><code>repeat until</code> to loop, with <code>continue</code> and <code>break</code> to steer</li><li>a task that gives back a value, built-in operations in the <code>time::</code> and <code>process::</code> namespaces, and command-line arguments to make the program testable</li></ul>
+<ul><li><code>pilot</code> to name a value, and <code>pilot mut</code> to say that it will change</li><li><code>ask</code> to read a line, and <code>say</code> with <code>{name}</code> interpolation to print</li><li>methods on words: <code>trim()</code> and <code>parse_int()</code>, with <code>parse_status()</code> to learn whether the parse worked</li><li>the types <code>word</code>, <code>int</code> and <code>bool</code>, which you wrote down only once, as a task&#x27;s return type</li><li><code>if</code>, <code>else if</code> and <code>else</code> to choose</li><li><code>repeat until</code> to loop, with <code>continue</code> and <code>break</code> to steer</li><li>a task that gives back a value, built-in operations in the <code>time::</code> and <code>process::</code> namespaces, and command-line arguments to make the program testable</li></ul>
 <p>Each of these was introduced quickly. The next three chapters go back over them with care. <a href="book-pilots-and-types.html">Chapter 3</a> starts with pilots and the types of the values they hold.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

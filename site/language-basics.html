@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -105,8 +105,8 @@ true
   </div>
 </figure>
 <p>Three forms exist:</p>
-<div class="tablewrap"><table><thead><tr><th>Form</th><th>Meaning</th></tr></thead><tbody><tr><td><code>pilot x = expr</code></td><td>Ordinary binding</td></tr><tr><td><code>pilot mut x = expr</code></td><td>Explicitly reassignable</td></tr><tr><td><code>fixed pilot x = expr</code></td><td>Immutable binding</td></tr></tbody></table></div>
-<div class="callout note"><div class="callout-title">Note</div><p><code>mut</code> and <code>fixed</code> only change behaviour under <code>--strict-borrow</code>. Without that flag V3 does no ownership or mutability checking, and all three forms behave identically. Write <code>mut</code> anyway — it documents intent and it is what the checker will demand when you turn it on.</p></div>
+<div class="tablewrap"><table><thead><tr><th>Form</th><th>Meaning</th></tr></thead><tbody><tr><td><code>pilot x = expr</code></td><td>Ordinary binding; can be reassigned</td></tr><tr><td><code>pilot mut x = expr</code></td><td>The same; <code>mut</code> is optional</td></tr><tr><td><code>fixed pilot x = expr</code></td><td>Immutable binding</td></tr><tr><td><code>grounded pilot x = expr</code></td><td>The same as <code>fixed</code></td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>fixed</code> and <code>grounded</code> are always enforced, for every type and for shape fields: assigning to one reports <em>&quot;fixed pilot cannot be modified&quot;</em> (or <em>&quot;grounded pilot ...&quot;</em>). Plain pilots can always be reassigned, with or without <code>mut</code>, and with or without <code>--strict-borrow</code>.</p></div>
 <p>Assignment operators: <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code>.</p>
 <h2 id="type-inference">Type inference<a class="anchor" href="#type-inference" aria-label="Link to this section">#</a></h2>
 <p>The annotation can always be omitted. V3 infers from the initialiser.</p>
@@ -268,8 +268,8 @@ Valkyries x5</code></pre>
 <span class="c-kw">pilot</span> x <span class="c-op">=</span> <span class="c-num">1</span>    <span class="c-com">-- a trailing comment</span></code></pre></div>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
