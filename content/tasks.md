@@ -68,8 +68,11 @@ call one declared later, and may call itself.
 ## `main`
 
 If a task called `main` exists it becomes the program entry point. If it does
-not, top-level statements are the program. You can have both — top-level
-statements run first, then `main`.
+not, top-level statements are the program. A file cannot mix the two: beside a
+`main`, an executable statement at the top level is a compile error,
+*"executable statement at top level is unsupported; place it inside task
+main()"*. Declarations — `pilot`, `task`, `shape` — are fine at the top level
+either way.
 
 ## Parameters are by value
 

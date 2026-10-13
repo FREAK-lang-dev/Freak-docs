@@ -65,7 +65,7 @@
     <article class="prose">
 <h1 id="verified-examples">Verified examples<a class="anchor" href="#verified-examples" aria-label="Link to this section">#</a></h1>
 <p class="lede">Every program on this site, compiled and executed by a real V3 binary.</p>
-<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.0 (Maverick) on 2026-10-13T16:17:53Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.0 (Maverick) on 2026-10-13T16:30:51Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <p>Each card below shows the exact source file under <code>examples/</code>, a badge for whether it compiled and ran, and the program&#x27;s captured output. Reproduce the whole set with:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python tools/refresh.py --jobs 6</code></pre></div>
 <p>The harness copies each example into a clean temporary directory, runs <code>freak build</code> with the default LLVM backend, executes the resulting binary, and checks stdout against reviewed expectations. It normalizes CRLF and omits at most one final newline; extra blank lines and standalone carriage returns remain significant. A failure is recorded with its diagnostics and blocks publication.</p>
@@ -1680,8 +1680,8 @@ old path</code></pre>
 
     <span class="c-kw">task</span> <span class="c-fn">greeting</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
         <span class="c-com">-- Interpolation substitutes PATHS only, never calls. Writing</span>
-        <span class="c-com">-- &quot;{self.rank()}&quot; would print those characters literally, so the</span>
-        <span class="c-com">-- call result goes into a binding first.</span>
+        <span class="c-com">-- &quot;{self.rank()}&quot; is a compile error, so the call result goes</span>
+        <span class="c-com">-- into a binding first.</span>
         <span class="c-kw">pilot</span> rank<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-type">self</span>.<span class="c-fn">rank</span>()
         <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.name}</span> - <span class="c-interp">{self.sorties}</span> sorties, rank <span class="c-interp">{rank}</span>&quot;</span>
     }

@@ -186,8 +186,8 @@
 
     <span class="c-kw">task</span> <span class="c-fn">greeting</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
         <span class="c-com">-- Interpolation substitutes PATHS only, never calls. Writing</span>
-        <span class="c-com">-- &quot;{self.rank()}&quot; would print those characters literally, so the</span>
-        <span class="c-com">-- call result goes into a binding first.</span>
+        <span class="c-com">-- &quot;{self.rank()}&quot; is a compile error, so the call result goes</span>
+        <span class="c-com">-- into a binding first.</span>
         <span class="c-kw">pilot</span> rank<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-type">self</span>.<span class="c-fn">rank</span>()
         <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.name}</span> - <span class="c-interp">{self.sorties}</span> sorties, rank <span class="c-interp">{rank}</span>&quot;</span>
     }

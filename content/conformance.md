@@ -73,8 +73,8 @@ Bible status: :partial: — real V3 status: a small core works.
 | 1.10 `or else` | :shipped: | **Rejected** | `unexpected 'or else'` |
 | 1.11 Generics `<T>`, bounds | :partial: | **Rejected** | `expected '(', found '<'`. `List<T>` is a hard-coded special case, not a mechanism |
 | 1.12 `lend` / `lend mut` | :partial: | **Rejected** | `expected an identifier for parameter name, found 'lend'` |
-| 1.13 `use module::{...}` | :partial: | **Stripped** — a build hint, not an import | |
-| 1.13 `use module::*` | :v4: | **Stripped** | |
+| 1.13 `use module::{...}` | :partial: | **Partial** — imports named tasks from a project module or a declared dependency | |
+| 1.13 `use module::*` | :v4: | **Rejected** | `import requires {symbol, symbol as alias}` |
 | 1.13 `launch` visibility | :partial: | **Rejected** | `unexpected 'launch'` |
 | 1.14 `variant` | :v4: | **Rejected** | |
 | 1.14 `alias` | :v4: | **Rejected** | |
@@ -160,26 +160,25 @@ The four anime operators also diverge in form, not just in enforcement:
 
 | Feature | Bible | V3 |
 |---|---|---|
-| `use module::{names}` | :partial: | Line is **replaced with a comment** before parsing |
-| `use module::*` | :v4: | Same — stripped |
+| `use module::{names}` | :partial: | Works for a project's own modules (`use self::m::{t}`) and for a declared dependency (`use dep::{t}`) |
+| `use module::*` | :v4: | **Rejected** |
 | `launch` / `launch(package)` | :partial: | **Rejected** |
-| Module-private visibility | :partial: | **No visibility system at all** |
-| `hangar.toml` | :partial: | Works, but as `[project]` + `[dependencies]` only — not the bible's `[unit]`/`[build]`/`[profile.*]` |
-| `hangar init/add/remove/install/update` | :partial: | Work, plus `outdated`, `version`, `audit`, `login`, `publish` |
+| Module-private visibility | :partial: | `[exports]` limits what a dependent project can import; nothing is private inside a project |
+| `hangar.toml` | :partial: | Works with `[project]`, `[modules]`, `[exports]`, `[tests]` and `[dependencies]` — not the bible's `[unit]`/`[build]`/`[profile.*]` |
+| `hangar init/add/remove/install/update` | :partial: | Present, plus `outdated`, `version`, `audit`, `login`, `publish`. `add` with a registry constraint is refused in 0.15.0 |
 | `hangar search` | :v4: | Absent |
-| **Consuming an installed package** | :partial: | **Impossible** — the build never reads `hangar_modules/` or `[dependencies]` |
+| **Consuming a package** | :partial: | Works for a dependency declared in `[dependencies]`; verified with a path dependency |
 
 > [!warn]
-> V3 has **no module system**. Everything — your file, and every standard
-> library file linked into the build — shares one flat global namespace. A
-> `use` line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
-> `std/ui/window.fk` or the cockpit package. Every other module is already in
-> scope without it.
+> V3's module system is the project manifest. `hangar.toml` names a project's
+> modules, its exports and its dependencies, and `use` imports named tasks
+> across them. `launch` does not parse and glob imports are refused.
 >
-> That also means Hangar can install a dependency it cannot then link.
-> `use pkg::{…}` is stripped, the package source is never concatenated, and
-> the first call fails with `unknown callable`. Verified against the shipping
-> compiler — see [Hangar & packages](hangar.html).
+> A single file built outside a project still shares one flat global namespace
+> with every standard-library file linked into the build. There, a `use std::…`
+> line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
+> `std/ui/window.fk` or the cockpit package. See
+> [Hangar & packages](hangar.html).
 
 ## Section 7 — Standard library
 
@@ -252,7 +251,7 @@ Counting the bible's own feature inventory against compile evidence:
 | §3 Concurrency | 0 | all |
 | §4 Borrow checker | 3 Phase-1 rules, opt-in | the rest |
 | §5 Anime layer | 4 of 20 | 16 |
-| §6 Modules | Hangar CLI only | the module system |
+| §6 Modules | Manifest modules, exports and dependencies | `launch` visibility, glob imports |
 | §7 Stdlib | ~8 of 19 modules, reshaped | 11 |
 | §16 FFI | 1 declaration form | all else |
 

@@ -24,8 +24,8 @@ impl Aviator {
 
     task greeting(self) -> word {
         -- Interpolation substitutes PATHS only, never calls. Writing
-        -- "{self.rank()}" would print those characters literally, so the
-        -- call result goes into a binding first.
+        -- "{self.rank()}" is a compile error, so the call result goes
+        -- into a binding first.
         pilot rank: word = self.rank()
         give back "{self.name} - {self.sorties} sorties, rank {rank}"
     }

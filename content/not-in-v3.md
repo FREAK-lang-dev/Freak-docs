@@ -229,19 +229,20 @@ pilot code: int = process::exec("some-command --flag")
 error: unexpected 'launch' — this token cannot start an expression
 ```
 
-`use` lines are replaced with comments before parsing. There is no import
-system and no visibility system — one flat global namespace holds your file and
-every linked standard-library file.
+`launch` does not parse, and there is no `launch(package)` and no glob import.
+What V3 has instead is the project manifest: `hangar.toml` names a project's
+modules, exports and dependencies, and `use` imports named tasks across them.
 
 Consequences worth planning around:
 
-- Name collisions with `std/` tasks are real. Prefix your tasks.
+- A single file built outside a project shares one flat global namespace with
+  every linked standard-library file. Name collisions with `std/` tasks are
+  real there. Prefix your tasks.
 - `use std::math3d`, `use std::zip`, `use std::ui` and `use cockpit` still
   matter as **build triggers** — the text switches on linking that module.
-- **Hangar packages cannot be consumed.** `hangar install` downloads into
-  `hangar_modules/`, but the build never reads it. Concatenate the source
-  instead: `cat lib/thing.fk src/app.fk > combined.fk && freak build
-  combined.fk`. See [Hangar & packages](hangar.html).
+- A `use` of anything else must name a module or a dependency declared in
+  `hangar.toml`, or the build stops with `undeclared direct dependency`. See
+  [Hangar & packages](hangar.html).
 
 ## Advanced types
 
@@ -301,5 +302,5 @@ knobs are `--opt=0..3`, `--c` / `--llvm`, `--target=`, `-o` / `--output=` and
 
 No language server, no incremental parsing, no tolerant AST, no autocomplete,
 no `test "name" { expect ... }` framework, no JIT. Parse errors abort the
-build. `freak test` is a shim around a Python regression runner in the source
-checkout.
+build. `freak test` runs the test programs a project lists in `hangar.toml`;
+there is no in-language test block.

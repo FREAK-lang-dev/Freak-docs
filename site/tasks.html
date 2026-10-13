@@ -159,7 +159,7 @@ positive</code></pre>
   </div>
 </figure>
 <h2 id="main"><code>main</code><a class="anchor" href="#main" aria-label="Link to this section">#</a></h2>
-<p>If a task called <code>main</code> exists it becomes the program entry point. If it does not, top-level statements are the program. You can have both — top-level statements run first, then <code>main</code>.</p>
+<p>If a task called <code>main</code> exists it becomes the program entry point. If it does not, top-level statements are the program. A file cannot mix the two: beside a <code>main</code>, an executable statement at the top level is a compile error, <em>&quot;executable statement at top level is unsupported; place it inside task main()&quot;</em>. Declarations — <code>pilot</code>, <code>task</code>, <code>shape</code> — are fine at the top level either way.</p>
 <h2 id="parameters-are-by-value">Parameters are by value<a class="anchor" href="#parameters-are-by-value" aria-label="Link to this section">#</a></h2>
 <p>There is no <code>lend</code> / <code>lend mut</code> in V3: the borrow syntax from the bible does not parse in a parameter list. Every parameter is passed by value.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>

@@ -21,7 +21,9 @@ number        = digit { digit | "." }
                 -- no sign, no exponent, no suffix
 
 word-literal  = '"' { char | escape } '"'
-escape        = "\\n" | "\\r" | "\\t" | "\\" any | "\\x" hex hex
+escape        = "\\n" | "\\r" | "\\t" | "\\\"" | "\\\\" | "\\{" | "\\}"
+              | "\\x" hex hex
+                -- any other escape is a lex error
                 -- "\x00" is rejected
 
 identifier    = ( letter | "_" ) { letter | digit | "_" }
@@ -29,7 +31,9 @@ identifier    = ( letter | "_" ) { letter | digit | "_" }
 ```
 
 Identifiers are classified against the keyword table **case-insensitively**: an
-identifier whose lowercase form is a keyword becomes that keyword token.
+identifier whose lowercase form is a keyword becomes that keyword token. The
+parser then matches a single-word keyword by its lowercase spelling, so
+`Pilot` is reserved — it cannot be a name — but does not start a declaration.
 
 ```text
 bool-literal  = "true" | "false" | "yes" | "no" | "hai" | "iie"
@@ -38,7 +42,7 @@ punctuation   = "==" | "!=" | "<=" | ">=" | "+=" | "-=" | "*=" | "/="
               | "%=" | "->" | "=>" | "**" | "|>" | "||" | "::"
               | "=" | "+" | "-" | "*" | "/" | "%" | "<" | ">" | "!"
               | ":" | "|" | "@" | "?" | "{" | "}" | "(" | ")"
-              | "[" | "]" | "," | "."
+              | "[" | "]" | "," | "." | "..=" | ".." | ";"
 ```
 
 `**`, `=>`, `||`, `?` and `!` are produced by the lexer but have **no grammar
@@ -52,7 +56,11 @@ and merges them.
 ```text
 "give back"  "or else"    "trust me"   "for each"   "for science"
 "training arc"   "bringing back"   "only on"   "PLUS ULTRA"   "FINAL FORM"
+"grounded pilot"
 ```
+
+`give back` and `grounded pilot` are merged only when the second word is on the
+same line as the first.
 
 ### Keyword table
 
@@ -60,7 +68,7 @@ and merges them.
 pilot fixed task say shape impl doctrine launch use as in lend mut move
 copy break continue if else when repeat times until done for each check
 result got nobody some ok err sessions max foreshadow payoff route sadly
-deus_ex_machina isekai eventually and or not nakama tsundere extern
+deus_ex_machina isekai eventually and or not nakama tsundere extern while
 ```
 
 Many of these are reserved without having a grammar rule — see
@@ -69,8 +77,10 @@ Many of these are reserved without having a grammar rule — see
 ## Program
 
 ```text
-program    = { statement }
+program    = { statement | ";" }
 ```
+
+A `;` separates statements and is otherwise ignored. It is never required.
 
 There is no distinction between top-level and nested statements: the same
 `statement` rule is used everywhere. A `task`, `shape` or `impl` is syntactically
@@ -86,12 +96,14 @@ annotation = "@" identifier            -- exactly one, no arguments
 statement-body =
       say-stmt | shape-decl | impl-decl | eventually-stmt
     | fixed-decl | pilot-decl | give-back | break-stmt | continue-stmt
-    | if-stmt | repeat-stmt | training-arc | when-stmt
+    | if-stmt | repeat-stmt | while-stmt | for-each | for-stmt
+    | training-arc | when-stmt | check-result
     | extern-decl | task-decl | block | assign-or-expr
 
 say-stmt      = "say" expression
 
-fixed-decl    = "fixed" "pilot" identifier [ ":" type ] "=" expression
+fixed-decl    = ( "fixed" "pilot" | "grounded pilot" )
+                identifier [ ":" type ] "=" expression
 pilot-decl    = "pilot" [ "mut" ] identifier [ ":" type ] "=" expression
 
 give-back     = "give back" [ expression ]
@@ -101,7 +113,15 @@ continue-stmt = "continue"
 if-stmt       = "if" expression block [ "else" ( if-stmt | block ) ]
 
 repeat-stmt   = "repeat" "until" expression block
-              | "repeat" expression "times" block
+              | "repeat" "while" expression block
+              | "repeat" expression "times" [ "with" identifier ] block
+
+while-stmt    = "while" expression block
+
+for-each      = "for each" identifier "in" expression
+                [ ( ".." | "..=" ) expression [ "step" expression ] ] block
+
+for-stmt      = "for" "(" pilot-decl ";" expression ";" assign-or-expr ")" block
 
 training-arc  = "training arc" "until" expression
                 "max" expression "sessions" block
@@ -109,13 +129,20 @@ training-arc  = "training arc" "until" expression
 when-stmt     = "when" expression "{" { when-arm } "}"
 when-arm      = ( "_" | expression ) "->" statement
 
+check-result  = "check" "result" expression "{" { check-arm } "}"
+check-arm     = ( "ok" | "err" ) "(" identifier ")" "->" block
+                -- exactly one ok arm and one err arm
+
 eventually-stmt = "eventually" block
 
-block         = "{" { statement } "}"
+block         = "{" { statement | ";" } "}"
 
 assign-or-expr = expression [ assign-op expression ]
 assign-op      = "=" | "+=" | "-=" | "*=" | "/=" | "%="
 ```
+
+`with` and `step` are ordinary identifiers that the parser recognises only in
+those positions; they are not reserved.
 
 Every type position — `pilot-decl`, `fixed-decl`, shape fields, parameters,
 return types, `extern` signatures — goes through one rule:
