@@ -133,10 +133,10 @@ pilot back: int = f.to_int()
 This is the single most surprising rule in V3, and the one that produces the
 most confusing errors.
 
-The lexer lowercases every identifier before comparing it against the keyword
-table. `pilot`, `Pilot`, `PILOT` and `PiLoT` are all the same keyword token.
-A keyword can never be an identifier, so none of those can name a shape, task,
-field or binding.
+The lexer compares every identifier against the keyword table in lowercase, so
+`pilot`, `Pilot`, `PILOT` and `PiLoT` are all reserved. None of them can name
+a shape, task, field or binding. Only the lowercase spelling works as the
+keyword, though: `Pilot x = 1` is a syntax error, not a declaration.
 
 {{example:reserved_words}}
 

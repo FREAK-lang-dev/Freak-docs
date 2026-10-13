@@ -138,4 +138,8 @@ callable by name. V3 does **not** rewrite the `+` token to dispatch to it — se
 | `\|\|` as an xm3 branch separator | V4 — lexes as one token but has no grammar |
 | `as?` downcast | V4 |
 | `*ptr`, `.read()`, `.write()`, `.offset()`, `.cast<U>()` | V4 |
-| `..` ranges | V4 |
+| `..` ranges as values | V4 |
+
+`a..b` and `a..=b` are accepted in one place only, the header of a
+[`for each`](control-flow.html#for-each-ranges-and-counting-loops). Anywhere
+else `..` is a syntax error.

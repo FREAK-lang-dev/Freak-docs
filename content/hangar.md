@@ -209,14 +209,15 @@ maintenance convention, not a module system. See
 ## Conventions that make it survivable
 
 A single file shares one flat namespace with every linked `std/` file and
-every library you concatenate. Collisions are silent until they are a redefinition
-error, so:
+every library you concatenate. Two tasks of your own with one name are an
+error, and a task named like a `std/` task quietly replaces it, so:
 
 - **Prefix everything a library exports.** `text_count_words`, not
   `count_words`. The standard library already does this — `string_*`, `std_*`,
   `ver_*`, `json_*`, `array_*`.
 - **Watch for `std/` collisions.** Defining your own `array_find` or
-  `string_trim` clashes with a task the build already linked.
+  `string_trim` replaces the standard one for your whole program. A compiler
+  builtin such as `ask` cannot be redefined at all.
 - **Remember reserved words are case-insensitive.** A library cannot export
   anything named `Result`, `Max`, `Route` or `Check` in any casing. See
   [reserved words](language-basics.html#reserved-words-are-case-insensitive).

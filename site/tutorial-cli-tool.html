@@ -288,11 +288,11 @@
   </div>
 </figure>
 <p>Run it against your own file:</p>
-<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run wordcount.fk README.md
-NO_COLOR=1 freak run wordcount.fk README.md</code></pre></div>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run wordcount.fk -- README.md
+NO_COLOR=1 freak run wordcount.fk -- README.md</code></pre></div>
 <h2 id="what-you-would-reach-for-next-and-cannot">What you would reach for next, and cannot<a class="anchor" href="#what-you-would-reach-for-next-and-cannot" aria-label="Link to this section">#</a></h2>
 <p>Worth knowing before you plan a bigger tool:</p>
-<div class="tablewrap"><table><thead><tr><th>You might want</th><th>V3 reality</th></tr></thead><tbody><tr><td><code>result&lt;T, E&gt;</code> and <code>?</code></td><td>None. Sentinels and <code>process::exit</code></td></tr><tr><td><code>.split(&quot;,&quot;)</code> into a list</td><td><code>string_split</code> returns an encoded word, not a list. Walk characters</td></tr><tr><td>A map for counting words</td><td>No <code>Map&lt;K,V&gt;</code>. Two parallel collections and <code>array_find</code></td></tr><tr><td><code>for each line in lines</code></td><td>Counted <code>repeat</code> plus an index</td></tr><tr><td>Writing to stderr</td><td>No stderr writer. Everything goes to stdout</td></tr><tr><td>A <code>-o</code> output flag</td><td>Output path is fixed to the source basename</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>You might want</th><th>V3 reality</th></tr></thead><tbody><tr><td><code>result&lt;T, E&gt;</code> and <code>?</code></td><td>None. Sentinels and <code>process::exit</code></td></tr><tr><td><code>.split(&quot;,&quot;)</code> into a list</td><td><code>string_split</code> returns an encoded word, not a list. Walk characters</td></tr><tr><td>A map for counting words</td><td>No <code>Map&lt;K,V&gt;</code>. Two parallel collections and <code>array_find</code></td></tr><tr><td><code>for each line in lines</code></td><td><code>for each</code> walks a <code>List&lt;T&gt;</code> or an int range, not a word. Here, a counted loop plus an index</td></tr><tr><td>Writing to stderr</td><td>No stderr writer. Everything goes to stdout</td></tr><tr><td>A <code>-o</code> output flag</td><td><code>freak build -o NAME</code> or <code>--output=NAME</code>. Default: the source basename</td></tr></tbody></table></div>
 <p>See <a href="not-in-v3.html">Not in V3</a> for substitutes.</p>
     </article>
     <footer class="pagefoot">

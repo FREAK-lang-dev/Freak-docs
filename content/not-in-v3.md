@@ -236,8 +236,10 @@ modules, exports and dependencies, and `use` imports named tasks across them.
 Consequences worth planning around:
 
 - A single file built outside a project shares one flat global namespace with
-  every linked standard-library file. Name collisions with `std/` tasks are
-  real there. Prefix your tasks.
+  every linked standard-library file. A task of yours with the name of a
+  `std/` task replaces it for your program without a warning, so prefix your
+  tasks. The compiler's builtins, such as `ask`, are protected: redefining one
+  is an error.
 - `use std::math3d`, `use std::zip`, `use std::ui` and `use cockpit` still
   matter as **build triggers** — the text switches on linking that module.
 - A `use` of anything else must name a module or a dependency declared in

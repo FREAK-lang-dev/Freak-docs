@@ -60,7 +60,7 @@ Bible status: :partial: — real V3 status: a small core works.
 | 1.7 `if` / `else if` / `else` | :shipped: | **Compiles** | |
 | 1.7 `when` with literal arms and `_` | :partial: | **Compiles** — statement only | |
 | 1.7 `when` with destructuring | :v4: | **Absent** | |
-| 1.7 `for each x in list` | :shipped: | **Rejected** | `unexpected 'for each'` |
+| 1.7 `for each x in list` | :shipped: | **Compiles** — over a `List<T>` and over int ranges | |
 | 1.7 `repeat N times` / `repeat until` | :shipped: | **Compiles** | |
 | 1.7 `training arc ... max N sessions` | :partial: | **Compiles** | |
 | 1.7 `training arc ... with growth` | :v4: | **Rejected** | |
