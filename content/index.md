@@ -92,8 +92,9 @@ global scope with the standard library. A project splits its code into the
 modules listed in `hangar.toml` and imports between them, and from other
 projects, with `use`. See [Hangar & packages](hangar.html).
 
-**Keywords are case-insensitive.** `pilot`, `Pilot` and `PILOT` are the same
-token. This makes a surprising number of natural names illegal — `Pilot`,
+**Keywords are reserved in every letter case.** `pilot`, `Pilot` and `PILOT`
+are all reserved, though only the lowercase spelling works as the keyword.
+This makes a surprising number of natural names illegal — `Pilot`,
 `Result`, `Max`, `Route` and `Check` cannot name your shapes or bindings. See
 [reserved words](language-basics.html#reserved-words-are-case-insensitive).
 

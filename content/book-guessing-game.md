@@ -140,9 +140,9 @@ In the `else` block, the program doubles the guess before printing it:
 
 It would be shorter to write `{guess * 2}` inside the word. That does not work.
 Braces interpolate a *name*: a pilot, or as Part II will show, a field of one.
-They never interpolate a calculation or a call. If what is inside the braces is
-not a name, the braces and their contents are printed exactly as written, with
-no error. Work the value out first, give it a name, and interpolate the name.
+They never interpolate a calculation or a call: the compiler refuses
+`{guess * 2}` with the message `unsupported interpolation expression`. Work the
+value out first, give it a name, and interpolate the name.
 
 > [!planned]
 > The specification gives conversion a different shape. `"42".to_int()` would

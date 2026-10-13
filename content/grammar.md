@@ -18,6 +18,8 @@ token         = number | word-literal | identifier | keyword
 
 number        = digit { digit | "." }
                 -- more than one "." is a lex error
+                -- a "." followed by another "." ends the number, so 1..4
+                -- is  number ".." number
                 -- no sign, no exponent, no suffix
 
 word-literal  = '"' { char | escape } '"'

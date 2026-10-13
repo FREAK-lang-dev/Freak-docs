@@ -138,7 +138,10 @@ If you need the library helpers, build a legacy handle with `array_new()`.
 
 ## Iterating
 
-There is no `for each` in either surface. Keep an index and use a counted loop:
+`for each item in items { }` walks a `List<T>`. A legacy array handle has no
+element type, so `for each` refuses it: *"for each requires a list with a known
+element type"*. When you need the position as well, keep an index and use a
+counted loop:
 
 ```fk
 pilot mut i: int = 0

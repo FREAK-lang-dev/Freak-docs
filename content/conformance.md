@@ -69,7 +69,7 @@ Bible status: :partial: — real V3 status: a small core works.
 | 1.8 Capture modes `copy` / `move` / `mut` | :v4: | **Absent** | |
 | 1.9 Pipe `\|>` | :shipped: | **Compiles** — bare task names only | |
 | 1.10 `?` propagation | :shipped: | **Rejected** | `unexpected '?'`. `parse_status()` is the closest substitute |
-| 1.10 `check` over maybe / result | :shipped: | **Rejected** | `unexpected 'check'` |
+| 1.10 `check` over maybe / result | :shipped: | **Partial** — only `check result` over `fs::read_checked(path)` | Any other `check`: `expected keyword 'result'` |
 | 1.10 `or else` | :shipped: | **Rejected** | `unexpected 'or else'` |
 | 1.11 Generics `<T>`, bounds | :partial: | **Rejected** | `expected '(', found '<'`. `List<T>` is a hard-coded special case, not a mechanism |
 | 1.12 `lend` / `lend mut` | :partial: | **Rejected** | `expected an identifier for parameter name, found 'lend'` |
@@ -211,7 +211,7 @@ confirmed against the binary that verified this site.
 
 The V3 lexer implements a **subset** of the bible's token table.
 
-Present: the 47 single-word keywords, 6 bool literals, 10 multi-word keywords,
+Present: the 49 single-word keywords, 6 bool literals, 11 multi-word keywords,
 and the punctuation set.
 
 Absent: `variant`, `alias`, `dyn`, `never`, `const`, all concurrency keywords,

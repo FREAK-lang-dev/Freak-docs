@@ -80,7 +80,7 @@
     }
 }</code></pre></div>
 <p>Argument 0 is the executable path, so the first real argument is index 1.</p>
-<p>That loop is the standard V3 iteration idiom: a counted <code>repeat</code> plus a manual index. There is no <code>for each</code>.</p>
+<p>That loop is a counted <code>repeat</code> plus a manual index. <code>repeat N times with i</code> supplies the index for you, starting at 0.</p>
 <h2 id="step-2-reading-a-file">Step 2 — Reading a file<a class="anchor" href="#step-2-reading-a-file" aria-label="Link to this section">#</a></h2>
 <p><code>fs::*</code> are builtins. There is no <code>result&lt;T,E&gt;</code> anywhere in V3, so failures come back as sentinel values — an empty <code>word</code>, or <code>false</code>:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>

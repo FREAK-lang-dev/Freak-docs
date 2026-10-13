@@ -225,13 +225,15 @@ times   until    done     for      each     check    result
 got     nobody   some     ok       err      sessions max
 foreshadow  payoff  route  sadly   deus_ex_machina   isekai
 eventually  and    or      not     nakama   tsundere extern
+while
 
 true  false  yes  no  hai  iie</code></pre></div>
 <p>Multi-word keywords, lexed greedily:</p>
 <div class="codeblock"><pre class="code"><code>give back   or else    trust me    for each    for science
-training arc   bringing back   only on   PLUS ULTRA   FINAL FORM</code></pre></div>
+training arc   bringing back   only on   PLUS ULTRA   FINAL FORM
+grounded pilot</code></pre></div>
 <p>The names that catch people most often are <code>Pilot</code>, <code>Result</code>, <code>Max</code>, <code>Route</code>, <code>Check</code>, <code>Move</code>, <code>Copy</code>, <code>Some</code>, <code>Ok</code>, <code>Err</code>, <code>Got</code>, <code>Use</code>, <code>In</code>, <code>As</code>, <code>Each</code>, <code>Done</code> and <code>Times</code>. Pick a synonym: <code>Aviator</code>, <code>Outcome</code>, <code>upper_bound</code>, <code>verdict</code>.</p>
-<div class="callout warn"><div class="callout-title">Careful</div><p>Several of these words are reserved but have <strong>no grammar at all</strong> in V3 — <code>doctrine</code>, <code>use</code>, <code>launch</code>, <code>check</code>, <code>lend</code>, <code>route</code>, <code>foreshadow</code>, <code>isekai</code>, <code>trust me</code>, <code>for each</code>. They lex as keywords and then fail in the parser with <em>&quot;this token cannot start an expression&quot;</em>. They still cannot be used as identifiers.</p></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Several of these words are reserved but have <strong>no grammar at all</strong> in V3 — <code>doctrine</code>, <code>launch</code>, <code>lend</code>, <code>route</code>, <code>foreshadow</code>, <code>isekai</code>, <code>trust me</code>. They lex as keywords and then fail in the parser with <em>&quot;this token cannot start an expression&quot;</em>. They still cannot be used as identifiers.</p></div>
 <h2 id="top-level-code">Top-level code<a class="anchor" href="#top-level-code" aria-label="Link to this section">#</a></h2>
 <p>A file does not need a <code>main</code>. Statements written at the top level run in order, and top-level bindings are visible to every task in the file.</p>
 <figure class="example">

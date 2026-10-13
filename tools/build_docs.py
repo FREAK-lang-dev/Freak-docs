@@ -79,7 +79,7 @@ KEYWORDS = {
     "max", "foreshadow", "payoff", "route", "sadly", "deus_ex_machina",
     "isekai", "eventually", "and", "or", "not", "nakama", "tsundere",
     "extern", "give back", "or else", "trust me", "for each", "for science",
-    "training arc", "bringing back", "only on",
+    "training arc", "bringing back", "only on", "while", "grounded pilot",
 }
 PAGE_LINK_RE = re.compile(r'href="([a-z0-9-]+)\.html')
 

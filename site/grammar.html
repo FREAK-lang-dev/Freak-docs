@@ -77,6 +77,8 @@ token         = number | word-literal | identifier | keyword
 
 number        = digit { digit | &quot;.&quot; }
                 -- more than one &quot;.&quot; is a lex error
+                -- a &quot;.&quot; followed by another &quot;.&quot; ends the number, so 1..4
+                -- is  number &quot;..&quot; number
                 -- no sign, no exponent, no suffix
 
 word-literal  = &#x27;&quot;&#x27; { char | escape } &#x27;&quot;&#x27;

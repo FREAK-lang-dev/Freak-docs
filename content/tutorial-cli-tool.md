@@ -29,8 +29,8 @@ task main() -> void {
 
 Argument 0 is the executable path, so the first real argument is index 1.
 
-That loop is the standard V3 iteration idiom: a counted `repeat` plus a manual
-index. There is no `for each`.
+That loop is a counted `repeat` plus a manual index. `repeat N times with i`
+supplies the index for you, starting at 0.
 
 ## Step 2 — Reading a file
 

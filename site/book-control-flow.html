@@ -349,7 +349,8 @@ lead element</code></pre>
         <span class="c-kw">say</span> <span class="c-str">&quot;Valkyries, sound off&quot;</span>
     }
 
-    <span class="c-com">-- There is no loop counter; keep one yourself when you need it.</span>
+    <span class="c-com">-- A bare `repeat N times` has no counter. Keep one yourself, or write</span>
+    <span class="c-com">-- `repeat N times with i` for one that starts at 0.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> number <span class="c-op">=</span> <span class="c-num">1</span>
     <span class="c-kw">repeat</span> <span class="c-num">3</span> <span class="c-kw">times</span> {
         <span class="c-kw">say</span> <span class="c-str">&quot;Valkyrie-<span class="c-interp">{number}</span>&quot;</span>
@@ -682,13 +683,13 @@ countdown 1</code></pre>
   <pre class="code"><code><span class="c-com">-- `while` runs as long as its condition is true: the opposite of `repeat until`.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() {
     <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">3</span>
-    while fuel <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+    <span class="c-kw">while</span> fuel <span class="c-op">&gt;</span> <span class="c-num">0</span> {
         <span class="c-kw">say</span> <span class="c-str">&quot;fuel <span class="c-interp">{fuel}</span>&quot;</span>
         fuel <span class="c-op">-=</span> <span class="c-num">1</span>
     }
 
     <span class="c-kw">pilot</span> laps <span class="c-op">=</span> <span class="c-num">0</span>
-    <span class="c-kw">repeat</span> while laps <span class="c-op">&lt;</span> <span class="c-num">2</span> {
+    <span class="c-kw">repeat</span> <span class="c-kw">while</span> laps <span class="c-op">&lt;</span> <span class="c-num">2</span> {
         laps <span class="c-op">+=</span> <span class="c-num">1</span>
     }
     <span class="c-kw">say</span> <span class="c-str">&quot;laps <span class="c-interp">{laps}</span>&quot;</span>

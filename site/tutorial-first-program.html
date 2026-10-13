@@ -101,7 +101,7 @@
     <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{callsign}</span> has flown <span class="c-interp">{sorties}</span> sorties&quot;</span>
 }</code></pre></div>
 <p><code>{path}</code> substitutes a binding. A <em>path</em> is an identifier plus optional <code>.field</code> hops — <code>callsign</code>, <code>unit.name</code>, <code>self.frame.thrust</code>.</p>
-<div class="callout warn"><div class="callout-title">Careful</div><p>Interpolation substitutes paths, <strong>never calls</strong>. <code>&quot;{rank()}&quot;</code> prints those characters literally rather than calling anything. Compute into a binding first — this is the single most common surprise in V3.</p></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>Interpolation substitutes paths, <strong>never calls</strong>. <code>&quot;{rank()}&quot;</code> is a compile error, <em>&quot;unsupported interpolation expression&quot;</em>, not a call. Compute into a binding first — this is the single most common surprise in V3.</p></div>
 <h2 id="step-4-a-task-of-your-own">Step 4 — A task of your own<a class="anchor" href="#step-4-a-task-of-your-own" aria-label="Link to this section">#</a></h2>
 <p><code>task</code> declares a function; <code>give back</code> returns from it.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
@@ -147,7 +147,7 @@
 }</code></pre></div>
 <p>Write <code>self</code> bare, never <code>self: Aviator</code> — the compiler fills in the owning shape.</p>
 <h2 id="step-7-loops">Step 7 — Loops<a class="anchor" href="#step-7-loops" aria-label="Link to this section">#</a></h2>
-<p>Three forms, no <code>for each</code>:</p>
+<p>Three of the loop forms. <a href="control-flow.html">Control flow</a> has the rest, including <code>for each</code> and <code>while</code>:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-num">12</span> <span class="c-kw">times</span> { takeru.sorties <span class="c-op">+=</span> <span class="c-num">1</span> }     <span class="c-com">-- counted</span>
 <span class="c-kw">repeat</span> <span class="c-kw">until</span> <span class="c-kw">done</span> { <span class="c-fn">work</span>() }                 <span class="c-com">-- condition, tested first</span>

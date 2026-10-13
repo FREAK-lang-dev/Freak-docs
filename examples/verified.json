@@ -10,9 +10,9 @@
     "archive_sha256": "a54c51988ae43834898f4d5c0cff6ab416f747dfed50e9e23fa20f55c2e013d8",
     "compiler_sha256": "2978298af6a191899d2333d8219da30884192a8bf976cde80620832d312109a2"
   },
-  "input_sha256": "20f550b154f3cfafcd29f2c1573fa6f7bb28aa942b3be92e6a02f410a0980939",
+  "input_sha256": "e51b1a3df21cdcbcf15c1ff53d4257a4ccd59b0e7ab602642ee5c435d83af261",
   "compiler": "freak 0.15.0 (Maverick)",
-  "generated_utc": "2026-10-13T16:35:51Z",
+  "generated_utc": "2026-10-13T16:49:47Z",
   "total": 84,
   "compiled": 84,
   "passed": 84,
@@ -28,7 +28,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11761
+      "elapsed_ms": 7671
     },
     "annotations": {
       "name": "annotations",
@@ -41,7 +41,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11984
+      "elapsed_ms": 7856
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -54,7 +54,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12426
+      "elapsed_ms": 8186
     },
     "array_literal": {
       "name": "array_literal",
@@ -67,7 +67,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12062
+      "elapsed_ms": 8172
     },
     "arrays": {
       "name": "arrays",
@@ -80,7 +80,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12173
+      "elapsed_ms": 7830
     },
     "book_bool": {
       "name": "book_bool",
@@ -94,7 +94,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 22645
+      "elapsed_ms": 15809
     },
     "book_break_continue": {
       "name": "book_break_continue",
@@ -108,7 +108,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19307
+      "elapsed_ms": 16599
     },
     "book_by_value": {
       "name": "book_by_value",
@@ -122,7 +122,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19494
+      "elapsed_ms": 16609
     },
     "book_collatz": {
       "name": "book_collatz",
@@ -136,7 +136,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19651
+      "elapsed_ms": 16648
     },
     "book_comments": {
       "name": "book_comments",
@@ -150,7 +150,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19100
+      "elapsed_ms": 16222
     },
     "book_constants": {
       "name": "book_constants",
@@ -164,7 +164,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19395
+      "elapsed_ms": 16461
     },
     "book_contextual_words": {
       "name": "book_contextual_words",
@@ -178,7 +178,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18441
+      "elapsed_ms": 16622
     },
     "book_conversions": {
       "name": "book_conversions",
@@ -192,7 +192,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17932
+      "elapsed_ms": 16237
     },
     "book_exit_code": {
       "name": "book_exit_code",
@@ -207,7 +207,7 @@
       "exit_code": 3,
       "expected_exit_code": 3,
       "strict_borrow": true,
-      "elapsed_ms": 16902
+      "elapsed_ms": 16577
     },
     "book_fizzbuzz": {
       "name": "book_fizzbuzz",
@@ -221,7 +221,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18314
+      "elapsed_ms": 16719
     },
     "book_for_each": {
       "name": "book_for_each",
@@ -235,7 +235,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17798
+      "elapsed_ms": 16515
     },
     "book_for_ranges": {
       "name": "book_for_ranges",
@@ -249,7 +249,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17737
+      "elapsed_ms": 16654
     },
     "book_give_back": {
       "name": "book_give_back",
@@ -263,7 +263,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16365
+      "elapsed_ms": 17097
     },
     "book_guess": {
       "name": "book_guess",
@@ -281,7 +281,7 @@
       ],
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15751
+      "elapsed_ms": 19405
     },
     "book_guess_compare": {
       "name": "book_guess_compare",
@@ -296,7 +296,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16367
+      "elapsed_ms": 19238
     },
     "book_guess_input": {
       "name": "book_guess_input",
@@ -311,7 +311,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16075
+      "elapsed_ms": 18952
     },
     "book_guess_parse": {
       "name": "book_guess_parse",
@@ -326,7 +326,7 @@
       "stdin": "fifty\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16548
+      "elapsed_ms": 19081
     },
     "book_guess_secret": {
       "name": "book_guess_secret",
@@ -340,7 +340,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16767
+      "elapsed_ms": 18640
     },
     "book_hello": {
       "name": "book_hello",
@@ -354,7 +354,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16609
+      "elapsed_ms": 20046
     },
     "book_if": {
       "name": "book_if",
@@ -368,7 +368,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15771
+      "elapsed_ms": 18255
     },
     "book_int": {
       "name": "book_int",
@@ -384,7 +384,7 @@
       "expected_exit_code": 1,
       "stderr": "FREAK: integer overflow in addition",
       "strict_borrow": true,
-      "elapsed_ms": 16339
+      "elapsed_ms": 18009
     },
     "book_keyword_case": {
       "name": "book_keyword_case",
@@ -398,7 +398,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16369
+      "elapsed_ms": 17854
     },
     "book_loop_forever": {
       "name": "book_loop_forever",
@@ -412,7 +412,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16424
+      "elapsed_ms": 18441
     },
     "book_num": {
       "name": "book_num",
@@ -426,7 +426,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15971
+      "elapsed_ms": 18300
     },
     "book_order": {
       "name": "book_order",
@@ -440,7 +440,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18300
+      "elapsed_ms": 17308
     },
     "book_pilots": {
       "name": "book_pilots",
@@ -454,7 +454,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17933
+      "elapsed_ms": 17109
     },
     "book_pipe": {
       "name": "book_pipe",
@@ -468,12 +468,12 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17794
+      "elapsed_ms": 16782
     },
     "book_repeat_times": {
       "name": "book_repeat_times",
       "file": "book_repeat_times.fk",
-      "source": "-- repeat N times\ntask main() {\n    repeat 3 times {\n        say \"Valkyries, sound off\"\n    }\n\n    -- There is no loop counter; keep one yourself when you need it.\n    pilot mut number = 1\n    repeat 3 times {\n        say \"Valkyrie-{number}\"\n        number += 1\n    }\n\n    -- The count is worked out once, before the first pass.\n    pilot mut passes = 2\n    repeat passes times {\n        passes += 10\n        say \"pass (passes is now {passes})\"\n    }\n\n    -- Zero or a negative count means the body never runs.\n    repeat 0 times { say \"never printed\" }\n}\n",
+      "source": "-- repeat N times\ntask main() {\n    repeat 3 times {\n        say \"Valkyries, sound off\"\n    }\n\n    -- A bare `repeat N times` has no counter. Keep one yourself, or write\n    -- `repeat N times with i` for one that starts at 0.\n    pilot mut number = 1\n    repeat 3 times {\n        say \"Valkyrie-{number}\"\n        number += 1\n    }\n\n    -- The count is worked out once, before the first pass.\n    pilot mut passes = 2\n    repeat passes times {\n        passes += 10\n        say \"pass (passes is now {passes})\"\n    }\n\n    -- Zero or a negative count means the body never runs.\n    repeat 0 times { say \"never printed\" }\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "Valkyries, sound off\nValkyries, sound off\nValkyries, sound off\nValkyrie-1\nValkyrie-2\nValkyrie-3\npass (passes is now 12)\npass (passes is now 22)",
@@ -482,7 +482,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17408
+      "elapsed_ms": 16954
     },
     "book_repeat_until": {
       "name": "book_repeat_until",
@@ -496,7 +496,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18715
+      "elapsed_ms": 17251
     },
     "book_scope": {
       "name": "book_scope",
@@ -510,7 +510,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18541
+      "elapsed_ms": 17295
     },
     "book_script": {
       "name": "book_script",
@@ -524,7 +524,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16493
+      "elapsed_ms": 16986
     },
     "book_shared_pilot": {
       "name": "book_shared_pilot",
@@ -538,7 +538,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15718
+      "elapsed_ms": 17460
     },
     "book_statements": {
       "name": "book_statements",
@@ -552,7 +552,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15346
+      "elapsed_ms": 17631
     },
     "book_tasks": {
       "name": "book_tasks",
@@ -566,7 +566,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16221
+      "elapsed_ms": 17568
     },
     "book_training_arc": {
       "name": "book_training_arc",
@@ -580,7 +580,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16165
+      "elapsed_ms": 17266
     },
     "book_two_word_case": {
       "name": "book_two_word_case",
@@ -594,7 +594,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15927
+      "elapsed_ms": 17479
     },
     "book_when": {
       "name": "book_when",
@@ -608,7 +608,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15840
+      "elapsed_ms": 20570
     },
     "book_while": {
       "name": "book_while",
@@ -622,7 +622,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15249
+      "elapsed_ms": 20928
     },
     "book_words_intro": {
       "name": "book_words_intro",
@@ -636,7 +636,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 15557
+      "elapsed_ms": 22015
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -649,7 +649,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8103
+      "elapsed_ms": 11925
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -662,7 +662,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8162
+      "elapsed_ms": 11511
     },
     "colour": {
       "name": "colour",
@@ -675,7 +675,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8184
+      "elapsed_ms": 12020
     },
     "control_if": {
       "name": "control_if",
@@ -688,7 +688,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7452
+      "elapsed_ms": 9952
     },
     "control_loops": {
       "name": "control_loops",
@@ -701,7 +701,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7688
+      "elapsed_ms": 10312
     },
     "control_when": {
       "name": "control_when",
@@ -714,7 +714,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7825
+      "elapsed_ms": 10191
     },
     "eventually": {
       "name": "eventually",
@@ -727,7 +727,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7775
+      "elapsed_ms": 10111
     },
     "extern": {
       "name": "extern",
@@ -740,7 +740,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7495
+      "elapsed_ms": 10264
     },
     "files": {
       "name": "files",
@@ -753,7 +753,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7443
+      "elapsed_ms": 10731
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -766,7 +766,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7361
+      "elapsed_ms": 10901
     },
     "hello": {
       "name": "hello",
@@ -779,7 +779,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7091
+      "elapsed_ms": 10406
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -792,7 +792,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7733
+      "elapsed_ms": 11047
     },
     "inference": {
       "name": "inference",
@@ -805,7 +805,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7395
+      "elapsed_ms": 10532
     },
     "interpolation": {
       "name": "interpolation",
@@ -818,12 +818,12 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7318
+      "elapsed_ms": 11877
     },
     "lists": {
       "name": "lists",
       "file": "lists.fk",
-      "source": "-- `List<T>` is V3's typed sequence. The element type must be a scalar\n-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not\n-- allowed: there is no `List<List<int>>`.\nshape Contact {\n    tag: word\n}\n\n-- A List may be a parameter and a return type. It may NOT be a shape\n-- field: that reports \"V3 owned shape fields do not yet support List\n-- values\".\ntask count_all(items: List<word>) -> int {\n    give back items.length()\n}\n\ntask first_three() -> List<int> {\n    give back [1, 2, 3]\n}\n\ntask main() -> void {\n    -- An array literal infers List<T> from its elements.\n    pilot names: List<word> = [\"Takeru\", \"Meiya\", \"Sumika\"]\n    say word_from_int(names.length())\n    say names[1]\n\n    -- Indexed assignment works on any list that is not `fixed`.\n    pilot mut scores: List<int> = [10, 20, 30]\n    scores[0] = 99\n    say word_from_int(scores[0])\n\n    -- Every scalar element type works.\n    pilot ratios: List<num> = [1.5, 2.5]\n    say format_num(ratios[1])\n\n    pilot flags: List<bool> = [true, false]\n    say word_from_bool(flags[0])\n\n    -- Shapes too, and field access chains off the element.\n    pilot contacts: List<Contact> = [Contact { tag: \"BETA-1\" }]\n    say contacts[0].tag\n\n    -- List::filled(value, count) builds a pre-populated list.\n    pilot zeros: List<int> = List::filled(0, 4)\n    say word_from_int(zeros.length())\n\n    -- Passed to a task, and returned from one.\n    say word_from_int(count_all(names))\n    say word_from_int(first_three()[2])\n\n    -- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.\n    pilot mut queue: List<int> = List::new()\n    queue.push(10)\n    queue.push(20)\n    queue.push(30)\n    say word_from_int(queue.length())\n    say word_from_int(queue.pop())      -- 30, removed and returned\n    say word_from_int(queue.length())\n    say word_from_int(queue.capacity()) -- starts at 8, doubles as needed\n    queue.reserve(64)\n    say word_from_int(queue.capacity())\n    queue.clear()\n    say word_from_int(queue.length())\n\n    -- Iterate with an index; there is no `for each`.\n    pilot mut i: int = 0\n    repeat names.length() times {\n        say names[i]\n        i += 1\n    }\n}\n",
+      "source": "-- `List<T>` is V3's typed sequence. The element type must be a scalar\n-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not\n-- allowed: there is no `List<List<int>>`.\nshape Contact {\n    tag: word\n}\n\n-- A List may be a parameter and a return type. It may NOT be a shape\n-- field: that reports \"V3 owned shape fields do not yet support List\n-- values\".\ntask count_all(items: List<word>) -> int {\n    give back items.length()\n}\n\ntask first_three() -> List<int> {\n    give back [1, 2, 3]\n}\n\ntask main() -> void {\n    -- An array literal infers List<T> from its elements.\n    pilot names: List<word> = [\"Takeru\", \"Meiya\", \"Sumika\"]\n    say word_from_int(names.length())\n    say names[1]\n\n    -- Indexed assignment works on any list that is not `fixed`.\n    pilot mut scores: List<int> = [10, 20, 30]\n    scores[0] = 99\n    say word_from_int(scores[0])\n\n    -- Every scalar element type works.\n    pilot ratios: List<num> = [1.5, 2.5]\n    say format_num(ratios[1])\n\n    pilot flags: List<bool> = [true, false]\n    say word_from_bool(flags[0])\n\n    -- Shapes too, and field access chains off the element.\n    pilot contacts: List<Contact> = [Contact { tag: \"BETA-1\" }]\n    say contacts[0].tag\n\n    -- List::filled(value, count) builds a pre-populated list.\n    pilot zeros: List<int> = List::filled(0, 4)\n    say word_from_int(zeros.length())\n\n    -- Passed to a task, and returned from one.\n    say word_from_int(count_all(names))\n    say word_from_int(first_three()[2])\n\n    -- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.\n    pilot mut queue: List<int> = List::new()\n    queue.push(10)\n    queue.push(20)\n    queue.push(30)\n    say word_from_int(queue.length())\n    say word_from_int(queue.pop())      -- 30, removed and returned\n    say word_from_int(queue.length())\n    say word_from_int(queue.capacity()) -- starts at 8, doubles as needed\n    queue.reserve(64)\n    say word_from_int(queue.capacity())\n    queue.clear()\n    say word_from_int(queue.length())\n\n    -- Iterating with an index. `for each name in names { }` visits the same\n    -- elements without one.\n    pilot mut i: int = 0\n    repeat names.length() times {\n        say names[i]\n        i += 1\n    }\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "3\nMeiya\n99\n2.5\ntrue\nBETA-1\n4\n3\n3\n3\n30\n2\n8\n64\n0\nTakeru\nMeiya\nSumika",
@@ -831,12 +831,12 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7814
+      "elapsed_ms": 12691
     },
     "module_pattern": {
       "name": "module_pattern",
       "file": "module_pattern.fk",
-      "source": "-- Reusing code across files in V3.\n--\n-- The compiler takes exactly one source file, and Hangar packages are\n-- never linked into it, so a \"library\" is just source you concatenate\n-- ahead of your program:\n--\n--     cat lib/text.fk src/app.fk > build/combined.fk\n--     freak build build/combined.fk\n--\n-- This file is what that produces. Everything lands in one flat global\n-- namespace, so a library must prefix its names to avoid collisions --\n-- with your code, and with the std/ tasks the build already links.\n\n-- ===================================================================\n-- lib/text.fk  -- the \"package\"\n-- ===================================================================\n\nshape TextStats {\n    words: int\n    longest: word\n}\n\ntask text_is_blank(c: word) -> bool {\n    give back c == \" \" or c == \"\\n\" or c == \"\\t\" or c == \"\\r\"\n}\n\ntask text_count_words(source: word) -> int {\n    pilot mut total: int = 0\n    pilot mut in_word: bool = false\n    pilot mut i: int = 0\n\n    repeat source.length() times {\n        if text_is_blank(source.char_at(i)) {\n            in_word = false\n        } else {\n            if not in_word { total += 1 }\n            in_word = true\n        }\n        i += 1\n    }\n    give back total\n}\n\ntask text_longest_word(source: word) -> word {\n    pilot mut best: word = \"\"\n    pilot mut current: word = \"\"\n    pilot mut i: int = 0\n\n    repeat source.length() times {\n        pilot c: word = source.char_at(i)\n        if text_is_blank(c) {\n            if current.length() > best.length() { best = current }\n            current = \"\"\n        } else {\n            current = current + c\n        }\n        i += 1\n    }\n    if current.length() > best.length() { best = current }\n    give back best\n}\n\ntask text_analyse(source: word) -> TextStats {\n    give back TextStats {\n        words: text_count_words(source),\n        longest: text_longest_word(source)\n    }\n}\n\n-- ===================================================================\n-- src/app.fk  -- your program\n-- ===================================================================\n\ntask main() -> void {\n    pilot report: TextStats = text_analyse(\"the beta will not negotiate with humanity\")\n\n    say word_from_int(report.words)\n    say report.longest\n\n    -- `use` lines are stripped before parsing, so leaving one in a\n    -- concatenated build is harmless -- and equally, it imports nothing.\n}\n",
+      "source": "-- Reusing code across files without a project.\n--\n-- A file built on its own is one translation unit, so outside a project\n-- a \"library\" is just source you concatenate ahead of your program:\n--\n--     cat lib/text.fk src/app.fk > build/combined.fk\n--     freak build build/combined.fk\n--\n-- This file is what that produces. Everything lands in one flat global\n-- namespace, so a library must prefix its names to avoid collisions --\n-- with your code, and with the std/ tasks the build already links.\n\n-- ===================================================================\n-- lib/text.fk  -- the \"package\"\n-- ===================================================================\n\nshape TextStats {\n    words: int\n    longest: word\n}\n\ntask text_is_blank(c: word) -> bool {\n    give back c == \" \" or c == \"\\n\" or c == \"\\t\" or c == \"\\r\"\n}\n\ntask text_count_words(source: word) -> int {\n    pilot mut total: int = 0\n    pilot mut in_word: bool = false\n    pilot mut i: int = 0\n\n    repeat source.length() times {\n        if text_is_blank(source.char_at(i)) {\n            in_word = false\n        } else {\n            if not in_word { total += 1 }\n            in_word = true\n        }\n        i += 1\n    }\n    give back total\n}\n\ntask text_longest_word(source: word) -> word {\n    pilot mut best: word = \"\"\n    pilot mut current: word = \"\"\n    pilot mut i: int = 0\n\n    repeat source.length() times {\n        pilot c: word = source.char_at(i)\n        if text_is_blank(c) {\n            if current.length() > best.length() { best = current }\n            current = \"\"\n        } else {\n            current = current + c\n        }\n        i += 1\n    }\n    if current.length() > best.length() { best = current }\n    give back best\n}\n\ntask text_analyse(source: word) -> TextStats {\n    give back TextStats {\n        words: text_count_words(source),\n        longest: text_longest_word(source)\n    }\n}\n\n-- ===================================================================\n-- src/app.fk  -- your program\n-- ===================================================================\n\ntask main() -> void {\n    pilot report: TextStats = text_analyse(\"the beta will not negotiate with humanity\")\n\n    say word_from_int(report.words)\n    say report.longest\n\n    -- No `use` line is needed, or possible, here: outside a project a\n    -- `use` must name a standard module.\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "7\nnegotiate",
@@ -844,7 +844,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8398
+      "elapsed_ms": 12586
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -857,7 +857,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8498
+      "elapsed_ms": 12621
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -870,7 +870,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8851
+      "elapsed_ms": 12582
     },
     "operators": {
       "name": "operators",
@@ -883,7 +883,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8851
+      "elapsed_ms": 12572
     },
     "pipe": {
       "name": "pipe",
@@ -896,7 +896,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8518
+      "elapsed_ms": 10237
     },
     "process_time": {
       "name": "process_time",
@@ -913,7 +913,7 @@
         "bravo"
       ],
       "exit_code": 0,
-      "elapsed_ms": 8811
+      "elapsed_ms": 10236
     },
     "recursion": {
       "name": "recursion",
@@ -926,7 +926,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8205
+      "elapsed_ms": 10284
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -939,7 +939,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7959
+      "elapsed_ms": 10296
     },
     "same_line": {
       "name": "same_line",
@@ -952,7 +952,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8035
+      "elapsed_ms": 10347
     },
     "shapes": {
       "name": "shapes",
@@ -965,7 +965,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7784
+      "elapsed_ms": 10151
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -978,7 +978,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6999
+      "elapsed_ms": 9151
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -991,7 +991,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7422
+      "elapsed_ms": 11001
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -1004,7 +1004,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7774
+      "elapsed_ms": 10983
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -1017,7 +1017,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7809
+      "elapsed_ms": 10764
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -1030,7 +1030,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7425
+      "elapsed_ms": 10417
     },
     "strings": {
       "name": "strings",
@@ -1043,7 +1043,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7862
+      "elapsed_ms": 11224
     },
     "tasks": {
       "name": "tasks",
@@ -1056,7 +1056,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7681
+      "elapsed_ms": 11092
     },
     "toplevel": {
       "name": "toplevel",
@@ -1069,7 +1069,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8869
+      "elapsed_ms": 10871
     },
     "training_arc": {
       "name": "training_arc",
@@ -1082,7 +1082,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9661
+      "elapsed_ms": 10827
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -1095,7 +1095,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9883
+      "elapsed_ms": 11318
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -1108,7 +1108,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9832
+      "elapsed_ms": 10769
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -1121,7 +1121,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10064
+      "elapsed_ms": 10216
     },
     "variables": {
       "name": "variables",
@@ -1134,7 +1134,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9244
+      "elapsed_ms": 7362
     },
     "word_builder": {
       "name": "word_builder",
@@ -1147,7 +1147,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7105
+      "elapsed_ms": 5238
     },
     "wordcount": {
       "name": "wordcount",
@@ -1160,7 +1160,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6355
+      "elapsed_ms": 5065
     }
   },
   "diagnostics": {

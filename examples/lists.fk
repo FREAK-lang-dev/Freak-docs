@@ -60,7 +60,8 @@ task main() -> void {
     queue.clear()
     say word_from_int(queue.length())
 
-    -- Iterate with an index; there is no `for each`.
+    -- Iterating with an index. `for each name in names { }` visits the same
+    -- elements without one.
     pilot mut i: int = 0
     repeat names.length() times {
         say names[i]

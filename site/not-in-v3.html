@@ -69,10 +69,11 @@
 <div class="callout note"><div class="callout-title">Note</div><p>Some things on the bible&#x27;s missing list have quietly arrived. V3 now has a typed [<code>List&lt;T&gt;</code>](arrays.html), a builtin [<code>ByteBuffer</code>](stdlib.html#bytebuffer), a [<code>word_builder::*</code>](words.html#building-words-incrementally) accumulator, and a <code>tcp::socket_*</code> family that can listen and accept. Check <a href="conformance.html">Bible vs V3</a> before assuming something is absent.</p></div>
 <h2 id="optional-and-fallible-values">Optional and fallible values<a class="anchor" href="#optional-and-fallible-values" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><pre class="code"><code>error: expected &#x27;{&#x27;, found &#x27;&lt;&#x27;          -- maybe&lt;T&gt;, result&lt;T,E&gt;
-error: unexpected &#x27;check&#x27;
+error: expected keyword &#x27;result&#x27;, found &#x27;x&#x27;   -- check over a maybe
 error: unexpected &#x27;?&#x27;
 error: unexpected &#x27;or else&#x27;</code></pre></div>
 <p>There is no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>some</code>, <code>nobody</code>, <code>ok</code>, <code>err</code>, <code>?</code> or <code>or else</code>. Signal absence and failure with sentinel values, the way the compiler&#x27;s own source does.</p>
+<p>One narrow form exists: <code>check result</code> over the value of <code>fs::read_checked(path)</code>, with one <code>ok(text)</code> arm and one <code>err(e)</code> arm. It tells a missing file from an empty one, and it is the only thing <code>check</code> accepts.</p>
 <p>For parsing specifically, v0.14.2 added a checked pair — <code>w.parse_int()</code> / <code>w.parse_num()</code> plus a global <code>parse_status()</code> — which distinguishes &quot;parsed zero&quot; from &quot;failed&quot;. <code>ByteBuffer.status()</code> follows the same out-of-band pattern. See <a href="words.html#checked-parsing">checked parsing</a>.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- A word task returns &quot;&quot; for &quot;no value&quot;.</span>
@@ -117,8 +118,8 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
     <span class="c-kw">give back</span> <span class="c-fn">array_get</span>(values, at)
 }</code></pre></div>
 <h2 id="iteration">Iteration<a class="anchor" href="#iteration" aria-label="Link to this section">#</a></h2>
-<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;for each&#x27; — this token cannot start an expression</code></pre></div>
-<p>Use an index and a counted loop:</p>
+<div class="codeblock"><pre class="code"><code>type error: for each requires a list with a known element type</code></pre></div>
+<p><code>for each</code> walks a <code>List&lt;T&gt;</code> or an int range. It does not walk a word or a legacy array handle. For those, use an index and a counted loop:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {

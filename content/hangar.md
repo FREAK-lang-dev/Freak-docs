@@ -120,15 +120,12 @@ in that list is in scope whether you write `use` or not.
 
 ## Commands
 
-These are the `hangar` subcommands. One no longer does what its row says: a
-registry constraint such as `hangar add muvluv "^2.0"` is refused in 0.15.0
-with *"Registry package sources are unavailable; specify an explicit Git
-source"*.
+These are the `hangar` subcommands.
 
 | Command | Effect |
 |---|---|
 | `hangar init [name]` | Scaffold `hangar.toml`, `src/main.fk`, `hangar_modules/` |
-| `hangar add <name> [constraint]` | Add a dependency to the manifest |
+| `hangar add <name> [constraint]` | Refused in 0.15.0: *"Registry package sources are unavailable; specify an explicit Git source"* |
 | `hangar add <name> <repo> [version]` | Add a dependency from a git repo |
 | `hangar remove <name>` | Remove it |
 | `hangar install` | Download all dependencies into `hangar_modules/` |

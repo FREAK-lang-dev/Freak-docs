@@ -17,7 +17,7 @@ Each entry gives the exact error and a working V3 substitute.
 
 ```text
 error: expected '{', found '<'          -- maybe<T>, result<T,E>
-error: unexpected 'check'
+error: expected keyword 'result', found 'x'   -- check over a maybe
 error: unexpected '?'
 error: unexpected 'or else'
 ```
@@ -25,6 +25,11 @@ error: unexpected 'or else'
 There is no `maybe<T>`, `result<T,E>`, `some`, `nobody`, `ok`, `err`, `?` or
 `or else`. Signal absence and failure with sentinel values, the way the
 compiler's own source does.
+
+One narrow form exists: `check result` over the value of
+`fs::read_checked(path)`, with one `ok(text)` arm and one `err(e)` arm. It
+tells a missing file from an empty one, and it is the only thing `check`
+accepts.
 
 For parsing specifically, v0.14.2 added a checked pair —
 `w.parse_int()` / `w.parse_num()` plus a global `parse_status()` — which
@@ -92,10 +97,11 @@ task map_get(keys: int, values: int, key: word) -> word {
 ## Iteration
 
 ```text
-error: unexpected 'for each' — this token cannot start an expression
+type error: for each requires a list with a known element type
 ```
 
-Use an index and a counted loop:
+`for each` walks a `List<T>` or an int range. It does not walk a word or a
+legacy array handle. For those, use an index and a counted loop:
 
 ```fk
 pilot mut i: int = 0
