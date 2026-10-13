@@ -1,0 +1,4 @@
+-- A file with no `main` runs its top-level statements, in order.
+pilot squadron = "Valkyries"
+say "booting"
+say "{squadron} ready"

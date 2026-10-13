@@ -1,5 +1,5 @@
 task main() {
-    pilot fuel = 50
+    fixed pilot fuel = 50
     fuel = 75
     say fuel
 }

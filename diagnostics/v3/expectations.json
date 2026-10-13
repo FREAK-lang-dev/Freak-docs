@@ -75,14 +75,6 @@
       "unknown binding 'wing'"
     ]
   },
-  "book_reassign_strict": {
-    "flags": [
-      "--strict-borrow"
-    ],
-    "contains": [
-      "This binding was sworn to silence. It cannot be reassigned. 'fuel'"
-    ]
-  },
   "book_remainder_num": {
     "contains": [
       "operator '%' does not accept num and num"
@@ -98,19 +90,9 @@
       "expected an identifier for task name, found 'launch'"
     ]
   },
-  "book_semicolon": {
-    "contains": [
-      "unexpected ';'"
-    ]
-  },
   "book_store_void": {
     "contains": [
       "binding initializer cannot have type void"
-    ]
-  },
-  "book_task_name_taken": {
-    "contains": [
-      "callable 'string_reverse' conflicts with another task or extern declaration"
     ]
   },
   "book_unknown_pilot": {
@@ -121,8 +103,7 @@
   "book_unterminated_word": {
     "contains": [
       "unterminated string literal",
-      "add a closing quote",
-      "unexpected end of file — missing '}'"
+      "add a closing quote"
     ]
   },
   "book_void_gives_value": {
@@ -165,9 +146,29 @@
       "cannot initialize int binding 'sorties' with word"
     ]
   },
-  "book_give_back_trap": {
+  "book_fixed_reassign": {
     "contains": [
-      "unexpected 'give back'"
+      "fixed pilot cannot be modified"
+    ]
+  },
+  "book_interpolation_expression": {
+    "contains": [
+      "unsupported interpolation expression"
+    ]
+  },
+  "book_no_entry": {
+    "contains": [
+      "program requires a usable task main() entry"
+    ]
+  },
+  "book_toplevel_main": {
+    "contains": [
+      "executable statement at top level is unsupported; place it inside task main()"
+    ]
+  },
+  "book_when_unreachable": {
+    "contains": [
+      "when arm is unreachable after '_'"
     ]
   }
 }

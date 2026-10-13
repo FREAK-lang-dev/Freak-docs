@@ -1,6 +1,6 @@
 # Control flow
 
-> Choose between paths with `if` and `when`, and repeat work with four kinds of loop.
+> Choose between paths with `if` and `when`, and repeat work with loops that count, loops that wait for a condition, and loops that visit a list.
 
 A program that only ran its statements from top to bottom could do very
 little. This chapter covers the statements that decide what runs next:
@@ -11,6 +11,8 @@ little. This chapter covers the statements that decide what runs next:
 - `repeat until`, for looping on a condition
 - `training arc`, a condition loop that is guaranteed to end
 - `for each`, for visiting the elements of a list
+- counting loops: ranges, `repeat ... times with`, and the C-style `for`
+- `while`, for looping as long as a condition holds
 - `break` and `continue`
 
 ## `if`
@@ -73,7 +75,7 @@ to it in each branch:
 
 Or put the decision in a task and give the answer back, as `status` does in
 the first listing. The second way is usually cleaner, because the pilot that
-receives the answer does not need to be `mut`.
+receives the answer is given its value once, and never needs a placeholder.
 
 ## `when`
 
@@ -97,9 +99,12 @@ carries on after the `when`. The compiler does not insist that you cover every
 case, so a missing arm fails silently. Unless you are certain the listed values
 are the only ones possible, end with `_`.
 
-Arms are tried in order. The last `when` in the listing puts `_` first, and so
-its second arm can never run. The compiler does not warn about this. Keep the
-catch-all at the bottom.
+Arms are tried in order, so an arm after `_` could never run, and neither
+could a second arm with a value already listed. The compiler refuses both:
+
+{{diagnostic:book_when_unreachable}}
+
+Keep the catch-all at the bottom.
 
 The subject can be an int, a word, a bool or a num.
 
@@ -134,9 +139,10 @@ The count is any int: a literal, a pilot, a calculation. It is worked out once,
 before the first pass. The third loop in the listing changes `passes` inside
 its own body, and still makes exactly the two passes it started with.
 
-There is no loop counter. If the body needs to know which pass it is on, keep
-a `pilot mut` beside the loop and increase it yourself, as the second loop
-does. This is the standard way to count in V3.
+The loop has no counter of its own. If the body needs to know which pass it
+is on, keep a pilot beside the loop and increase it yourself, as the second
+loop does, or let the loop count for you with `repeat N times with i`, shown
+later in this chapter.
 
 A count of zero, or a negative count, means the body does not run at all.
 
@@ -155,6 +161,8 @@ Two things about `repeat until` are easy to get backwards.
 **The loop runs while the condition is false.** `until` gives the condition for
 *stopping*. `repeat until countdown == 0` keeps going as long as `countdown` is
 not zero. If you are used to `while` loops, this is the opposite sense.
+FREAK has a `while` as well, described below, so you can pick whichever reads
+better.
 
 **The condition is tested before each pass, including the first.** If it is
 already true, the body never runs. The second loop in the listing shows this:
@@ -227,9 +235,42 @@ in a block.
 `for each` gives you the element and not its position. When you need both,
 count alongside the loop, as the second loop in the listing does.
 
-The thing after `in` has to be a list. A word is not a list of its letters:
+The thing after `in` has to be a list or a range. A word is not a list of its
+letters:
 
 {{diagnostic:book_for_each_word}}
+
+## Counting loops
+
+When you want the numbers themselves, loop over a range, or use a loop that
+counts.
+
+{{example:book_for_ranges}}
+
+There are three forms, and they mean the same as they would in most languages.
+Use whichever reads best for the loop at hand.
+
+- `for each i in 1..4` gives `i` the values 1, 2 and 3. The end of a range
+  written `..` is not included. Written `..=`, as in `1..=3`, it is.
+- `step` sets the distance between values: `0..10 step 4` gives 0, 4 and 8.
+- `repeat 2 times with pass` is a `repeat ... times` loop that names its
+  counter. The counter starts at 0.
+- `for (pilot i = 3; i > 0; i -= 1)` is the form from C and its relatives: a
+  pilot to start with, a condition tested before each pass, and a statement
+  run after each pass.
+
+In every form the counter is a pilot that exists only inside the loop.
+
+## `while`
+
+`while` is `repeat until` turned the other way round: it runs as long as its
+condition is *true*. `repeat while` is another spelling of the same loop.
+
+{{example:book_while}}
+
+Like `repeat until`, `while` tests its condition before each pass, so a
+condition that is false at the start means the body never runs. `while` is a
+reserved word, so it cannot be used as a name.
 
 ## `break` and `continue`
 
@@ -240,8 +281,8 @@ Two statements change the course of any loop from inside its body.
 `break` ends the loop. Execution carries on with the first statement after it.
 
 `continue` ends the current pass. In a `repeat ... times` loop the next pass
-begins; in a `repeat until` or a `training arc` the condition is tested again;
-in a `for each` the loop moves to the next element.
+begins; in a `repeat until`, a `while` or a `training arc` the condition is
+tested again; in a `for each` the loop moves to the next element or value.
 
 When loops are nested, `break` and `continue` act on the innermost loop that
 contains them. The second half of the listing prints a triangle: the inner
@@ -349,7 +390,7 @@ to the compiler's diagnostics. Part VII covers them.
 > [!planned]
 > The specification lets `for each` deliver the position along with the
 > element, written `for each (i, item) in list.enumerate()`. Until a compiler
-> has it, count with a `pilot mut`.
+> has it, count with a pilot beside the loop.
 
 ## Summary
 
@@ -358,10 +399,13 @@ it, and the first true branch wins. `when` chooses by comparing one value with
 literal arms; put `_` last to catch everything else. Both are statements, not
 values.
 
-There are four loops. `repeat N times` runs a fixed number of passes, counted
-once at the start. `repeat until` runs while its condition is false, testing
-before each pass. `training arc` is the same with a compulsory limit on the
-number of passes, so it always ends. `for each` visits each element of a list.
+`repeat N times` runs a fixed number of passes, counted once at the start,
+and can name its counter with `with`. `repeat until` runs while its condition
+is false and `while` runs while it is true; both test before each pass.
+`training arc` is `repeat until` with a compulsory limit on the number of
+passes, so it always ends. `for each` visits each element of a list or each
+value of a range, and the C-style `for` counts with a start, a condition and a
+step.
 
 `break` leaves the innermost loop and `continue` skips to its next pass.
 

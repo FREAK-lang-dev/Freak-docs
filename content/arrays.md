@@ -13,7 +13,7 @@ interchangeable everywhere.
 | Element type | Checked | Always `word` |
 | Length | `list.length()` | `array_len(h)` |
 | Read | `list[i]` | `array_get(h, i)` |
-| Write | `list[i] = v` (needs `pilot mut`) | `array_set(h, i, v)` |
+| Write | `list[i] = v` (not on a `fixed` list) | `array_set(h, i, v)` |
 | Append | `list.push(v)` | `array_push(h, v)` |
 | Remove | `list.pop()` | — |
 | Accepted by `array_*` builtins | yes, when `List<word>` | yes |
@@ -32,8 +32,9 @@ Rules worth pinning down:
   one type. Numbers stay numbers; no conversion to `word` is needed.
 - **`.length()` is a method**, not a field. `list.length` reports
   *"non-shape value has no fields"*.
-- **Indexed assignment needs `pilot mut`.** Otherwise you get
-  *"indexed assignment requires a mutable list binding; declare it with pilot mut"*.
+- **A `fixed` or `grounded` list cannot be changed.** Indexed assignment or a
+  mutating method on one reports *"fixed pilot cannot be modified"*. A plain
+  `pilot` list can be changed.
 - **`List::filled(value, count)`** builds a pre-populated list and takes its
   element type from `value`.
 - Indexing a shape element chains: `contacts[0].tag`.
@@ -63,7 +64,7 @@ say word_from_int(xs.length())  -- 1
 Constructors: `List::new()`, `List::with_capacity(n)`, `List::filled(v, n)`, or
 a literal.
 
-Mutating methods need `pilot mut`, same as indexed assignment.
+Mutating methods work on any list that is not `fixed` or `grounded`.
 
 Still missing: `insert`, `remove`, `sort`, and any iterator. Sorting a list
 means copying into a legacy handle, or writing the loop.

@@ -26,10 +26,4 @@ task main() {
     when rank {
         "cadet" -> say "never printed"
     }
-
-    -- Arms are tried from the top, and the first match wins.
-    when rank {
-        _ -> say "the catch-all came first, so it always wins"
-        "ace" -> say "never printed"
-    }
 }

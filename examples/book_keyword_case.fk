@@ -1,6 +1,5 @@
 -- Single-word keywords work only in lowercase. The truth literals are the
--- dangerous case: a capitalised spelling is accepted, and it does not mean
--- what it says.
+-- exception: a capitalised spelling is accepted and means the same value.
 task main() {
     pilot lowercase = true
     pilot uppercase = TRUE

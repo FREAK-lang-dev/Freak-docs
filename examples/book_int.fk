@@ -12,5 +12,6 @@ task main() {
 
     pilot largest: int = 9223372036854775807
     say largest
-    say largest + 1      -- past the largest value, V3 wraps around silently
+    say largest + 1      -- past the largest value, the program stops here
+    say "never printed"
 }

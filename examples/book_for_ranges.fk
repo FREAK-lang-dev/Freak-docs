@@ -1,0 +1,18 @@
+-- Counting loops. A range a..b stops before b; a..=b includes b.
+task main() {
+    for each i in 1..4 {
+        say "range {i}"
+    }
+    for each i in 1..=3 {
+        say "inclusive {i}"
+    }
+    for each i in 0..10 step 4 {
+        say "step {i}"
+    }
+    repeat 2 times with pass {
+        say "pass {pass}"
+    }
+    for (pilot i = 3; i > 0; i -= 1) {
+        say "countdown {i}"
+    }
+}

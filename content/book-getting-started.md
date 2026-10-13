@@ -260,7 +260,8 @@ in double quotes. FREAK calls a piece of text a *word*, whatever its length.
 `say` is part of the language. There is nothing to import.
 
 Notice what is absent. There is no semicolon at the end of the statement: FREAK
-code does not use them, and V3 treats one as an error. The body is indented by
+code does not need them. A semicolon is allowed, and lets you put two short
+statements on one line, but the convention is one statement per line. The body is indented by
 four spaces, which is the convention in FREAK code, but indentation is for
 readers. The compiler finds the structure from the braces.
 
@@ -291,10 +292,8 @@ purpose. Delete the closing quote:
 {{diagnostic:book_unterminated_word}}
 
 The compiler names the problem, points at the place with a caret, and suggests
-the fix. It also reports a second error, the missing brace. The second is a
-consequence of the first: without the closing quote, the rest of the file was
-read as part of the word, brace included. When you get several errors, fix the
-first one and build again.
+the fix. When you get several errors, fix the first one and build again: later
+errors are often consequences of the first.
 
 Now misspell `say`:
 
@@ -305,14 +304,13 @@ never created. "Binding" is the compiler's word for a named value. You will
 see `unknown binding` whenever the name of a value is misspelled, and `unknown
 callable` when it is the name of a task.
 
-One mistake produces no message at all. The entry point is the task named
-`main`, in lowercase. Name it anything else and the program builds, starts,
-finds nothing to do, and ends:
+The entry point is the task named `main`, in lowercase. Name it anything else
+and the program has nowhere to start, so it does not build:
 
-{{example:book_no_entry}}
+{{diagnostic:book_no_entry}}
 
-> [!warn]
-> If a program builds and prints nothing, check the spelling of `main` first.
+The message mentions a second possibility, a file of statements with no
+`main` at all. That is a script, and Chapter 4 shows how it runs.
 
 ## Building, running and checking
 
@@ -408,18 +406,23 @@ freak init sortie
 ```
 
 ```text
-  ✨ Creating project: sortie
-
-  ✓ sortie/main.fk
-  ✓ sortie/hangar.toml
-
-  Get started:
-    cd sortie
-    freak run main.fk
+Created project sortie
 ```
 
 The project is called `sortie`, a mission flown by a single unit. The command
-made a directory with two files in it.
+made a directory with this in it:
+
+```text
+sortie/
+  hangar.toml
+  README.md
+  LICENSE
+  src/
+    main.fk
+    greet.fk
+  tests/
+    greeting_test.fk
+```
 
 `hangar.toml` is the project's description:
 
@@ -427,45 +430,53 @@ made a directory with two files in it.
 [project]
 name = "sortie"
 version = "0.1.0"
+kind = "app"
+entry = "src/main.fk"
+readme = "README.md"
+license_file = "LICENSE"
+
+[modules]
+greet = "src/greet.fk"
+
+[exports]
+greet = "greet::greet"
+
+[tests]
+greeting = "tests/greeting_test.fk"
 
 [dependencies]
 ```
 
-It records the project's name and version, and has an empty section for the
-packages the project depends on. The file belongs to Hangar, FREAK's package
-manager, which is why it carries that name.
+It records the project's name and version, which file the program starts in,
+the other source files it is made of, and its tests. The empty
+`[dependencies]` section is for packages the project uses. The file belongs to
+Hangar, FREAK's package manager, which is why it carries that name.
 
-`main.fk` is a starting program:
+`src/main.fk` is the starting program, and `src/greet.fk` holds one task it
+uses. The program says hello to `sortie`, or to a name you give it. You do not
+need to follow every line of it yet: Chapter 4 covers tasks, and Part IV
+covers splitting a program across files.
 
-```fk
--- sortie
--- Created with FREAK 0.14.2
-
-say "Hello from sortie!"
-```
-
-This program has no `main` task. In V3, a file without `main` runs the
-statements written at its top level, in order. That is convenient for a
-three-line script. This book writes `main` in every program anyway, because
-once a file has a `main`, statements outside it are not run at all, and it is
-easier to keep one habit than two. Chapter 4 shows that rule in action.
-
-Run the project the same way as before:
+Inside the project directory, `freak run` needs no file name, because the
+manifest names the entry. Anything after `--` is passed to the program:
 
 ```sh
 cd sortie
-freak run main.fk
+freak run
+freak run -- Ada
 ```
 
 ```text
-Hello from sortie!
+Hello, sortie!
+Hello, Ada!
 ```
 
-> [!note]
-> The dependencies section is less useful than it looks. In V3, Hangar can
-> download a package, but the compiler does not yet read downloaded packages
-> when it builds. The chapter on Hangar in Part IV explains what works and
-> what to do instead.
+`freak test` builds and runs the tests the manifest lists:
+
+```text
+  run: passed (11 ms), exit 0
+1 passed, 0 failed (1 tests)
+```
 
 ## In V4
 
@@ -502,8 +513,8 @@ cannot build yet. The message is worded as "not yet supported": it marks a
 gap in this commit, not a rule of the language.
 
 **Statements must be inside a task.** The specification says that only
-declarations may appear at the top level of a file, and V4 enforces it. The
-program that `freak init` generates does not build in V4:
+declarations may appear at the top level of a file, and V4 enforces it. A
+script, a file of statements with no `main`, does not build in V4:
 
 {{v4:toplevel_statement}}
 
@@ -522,8 +533,7 @@ value with `pilot`, which Chapter 2 introduces, and tries to print it:
 That limits what the V4 listings in the next few chapters can show on screen.
 Most of them report their result through the exit code instead.
 
-**A semicolon is accepted.** V3 rejects one at the end of a statement. V4
-allows it, as the specification does:
+**A semicolon is accepted**, as it is in V3 and in the specification:
 
 {{v4:semicolon}}
 

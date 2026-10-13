@@ -142,25 +142,20 @@
   },
   "book_int": {
     "stdout_any_of": [
-      "9\n5\n14\n3\n1\n-3\n-1\n7\n9\n9223372036854775807\n-9223372036854775808"
+      "9\n5\n14\n3\n1\n-3\n-1\n7\n9\n9223372036854775807"
     ],
+    "exit_code": 1,
     "strict_borrow": true
   },
   "book_keyword_case": {
     "stdout_any_of": [
-      "true\nfalse"
+      "true\ntrue"
     ],
     "strict_borrow": true
   },
   "book_loop_forever": {
     "stdout_any_of": [
       "climbing through 2500\nclimbing through 5000\nclimbing through 7500\nclimbing through 10000\nlevel at 10000"
-    ],
-    "strict_borrow": true
-  },
-  "book_no_entry": {
-    "stdout_any_of": [
-      ""
     ],
     "strict_borrow": true
   },
@@ -224,12 +219,6 @@
     ],
     "strict_borrow": true
   },
-  "book_toplevel_main": {
-    "stdout_any_of": [
-      "main sees Valkyries"
-    ],
-    "strict_borrow": true
-  },
   "book_training_arc": {
     "stdout_any_of": [
       "100\n4"
@@ -238,13 +227,13 @@
   },
   "book_when": {
     "stdout_any_of": [
-      "launch\nunknown order\ncleared for sortie\nlead element\nthe catch-all came first, so it always wins"
+      "launch\nunknown order\ncleared for sortie\nlead element"
     ],
     "strict_borrow": true
   },
   "book_words_intro": {
     "stdout_any_of": [
-      "Muv-Luv\n7\nXM3\ntrue\nMuv-Luv: 12 sorties, ratio 0.75, cleared true\n{sorties + 1} is not worked out\ntab:[\t] quote:[\"] backslash:[\\]"
+      "Muv-Luv\n7\nXM3\ntrue\ntrue\nMuv-Luv: 12 sorties, ratio 0.75, cleared true\n{sorties} is printed as written\ntab:[\t] quote:[\"] backslash:[\\]"
     ],
     "strict_borrow": true
   },
@@ -462,6 +451,24 @@
   "book_two_word_case": {
     "stdout_any_of": [
       "20"
+    ],
+    "strict_borrow": true
+  },
+  "book_for_ranges": {
+    "stdout_any_of": [
+      "range 1\nrange 2\nrange 3\ninclusive 1\ninclusive 2\ninclusive 3\nstep 0\nstep 4\nstep 8\npass 0\npass 1\ncountdown 3\ncountdown 2\ncountdown 1"
+    ],
+    "strict_borrow": true
+  },
+  "book_script": {
+    "stdout_any_of": [
+      "booting\nValkyries ready"
+    ],
+    "strict_borrow": true
+  },
+  "book_while": {
+    "stdout_any_of": [
+      "fuel 3\nfuel 2\nfuel 1\nlaps 2"
     ],
     "strict_borrow": true
   }

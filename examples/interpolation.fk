@@ -1,7 +1,7 @@
 -- `{path}` inside a double-quoted word interpolates a binding.
 -- A path is an identifier plus zero or more `.field` hops, and must
--- resolve to word, int, num or bool. Anything that is not a valid path
--- stays literal text.
+-- resolve to word, int, num or bool. Anything else in braces is an
+-- error; write \{ and \} to print a brace.
 -- (`Aviator`, not `Pilot`: V3 keywords are case-insensitive, so `Pilot`
 -- is the `pilot` keyword and cannot name a shape.)
 shape Aviator {
@@ -28,6 +28,6 @@ task main() -> void {
     say "shape: {p.name} / {p.score}"
     say p.summary()
 
-    -- Not a path, so it is printed literally:
-    say "literal {1 + 2} braces"
+    -- Escaped braces are printed as they are:
+    say "literal \{1 + 2\} braces"
 }

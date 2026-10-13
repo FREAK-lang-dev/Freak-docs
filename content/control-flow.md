@@ -61,8 +61,8 @@ V3 has exactly three loop forms.
 repeat COUNT times { body }
 ```
 
-`COUNT` is any `int` expression, evaluated **once** before the loop. There is no
-loop variable — keep your own counter if you need the index.
+`COUNT` is any `int` expression, evaluated **once** before the loop. Add
+`with NAME` to get a counter that starts at 0: `repeat COUNT times with i { }`.
 
 ```fk
 pilot mut i: int = 0
@@ -152,29 +152,30 @@ from the specification.
 > and it does not run on `give back`, `break` or `panic`. Treat it as a labelled
 > section, not as `defer`. True deferred semantics are V4.
 
-## No `for each`
+## for each, ranges and counting loops
 
-`for each` lexes as a keyword but has no grammar in V3:
+`for each NAME in LIST { }` visits each element of a list. The same form walks a
+range of ints: `a..b` excludes `b`, `a..=b` includes it, and `step` sets the
+distance between values. `repeat N times with NAME { }` names the counter of a
+counted loop, starting at 0. The C-style `for (pilot i = 0; i < n; i += 1) { }`
+is also accepted. In every form the loop variable exists only inside the body.
 
-```text
-error: unexpected 'for each' — this token cannot start an expression
-```
+{{example:book_for_ranges}}
 
-Iterate with an index instead:
+A word is not a list: `for each c in "abc"` is a type error.
 
-```fk
-pilot mut i: int = 0
-repeat array_len(items) times {
-    say array_get(items, i)
-    i += 1
-}
-```
+## while
+
+`while CONDITION { }` runs as long as the condition is true, testing before
+each pass. `repeat while CONDITION { }` is the same loop. `while` is a reserved
+word.
+
+{{example:book_while}}
 
 ## Summary of what is missing
 
 | Construct | Status |
 |---|---|
-| `for each x in list` | V4 |
 | `for each (i, x) in list.enumerate()` | V4 |
 | `check` over `maybe` / `result` | V4 |
 | `check route` | V4 |

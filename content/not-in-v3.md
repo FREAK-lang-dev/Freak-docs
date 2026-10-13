@@ -207,8 +207,9 @@ Every parameter is by value, and shapes are handles into runtime storage — so 
 task that mutates a shape parameter's field affects the caller. Return a fresh
 shape when you want isolation.
 
-`--strict-borrow` enables a Phase-1 checker for immutability and single-owner
-moves; that is the whole of V3's ownership story.
+`--strict-borrow` enables a Phase-1 checker for single-owner moves, and
+`fixed` pilots are always immutable; that is the whole of V3's ownership
+story.
 
 ## Concurrency
 
@@ -292,8 +293,8 @@ Stick to `int`, `num`, `bool` and `void` across the boundary — `word` is an
 ## Build modes, voices, output paths
 
 `slice_of_life`, `mecha`, `shonen_jump`, `final_form` and `alternative` build
-modes do not exist; nor do `--voice=`, `--clearance=`, `--build-mode=` or
-`-o output_path`. The knobs are `--opt=0..3`, `--c` / `--llvm`, `--target=` and
+modes do not exist; nor do `--voice=`, `--clearance=` or `--build-mode=`. The
+knobs are `--opt=0..3`, `--c` / `--llvm`, `--target=`, `-o` / `--output=` and
 `--strict-borrow`.
 
 ## Tooling

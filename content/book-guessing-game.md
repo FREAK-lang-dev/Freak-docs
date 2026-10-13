@@ -35,8 +35,8 @@ freak init guess
 cd guess
 ```
 
-Open `main.fk` and delete what is there. Each step below replaces the file's
-contents. Run each one with `freak run main.fk` and see it work before going
+Open `src/main.fk` and delete what is there. Each step below replaces the
+file's contents. Run each one with `freak run` and see it work before going
 on.
 
 ## Step 1: asking for a guess
@@ -242,14 +242,12 @@ and stops.
 
 ### `mut`
 
-`solved` and `attempts` are declared with `pilot mut`. `mut` marks a pilot
-whose value will change after it is created. `secret` never changes, so it is a
-plain `pilot`.
+`solved` and `attempts` are declared with `pilot mut`. `mut` says that the
+pilot's value will change after it is created. It is a note to the reader: a
+plain `pilot` can be changed too, and Chapter 3 shows the form that cannot.
+`secret` never changes, so it is a plain `pilot`.
 
 `attempts += 1` is short for `attempts = attempts + 1`.
-
-Chapter 3 explains exactly how strictly `mut` is enforced. For now, the habit
-to form is simple: if you are going to assign to it again, write `mut`.
 
 ### `continue` and `break`
 
@@ -308,19 +306,25 @@ five lines of input.
 
 ## Playing it
 
-`freak run` takes no arguments for your program; it reports an extra word as
-an unknown flag. To play with a chosen secret, build once and run the program
-yourself:
+To play with a chosen secret, pass it after `--`. Everything after `--` goes
+to your program, not to `freak`:
 
 ```sh
-freak build main.fk
-./main 42
+freak run -- 42
 ```
 
 To play properly, leave the argument off:
 
 ```sh
-./main
+freak run
+```
+
+`freak build` makes a program you can start without `freak`. In this project
+it is written next to the source, as `src/main`:
+
+```sh
+freak build
+./src/main 42
 ```
 
 Try the edges. Type a word instead of a number. Type a number with spaces
@@ -357,22 +361,16 @@ commit V4 does not accept `pilot mut`, and lets every pilot be reassigned:
 
 {{v4:pilot_mut}}
 
-V3 in its default mode builds this V4 listing as it stands. V3's strict mode
-does not. It wants `mut` on a pilot that changes, and this V4 commit rejects
-the word. It also objects to the way `guess` is passed to a task, for a reason
-that belongs to Part III. So this is the first program that cannot be written
-one way for both.
-
-The specification does not settle the matter. Its section on pilots says they
-can be reassigned by default and that `fixed pilot` is the form that cannot.
-Its notes on the borrow checker describe V3's rule, where only a `pilot mut`
-can. Chapter 3 shows what each compiler does today.
+V3 builds this V4 listing as it stands, in its strict mode too, and it gives
+the same exit code. Both follow the specification's section on pilots: a pilot
+can be reassigned unless it is declared `fixed`. The difference left is `mut`
+itself, which V3 accepts as an optional word and this V4 commit rejects.
 
 ## Summary
 
 You built a complete interactive program. Along the way you used:
 
-- `pilot` to name a value, and `pilot mut` for one that changes
+- `pilot` to name a value, and `pilot mut` to say that it will change
 - `ask` to read a line, and `say` with `{name}` interpolation to print
 - methods on words: `trim()` and `parse_int()`, with `parse_status()` to learn whether the parse worked
 - the types `word`, `int` and `bool`, which you wrote down only once, as a task's return type

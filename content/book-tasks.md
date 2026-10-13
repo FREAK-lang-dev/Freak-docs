@@ -173,19 +173,25 @@ exit code is a small number. On Linux and macOS only values from 0 to 255
 survive the journey to the operating system, so use it for a status, not for a
 result.
 
-## The top level is for declarations
+## Scripts and the top level
 
-Chapter 1 mentioned that a file with no `main` runs the statements at its top
-level. Once a file has a `main`, that stops. The program starts at `main`, and
-a statement written outside every task is not run at all:
+A file does not have to have a `main`. Without one, it is a *script*: the
+statements at its top level run in order, from the first line to the last.
 
-{{example:book_toplevel_main}}
+{{example:book_script}}
 
-The top-level pilot still works, because a pilot is a declaration. The
-top-level `say` is a statement, and it was silently skipped.
+That is convenient for a few lines of work. Once a file has a `main`, the
+program starts there instead, and a statement outside every task would never
+run. The compiler refuses one rather than skip it quietly:
 
-The rule to take from this: in a program with a `main`, put only declarations
-at the top level. That means tasks, pilots, and the shapes of Part II.
+{{diagnostic:book_toplevel_main}}
+
+The top-level pilot is fine, because a pilot is a declaration. The top-level
+`say` is a statement, and it is what the message points at.
+
+The rule to take from this: choose one shape per file. Either write a script
+with no `main`, or put only declarations at the top level: tasks, pilots, and
+the shapes of Part II.
 
 Tasks themselves can only be declared at the top level. A task inside a task
 is an error:
@@ -197,21 +203,18 @@ is an error:
 All the tasks in a program share one set of names. Two tasks cannot have the
 same name, even with different parameters.
 
-That set includes more than your own file. Chapter 1 showed that the standard
-library is placed in front of your program before it is compiled. Its tasks
-are in the same set of names as yours, and you cannot declare a task with a
-name it already uses:
-
-{{diagnostic:book_task_name_taken}}
-
-`string_reverse` is a standard-library task. The message does not say where
-the other declaration is, which makes this confusing the first time. If a task
-name you have certainly used only once is reported as conflicting, the
-standard library has it. Choose a more specific name.
+The standard library is placed in front of your program before it is
+compiled, but its tasks do not take names away from you. If you declare a task
+with the same name as a standard-library task, such as `string_reverse`, your
+program calls yours.
 
 The names of the operations built into the compiler, such as `ask`, are
-protected in the same way, with the message `conflicts with a compiler
-builtin`.
+different. They are protected, and declaring a task with one of them is
+refused with the message `conflicts with a compiler builtin`.
+
+A pilot also takes a name away from a task while it is visible. Inside a task
+that declares `pilot f = 3`, a call `f()` is refused with `local value shadows
+this name`. Give the pilot a different name.
 
 ## The pipe operator
 

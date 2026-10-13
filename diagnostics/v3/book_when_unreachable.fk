@@ -1,0 +1,7 @@
+task main() {
+    pilot rank = "ace"
+    when rank {
+        _ -> say "the catch-all comes first"
+        "ace" -> say "never reached"
+    }
+}
