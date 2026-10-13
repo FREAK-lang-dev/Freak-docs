@@ -1,4 +1,4 @@
--- V4 accepts a semicolon at the end of a statement. V3 rejects it.
+-- V4 accepts a semicolon at the end of a statement, as V3 does.
 task main() -> int {
     pilot fuel = 50;
     give back fuel

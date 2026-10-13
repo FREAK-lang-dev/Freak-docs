@@ -14,14 +14,14 @@ freak <command> [file.fk] [options]
 | `freak run <file.fk>` | Build, then execute |
 | `freak check <file.fk>` | Lex, parse and type-check only — **no standard library** |
 | `freak transpile <file.fk>` | Emit `.c` or `.ll` and stop |
-| `freak init` | Scaffold a new project |
+| `freak init NAME [--template=cli\|lib\|http]` | Create a project: manifest, sources and a test |
 | `freak doctor` | Validate the toolchain and payload |
 | `freak upgrade` | Download and stage a newer FREAK |
 | `freak hangar <cmd>` | Package manager (also a standalone `hangar` binary) |
 | `freak version`, `freak --version`, `freak -V` | Print the version |
 | `freak help`, `freak --help`, `freak -h` | Print the help screen |
 | `freak flex` | Print the banner |
-| `freak test` | Source-checkout shim around `python tests/suite/run_tests.py` |
+| `freak test` | In a project: build and run the tests listed in `hangar.toml` |
 | `freak audit-science` | List every `for science,` call site |
 | `freak audit-trust` | List every `trust me` block with its honor level |
 | `freak audit-miracles` | List every `deus_ex_machina` block |
@@ -38,7 +38,7 @@ freak <command> [file.fk] [options]
 > [!note]
 > The audit subcommands shell out to `python -m freakc`. They need the Python
 > bootstrap package and the repository's audit inputs; the native V3 binary
-> does not contain that auditor. The same is true of `freak test`.
+> does not contain that auditor.
 
 ## Options
 
@@ -49,6 +49,7 @@ freak <command> [file.fk] [options]
 | `--opt=N` | Optimisation level, `0`–`3`. Default `2` |
 | `--target=TRIPLE` | Cross-compile target triple |
 | `--strict-borrow` | Enable the opt-in Phase-1 ownership checker |
+| `-o NAME`, `--output=NAME` | Name of the output binary. Default: the source basename |
 
 Flags may appear in any order after the file:
 
@@ -101,7 +102,7 @@ standalone binary.
 | Subcommand | Status |
 |---|---|
 | `hangar init [name]` | works |
-| `hangar add <name> [constraint]` | works |
+| `hangar add <name> [constraint]` | refused in 0.15.0: *"Registry package sources are unavailable; specify an explicit Git source"* |
 | `hangar add <name> <repo> [version]` | works |
 | `hangar remove <name>` | works |
 | `hangar install` | works |
@@ -113,27 +114,23 @@ standalone binary.
 | `hangar login`, `hangar publish [--dry-run]` | works |
 | `hangar search <query>` | not in this build |
 
-A `hangar.toml` as the tool actually writes it:
+What `hangar init` writes:
 
 ```toml
-[project]
-name = "demo"
-version = "0.1.0"
-
-[dependencies]
-muvluv = "^2.0"
+project.name = "demo"
+project.version = "0.1.0"
 ```
 
 Dependency constraints are matched by `std/version.fk`, whose semver
 comparison and `^`-constraint logic you can call directly — see
 [Standard library](stdlib.html#stdversion).
 
-> [!warn]
-> **Installing a package does not make it usable.** `freak build` never reads
-> `hangar_modules/` or `[dependencies]`, and `use pkg::{…}` is stripped to a
-> comment before parsing. Dependencies have to be concatenated into your source
-> by hand. See [Hangar & packages](hangar.html) for the full picture and the
-> working pattern.
+> [!note]
+> As of 0.15, `freak build`, `freak run` and `freak test` read `hangar.toml`. A
+> project's modules and its declared dependencies are compiled in, and
+> `use name::{item}` imports an exported task. A project needs `kind` and, for
+> an app, `entry`, which `freak init` writes and `hangar init` does not. See
+> [Hangar & packages](hangar.html).
 
 ## Environment
 

@@ -133,10 +133,10 @@ pilot back: int = f.to_int()
 This is the single most surprising rule in V3, and the one that produces the
 most confusing errors.
 
-The lexer lowercases every identifier before comparing it against the keyword
-table. `pilot`, `Pilot`, `PILOT` and `PiLoT` are all the same keyword token.
-A keyword can never be an identifier, so none of those can name a shape, task,
-field or binding.
+The lexer compares every identifier against the keyword table in lowercase, so
+`pilot`, `Pilot`, `PILOT` and `PiLoT` are all reserved. None of them can name
+a shape, task, field or binding. Only the lowercase spelling works as the
+keyword, though: `Pilot x = 1` is a syntax error, not a declaration.
 
 {{example:reserved_words}}
 
@@ -158,6 +158,7 @@ times   until    done     for      each     check    result
 got     nobody   some     ok       err      sessions max
 foreshadow  payoff  route  sadly   deus_ex_machina   isekai
 eventually  and    or      not     nakama   tsundere extern
+while
 
 true  false  yes  no  hai  iie
 ```
@@ -167,6 +168,7 @@ Multi-word keywords, lexed greedily:
 ```text
 give back   or else    trust me    for each    for science
 training arc   bringing back   only on   PLUS ULTRA   FINAL FORM
+grounded pilot
 ```
 
 The names that catch people most often are `Pilot`, `Result`, `Max`, `Route`,
@@ -176,8 +178,8 @@ The names that catch people most often are `Pilot`, `Result`, `Max`, `Route`,
 
 > [!warn]
 > Several of these words are reserved but have **no grammar at all** in V3 —
-> `doctrine`, `use`, `launch`, `check`, `lend`, `route`, `foreshadow`,
-> `isekai`, `trust me`, `for each`. They lex as keywords and then fail in the
+> `doctrine`, `launch`, `lend`, `route`, `foreshadow`, `isekai`, `trust me`.
+> They lex as keywords and then fail in the
 > parser with *"this token cannot start an expression"*. They still cannot be
 > used as identifiers.
 

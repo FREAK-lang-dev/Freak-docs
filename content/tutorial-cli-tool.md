@@ -29,8 +29,8 @@ task main() -> void {
 
 Argument 0 is the executable path, so the first real argument is index 1.
 
-That loop is the standard V3 iteration idiom: a counted `repeat` plus a manual
-index. There is no `for each`.
+That loop is a counted `repeat` plus a manual index. `repeat N times with i`
+supplies the index for you, starting at 0.
 
 ## Step 2 — Reading a file
 
@@ -181,8 +181,8 @@ Call `configure_output()` first thing in `main`.
 Run it against your own file:
 
 ```sh
-freak run wordcount.fk README.md
-NO_COLOR=1 freak run wordcount.fk README.md
+freak run wordcount.fk -- README.md
+NO_COLOR=1 freak run wordcount.fk -- README.md
 ```
 
 ## What you would reach for next, and cannot
@@ -194,8 +194,8 @@ Worth knowing before you plan a bigger tool:
 | `result<T, E>` and `?` | None. Sentinels and `process::exit` |
 | `.split(",")` into a list | `string_split` returns an encoded word, not a list. Walk characters |
 | A map for counting words | No `Map<K,V>`. Two parallel collections and `array_find` |
-| `for each line in lines` | Counted `repeat` plus an index |
+| `for each line in lines` | `for each` walks a `List<T>` or an int range, not a word. Here, a counted loop plus an index |
 | Writing to stderr | No stderr writer. Everything goes to stdout |
-| A `-o` output flag | Output path is fixed to the source basename |
+| A `-o` output flag | `freak build -o NAME` or `--output=NAME`. Default: the source basename |
 
 See [Not in V3](not-in-v3.html) for substitutes.

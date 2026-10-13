@@ -17,7 +17,7 @@ Each entry gives the exact error and a working V3 substitute.
 
 ```text
 error: expected '{', found '<'          -- maybe<T>, result<T,E>
-error: unexpected 'check'
+error: expected keyword 'result', found 'x'   -- check over a maybe
 error: unexpected '?'
 error: unexpected 'or else'
 ```
@@ -25,6 +25,11 @@ error: unexpected 'or else'
 There is no `maybe<T>`, `result<T,E>`, `some`, `nobody`, `ok`, `err`, `?` or
 `or else`. Signal absence and failure with sentinel values, the way the
 compiler's own source does.
+
+One narrow form exists: `check result` over the value of
+`fs::read_checked(path)`, with one `ok(text)` arm and one `err(e)` arm. It
+tells a missing file from an empty one, and it is the only thing `check`
+accepts.
 
 For parsing specifically, v0.14.2 added a checked pair —
 `w.parse_int()` / `w.parse_num()` plus a global `parse_status()` — which
@@ -92,10 +97,11 @@ task map_get(keys: int, values: int, key: word) -> word {
 ## Iteration
 
 ```text
-error: unexpected 'for each' — this token cannot start an expression
+type error: for each requires a list with a known element type
 ```
 
-Use an index and a counted loop:
+`for each` walks a `List<T>` or an int range. It does not walk a word or a
+legacy array handle. For those, use an index and a counted loop:
 
 ```fk
 pilot mut i: int = 0
@@ -229,19 +235,22 @@ pilot code: int = process::exec("some-command --flag")
 error: unexpected 'launch' — this token cannot start an expression
 ```
 
-`use` lines are replaced with comments before parsing. There is no import
-system and no visibility system — one flat global namespace holds your file and
-every linked standard-library file.
+`launch` does not parse, and there is no `launch(package)` and no glob import.
+What V3 has instead is the project manifest: `hangar.toml` names a project's
+modules, exports and dependencies, and `use` imports named tasks across them.
 
 Consequences worth planning around:
 
-- Name collisions with `std/` tasks are real. Prefix your tasks.
+- A single file built outside a project shares one flat global namespace with
+  every linked standard-library file. A task of yours with the name of a
+  `std/` task replaces it for your program without a warning, so prefix your
+  tasks. The compiler's builtins, such as `ask`, are protected: redefining one
+  is an error.
 - `use std::math3d`, `use std::zip`, `use std::ui` and `use cockpit` still
   matter as **build triggers** — the text switches on linking that module.
-- **Hangar packages cannot be consumed.** `hangar install` downloads into
-  `hangar_modules/`, but the build never reads it. Concatenate the source
-  instead: `cat lib/thing.fk src/app.fk > combined.fk && freak build
-  combined.fk`. See [Hangar & packages](hangar.html).
+- A `use` of anything else must name a module or a dependency declared in
+  `hangar.toml`, or the build stops with `undeclared direct dependency`. See
+  [Hangar & packages](hangar.html).
 
 ## Advanced types
 
@@ -301,5 +310,5 @@ knobs are `--opt=0..3`, `--c` / `--llvm`, `--target=`, `-o` / `--output=` and
 
 No language server, no incremental parsing, no tolerant AST, no autocomplete,
 no `test "name" { expect ... }` framework, no JIT. Parse errors abort the
-build. `freak test` is a shim around a Python regression runner in the source
-checkout.
+build. `freak test` runs the test programs a project lists in `hangar.toml`;
+there is no in-language test block.

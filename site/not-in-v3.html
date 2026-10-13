@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -69,10 +69,11 @@
 <div class="callout note"><div class="callout-title">Note</div><p>Some things on the bible&#x27;s missing list have quietly arrived. V3 now has a typed [<code>List&lt;T&gt;</code>](arrays.html), a builtin [<code>ByteBuffer</code>](stdlib.html#bytebuffer), a [<code>word_builder::*</code>](words.html#building-words-incrementally) accumulator, and a <code>tcp::socket_*</code> family that can listen and accept. Check <a href="conformance.html">Bible vs V3</a> before assuming something is absent.</p></div>
 <h2 id="optional-and-fallible-values">Optional and fallible values<a class="anchor" href="#optional-and-fallible-values" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><pre class="code"><code>error: expected &#x27;{&#x27;, found &#x27;&lt;&#x27;          -- maybe&lt;T&gt;, result&lt;T,E&gt;
-error: unexpected &#x27;check&#x27;
+error: expected keyword &#x27;result&#x27;, found &#x27;x&#x27;   -- check over a maybe
 error: unexpected &#x27;?&#x27;
 error: unexpected &#x27;or else&#x27;</code></pre></div>
 <p>There is no <code>maybe&lt;T&gt;</code>, <code>result&lt;T,E&gt;</code>, <code>some</code>, <code>nobody</code>, <code>ok</code>, <code>err</code>, <code>?</code> or <code>or else</code>. Signal absence and failure with sentinel values, the way the compiler&#x27;s own source does.</p>
+<p>One narrow form exists: <code>check result</code> over the value of <code>fs::read_checked(path)</code>, with one <code>ok(text)</code> arm and one <code>err(e)</code> arm. It tells a missing file from an empty one, and it is the only thing <code>check</code> accepts.</p>
 <p>For parsing specifically, v0.14.2 added a checked pair — <code>w.parse_int()</code> / <code>w.parse_num()</code> plus a global <code>parse_status()</code> — which distinguishes &quot;parsed zero&quot; from &quot;failed&quot;. <code>ByteBuffer.status()</code> follows the same out-of-band pattern. See <a href="words.html#checked-parsing">checked parsing</a>.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- A word task returns &quot;&quot; for &quot;no value&quot;.</span>
@@ -117,8 +118,8 @@ error: unexpected &#x27;or else&#x27;</code></pre></div>
     <span class="c-kw">give back</span> <span class="c-fn">array_get</span>(values, at)
 }</code></pre></div>
 <h2 id="iteration">Iteration<a class="anchor" href="#iteration" aria-label="Link to this section">#</a></h2>
-<div class="codeblock"><pre class="code"><code>error: unexpected &#x27;for each&#x27; — this token cannot start an expression</code></pre></div>
-<p>Use an index and a counted loop:</p>
+<div class="codeblock"><pre class="code"><code>type error: for each requires a list with a known element type</code></pre></div>
+<p><code>for each</code> walks a <code>List&lt;T&gt;</code> or an int range. It does not walk a word or a legacy array handle. For those, use an index and a counted loop:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
 <span class="c-kw">repeat</span> <span class="c-fn">array_len</span>(items) <span class="c-kw">times</span> {
@@ -178,7 +179,7 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <div class="codeblock"><pre class="code"><code>error: expected an identifier for parameter name, found &#x27;lend&#x27;</code></pre></div>
 <p>No <code>lend</code> / <code>lend mut</code> parameters, no <code>&#x27;a</code> lifetimes, no outlives bounds, no <code>Shared&lt;T&gt;</code> / <code>Weak&lt;T&gt;</code>, no <code>.clone()</code>, no <code>trust me</code>.</p>
 <p>Every parameter is by value, and shapes are handles into runtime storage — so a task that mutates a shape parameter&#x27;s field affects the caller. Return a fresh shape when you want isolation.</p>
-<p><code>--strict-borrow</code> enables a Phase-1 checker for immutability and single-owner moves; that is the whole of V3&#x27;s ownership story.</p>
+<p><code>--strict-borrow</code> enables a Phase-1 checker for single-owner moves, and <code>fixed</code> pilots are always immutable; that is the whole of V3&#x27;s ownership story.</p>
 <h2 id="concurrency">Concurrency<a class="anchor" href="#concurrency" aria-label="Link to this section">#</a></h2>
 <p>Nothing at all. No <code>xm3</code>, <code>sortie</code>, <code>debrief</code>, <code>formation</code>, <code>BriefingRoom</code>, <code>wingman</code>, <code>Comms</code>, <code>std::thread</code>, atomics or channels. None of those words are keywords. <code>||</code> lexes as one token and has no grammar rule.</p>
 <p>Shell out if you must:</p>
@@ -186,9 +187,9 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">pilot</span> code<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> process<span class="c-op">::</span><span class="c-fn">exec</span>(<span class="c-str">&quot;some-command --flag&quot;</span>)</code></pre></div>
 <h2 id="modules-and-visibility">Modules and visibility<a class="anchor" href="#modules-and-visibility" aria-label="Link to this section">#</a></h2>
 <div class="codeblock"><pre class="code"><code>error: unexpected &#x27;launch&#x27; — this token cannot start an expression</code></pre></div>
-<p><code>use</code> lines are replaced with comments before parsing. There is no import system and no visibility system — one flat global namespace holds your file and every linked standard-library file.</p>
+<p><code>launch</code> does not parse, and there is no <code>launch(package)</code> and no glob import. What V3 has instead is the project manifest: <code>hangar.toml</code> names a project&#x27;s modules, exports and dependencies, and <code>use</code> imports named tasks across them.</p>
 <p>Consequences worth planning around:</p>
-<ul><li>Name collisions with <code>std/</code> tasks are real. Prefix your tasks.</li><li><code>use std::math3d</code>, <code>use std::zip</code>, <code>use std::ui</code> and <code>use cockpit</code> still matter as <strong>build triggers</strong> — the text switches on linking that module.</li><li><strong>Hangar packages cannot be consumed.</strong> <code>hangar install</code> downloads into <code>hangar_modules/</code>, but the build never reads it. Concatenate the source instead: <code>cat lib/thing.fk src/app.fk &gt; combined.fk &amp;&amp; freak build combined.fk</code>. See <a href="hangar.html">Hangar &amp; packages</a>.</li></ul>
+<ul><li>A single file built outside a project shares one flat global namespace with every linked standard-library file. A task of yours with the name of a <code>std/</code> task replaces it for your program without a warning, so prefix your tasks. The compiler&#x27;s builtins, such as <code>ask</code>, are protected: redefining one is an error.</li><li><code>use std::math3d</code>, <code>use std::zip</code>, <code>use std::ui</code> and <code>use cockpit</code> still matter as <strong>build triggers</strong> — the text switches on linking that module.</li><li>A <code>use</code> of anything else must name a module or a dependency declared in <code>hangar.toml</code>, or the build stops with <code>undeclared direct dependency</code>. See <a href="hangar.html">Hangar &amp; packages</a>.</li></ul>
 <h2 id="advanced-types">Advanced types<a class="anchor" href="#advanced-types" aria-label="Link to this section">#</a></h2>
 <p><code>power&lt;N&gt;</code>, <code>prob[lo..hi]</code>, <code>causality&lt;T&gt;</code> and <code>mood</code> do not lex. Model the same intent with ordinary values and runtime checks:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
@@ -205,13 +206,13 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <h2 id="syntax-shorthands">Syntax shorthands<a class="anchor" href="#syntax-shorthands" aria-label="Link to this section">#</a></h2>
 <div class="tablewrap"><table><thead><tr><th>Bible form</th><th>V3</th></tr></thead><tbody><tr><td><code>task f(x) =&gt; expr</code></td><td>Use a braced body with <code>give back</code></td></tr><tr><td><code>done</code> closing a block</td><td>Use <code>}</code></td></tr><tr><td><code>**</code> exponent</td><td><code>math::pow(a, b)</code> or <code>std_pow(a, b)</code></td></tr><tr><td><code>-5</code> as a literal</td><td><code>0 - 5</code></td></tr><tr><td><code>42u</code>, <code>3.14f</code>, <code>42t</code>, <code>999b</code></td><td>No suffixes</td></tr><tr><td><code>[0; 100]</code> repeat-fill</td><td><code>List::filled(0, 100)</code></td></tr><tr><td><code>[T; N]</code> fixed arrays</td><td><code>List&lt;T&gt;</code>, or a legacy array handle</td></tr><tr><td><code>(a, b)</code> tuples</td><td>A shape</td></tr><tr><td>Named call arguments</td><td>Positional only</td></tr><tr><td>Stacked <code>@a @b</code> annotations</td><td>One per statement</td></tr><tr><td><code>@rival(meiya)</code> annotation arguments</td><td>Bare <code>@name</code> only</td></tr></tbody></table></div>
 <h2 id="build-modes-voices-output-paths">Build modes, voices, output paths<a class="anchor" href="#build-modes-voices-output-paths" aria-label="Link to this section">#</a></h2>
-<p><code>slice_of_life</code>, <code>mecha</code>, <code>shonen_jump</code>, <code>final_form</code> and <code>alternative</code> build modes do not exist; nor do <code>--voice=</code>, <code>--clearance=</code>, <code>--build-mode=</code> or <code>-o output_path</code>. The knobs are <code>--opt=0..3</code>, <code>--c</code> / <code>--llvm</code>, <code>--target=</code> and <code>--strict-borrow</code>.</p>
+<p><code>slice_of_life</code>, <code>mecha</code>, <code>shonen_jump</code>, <code>final_form</code> and <code>alternative</code> build modes do not exist; nor do <code>--voice=</code>, <code>--clearance=</code> or <code>--build-mode=</code>. The knobs are <code>--opt=0..3</code>, <code>--c</code> / <code>--llvm</code>, <code>--target=</code>, <code>-o</code> / <code>--output=</code> and <code>--strict-borrow</code>.</p>
 <h2 id="tooling">Tooling<a class="anchor" href="#tooling" aria-label="Link to this section">#</a></h2>
-<p>No language server, no incremental parsing, no tolerant AST, no autocomplete, no <code>test &quot;name&quot; { expect ... }</code> framework, no JIT. Parse errors abort the build. <code>freak test</code> is a shim around a Python regression runner in the source checkout.</p>
+<p>No language server, no incremental parsing, no tolerant AST, no autocomplete, no <code>test &quot;name&quot; { expect ... }</code> framework, no JIT. Parse errors abort the build. <code>freak test</code> runs the test programs a project lists in <code>hangar.toml</code>; there is no in-language test block.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

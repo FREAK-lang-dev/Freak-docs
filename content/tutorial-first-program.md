@@ -78,9 +78,9 @@ task main() -> void {
 `.field` hops — `callsign`, `unit.name`, `self.frame.thrust`.
 
 > [!warn]
-> Interpolation substitutes paths, **never calls**. `"{rank()}"` prints those
-> characters literally rather than calling anything. Compute into a binding
-> first — this is the single most common surprise in V3.
+> Interpolation substitutes paths, **never calls**. `"{rank()}"` is a compile
+> error, *"unsupported interpolation expression"*, not a call. Compute into a
+> binding first — this is the single most common surprise in V3.
 
 ## Step 4 — A task of your own
 
@@ -151,7 +151,8 @@ shape.
 
 ## Step 7 — Loops
 
-Three forms, no `for each`:
+Three of the loop forms. [Control flow](control-flow.html) has the rest,
+including `for each` and `while`:
 
 ```fk
 repeat 12 times { takeru.sorties += 1 }     -- counted

@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -76,7 +76,7 @@
 <p><strong>V3</strong> is the compiler you can install. It is written in FREAK and compiles itself. Every release so far, including the current one, is V3. When this book says something works, it means it works in V3.</p>
 <p><strong>V4</strong> is the next compiler, being built beside V3 in the same repository. Its project name is Maverick. It is a new design. V3 compiles a program from start to finish in one go. V4 is built from separate stages that each record what they learned, so that an editor can ask questions about your code while you type. V4 has no release yet. It already compiles and runs small programs, and it already differs from V3 in ways you will meet in the first chapter.</p>
 <p><strong>The specification</strong> is a document in the compiler repository, <code>freak-full-bible.md</code>, which everyone calls the bible. It describes the whole language as it is meant to be. Neither compiler implements all of it. V3 implements a small core. V4 understands much more of it than it can run yet.</p>
-<div class="callout note"><div class="callout-title">Note</div><p>The released V3 compiler prints the name Maverick too: <code>freak --version</code> answers <code>freak 0.14.2 (Maverick)</code>. That overlap is historical. In this book &quot;V3&quot; always means the compiler you install, and &quot;V4&quot; always means the new one under development.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p>The released V3 compiler prints the name Maverick too: <code>freak --version</code> answers <code>freak 0.15.0 (Maverick)</code>. That overlap is historical. In this book &quot;V3&quot; always means the compiler you install, and &quot;V4&quot; always means the new one under development.</p></div>
 <h2 id="how-the-book-marks-what-is-real">How the book marks what is real<a class="anchor" href="#how-the-book-marks-what-is-real" aria-label="Link to this section">#</a></h2>
 <p>A book about a language that is still being built could easily describe three different languages at once without telling you. This one separates them, in the same way on every page.</p>
 <h3 id="ordinary-text-is-v3-and-it-has-been-run">Ordinary text is V3, and it has been run<a class="anchor" href="#ordinary-text-is-v3-and-it-has-been-run" aria-label="Link to this section">#</a></h3>
@@ -151,8 +151,8 @@
 <p>Turn to <a href="book-getting-started.html">Chapter 1</a> to install the compiler.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

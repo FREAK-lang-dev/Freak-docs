@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -159,7 +159,7 @@ positive</code></pre>
   </div>
 </figure>
 <h2 id="main"><code>main</code><a class="anchor" href="#main" aria-label="Link to this section">#</a></h2>
-<p>If a task called <code>main</code> exists it becomes the program entry point. If it does not, top-level statements are the program. You can have both — top-level statements run first, then <code>main</code>.</p>
+<p>If a task called <code>main</code> exists it becomes the program entry point. If it does not, top-level statements are the program. A file cannot mix the two: beside a <code>main</code>, an executable statement at the top level is a compile error, <em>&quot;executable statement at top level is unsupported; place it inside task main()&quot;</em>. Declarations — <code>pilot</code>, <code>task</code>, <code>shape</code> — are fine at the top level either way.</p>
 <h2 id="parameters-are-by-value">Parameters are by value<a class="anchor" href="#parameters-are-by-value" aria-label="Link to this section">#</a></h2>
 <p>There is no <code>lend</code> / <code>lend mut</code> in V3: the borrow syntax from the bible does not parse in a parameter list. Every parameter is passed by value.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
@@ -204,8 +204,8 @@ positive</code></pre>
 <div class="tablewrap"><table><thead><tr><th>Feature</th><th>Status</th></tr></thead><tbody><tr><td>Generic parameters <code>task f&lt;T&gt;(...)</code></td><td>V4 — <code>expected &#x27;(&#x27;, found &#x27;&lt;&#x27;</code></td></tr><tr><td>Named call arguments</td><td>V4</td></tr><tr><td>Default parameter values</td><td>V4</td></tr><tr><td>Variadic parameters</td><td>V4</td></tr><tr><td>Closures / lambdas <code>|x| =&gt; x * 2</code></td><td>V4 — <code>|</code> cannot start an expression</td></tr><tr><td>Arrow bodies <code>=&gt; expr</code></td><td>V4</td></tr><tr><td><code>done</code> as a block terminator</td><td>V4</td></tr><tr><td>Returning <code>maybe&lt;T&gt;</code> or <code>result&lt;T,E&gt;</code></td><td>V4 — no such types</td></tr><tr><td><code>?</code> error propagation, <code>or else</code></td><td>V4</td></tr><tr><td>Visibility modifiers <code>launch</code> / <code>launch(package)</code></td><td>V4</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

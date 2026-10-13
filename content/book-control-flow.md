@@ -339,8 +339,8 @@ chain instead of sitting in an `else`:
 
 {{v4:else_if_trailing}}
 
-**An arm after `_` is an error.** V3 accepts a `when` whose catch-all comes
-first and never runs the arms below it. V4 refuses the program:
+**An arm after `_` is an error.** V3 refuses it, as shown earlier in this
+chapter. V4 refuses the program too, with its own message:
 
 {{v4:when_default_first}}
 

@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -65,7 +65,7 @@
     <article class="prose">
 <h1 id="verified-examples">Verified examples<a class="anchor" href="#verified-examples" aria-label="Link to this section">#</a></h1>
 <p class="lede">Every program on this site, compiled and executed by a real V3 binary.</p>
-<div class="summary-card"><div class="sc-num">83/83</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.14.2 (Maverick) on 2026-10-05T00:02:10Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.0 (Maverick) on 2026-10-13T16:49:47Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <p>Each card below shows the exact source file under <code>examples/</code>, a badge for whether it compiled and ran, and the program&#x27;s captured output. Reproduce the whole set with:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python tools/refresh.py --jobs 6</code></pre></div>
 <p>The harness copies each example into a clean temporary directory, runs <code>freak build</code> with the default LLVM backend, executes the resulting binary, and checks stdout against reviewed expectations. It normalizes CRLF and omits at most one final newline; extra blank lines and standalone carriage returns remain significant. A failure is recorded with its diagnostics and blocks publication.</p>
@@ -92,7 +92,7 @@
   </figcaption>
   <pre class="code"><code><span class="c-com">-- Bindings are declared with `pilot`.</span>
 <span class="c-com">-- `fixed pilot` marks an immutable binding.</span>
-<span class="c-com">-- `pilot mut` opts a binding into reassignment.</span>
+<span class="c-com">-- A plain `pilot` can be reassigned; `mut` is optional and tells the reader so.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> answer<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">42</span>
     <span class="c-kw">pilot</span> ratio<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">3.5</span>
@@ -372,7 +372,7 @@ in the air</code></pre>
     <span class="ex-name">examples/control_loops.fk</span>
     <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- V3 has three loop forms: a counted loop, a condition loop,</span>
+  <pre class="code"><code><span class="c-com">-- Three of V3&#x27;s loop forms: a counted loop, a condition loop,</span>
 <span class="c-com">-- and the bounded `training arc`.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-com">-- repeat N times</span>
@@ -613,8 +613,8 @@ F</code></pre>
   </figcaption>
   <pre class="code"><code><span class="c-com">-- `{path}` inside a double-quoted word interpolates a binding.</span>
 <span class="c-com">-- A path is an identifier plus zero or more `.field` hops, and must</span>
-<span class="c-com">-- resolve to word, int, num or bool. Anything that is not a valid path</span>
-<span class="c-com">-- stays literal text.</span>
+<span class="c-com">-- resolve to word, int, num or bool. Anything else in braces is an</span>
+<span class="c-com">-- error; write \{ and \} to print a brace.</span>
 <span class="c-com">-- (`Aviator`, not `Pilot`: V3 keywords are case-insensitive, so `Pilot`</span>
 <span class="c-com">-- is the `pilot` keyword and cannot name a shape.)</span>
 <span class="c-kw">shape</span> <span class="c-type">Aviator</span> {
@@ -641,8 +641,8 @@ F</code></pre>
     <span class="c-kw">say</span> <span class="c-str">&quot;shape: <span class="c-interp">{p.name}</span> / <span class="c-interp">{p.score}</span>&quot;</span>
     <span class="c-kw">say</span> p.<span class="c-fn">summary</span>()
 
-    <span class="c-com">-- Not a path, so it is printed literally:</span>
-    <span class="c-kw">say</span> <span class="c-str">&quot;literal {1 + 2} braces&quot;</span>
+    <span class="c-com">-- Escaped braces are printed as they are:</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;literal \{1 + 2\} braces&quot;</span>
 }</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
@@ -888,7 +888,7 @@ Takemikazuchi thrust=880</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
     <span class="c-kw">say</span> names[<span class="c-num">1</span>]
 
-    <span class="c-com">-- Indexed assignment requires `pilot mut`.</span>
+    <span class="c-com">-- Indexed assignment works on any list that is not `fixed`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> scores<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">10</span>, <span class="c-num">20</span>, <span class="c-num">30</span>]
     scores[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">99</span>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(scores[<span class="c-num">0</span>])
@@ -912,7 +912,7 @@ Takemikazuchi thrust=880</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">count_all</span>(names))
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">first_three</span>()[<span class="c-num">2</span>])
 
-    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.</span>
+    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> queue<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
     queue.<span class="c-fn">push</span>(<span class="c-num">10</span>)
     queue.<span class="c-fn">push</span>(<span class="c-num">20</span>)
@@ -926,7 +926,8 @@ Takemikazuchi thrust=880</code></pre>
     queue.<span class="c-fn">clear</span>()
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(queue.<span class="c-fn">length</span>())
 
-    <span class="c-com">-- Iterate with an index; there is no `for each`.</span>
+    <span class="c-com">-- Iterating with an index. `for each name in names { }` visits the same</span>
+    <span class="c-com">-- elements without one.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> i<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">0</span>
     <span class="c-kw">repeat</span> names.<span class="c-fn">length</span>() <span class="c-kw">times</span> {
         <span class="c-kw">say</span> names[i]
@@ -1562,7 +1563,7 @@ hi
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: /build/process_time
+arg 0: /build/process_time.exe
 arg 1: alpha
 arg 2: bravo
 true
@@ -1680,8 +1681,8 @@ old path</code></pre>
 
     <span class="c-kw">task</span> <span class="c-fn">greeting</span>(<span class="c-type">self</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
         <span class="c-com">-- Interpolation substitutes PATHS only, never calls. Writing</span>
-        <span class="c-com">-- &quot;{self.rank()}&quot; would print those characters literally, so the</span>
-        <span class="c-com">-- call result goes into a binding first.</span>
+        <span class="c-com">-- &quot;{self.rank()}&quot; is a compile error, so the call result goes</span>
+        <span class="c-com">-- into a binding first.</span>
         <span class="c-kw">pilot</span> rank<span class="c-op">:</span> <span class="c-type">word</span> <span class="c-op">=</span> <span class="c-type">self</span>.<span class="c-fn">rank</span>()
         <span class="c-kw">give back</span> <span class="c-str">&quot;<span class="c-interp">{self.name}</span> - <span class="c-interp">{self.sorties}</span> sorties, rank <span class="c-interp">{rank}</span>&quot;</span>
     }
@@ -1946,11 +1947,10 @@ busiest pilot flew 31</code></pre>
     <span class="ex-name">examples/module_pattern.fk</span>
     <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- Reusing code across files in V3.</span>
+  <pre class="code"><code><span class="c-com">-- Reusing code across files without a project.</span>
 <span class="c-com">--</span>
-<span class="c-com">-- The compiler takes exactly one source file, and Hangar packages are</span>
-<span class="c-com">-- never linked into it, so a &quot;library&quot; is just source you concatenate</span>
-<span class="c-com">-- ahead of your program:</span>
+<span class="c-com">-- A file built on its own is one translation unit, so outside a project</span>
+<span class="c-com">-- a &quot;library&quot; is just source you concatenate ahead of your program:</span>
 <span class="c-com">--</span>
 <span class="c-com">--     cat lib/text.fk src/app.fk &gt; build/combined.fk</span>
 <span class="c-com">--     freak build build/combined.fk</span>
@@ -2025,8 +2025,8 @@ busiest pilot flew 31</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(report.words)
     <span class="c-kw">say</span> report.longest
 
-    <span class="c-com">-- `use` lines are stripped before parsing, so leaving one in a</span>
-    <span class="c-com">-- concatenated build is harmless -- and equally, it imports nothing.</span>
+    <span class="c-com">-- No `use` line is needed, or possible, here: outside a project a</span>
+    <span class="c-com">-- `use` must name a standard module.</span>
 }</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
@@ -2151,8 +2151,8 @@ NEGOTIATE</code></pre>
 </figure>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

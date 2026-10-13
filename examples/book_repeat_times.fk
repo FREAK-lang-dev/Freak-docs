@@ -4,7 +4,8 @@ task main() {
         say "Valkyries, sound off"
     }
 
-    -- There is no loop counter; keep one yourself when you need it.
+    -- A bare `repeat N times` has no counter. Keep one yourself, or write
+    -- `repeat N times with i` for one that starts at 0.
     pilot mut number = 1
     repeat 3 times {
         say "Valkyrie-{number}"

@@ -18,9 +18,9 @@ They are global tasks in the same flat namespace as your own.
 
 ## How modules are loaded
 
-`use` lines are rewritten to comments before parsing, so they never reach the
-grammar. They survive only as a **textual trigger** telling the build to link
-an optional module.
+For the optional modules below, a `use std::…` line is a **textual trigger**
+telling the build to link the file. Naming a standard module that does not
+exist is an error: `unsupported standard module`.
 
 | Module | Loaded |
 |---|---|

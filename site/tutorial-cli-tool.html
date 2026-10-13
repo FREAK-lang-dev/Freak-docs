@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -80,7 +80,7 @@
     }
 }</code></pre></div>
 <p>Argument 0 is the executable path, so the first real argument is index 1.</p>
-<p>That loop is the standard V3 iteration idiom: a counted <code>repeat</code> plus a manual index. There is no <code>for each</code>.</p>
+<p>That loop is a counted <code>repeat</code> plus a manual index. <code>repeat N times with i</code> supplies the index for you, starting at 0.</p>
 <h2 id="step-2-reading-a-file">Step 2 — Reading a file<a class="anchor" href="#step-2-reading-a-file" aria-label="Link to this section">#</a></h2>
 <p><code>fs::*</code> are builtins. There is no <code>result&lt;T,E&gt;</code> anywhere in V3, so failures come back as sentinel values — an empty <code>word</code>, or <code>false</code>:</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
@@ -288,16 +288,16 @@
   </div>
 </figure>
 <p>Run it against your own file:</p>
-<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run wordcount.fk README.md
-NO_COLOR=1 freak run wordcount.fk README.md</code></pre></div>
+<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run wordcount.fk -- README.md
+NO_COLOR=1 freak run wordcount.fk -- README.md</code></pre></div>
 <h2 id="what-you-would-reach-for-next-and-cannot">What you would reach for next, and cannot<a class="anchor" href="#what-you-would-reach-for-next-and-cannot" aria-label="Link to this section">#</a></h2>
 <p>Worth knowing before you plan a bigger tool:</p>
-<div class="tablewrap"><table><thead><tr><th>You might want</th><th>V3 reality</th></tr></thead><tbody><tr><td><code>result&lt;T, E&gt;</code> and <code>?</code></td><td>None. Sentinels and <code>process::exit</code></td></tr><tr><td><code>.split(&quot;,&quot;)</code> into a list</td><td><code>string_split</code> returns an encoded word, not a list. Walk characters</td></tr><tr><td>A map for counting words</td><td>No <code>Map&lt;K,V&gt;</code>. Two parallel collections and <code>array_find</code></td></tr><tr><td><code>for each line in lines</code></td><td>Counted <code>repeat</code> plus an index</td></tr><tr><td>Writing to stderr</td><td>No stderr writer. Everything goes to stdout</td></tr><tr><td>A <code>-o</code> output flag</td><td>Output path is fixed to the source basename</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>You might want</th><th>V3 reality</th></tr></thead><tbody><tr><td><code>result&lt;T, E&gt;</code> and <code>?</code></td><td>None. Sentinels and <code>process::exit</code></td></tr><tr><td><code>.split(&quot;,&quot;)</code> into a list</td><td><code>string_split</code> returns an encoded word, not a list. Walk characters</td></tr><tr><td>A map for counting words</td><td>No <code>Map&lt;K,V&gt;</code>. Two parallel collections and <code>array_find</code></td></tr><tr><td><code>for each line in lines</code></td><td><code>for each</code> walks a <code>List&lt;T&gt;</code> or an int range, not a word. Here, a counted loop plus an index</td></tr><tr><td>Writing to stderr</td><td>No stderr writer. Everything goes to stdout</td></tr><tr><td>A <code>-o</code> output flag</td><td><code>freak build -o NAME</code> or <code>--output=NAME</code>. Default: the source basename</td></tr></tbody></table></div>
 <p>See <a href="not-in-v3.html">Not in V3</a> for substitutes.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

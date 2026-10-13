@@ -1,8 +1,7 @@
--- Reusing code across files in V3.
+-- Reusing code across files without a project.
 --
--- The compiler takes exactly one source file, and Hangar packages are
--- never linked into it, so a "library" is just source you concatenate
--- ahead of your program:
+-- A file built on its own is one translation unit, so outside a project
+-- a "library" is just source you concatenate ahead of your program:
 --
 --     cat lib/text.fk src/app.fk > build/combined.fk
 --     freak build build/combined.fk
@@ -77,6 +76,6 @@ task main() -> void {
     say word_from_int(report.words)
     say report.longest
 
-    -- `use` lines are stripped before parsing, so leaving one in a
-    -- concatenated build is harmless -- and equally, it imports nothing.
+    -- No `use` line is needed, or possible, here: outside a project a
+    -- `use` must name a standard module.
 }

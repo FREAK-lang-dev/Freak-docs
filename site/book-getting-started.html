@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -77,13 +77,13 @@
 <div class="codeblock"><pre class="code"><code>&gt; Detected platform: linux-x64
 &gt; Clang is available
 &gt; Fetching latest release...
-&gt; Release: v0.14.2
+&gt; Release: v0.15.0
 &gt; Downloading freak-linux-x64.tar.gz...
 &gt; Verified SHA-256 for freak-linux-x64.tar.gz
 &gt; Extracting distribution...
 &gt; Added /home/you/.freak/bin to PATH in /home/you/.bashrc
 &gt;
-&gt; FREAK v0.14.2 installed successfully!
+&gt; FREAK v0.15.0 installed successfully!
 &gt;   Compiler: /home/you/.freak/bin/freak
 &gt;   Hangar:   /home/you/.freak/bin/hangar
 &gt;   Runtime:  /home/you/.freak/runtime/
@@ -106,7 +106,7 @@
 <h2 id="checking-the-installation">Checking the installation<a class="anchor" href="#checking-the-installation" aria-label="Link to this section">#</a></h2>
 <p>Ask the compiler for its version:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak --version</code></pre></div>
-<div class="codeblock"><pre class="code"><code>freak 0.14.2 (Maverick)</code></pre></div>
+<div class="codeblock"><pre class="code"><code>freak 0.15.0 (Maverick)</code></pre></div>
 <p>If your shell answers <code>command not found</code>, the <code>PATH</code> change has not taken effect yet. Open a new terminal and try again. If it still fails, the installer found no startup file to change, and you need to add the <code>export</code> line by hand.</p>
 <p>A version number only proves the <code>freak</code> program starts. To check that the whole toolchain works, run the doctor:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak doctor</code></pre></div>
@@ -194,7 +194,7 @@ Hello, FREAK!
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code>    <span class="c-kw">say</span> <span class="c-str">&quot;Hello, FREAK!&quot;</span></code></pre></div>
 <p><code>say</code> prints a value followed by a new line. Here the value is a piece of text in double quotes. FREAK calls a piece of text a <em>word</em>, whatever its length. <code>say</code> is part of the language. There is nothing to import.</p>
-<p>Notice what is absent. There is no semicolon at the end of the statement: FREAK code does not use them, and V3 treats one as an error. The body is indented by four spaces, which is the convention in FREAK code, but indentation is for readers. The compiler finds the structure from the braces.</p>
+<p>Notice what is absent. There is no semicolon at the end of the statement: FREAK code does not need them. A semicolon is allowed, and lets you put two short statements on one line, but the convention is one statement per line. The body is indented by four spaces, which is the convention in FREAK code, but indentation is for readers. The compiler finds the structure from the braces.</p>
 <h3 id="reading-the-build-report">Reading the build report<a class="anchor" href="#reading-the-build-report" aria-label="Link to this section">#</a></h3>
 <p>The lines between the first two boxes are the stages your program went through.</p>
 <div class="tablewrap"><table><thead><tr><th>Stage</th><th>What happens</th></tr></thead><tbody><tr><td>Lexing</td><td>The text is cut into tokens: names, numbers, words, punctuation</td></tr><tr><td>Parsing</td><td>The tokens are arranged into the structure of the program</td></tr><tr><td>Type checking</td><td>Every value is checked to have the type its use requires</td></tr><tr><td>Emit LLVM IR</td><td>The checked program is written out in LLVM&#x27;s intermediate form</td></tr><tr><td>Native binary</td><td>Clang turns that into a program your machine can run</td></tr></tbody></table></div>
@@ -215,16 +215,10 @@ Hello, FREAK!
  --&gt; book_unterminated_word.fk:2:9
   |
 2 |     say &quot;Hello, FREAK!
-  |         ^ add a closing quote
-
-error: unexpected end of file — missing &#x27;}&#x27;
- --&gt; book_unterminated_word.fk:1:13
-  |
-1 | task main() {
-  |             ^ block opened here</code></pre>
+  |         ^ add a closing quote</code></pre>
   </div>
 </figure>
-<p>The compiler names the problem, points at the place with a caret, and suggests the fix. It also reports a second error, the missing brace. The second is a consequence of the first: without the closing quote, the rest of the file was read as part of the word, brace included. When you get several errors, fix the first one and build again.</p>
+<p>The compiler names the problem, points at the place with a caret, and suggests the fix. When you get several errors, fix the first one and build again: later errors are often consequences of the first.</p>
 <p>Now misspell <code>say</code>:</p>
 <figure class="example">
   <figcaption>
@@ -239,23 +233,38 @@ error: unexpected end of file — missing &#x27;}&#x27;
     <pre class="stdout err"><code>type error: unknown binding &#x27;sya&#x27; (line 2)
  --&gt; book_misspelled_say.fk:2:1
 2 |     sya &quot;Hello, FREAK!&quot;
+  | ^
+type error: bare value is not a statement; use it in say, give back, a binding or a call (line 2)
+ --&gt; book_misspelled_say.fk:2:1
+2 |     sya &quot;Hello, FREAK!&quot;
+  | ^
+type error: bare value is not a statement; use it in say, give back, a binding or a call (line 2)
+ --&gt; book_misspelled_say.fk:2:1
+2 |     sya &quot;Hello, FREAK!&quot;
   | ^</code></pre>
   </div>
 </figure>
 <p>The compiler does not know <code>sya</code>, so it takes it for the name of a value you never created. &quot;Binding&quot; is the compiler&#x27;s word for a named value. You will see <code>unknown binding</code> whenever the name of a value is misspelled, and <code>unknown callable</code> when it is the name of a task.</p>
-<p>One mistake produces no message at all. The entry point is the task named <code>main</code>, in lowercase. Name it anything else and the program builds, starts, finds nothing to do, and ends:</p>
+<p>The entry point is the task named <code>main</code>, in lowercase. Name it anything else and the program has nowhere to start, so it does not build:</p>
 <figure class="example">
   <figcaption>
-    <span class="ex-name">examples/book_no_entry.fk</span>
-    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+    <span class="ex-name">diagnostics/v3/book_no_entry.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
   </figcaption>
   <pre class="code"><code><span class="c-com">-- The entry point is the task named `main`, in lowercase.</span>
-<span class="c-com">-- This file has no such task, so the program starts, does nothing, and ends.</span>
+<span class="c-com">-- This file has no such task and nothing else to run, so it does not build.</span>
 <span class="c-kw">task</span> <span class="c-fn">Main</span>() {
     <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
 }</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: program requires a usable task main() entry or executable script statements (line 1)
+ --&gt; book_no_entry.fk:1:1
+1 | -- The entry point is the task named `main`, in lowercase.
+  | ^</code></pre>
+  </div>
 </figure>
-<div class="callout warn"><div class="callout-title">Careful</div><p>If a program builds and prints nothing, check the spelling of <code>main</code> first.</p></div>
+<p>The message mentions a second possibility, a file of statements with no <code>main</code> at all. That is a script, and Chapter 4 shows how it runs.</p>
 <h2 id="building-running-and-checking">Building, running and checking<a class="anchor" href="#building-running-and-checking" aria-label="Link to this section">#</a></h2>
 <p><code>freak run</code> did two things: it built a program and then started it. You can do them separately.</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build hello.fk</code></pre></div>
@@ -305,34 +314,47 @@ Source length: 90
 <h2 id="a-first-project">A first project<a class="anchor" href="#a-first-project" aria-label="Link to this section">#</a></h2>
 <p>A single file is fine for learning. A program you intend to keep deserves a directory of its own and a file that describes it. <code>freak init</code> creates both:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak init sortie</code></pre></div>
-<div class="codeblock"><pre class="code"><code>  ✨ Creating project: sortie
-
-  ✓ sortie/main.fk
-  ✓ sortie/hangar.toml
-
-  Get started:
-    cd sortie
-    freak run main.fk</code></pre></div>
-<p>The project is called <code>sortie</code>, a mission flown by a single unit. The command made a directory with two files in it.</p>
+<div class="codeblock"><pre class="code"><code>Created project sortie</code></pre></div>
+<p>The project is called <code>sortie</code>, a mission flown by a single unit. The command made a directory with this in it:</p>
+<div class="codeblock"><pre class="code"><code>sortie/
+  hangar.toml
+  README.md
+  LICENSE
+  src/
+    main.fk
+    greet.fk
+  tests/
+    greeting_test.fk</code></pre></div>
 <p><code>hangar.toml</code> is the project&#x27;s description:</p>
 <div class="codeblock"><span class="code-lang">TOML</span><pre class="code"><code>[project]
 name = &quot;sortie&quot;
 version = &quot;0.1.0&quot;
+kind = &quot;app&quot;
+entry = &quot;src/main.fk&quot;
+readme = &quot;README.md&quot;
+license_file = &quot;LICENSE&quot;
+
+[modules]
+greet = &quot;src/greet.fk&quot;
+
+[exports]
+greet = &quot;greet::greet&quot;
+
+[tests]
+greeting = &quot;tests/greeting_test.fk&quot;
 
 [dependencies]</code></pre></div>
-<p>It records the project&#x27;s name and version, and has an empty section for the packages the project depends on. The file belongs to Hangar, FREAK&#x27;s package manager, which is why it carries that name.</p>
-<p><code>main.fk</code> is a starting program:</p>
-<p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
-<div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-com">-- sortie</span>
-<span class="c-com">-- Created with FREAK 0.14.2</span>
-
-<span class="c-kw">say</span> <span class="c-str">&quot;Hello from sortie!&quot;</span></code></pre></div>
-<p>This program has no <code>main</code> task. In V3, a file without <code>main</code> runs the statements written at its top level, in order. That is convenient for a three-line script. This book writes <code>main</code> in every program anyway, because once a file has a <code>main</code>, statements outside it are not run at all, and it is easier to keep one habit than two. Chapter 4 shows that rule in action.</p>
-<p>Run the project the same way as before:</p>
+<p>It records the project&#x27;s name and version, which file the program starts in, the other source files it is made of, and its tests. The empty <code>[dependencies]</code> section is for packages the project uses. The file belongs to Hangar, FREAK&#x27;s package manager, which is why it carries that name.</p>
+<p><code>src/main.fk</code> is the starting program, and <code>src/greet.fk</code> holds one task it uses. The program says hello to <code>sortie</code>, or to a name you give it. You do not need to follow every line of it yet: Chapter 4 covers tasks, and Part IV covers splitting a program across files.</p>
+<p>Inside the project directory, <code>freak run</code> needs no file name, because the manifest names the entry. Anything after <code>--</code> is passed to the program:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>cd sortie
-freak run main.fk</code></pre></div>
-<div class="codeblock"><pre class="code"><code>Hello from sortie!</code></pre></div>
-<div class="callout note"><div class="callout-title">Note</div><p>The dependencies section is less useful than it looks. In V3, Hangar can download a package, but the compiler does not yet read downloaded packages when it builds. The chapter on Hangar in Part IV explains what works and what to do instead.</p></div>
+freak run
+freak run -- Ada</code></pre></div>
+<div class="codeblock"><pre class="code"><code>Hello, sortie!
+Hello, Ada!</code></pre></div>
+<p><code>freak test</code> builds and runs the tests the manifest lists:</p>
+<div class="codeblock"><pre class="code"><code>  run: passed (11 ms), exit 0
+1 passed, 0 failed (1 tests)</code></pre></div>
 <h2 id="in-v4">In V4<a class="anchor" href="#in-v4" aria-label="Link to this section">#</a></h2>
 <p>V4 has no installer and no release. To try it you need a copy of the compiler repository and Python, and you build programs with a script from that repository:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python src/compiler/v4/build_v4.py hello.fk -o hello
@@ -370,7 +392,7 @@ freak run main.fk</code></pre></div>
   </div>
 </figure>
 <p>A line beginning <code>v4-native-contract-error=</code> comes from the last stage of V4, the one that generates code. It is how that stage says it has met something it cannot build yet. The message is worded as &quot;not yet supported&quot;: it marks a gap in this commit, not a rule of the language.</p>
-<p><strong>Statements must be inside a task.</strong> The specification says that only declarations may appear at the top level of a file, and V4 enforces it. The program that <code>freak init</code> generates does not build in V4:</p>
+<p><strong>Statements must be inside a task.</strong> The specification says that only declarations may appear at the top level of a file, and V4 enforces it. A script, a file of statements with no <code>main</code>, does not build in V4:</p>
 <figure class="example v4">
   <figcaption>
     <span class="ex-name">examples-v4/toplevel_statement.fk</span>
@@ -401,13 +423,13 @@ freak run main.fk</code></pre></div>
   </div>
 </figure>
 <p>That limits what the V4 listings in the next few chapters can show on screen. Most of them report their result through the exit code instead.</p>
-<p><strong>A semicolon is accepted.</strong> V3 rejects one at the end of a statement. V4 allows it, as the specification does:</p>
+<p><strong>A semicolon is accepted</strong>, as it is in V3 and in the specification:</p>
 <figure class="example v4">
   <figcaption>
     <span class="ex-name">examples-v4/semicolon.fk</span>
     <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- V4 accepts a semicolon at the end of a statement. V3 rejects it.</span>
+  <pre class="code"><code><span class="c-com">-- V4 accepts a semicolon at the end of a statement, as V3 does.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
     <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>;
     <span class="c-kw">give back</span> fuel
@@ -422,8 +444,8 @@ freak run main.fk</code></pre></div>
 <p><a href="book-guessing-game.html">Chapter 2</a> puts these pieces to work in a real program: a number-guessing game that reads what you type.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

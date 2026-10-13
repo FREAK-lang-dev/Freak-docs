@@ -1,4 +1,4 @@
--- V3 has three loop forms: a counted loop, a condition loop,
+-- Three of V3's loop forms: a counted loop, a condition loop,
 -- and the bounded `training arc`.
 task main() -> void {
     -- repeat N times

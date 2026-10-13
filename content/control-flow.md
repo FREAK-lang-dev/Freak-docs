@@ -1,6 +1,6 @@
 # Control flow
 
-> Two branch forms, three loop forms, and a bounded loop you will not find in other languages.
+> Two branch forms, six loop forms, and a bounded loop you will not find in other languages.
 
 ## if / else if / else
 
@@ -51,7 +51,9 @@ task main() -> void {
 
 ## Loops
 
-V3 has exactly three loop forms.
+The listing shows the counted loop, the condition loop and the bounded
+`training arc`. `for each`, the C-style `for` and `while` have their own
+sections below.
 
 {{example:control_loops}}
 
@@ -115,7 +117,7 @@ hard guarantee of termination:
 
 ## break and continue
 
-Both work in all three loop forms.
+Both work in every loop form.
 
 ```fk
 repeat 10 times {

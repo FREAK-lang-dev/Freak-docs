@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -66,7 +66,7 @@
 <h1 id="pilots-values-and-types">Pilots, values and types<a class="anchor" href="#pilots-values-and-types" aria-label="Link to this section">#</a></h1>
 <p class="lede">How to name a value, what kinds of value there are, and the strict rules that keep them from being confused with one another.</p>
 <p>Chapter 2 used pilots, numbers, words and truth values without stopping to explain them. This chapter goes back over each one. It covers:</p>
-<ul><li>declaring pilots, and what <code>mut</code> and <code>fixed</code> do</li><li>where a pilot can be seen, and for how long</li><li>the words you cannot use as names</li><li>the four basic types: <code>int</code>, <code>num</code>, <code>bool</code> and <code>word</code></li><li>why FREAK never converts between types unless you ask</li></ul>
+<ul><li>declaring pilots, and keeping one from changing with <code>fixed</code></li><li>where a pilot can be seen, and for how long</li><li>the words you cannot use as names</li><li>the four basic types: <code>int</code>, <code>num</code>, <code>bool</code> and <code>word</code></li><li>why FREAK never converts between types unless you ask</li></ul>
 <h2 id="pilots">Pilots<a class="anchor" href="#pilots" aria-label="Link to this section">#</a></h2>
 <p>A pilot is a name for a value. You create one with <code>pilot</code>, a name, an equals sign, and the value it starts with.</p>
 <figure class="example">
@@ -171,35 +171,29 @@ error: unexpected &#x27;=&#x27; — this token cannot start an expression
 <p>A name is made of letters, digits and underscores, and does not start with a digit. Only the unaccented letters <code>a</code> to <code>z</code> and <code>A</code> to <code>Z</code> are allowed.</p>
 <p>FREAK code follows two conventions. Ordinary pilots and tasks are written in lowercase with underscores between words: <code>secret_number</code>, <code>sorties_flown</code>. Values that are fixed for the whole program are written in capitals: <code>MAX_SORTIES</code>.</p>
 <h2 id="changing-a-pilot">Changing a pilot<a class="anchor" href="#changing-a-pilot" aria-label="Link to this section">#</a></h2>
-<p>There are three ways to declare a pilot, and they differ in what you intend to do with it afterwards.</p>
-<div class="tablewrap"><table><thead><tr><th>Declaration</th><th>Intent</th></tr></thead><tbody><tr><td><code>pilot x = 1</code></td><td>An ordinary pilot</td></tr><tr><td><code>pilot mut x = 1</code></td><td>A pilot whose value will be changed</td></tr><tr><td><code>fixed pilot x = 1</code></td><td>A pilot whose value must never change</td></tr></tbody></table></div>
+<p>A pilot can be changed after it is created, unless you say otherwise.</p>
+<div class="tablewrap"><table><thead><tr><th>Declaration</th><th>Meaning</th></tr></thead><tbody><tr><td><code>pilot x = 1</code></td><td>A pilot you may change later</td></tr><tr><td><code>pilot mut x = 1</code></td><td>The same; <code>mut</code> is optional</td></tr><tr><td><code>fixed pilot x = 1</code></td><td>A pilot whose value must never change</td></tr><tr><td><code>grounded pilot x = 1</code></td><td>The same as <code>fixed</code>: a grounded pilot isn&#x27;t going anywhere</td></tr></tbody></table></div>
 <p>Assignment uses <code>=</code>. For arithmetic on the pilot&#x27;s own value there are shorthand forms: <code>x += 5</code> means <code>x = x + 5</code>, and <code>-=</code>, <code>*=</code>, <code>/=</code> and <code>%=</code> work the same way.</p>
-<p>Now the part that needs care. How strictly these three forms are enforced depends on how you build.</p>
-<p><strong>By default, V3 does not enforce them for simple values.</strong> A plain <code>pilot</code> holding a number can be reassigned, and so can a <code>fixed pilot</code>. The words <code>mut</code> and <code>fixed</code> are accepted and, for numbers, words and bools, ignored.</p>
-<p>**With <code>--strict-borrow</code>, V3 enforces them.** That flag turns on V3&#x27;s ownership checker, which Part III is about. Under it, only a <code>pilot mut</code> may be reassigned:</p>
+<p><code>fixed</code> and <code>grounded</code> are enforced for every kind of value: numbers, words, lists, and the fields of a shape. Assigning to one stops the build, and the message uses the word you wrote:</p>
 <figure class="example">
   <figcaption>
-    <span class="ex-name">diagnostics/v3/book_reassign_strict.fk</span>
-    <span class="ex-badges"><span class="badge bad">does not compile</span><span class="badge flag">--strict-borrow</span></span>
+    <span class="ex-name">diagnostics/v3/book_fixed_reassign.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
   </figcaption>
   <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
-    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
+    <span class="c-kw">fixed</span> <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">50</span>
     fuel <span class="c-op">=</span> <span class="c-num">75</span>
     <span class="c-kw">say</span> fuel
 }</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Compiler diagnostic</div>
-    <pre class="stdout err"><code>borrowck: This binding was sworn to silence. It cannot be reassigned. &#x27;fuel&#x27; (line 3)
- --&gt; book_reassign_strict.fk:3:1
+    <pre class="stdout err"><code>type error: fixed pilot cannot be modified (line 3)
+ --&gt; book_fixed_reassign.fk:3:1
 3 |     fuel = 75
   | ^</code></pre>
   </div>
 </figure>
-<p>The same message is given for assigning to a <code>fixed pilot</code>.</p>
-<p>You turn it on by adding the flag to a build:</p>
-<div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak build main.fk --strict-borrow</code></pre></div>
-<p>So write the declarations as if they were always enforced. Use <code>pilot mut</code> for anything you assign to again, <code>fixed pilot</code> for values that must not change, and plain <code>pilot</code> for everything else. Your code then says what it means, and the strict mode will have no complaint about its assignments. The strict mode has a second set of rules, about values that are handed from one place to another, and those are Part III&#x27;s subject.</p>
-<div class="callout note"><div class="callout-title">Note</div><p>One kind of value is checked even without the flag. A list must be declared <code>pilot mut</code> before you can add to it or change its elements. Part II covers lists.</p></div>
+<p><code>mut</code> is accepted for readers coming from languages where values cannot be changed by default. It changes nothing, so use it or leave it out as you prefer. Mark the values that must not change, and let everything else be a plain <code>pilot</code>.</p>
 <h2 id="scope">Scope<a class="anchor" href="#scope" aria-label="Link to this section">#</a></h2>
 <p>A pilot exists from the line that declares it to the end of the block it was declared in. A block is whatever sits between a pair of braces: the body of a task, of an <code>if</code>, of a loop.</p>
 <figure class="example">
@@ -325,7 +319,7 @@ Valkyrie-2 away (sortie 2)
 <p>Use that sparingly. A value that any task may change is hard to reason about, because to know what it holds you have to know everything that ran before. Passing values into tasks and giving results back, the subject of Chapter 4, keeps programs easier to follow.</p>
 <h2 id="reserved-words">Reserved words<a class="anchor" href="#reserved-words" aria-label="Link to this section">#</a></h2>
 <p>Some words belong to the language and cannot be used as names. In most languages that list is short and obvious. In FREAK it is longer than you would guess, because it includes words the language has reserved for features that are not built yet.</p>
-<p>These 54 words are reserved in V3:</p>
+<p>These 55 words are reserved in V3:</p>
 <div class="codeblock"><pre class="code"><code>pilot   fixed    task       say      shape    impl      doctrine
 launch  use      as         in       lend     mut       move
 copy    break    continue   if       else     when      repeat
@@ -333,6 +327,7 @@ times   until    done       for      each     check     result
 got     nobody   some       ok       err      sessions  max
 foreshadow  payoff   route   sadly   deus_ex_machina    isekai
 eventually  and      or      not     nakama   tsundere  extern
+while
 
 true    false    yes    no    hai    iie</code></pre></div>
 <p>Several of them are words you will reach for naturally: <code>max</code>, <code>result</code>, <code>ok</code>, <code>check</code>, <code>done</code>, <code>times</code>, <code>in</code>, <code>use</code>, <code>copy</code>, <code>move</code>, <code>route</code>, <code>launch</code>. This book&#x27;s own examples ran into it. A task that starts a sortie wanted to be called <code>launch</code>:</p>
@@ -365,7 +360,7 @@ error: unexpected &#x27;launch&#x27; — this token cannot start an expression
 </figure>
 <p>When you see <code>expected an identifier ... found</code> followed by a word you thought was a perfectly good name, this is why. Pick another: <code>limit</code> for <code>max</code>, <code>outcome</code> for <code>result</code>, <code>ready</code> for <code>ok</code>, <code>scramble</code> for <code>launch</code>.</p>
 <h3 id="words-that-are-not-reserved">Words that are not reserved<a class="anchor" href="#words-that-are-not-reserved" aria-label="Link to this section">#</a></h3>
-<p>In one respect the list is shorter than you might guess. Several words the language uses constantly are missing from it: <code>give</code>, <code>back</code>, <code>training</code>, <code>arc</code>, <code>ask</code>, and the type names <code>int</code>, <code>num</code>, <code>bool</code> and <code>word</code>. V3 recognises those by where they appear, so it accepts them as names too:</p>
+<p>In one respect the list is shorter than you might guess. Several words the language uses constantly are missing from it: <code>give</code>, <code>back</code>, <code>training</code>, <code>arc</code>, <code>ask</code>, <code>grounded</code>, <code>step</code>, <code>with</code>, and the type names <code>int</code>, <code>num</code>, <code>bool</code> and <code>word</code>. V3 recognises those by where they appear, so it accepts them as names too:</p>
 <figure class="example">
   <figcaption>
     <span class="ex-name">examples/book_contextual_words.fk</span>
@@ -392,35 +387,7 @@ error: unexpected &#x27;launch&#x27; — this token cannot start an expression
     <pre class="stdout"><code>training 3, ask 6</code></pre>
   </div>
 </figure>
-<p>That listing builds, and <code>give back give</code> is reason enough never to write it. There is a trap as well. V3 joins <code>give</code> and <code>back</code> into one keyword wherever the two words follow each other, even across the end of a line:</p>
-<figure class="example">
-  <figcaption>
-    <span class="ex-name">diagnostics/v3/book_give_back_trap.fk</span>
-    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
-  </figcaption>
-  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
-    <span class="c-kw">pilot</span> give <span class="c-op">=</span> <span class="c-num">1</span>
-    <span class="c-kw">pilot</span> <span class="c-kw">mut</span> back <span class="c-op">=</span> <span class="c-num">2</span>
-    <span class="c-kw">say</span> <span class="c-kw">give
-    back</span> <span class="c-op">=</span> <span class="c-num">3</span>
-    <span class="c-kw">say</span> back
-}</code></pre>
-  <div class="ex-out">
-    <div class="ex-out-head">Compiler diagnostic</div>
-    <pre class="stdout err"><code>error: unexpected &#x27;give back&#x27; — this token cannot start an expression
- --&gt; book_give_back_trap.fk:4:9
-  |
-4 |     say give
-  |         ^
-
-error: unexpected &#x27;=&#x27; — this token cannot start an expression
- --&gt; book_give_back_trap.fk:5:10
-  |
-5 |     back = 3
-  |          ^</code></pre>
-  </div>
-</figure>
-<p>Line 4 ends with the pilot <code>give</code> and line 5 starts with the pilot <code>back</code>, and the compiler reads the pair as <code>give back</code>. Treat every word the language uses as reserved, whether or not the compiler insists.</p>
+<p>That listing builds, and <code>give back give</code> is reason enough never to write it. <code>give back</code> is a keyword only as a pair on one line, so a pilot called <code>give</code> at the end of one line and a pilot called <code>back</code> at the start of the next stay two pilots. Even so, treat every word the language uses as reserved, whether or not the compiler insists.</p>
 <h3 id="capital-letters-do-not-help">Capital letters do not help<a class="anchor" href="#capital-letters-do-not-help" aria-label="Link to this section">#</a></h3>
 <p>V3 reserves these words in every combination of capital and small letters. <code>Max</code>, <code>MAX</code> and <code>max</code> are all refused as names:</p>
 <figure class="example">
@@ -447,15 +414,14 @@ error: unexpected &#x27;Max&#x27; — this token cannot start an expression
   |         ^</code></pre>
   </div>
 </figure>
-<div class="callout warn"><div class="callout-title">Careful</div><p>The reservation covers every spelling, but a single-word <em>keyword</em> works only in lowercase. <code>Pilot x = 1</code> is not a declaration and <code>If</code> does not start a condition; both are syntax errors. The truth literals are the dangerous exception, because a capitalised one is accepted and silently means false.</p></div>
+<div class="callout warn"><div class="callout-title">Careful</div><p>The reservation covers every spelling, but a single-word <em>keyword</em> works only in lowercase. <code>Pilot x = 1</code> is not a declaration and <code>If</code> does not start a condition; both are syntax errors. The truth literals are the exception: a capitalised one is accepted and means the same value as the lowercase one.</p></div>
 <figure class="example">
   <figcaption>
     <span class="ex-name">examples/book_keyword_case.fk</span>
     <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
   </figcaption>
   <pre class="code"><code><span class="c-com">-- Single-word keywords work only in lowercase. The truth literals are the</span>
-<span class="c-com">-- dangerous case: a capitalised spelling is accepted, and it does not mean</span>
-<span class="c-com">-- what it says.</span>
+<span class="c-com">-- exception: a capitalised spelling is accepted and means the same value.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() {
     <span class="c-kw">pilot</span> lowercase <span class="c-op">=</span> <span class="c-lit">true</span>
     <span class="c-kw">pilot</span> uppercase <span class="c-op">=</span> <span class="c-lit">TRUE</span>
@@ -466,7 +432,7 @@ error: unexpected &#x27;Max&#x27; — this token cannot start an expression
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>true
-false</code></pre>
+true</code></pre>
   </div>
 </figure>
 <p>The two-word keywords are treated differently. V3 accepts <code>give back</code>, <code>for each</code> and <code>training arc</code> in any letter case:</p>
@@ -523,7 +489,8 @@ false</code></pre>
 
     <span class="c-kw">pilot</span> largest<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">9223372036854775807</span>
     <span class="c-kw">say</span> largest
-    <span class="c-kw">say</span> largest <span class="c-op">+</span> <span class="c-num">1</span>      <span class="c-com">-- past the largest value, V3 wraps around silently</span>
+    <span class="c-kw">say</span> largest <span class="c-op">+</span> <span class="c-num">1</span>      <span class="c-com">-- past the largest value, the program stops here</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
 }</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
@@ -536,16 +503,18 @@ false</code></pre>
 -1
 7
 9
-9223372036854775807
--9223372036854775808</code></pre>
+9223372036854775807</code></pre>
+  </div>
+  <div class="ex-out">
+    <div class="ex-out-head">Exit code 1</div>
   </div>
 </figure>
 <p>Four things in that listing are worth stating as rules.</p>
 <p><strong>Dividing two ints gives an int.</strong> The fractional part is dropped, so <code>7 / 2</code> is <code>3</code>. The result is rounded toward zero, which matters for negative numbers: <code>-7 / 2</code> is <code>-3</code>, where rounding downward would give <code>-4</code>.</p>
 <p>**<code>%</code> gives the remainder** of that division, and takes the sign of the left side: <code>-7 % 2</code> is <code>-1</code>.</p>
 <p><strong>Multiplication, division and remainder are done before addition and subtraction.</strong> Parentheses change the order.</p>
-<p><strong>Arithmetic that goes past the largest int wraps around</strong> to the smallest, with no error and no warning. The same happens to a number literal that is too large to fit. If your numbers can become that large, it is up to you to check before they do.</p>
-<div class="callout warn"><div class="callout-title">Careful</div><p>Dividing an int by zero is not checked either. Depending on the machine and on how the zero got there, the operating system stops the program on the spot or the program carries on with a meaningless value. Neither produces a FREAK message. Test the divisor before you divide by anything that could be zero.</p></div>
+<p><strong>Arithmetic that goes past the largest or smallest int stops the program.</strong> The last line of the listing never runs. The program prints <code>FREAK: integer overflow in addition</code> to the error stream and ends with exit code 1. A number literal too large to fit is refused when you build.</p>
+<p><strong>Dividing an int by zero stops the program too</strong>, with <code>FREAK: integer division by zero</code>, and so does taking a remainder by zero. If a divisor could be zero, test it before you divide.</p>
 <p>Ints are written in decimal only. There is no hexadecimal form, no separator for grouping digits, and no exponent. The compiler does not say so directly. It reads <code>0xFF</code> as the number <code>0</code> followed by a name, and reports <code>unknown binding &#x27;xFF&#x27;</code>. If you see an unknown binding that looks like the tail of a number, this is the cause.</p>
 <h3 id="num"><code>num</code><a class="anchor" href="#num" aria-label="Link to this section">#</a></h3>
 <p>A <code>num</code> is a floating-point number, stored in 64 bits. A number written with a decimal point is a num. At least one digit must come before the point: <code>0.5</code>, never <code>.5</code>.</p>
@@ -685,6 +654,7 @@ contact</code></pre>
     <span class="c-kw">say</span> system
 
     <span class="c-kw">say</span> title <span class="c-op">==</span> <span class="c-str">&quot;Muv-Luv&quot;</span>                 <span class="c-com">-- words compare with == and !=</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;apple&quot;</span> <span class="c-op">&lt;</span> <span class="c-str">&quot;banana&quot;</span>                 <span class="c-com">-- and are ordered byte by byte</span>
 
     <span class="c-com">-- A name in braces is replaced by its value. It works for</span>
     <span class="c-com">-- word, int, num and bool pilots.</span>
@@ -693,8 +663,8 @@ contact</code></pre>
     <span class="c-kw">pilot</span> cleared <span class="c-op">=</span> <span class="c-lit">true</span>
     <span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{title}</span>: <span class="c-interp">{sorties}</span> sorties, ratio <span class="c-interp">{ratio}</span>, cleared <span class="c-interp">{cleared}</span>&quot;</span>
 
-    <span class="c-com">-- Braces around anything that is not a name are printed as they are.</span>
-    <span class="c-kw">say</span> <span class="c-str">&quot;{sorties + 1} is not worked out&quot;</span>
+    <span class="c-com">-- A backslash before a brace prints the brace itself.</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;\{sorties\} is printed as written&quot;</span>
 
     <span class="c-com">-- A backslash introduces a character that is awkward to type.</span>
     <span class="c-kw">say</span> <span class="c-str">&quot;tab:[\t] quote:[\&quot;] backslash:[\\]&quot;</span>
@@ -705,11 +675,32 @@ contact</code></pre>
 7
 XM3
 true
+true
 Muv-Luv: 12 sorties, ratio 0.75, cleared true
-{sorties + 1} is not worked out
+{sorties} is printed as written
 tab:[	] quote:[&quot;] backslash:[\]</code></pre>
   </div>
 </figure>
+<p>Only a name, or a name followed by <code>.field</code>, can go between the braces. A calculation cannot, and the program does not build:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_interpolation_expression.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> sorties <span class="c-op">=</span> <span class="c-num">12</span>
+    <span class="c-kw">say</span> <span class="c-str">&quot;{sorties + 1} sorties&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>error: unsupported interpolation expression
+ --&gt; book_interpolation_expression.fk:3:9
+  |
+3 |     say &quot;{sorties + 1} sorties&quot;
+  |         ^ use a binding or field path, or escape literal braces</code></pre>
+  </div>
+</figure>
+<p>Work the value out into a pilot first, and put the pilot&#x27;s name in the braces.</p>
 <p>That is enough about words to read the next two chapters. Words have a chapter of their own in Part II, which covers their methods, the exact rules of interpolation, and how to take them apart.</p>
 <h2 id="types-do-not-mix-by-themselves">Types do not mix by themselves<a class="anchor" href="#types-do-not-mix-by-themselves" aria-label="Link to this section">#</a></h2>
 <p>FREAK will not guess what you mean when two types meet. Joining a word and a number is an error:</p>
@@ -834,13 +825,13 @@ ready: true
     <div class="ex-out-head">Exit code 36</div>
   </div>
 </figure>
-<p>Int arithmetic wraps at the limits, as in V3:</p>
+<p>Int arithmetic wraps at the limits at this commit. V3 stops the program instead, as the specification says V4 will:</p>
 <figure class="example v4">
   <figcaption>
     <span class="ex-name">examples-v4/overflow_wraps.fk</span>
     <span class="ex-badges"><span class="badge v4">V4 snapshot 7c9a1f3c27</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- Past the largest int the value wraps around, as it does in V3.</span>
+  <pre class="code"><code><span class="c-com">-- Past the largest int the value wraps around at this commit. V3 stops the program.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">int</span> {
     <span class="c-kw">pilot</span> largest<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">9223372036854775807</span>
     <span class="c-kw">pilot</span> next <span class="c-op">=</span> largest <span class="c-op">+</span> <span class="c-num">1</span>
@@ -899,7 +890,7 @@ ready: true
     <div class="ex-out-head">Exit code 7</div>
   </div>
 </figure>
-<p>The truth literals are the exception, and here V4 corrects V3. A capitalised truth literal is still a truth literal, so it cannot be a name, and it means what it says:</p>
+<p>The truth literals are the exception, and here V4 and V3 agree. A capitalised truth literal is still a truth literal, so it cannot be a name, and it means what it says:</p>
 <figure class="example v4">
   <figcaption>
     <span class="ex-name">examples-v4/truth_literal_case.fk</span>
@@ -918,7 +909,6 @@ ready: true
     <div class="ex-out-head">Exit code 7</div>
   </div>
 </figure>
-<p>V3 fails the first two tests, because it reads <code>TRUE</code> and <code>Yes</code> as false, and gives 4 for this program where V4 gives 7.</p>
 <p>**Every pilot can be reassigned, and <code>mut</code> is not accepted.** Chapter 2 showed <code>pilot mut</code> being rejected. Assignment to a plain pilot works:</p>
 <figure class="example v4">
   <figcaption>
@@ -936,7 +926,7 @@ ready: true
     <div class="ex-out-head">Exit code 80</div>
   </div>
 </figure>
-<p>That much agrees with the specification&#x27;s section on pilots, which says they can be reassigned by default. The same section says a <code>fixed pilot</code> cannot be, and this commit does not enforce that yet:</p>
+<p>That much agrees with the specification&#x27;s section on pilots and with V3, both of which let a pilot be reassigned by default. The same section says a <code>fixed pilot</code> cannot be, which V3 enforces and this commit does not yet:</p>
 <figure class="example v4">
   <figcaption>
     <span class="ex-name">examples-v4/fixed_reassigned.fk</span>
@@ -1120,15 +1110,15 @@ ready: true
 <div class="callout planned"><div class="callout-title">Planned</div><p>The specification describes <code>num</code> as the default numeric type, with whole literals narrowing to <code>int</code> where an int is required. V3 does it the other way round: a literal without a decimal point is an <code>int</code>.</p></div>
 <div class="callout planned"><div class="callout-title">Planned</div><p>Two ways of grouping values without declaring a shape are specified and not in V3: tuples, written <code>(42, &quot;hello&quot;)</code>, and fixed-size arrays, written <code>[int; 4]</code>.</p></div>
 <h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
-<p>A pilot is a named value with a type that never changes. The type is inferred from the starting value or written after a colon. Declare a pilot <code>mut</code> if you will reassign it and <code>fixed</code> if it must not change; V3 enforces this under <code>--strict-borrow</code>, and always for lists.</p>
-<p>A pilot lives until the end of its block. An inner block may shadow an outer name; the same block may not declare a name twice. Fifty-four words are reserved in any letter case, and single-word keywords work only in lowercase.</p>
-<p>There are four basic types. <code>int</code> is a 64-bit whole number whose division truncates and whose arithmetic wraps. <code>num</code> is a 64-bit floating-point number, printed to ten significant digits. <code>bool</code> is true or false, combined with <code>and</code>, <code>or</code> and <code>not</code>. <code>word</code> is text.</p>
+<p>A pilot is a named value with a type that never changes. The type is inferred from the starting value or written after a colon. A pilot can be reassigned unless it is declared <code>fixed</code> or <code>grounded</code>, and V3 enforces that.</p>
+<p>A pilot lives until the end of its block. An inner block may shadow an outer name; the same block may not declare a name twice. Fifty-five words are reserved in any letter case, and single-word keywords work only in lowercase.</p>
+<p>There are four basic types. <code>int</code> is a 64-bit whole number whose division truncates, and whose overflow or division by zero stops the program. <code>num</code> is a 64-bit floating-point number, printed to ten significant digits. <code>bool</code> is true or false, combined with <code>and</code>, <code>or</code> and <code>not</code>. <code>word</code> is text.</p>
 <p>Types never mix on their own, with one exception: an int becomes a num where a num is expected. Everything else is converted by calling a method.</p>
 <p><a href="book-tasks.html">Chapter 4</a> is about tasks: how to define them, pass values in, and give values back.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

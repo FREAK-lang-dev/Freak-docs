@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -70,7 +70,7 @@
 <p><strong>Standard-library tasks</strong> live in <code>std/*.fk</code> as ordinary FREAK source. The CLI concatenates those files ahead of yours during <code>freak build</code> and <code>freak run</code>. They are global tasks in the same flat namespace as your own.</p>
 <div class="callout warn"><div class="callout-title">Careful</div><p><code>freak check</code> compiles your file <strong>alone</strong>. Anything from <code>std/</code> reports <code>unknown callable</code>. Use <code>freak build</code> or <code>freak run</code> to type-check code that uses the standard library.</p></div>
 <h2 id="how-modules-are-loaded">How modules are loaded<a class="anchor" href="#how-modules-are-loaded" aria-label="Link to this section">#</a></h2>
-<p><code>use</code> lines are rewritten to comments before parsing, so they never reach the grammar. They survive only as a <strong>textual trigger</strong> telling the build to link an optional module.</p>
+<p>For the optional modules below, a <code>use std::…</code> line is a <strong>textual trigger</strong> telling the build to link the file. Naming a standard module that does not exist is an error: <code>unsupported standard module</code>.</p>
 <div class="tablewrap"><table><thead><tr><th>Module</th><th>Loaded</th></tr></thead><tbody><tr><td><code>std/math.fk</code>, <code>std/string.fk</code>, <code>std/convert.fk</code>, <code>std/algorithm.fk</code>, <code>std/json.fk</code>, <code>std/version.fk</code></td><td>Always</td></tr><tr><td><code>std/runtime.fk</code>, <code>std/http.fk</code></td><td>Always, LLVM backend only</td></tr><tr><td><code>std/math3d.fk</code></td><td>Only if the source text contains <code>use std::math3d</code></td></tr><tr><td><code>std/zip.fk</code></td><td>Only if the source text contains <code>use std::zip</code></td></tr><tr><td><code>std/ui/window.fk</code></td><td>Only if the source text contains <code>use std::ui</code></td></tr><tr><td><code>packages/cockpit/src/*.fk</code></td><td>Only if the source text contains <code>use cockpit</code></td></tr></tbody></table></div>
 <p>So <code>use std::ui</code> is not an import — it is a build flag written in import syntax. Everything else is already in scope without it.</p>
 <h2 id="prelude-builtins">Prelude builtins<a class="anchor" href="#prelude-builtins" aria-label="Link to this section">#</a></h2>
@@ -256,7 +256,7 @@ false</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: /build/process_time
+arg 0: /build/process_time.exe
 arg 1: alpha
 arg 2: bravo
 true
@@ -430,8 +430,8 @@ false</code></pre>
 <div class="tablewrap"><table><thead><tr><th>Bible module</th><th>V3 equivalent</th></tr></thead><tbody><tr><td><code>std::collections</code> <code>List&lt;T&gt;</code></td><td>Typed <code>List&lt;T&gt;</code> with indexing and <code>List::filled</code> — no <code>push</code>/<code>pop</code>/<code>sort</code></td></tr><tr><td><code>std::bytes</code> <code>ByteBuffer</code></td><td>The builtin <code>ByteBuffer</code> type</td></tr><tr><td><code>std::word</code> <code>WordBuilder</code></td><td><code>word_builder::*</code> over an <code>int</code> handle</td></tr><tr><td><code>std::net</code></td><td><code>tcp::socket_*</code>, including listen and accept</td></tr></tbody></table></div>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

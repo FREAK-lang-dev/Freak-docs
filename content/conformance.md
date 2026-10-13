@@ -60,7 +60,7 @@ Bible status: :partial: — real V3 status: a small core works.
 | 1.7 `if` / `else if` / `else` | :shipped: | **Compiles** | |
 | 1.7 `when` with literal arms and `_` | :partial: | **Compiles** — statement only | |
 | 1.7 `when` with destructuring | :v4: | **Absent** | |
-| 1.7 `for each x in list` | :shipped: | **Rejected** | `unexpected 'for each'` |
+| 1.7 `for each x in list` | :shipped: | **Compiles** — over a `List<T>` and over int ranges | |
 | 1.7 `repeat N times` / `repeat until` | :shipped: | **Compiles** | |
 | 1.7 `training arc ... max N sessions` | :partial: | **Compiles** | |
 | 1.7 `training arc ... with growth` | :v4: | **Rejected** | |
@@ -69,12 +69,12 @@ Bible status: :partial: — real V3 status: a small core works.
 | 1.8 Capture modes `copy` / `move` / `mut` | :v4: | **Absent** | |
 | 1.9 Pipe `\|>` | :shipped: | **Compiles** — bare task names only | |
 | 1.10 `?` propagation | :shipped: | **Rejected** | `unexpected '?'`. `parse_status()` is the closest substitute |
-| 1.10 `check` over maybe / result | :shipped: | **Rejected** | `unexpected 'check'` |
+| 1.10 `check` over maybe / result | :shipped: | **Partial** — only `check result` over `fs::read_checked(path)` | Any other `check`: `expected keyword 'result'` |
 | 1.10 `or else` | :shipped: | **Rejected** | `unexpected 'or else'` |
 | 1.11 Generics `<T>`, bounds | :partial: | **Rejected** | `expected '(', found '<'`. `List<T>` is a hard-coded special case, not a mechanism |
 | 1.12 `lend` / `lend mut` | :partial: | **Rejected** | `expected an identifier for parameter name, found 'lend'` |
-| 1.13 `use module::{...}` | :partial: | **Stripped** — a build hint, not an import | |
-| 1.13 `use module::*` | :v4: | **Stripped** | |
+| 1.13 `use module::{...}` | :partial: | **Partial** — imports named tasks from a project module or a declared dependency | |
+| 1.13 `use module::*` | :v4: | **Rejected** | `import requires {symbol, symbol as alias}` |
 | 1.13 `launch` visibility | :partial: | **Rejected** | `unexpected 'launch'` |
 | 1.14 `variant` | :v4: | **Rejected** | |
 | 1.14 `alias` | :v4: | **Rejected** | |
@@ -160,26 +160,25 @@ The four anime operators also diverge in form, not just in enforcement:
 
 | Feature | Bible | V3 |
 |---|---|---|
-| `use module::{names}` | :partial: | Line is **replaced with a comment** before parsing |
-| `use module::*` | :v4: | Same — stripped |
+| `use module::{names}` | :partial: | Works for a project's own modules (`use self::m::{t}`) and for a declared dependency (`use dep::{t}`) |
+| `use module::*` | :v4: | **Rejected** |
 | `launch` / `launch(package)` | :partial: | **Rejected** |
-| Module-private visibility | :partial: | **No visibility system at all** |
-| `hangar.toml` | :partial: | Works, but as `[project]` + `[dependencies]` only — not the bible's `[unit]`/`[build]`/`[profile.*]` |
-| `hangar init/add/remove/install/update` | :partial: | Work, plus `outdated`, `version`, `audit`, `login`, `publish` |
+| Module-private visibility | :partial: | `[exports]` limits what a dependent project can import; nothing is private inside a project |
+| `hangar.toml` | :partial: | Works with `[project]`, `[modules]`, `[exports]`, `[tests]` and `[dependencies]` — not the bible's `[unit]`/`[build]`/`[profile.*]` |
+| `hangar init/add/remove/install/update` | :partial: | Present, plus `outdated`, `version`, `audit`, `login`, `publish`. `add` with a registry constraint is refused in 0.15.0 |
 | `hangar search` | :v4: | Absent |
-| **Consuming an installed package** | :partial: | **Impossible** — the build never reads `hangar_modules/` or `[dependencies]` |
+| **Consuming a package** | :partial: | Works for a dependency declared in `[dependencies]`; verified with a path dependency |
 
 > [!warn]
-> V3 has **no module system**. Everything — your file, and every standard
-> library file linked into the build — shares one flat global namespace. A
-> `use` line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
-> `std/ui/window.fk` or the cockpit package. Every other module is already in
-> scope without it.
+> V3's module system is the project manifest. `hangar.toml` names a project's
+> modules, its exports and its dependencies, and `use` imports named tasks
+> across them. `launch` does not parse and glob imports are refused.
 >
-> That also means Hangar can install a dependency it cannot then link.
-> `use pkg::{…}` is stripped, the package source is never concatenated, and
-> the first call fails with `unknown callable`. Verified against the shipping
-> compiler — see [Hangar & packages](hangar.html).
+> A single file built outside a project still shares one flat global namespace
+> with every standard-library file linked into the build. There, a `use std::…`
+> line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
+> `std/ui/window.fk` or the cockpit package. See
+> [Hangar & packages](hangar.html).
 
 ## Section 7 — Standard library
 
@@ -212,7 +211,7 @@ confirmed against the binary that verified this site.
 
 The V3 lexer implements a **subset** of the bible's token table.
 
-Present: the 47 single-word keywords, 6 bool literals, 10 multi-word keywords,
+Present: the 49 single-word keywords, 6 bool literals, 11 multi-word keywords,
 and the punctuation set.
 
 Absent: `variant`, `alias`, `dyn`, `never`, `const`, all concurrency keywords,
@@ -222,9 +221,10 @@ lifetime tokens `'a`, numeric suffixes (`42u`, `3.14f`, `42t`, `999b`), and
 
 The bible's §8.3 requires V4 keywords to be matched **case-sensitively** so
 that `Pilot` and `Some` stay usable as identifiers. **V3 does the opposite** —
-it lowercases before comparing, so `Pilot`, `Result` and `Max` are keywords and
-cannot be names. This is the single largest practical divergence for someone
-writing V3 code.
+it reserves a keyword in every letter case, so `Pilot`, `Result` and `Max`
+cannot be names. A capitalised single-word keyword does not work as the
+keyword either: only the lowercase spelling does. This is the single largest
+practical divergence for someone writing V3 code.
 
 ## Sections 9–17
 
@@ -234,7 +234,7 @@ writing V3 code.
 | §10 Type checker | :partial: | Basic inference, arity and type checks, nominal member validation. None of the listed advanced rules |
 | §11 Code generation | :partial: | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
 | §12 Build modes | :v4: | Absent — only `--opt=0..3` and backend choice |
-| §13 Compiler CLI | :partial: | Most commands present; `-o`, `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
+| §13 Compiler CLI | :partial: | Most commands present; `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
 | §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines |
 | §15 Cheatsheet | :partial: | Describes the full language; roughly a fifth applies to V3 |
 | §16 FFI | :v4: | Only bare `extern task f(...) -> T`. No blocks, conventions, `link=`, layout attributes, raw pointers or `trust me` |
@@ -251,7 +251,7 @@ Counting the bible's own feature inventory against compile evidence:
 | §3 Concurrency | 0 | all |
 | §4 Borrow checker | 3 Phase-1 rules, opt-in | the rest |
 | §5 Anime layer | 4 of 20 | 16 |
-| §6 Modules | Hangar CLI only | the module system |
+| §6 Modules | Manifest modules, exports and dependencies | `launch` visibility, glob imports |
 | §7 Stdlib | ~8 of 19 modules, reshaped | 11 |
 | §16 FFI | 1 declaration form | all else |
 
@@ -270,7 +270,7 @@ Counting the bible's own feature inventory against compile evidence:
 > verification harness when you pull.
 
 V3 is a small, sharp, genuinely self-hosting language: scalars, words, shapes,
-methods, three loops, two branch forms, flat arrays and a C FFI. The bible
+methods, loops, two branch forms, flat arrays and a C FFI. The bible
 describes where FREAK is going. This site describes where it is.
 
 For what to write instead of the missing features, see

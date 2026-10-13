@@ -1,45 +1,103 @@
 # Hangar & packages
 
-> Hangar manages dependencies. V3 cannot consume them. This page explains the gap and what to do instead.
+> A project is a `hangar.toml` and the sources it names. This page covers what the compiler reads from that manifest, how one project uses another, and what is still missing.
 
 Hangar is FREAK's package manager, shipping as `freak hangar <cmd>` and as a
-standalone `hangar` binary. It initialises projects, edits manifests, resolves
-semver constraints, downloads packages and publishes them.
+standalone `hangar` binary. As of 0.15 the compiler reads the project manifest
+too: `freak build`, `freak run` and `freak test` work on a whole project, and a
+project can import tasks from another one.
 
-> [!warn]
-> **An installed package is not visible to the compiler.** `freak build` never
-> reads `hangar_modules/` and never reads `[dependencies]`. A `use pkg::{…}`
-> line is rewritten to a comment before parsing, so nothing is imported and the
-> first call into the package fails with `unknown callable`.
->
-> Hangar today is a manifest and download tool. The link step that would make a
-> dependency usable does not exist in V3.
+## A project
 
-Verified against the shipping compiler:
+`freak init NAME` creates one; `--template=cli`, `lib` or `http` chooses the
+starting layout. Its manifest looks like this:
+
+```toml
+[project]
+name = "sortie"
+version = "0.1.0"
+kind = "app"
+entry = "src/main.fk"
+
+[modules]
+greet = "src/greet.fk"
+
+[exports]
+greet = "greet::greet"
+
+[tests]
+greeting = "tests/greeting_test.fk"
+
+[dependencies]
+```
+
+| Table | What it is for |
+|---|---|
+| `[project]` | `kind` must be `app` or `lib`. An app names its `entry` file |
+| `[modules]` | The project's other source files, each under a module name |
+| `[exports]` | The tasks another project may import, written `module::task` |
+| `[tests]` | The programs `freak test` builds and runs |
+| `[dependencies]` | The projects this one may import from |
+
+Inside the project directory, `freak build` and `freak run` need no file name.
+A file imports from one of the project's own modules with `use self::`:
+
+```fk
+use self::greet::{greet}
+
+task main() {
+    say greet("sortie")
+}
+```
+
+## Using another project
+
+A library lists what it offers under `[exports]`. A project that wants it names
+it under `[dependencies]`, and imports the exported task through that name:
+
+```toml
+[dependencies]
+demo = { path = "../.." }
+```
+
+```fk
+use demo::{greet}
+
+task main() {
+    say greet("consumer")
+}
+```
+
+Verified against the shipping compiler, in the consumer project that
+`freak init greeter --template=lib` generates under `examples/consumer`:
 
 ```text
-$ freak hangar init demo
-  INITIALIZED demo
-    hangar.toml
-    src/main.fk
-    hangar_modules/
-
-$ cat hangar_modules/greeter/greeter.fk
-task greeter_hello(name: word) -> word { give back "hello, " + name }
-
-$ cat src/main.fk
-use greeter::{greeter_hello}
-task main() -> void { say greeter_hello("Takeru") }
-
-$ freak build src/main.fk
-type error: unknown callable 'greeter_hello' (line 4)
-  X BUILD FAILED
+$ freak run
+Hello, consumer!
 ```
+
+An import is checked, not skipped:
+
+| You write | The compiler answers |
+|---|---|
+| `use greeter::{hello}` with no `greeter` dependency declared | `undeclared direct dependency 'greeter'` |
+| `use demo::{nothing}` | `missing public export 'nothing'` |
+| `use demo::*` | `import requires {symbol, symbol as alias}` |
+| `use std::nonexistent` | `unsupported standard module 'nonexistent'` |
+
+> [!note]
+> Only a path dependency was run for this page. The 0.15.0 release notes say
+> build, run and test also consume Git dependencies pinned in `hangar.lock`.
+
+> [!warn]
+> `freak hangar init` still writes the older, smaller manifest, without `kind`
+> or `entry`. `freak build` refuses a project like that: *"project.kind must be
+> 'app' or 'lib'"*. Create projects with `freak init`, or add the two keys.
 
 ## What does get linked
 
-`cli_load_std` in `src/cli/build.fk` is the whole of the build's source
-resolution. It concatenates a fixed list ahead of your file:
+`cli_load_std` in `src/cli/build.fk` is how the standard library reaches your
+program. It concatenates a fixed list ahead of your source:
 
 | Source | When |
 |---|---|
@@ -62,12 +120,12 @@ in that list is in scope whether you write `use` or not.
 
 ## Commands
 
-All of these work. What they cannot do is make a package compile.
+These are the `hangar` subcommands.
 
 | Command | Effect |
 |---|---|
 | `hangar init [name]` | Scaffold `hangar.toml`, `src/main.fk`, `hangar_modules/` |
-| `hangar add <name> [constraint]` | Add a dependency to the manifest |
+| `hangar add <name> [constraint]` | Refused in 0.15.0: *"Registry package sources are unavailable; specify an explicit Git source"* |
 | `hangar add <name> <repo> [version]` | Add a dependency from a git repo |
 | `hangar remove <name>` | Remove it |
 | `hangar install` | Download all dependencies into `hangar_modules/` |
@@ -84,7 +142,7 @@ All of these work. What they cannot do is make a package compile.
 
 ### Signing in
 
-In 0.14.2, `hangar login` stores a registry token in
+In 0.15.0, `hangar login` stores a registry token in
 `~/.hangar/credentials` — a string an administrator mints and you paste in.
 `hangar publish` sends it as a bearer token.
 
@@ -96,35 +154,24 @@ In 0.14.2, `hangar login` stores a registry token in
 > revoke yourself with `hangar auth logout`. `hangar auth status` says who you
 > are signed in as, and `hangar login` still works as an alias. Publishing is
 > tied to an account too: the first publish of a name claims it, and nobody
-> else can ship that name afterwards. Not in 0.14.2 — this page follows the
-> shipping compiler, and will change when the next release lands.
+> else can ship that name afterwards. Not in 0.15.0 — this page follows the
+> shipping compiler, and will change when a release carries it.
 
 ## hangar.toml
 
-What `hangar init` actually writes:
+`freak init` writes the manifest shown at the top of this page. `hangar init`
+writes a smaller one, in dotted-key form:
 
 ```toml
-[project]
-name = "demo"
-version = "0.1.0"
-```
-
-And after `hangar add muvluv "^2.0"`:
-
-```toml
-[project]
-name = "demo"
-version = "0.1.0"
-
-[dependencies]
-muvluv = "^2.0"
+project.name = "demo"
+project.version = "0.1.0"
 ```
 
 > [!warn]
-> The specification's §6.2 shows a different, larger manifest — `[unit]` rather
-> than `[project]`, plus `author`, `entry`, `edition`, a `[build]` table with
-> `mode`/`target`/`voice`, and `[profile.*]` sections. None of that is written
-> or read by the shipping tool. Only `[project]` and `[dependencies]` matter.
+> The specification's §6.2 shows a different manifest — `[unit]` rather than
+> `[project]`, plus `edition`, a `[build]` table with `mode`/`target`/`voice`,
+> and `[profile.*]` sections. None of that is written or read by the shipping
+> tools. They use the tables listed under [A project](#a-project).
 
 Version constraints are resolved by `std/version.fk`, which is real, working
 semver: `ver_satisfies("1.4.2", "^1.4")` is `true`. You can call that machinery
@@ -132,22 +179,15 @@ directly — see [Standard library](stdlib.html#stdversion).
 
 `hangar.lock` records resolved versions.
 
-## Reusing code, for real
+## Single files
 
-Because the compiler takes exactly one file and everything lands in one flat
-global namespace, a "library" is just source you concatenate ahead of your
-program:
+A file built on its own, outside any project, is still one translation unit in
+one flat global namespace. There a "library" is just source you concatenate
+ahead of your program:
 
 ```sh
 cat lib/text.fk src/app.fk > build/combined.fk
 freak build build/combined.fk
-```
-
-Verified working, including against a file downloaded into `hangar_modules/`:
-
-```sh
-cat hangar_modules/greeter/greeter.fk src/app.fk > combined.fk
-freak build combined.fk     # BUILD SUCCESSFUL
 ```
 
 Order matters only for `shape` declarations: a shape must be registered before
@@ -165,20 +205,21 @@ maintenance convention, not a module system. See
 
 ## Conventions that make it survivable
 
-One flat namespace across your code, every linked `std/` file, and every
-library you concatenate. Collisions are silent until they are a redefinition
-error, so:
+A single file shares one flat namespace with every linked `std/` file and
+every library you concatenate. Two tasks of your own with one name are an
+error, and a task named like a `std/` task quietly replaces it, so:
 
 - **Prefix everything a library exports.** `text_count_words`, not
   `count_words`. The standard library already does this — `string_*`, `std_*`,
   `ver_*`, `json_*`, `array_*`.
 - **Watch for `std/` collisions.** Defining your own `array_find` or
-  `string_trim` clashes with a task the build already linked.
+  `string_trim` replaces the standard one for your whole program. A compiler
+  builtin such as `ask` cannot be redefined at all.
 - **Remember reserved words are case-insensitive.** A library cannot export
   anything named `Result`, `Max`, `Route` or `Check` in any casing. See
   [reserved words](language-basics.html#reserved-words-are-case-insensitive).
-- **Keep a build script.** A one-line `cat` in a `.sh`/`.bat` is your build
-  system. Regenerate the combined file every time.
+- **Keep a build script.** Outside a project, a one-line `cat` in a
+  `.sh`/`.bat` is your build system. Regenerate the combined file every time.
 
 ## A Makefile-shaped example
 
@@ -195,10 +236,10 @@ Line numbers in diagnostics refer to the combined file. The compiler maintains
 a source map for the std prefix it adds itself, but it cannot know about your
 `cat`, so keep the concatenation order stable if you want stable offsets.
 
-## What ships when this is fixed
+## What is still missing
 
-Real imports need the module system from §6 and §17 of the specification —
-`launch` visibility, `use module::{names}`, `launch(package)`, glob imports,
-namespace collision rules. All of that is V4 work; `launch` does not currently
-parse at all. Until then, Hangar is useful for versioning and distributing
-source, and `cat` is the linker.
+The specification's module system (§6 and §17) goes further than the manifest
+does. `launch` visibility does not parse, there is no `launch(package)`, and a
+glob import is refused. `[exports]` is the only visibility there is: it limits
+what another project can import. Inside one project, any module can import any
+task of another with `use self::`.

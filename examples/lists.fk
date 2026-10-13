@@ -22,7 +22,7 @@ task main() -> void {
     say word_from_int(names.length())
     say names[1]
 
-    -- Indexed assignment requires `pilot mut`.
+    -- Indexed assignment works on any list that is not `fixed`.
     pilot mut scores: List<int> = [10, 20, 30]
     scores[0] = 99
     say word_from_int(scores[0])
@@ -46,7 +46,7 @@ task main() -> void {
     say word_from_int(count_all(names))
     say word_from_int(first_three()[2])
 
-    -- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.
+    -- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.
     pilot mut queue: List<int> = List::new()
     queue.push(10)
     queue.push(20)
@@ -60,7 +60,8 @@ task main() -> void {
     queue.clear()
     say word_from_int(queue.length())
 
-    -- Iterate with an index; there is no `for each`.
+    -- Iterating with an index. `for each name in names { }` visits the same
+    -- elements without one.
     pilot mut i: int = 0
     repeat names.length() times {
         say names[i]
