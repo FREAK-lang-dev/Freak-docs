@@ -3,19 +3,19 @@
   "generation": "v3",
   "channel": "release",
   "provenance": {
-    "release": "v0.14.2",
+    "release": "v0.15.0",
     "repository": "FREAK-lang-dev/Freak-lang",
-    "compiler_commit": "cedc022a2fca6b0ad8b6ea4b3c93ab3099006cc0",
-    "archive": "freak-linux-x64.tar.gz",
-    "archive_sha256": "f1a81c1dc411d642081946cd9733bfd76566fc2ec46bfbc1e45c21002a3a7a32",
-    "compiler_sha256": "253f1aab65aef20fb7954a5afead30405f8e6d40907444be025d274e2bf976e3"
+    "compiler_commit": "7780d357f3849fea3eabb4d41732ae6fa6c10bbd",
+    "archive": "freak-windows-x64.zip",
+    "archive_sha256": "a54c51988ae43834898f4d5c0cff6ab416f747dfed50e9e23fa20f55c2e013d8",
+    "compiler_sha256": "2978298af6a191899d2333d8219da30884192a8bf976cde80620832d312109a2"
   },
-  "input_sha256": "412f4fbff8bdd07b5b75c5285f71cc1b84e94d2571bd2816421ed891d80be174",
-  "compiler": "freak 0.14.2 (Maverick)",
-  "generated_utc": "2026-10-05T00:02:10Z",
-  "total": 83,
-  "compiled": 83,
-  "passed": 83,
+  "input_sha256": "42179a8ac20ad882e0cfc7086070c78c5a58a4cca7802beeb8d8a524808ec4ae",
+  "compiler": "freak 0.15.0 (Maverick)",
+  "generated_utc": "2026-10-13T16:00:18Z",
+  "total": 84,
+  "compiled": 84,
+  "passed": 84,
   "examples": {
     "anime_operators": {
       "name": "anime_operators",
@@ -28,7 +28,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6733
+      "elapsed_ms": 9240
     },
     "annotations": {
       "name": "annotations",
@@ -41,7 +41,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6628
+      "elapsed_ms": 9162
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -54,7 +54,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6768
+      "elapsed_ms": 9396
     },
     "array_literal": {
       "name": "array_literal",
@@ -67,7 +67,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6527
+      "elapsed_ms": 9494
     },
     "arrays": {
       "name": "arrays",
@@ -80,7 +80,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6510
+      "elapsed_ms": 9372
     },
     "book_bool": {
       "name": "book_bool",
@@ -94,7 +94,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13634
+      "elapsed_ms": 18877
     },
     "book_break_continue": {
       "name": "book_break_continue",
@@ -108,7 +108,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 14481
+      "elapsed_ms": 21525
     },
     "book_by_value": {
       "name": "book_by_value",
@@ -122,7 +122,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 14832
+      "elapsed_ms": 21645
     },
     "book_collatz": {
       "name": "book_collatz",
@@ -136,7 +136,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 14550
+      "elapsed_ms": 21652
     },
     "book_comments": {
       "name": "book_comments",
@@ -150,7 +150,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13364
+      "elapsed_ms": 20679
     },
     "book_constants": {
       "name": "book_constants",
@@ -164,7 +164,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12930
+      "elapsed_ms": 21795
     },
     "book_contextual_words": {
       "name": "book_contextual_words",
@@ -178,7 +178,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 14166
+      "elapsed_ms": 24253
     },
     "book_conversions": {
       "name": "book_conversions",
@@ -192,7 +192,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12483
+      "elapsed_ms": 21763
     },
     "book_exit_code": {
       "name": "book_exit_code",
@@ -207,7 +207,7 @@
       "exit_code": 3,
       "expected_exit_code": 3,
       "strict_borrow": true,
-      "elapsed_ms": 13378
+      "elapsed_ms": 21923
     },
     "book_fizzbuzz": {
       "name": "book_fizzbuzz",
@@ -221,7 +221,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12816
+      "elapsed_ms": 23262
     },
     "book_for_each": {
       "name": "book_for_each",
@@ -235,7 +235,21 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13285
+      "elapsed_ms": 23170
+    },
+    "book_for_ranges": {
+      "name": "book_for_ranges",
+      "file": "book_for_ranges.fk",
+      "source": "-- Counting loops. A range a..b stops before b; a..=b includes b.\ntask main() {\n    for each i in 1..4 {\n        say \"range {i}\"\n    }\n    for each i in 1..=3 {\n        say \"inclusive {i}\"\n    }\n    for each i in 0..10 step 4 {\n        say \"step {i}\"\n    }\n    repeat 2 times with pass {\n        say \"pass {pass}\"\n    }\n    for (pilot i = 3; i > 0; i -= 1) {\n        say \"countdown {i}\"\n    }\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "range 1\nrange 2\nrange 3\ninclusive 1\ninclusive 2\ninclusive 3\nstep 0\nstep 4\nstep 8\npass 0\npass 1\ncountdown 3\ncountdown 2\ncountdown 1",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 22734
     },
     "book_give_back": {
       "name": "book_give_back",
@@ -249,7 +263,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13380
+      "elapsed_ms": 20562
     },
     "book_guess": {
       "name": "book_guess",
@@ -267,7 +281,7 @@
       ],
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12977
+      "elapsed_ms": 17357
     },
     "book_guess_compare": {
       "name": "book_guess_compare",
@@ -282,7 +296,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12665
+      "elapsed_ms": 17007
     },
     "book_guess_input": {
       "name": "book_guess_input",
@@ -297,7 +311,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13015
+      "elapsed_ms": 19161
     },
     "book_guess_parse": {
       "name": "book_guess_parse",
@@ -312,7 +326,7 @@
       "stdin": "fifty\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12633
+      "elapsed_ms": 19758
     },
     "book_guess_secret": {
       "name": "book_guess_secret",
@@ -326,7 +340,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12451
+      "elapsed_ms": 19274
     },
     "book_hello": {
       "name": "book_hello",
@@ -340,7 +354,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13111
+      "elapsed_ms": 17378
     },
     "book_if": {
       "name": "book_if",
@@ -354,35 +368,37 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13028
+      "elapsed_ms": 16987
     },
     "book_int": {
       "name": "book_int",
       "file": "book_int.fk",
-      "source": "-- int: a 64-bit signed whole number.\ntask main() {\n    say 7 + 2\n    say 7 - 2\n    say 7 * 2\n    say 7 / 2            -- division between ints drops the fraction\n    say 7 % 2            -- and % gives the remainder\n    say -7 / 2           -- rounding is toward zero, not downward\n    say -7 % 2           -- so the remainder takes the sign of the left side\n    say 1 + 2 * 3        -- * / % bind tighter than + -\n    say (1 + 2) * 3\n\n    pilot largest: int = 9223372036854775807\n    say largest\n    say largest + 1      -- past the largest value, V3 wraps around silently\n}\n",
+      "source": "-- int: a 64-bit signed whole number.\ntask main() {\n    say 7 + 2\n    say 7 - 2\n    say 7 * 2\n    say 7 / 2            -- division between ints drops the fraction\n    say 7 % 2            -- and % gives the remainder\n    say -7 / 2           -- rounding is toward zero, not downward\n    say -7 % 2           -- so the remainder takes the sign of the left side\n    say 1 + 2 * 3        -- * / % bind tighter than + -\n    say (1 + 2) * 3\n\n    pilot largest: int = 9223372036854775807\n    say largest\n    say largest + 1      -- past the largest value, the program stops here\n    say \"never printed\"\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "9\n5\n14\n3\n1\n-3\n-1\n7\n9\n9223372036854775807\n-9223372036854775808",
+      "stdout": "9\n5\n14\n3\n1\n-3\n-1\n7\n9\n9223372036854775807",
       "errors": [],
       "backend": "llvm",
       "passed": true,
-      "exit_code": 0,
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "stderr": "FREAK: integer overflow in addition",
       "strict_borrow": true,
-      "elapsed_ms": 12851
+      "elapsed_ms": 16846
     },
     "book_keyword_case": {
       "name": "book_keyword_case",
       "file": "book_keyword_case.fk",
-      "source": "-- Single-word keywords work only in lowercase. The truth literals are the\n-- dangerous case: a capitalised spelling is accepted, and it does not mean\n-- what it says.\ntask main() {\n    pilot lowercase = true\n    pilot uppercase = TRUE\n\n    say lowercase\n    say uppercase\n}\n",
+      "source": "-- Single-word keywords work only in lowercase. The truth literals are the\n-- exception: a capitalised spelling is accepted and means the same value.\ntask main() {\n    pilot lowercase = true\n    pilot uppercase = TRUE\n\n    say lowercase\n    say uppercase\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "true\nfalse",
+      "stdout": "true\ntrue",
       "errors": [],
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13293
+      "elapsed_ms": 16597
     },
     "book_loop_forever": {
       "name": "book_loop_forever",
@@ -396,21 +412,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12609
-    },
-    "book_no_entry": {
-      "name": "book_no_entry",
-      "file": "book_no_entry.fk",
-      "source": "-- The entry point is the task named `main`, in lowercase.\n-- This file has no such task, so the program starts, does nothing, and ends.\ntask Main() {\n    say \"never printed\"\n}\n",
-      "compiled": true,
-      "ran": true,
-      "stdout": "",
-      "errors": [],
-      "backend": "llvm",
-      "passed": true,
-      "exit_code": 0,
-      "strict_borrow": true,
-      "elapsed_ms": 13367
+      "elapsed_ms": 16828
     },
     "book_num": {
       "name": "book_num",
@@ -424,7 +426,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13051
+      "elapsed_ms": 16785
     },
     "book_order": {
       "name": "book_order",
@@ -438,7 +440,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13325
+      "elapsed_ms": 18356
     },
     "book_pilots": {
       "name": "book_pilots",
@@ -452,7 +454,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13577
+      "elapsed_ms": 18663
     },
     "book_pipe": {
       "name": "book_pipe",
@@ -466,7 +468,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13128
+      "elapsed_ms": 18349
     },
     "book_repeat_times": {
       "name": "book_repeat_times",
@@ -480,7 +482,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12936
+      "elapsed_ms": 18469
     },
     "book_repeat_until": {
       "name": "book_repeat_until",
@@ -494,7 +496,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12875
+      "elapsed_ms": 18159
     },
     "book_scope": {
       "name": "book_scope",
@@ -508,7 +510,21 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13073
+      "elapsed_ms": 18129
+    },
+    "book_script": {
+      "name": "book_script",
+      "file": "book_script.fk",
+      "source": "-- A file with no `main` runs its top-level statements, in order.\npilot squadron = \"Valkyries\"\nsay \"booting\"\nsay \"{squadron} ready\"\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "booting\nValkyries ready",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 18161
     },
     "book_shared_pilot": {
       "name": "book_shared_pilot",
@@ -522,7 +538,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13104
+      "elapsed_ms": 20741
     },
     "book_statements": {
       "name": "book_statements",
@@ -536,7 +552,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12663
+      "elapsed_ms": 20737
     },
     "book_tasks": {
       "name": "book_tasks",
@@ -550,21 +566,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13277
-    },
-    "book_toplevel_main": {
-      "name": "book_toplevel_main",
-      "file": "book_toplevel_main.fk",
-      "source": "-- With a `main`, the top level is for declarations.\npilot squadron = \"Valkyries\"\n\nsay \"this top-level statement is never run\"\n\ntask main() {\n    say \"main sees {squadron}\"\n}\n",
-      "compiled": true,
-      "ran": true,
-      "stdout": "main sees Valkyries",
-      "errors": [],
-      "backend": "llvm",
-      "passed": true,
-      "exit_code": 0,
-      "strict_borrow": true,
-      "elapsed_ms": 12918
+      "elapsed_ms": 24395
     },
     "book_training_arc": {
       "name": "book_training_arc",
@@ -578,7 +580,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13680
+      "elapsed_ms": 24264
     },
     "book_two_word_case": {
       "name": "book_two_word_case",
@@ -592,35 +594,49 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 13465
+      "elapsed_ms": 24584
     },
     "book_when": {
       "name": "book_when",
       "file": "book_when.fk",
-      "source": "-- `when` picks one arm by comparing a value with literals.\ntask order_for(code: int) -> word {\n    when code {\n        1 -> give back \"launch\"\n        2 -> give back \"hold\"\n        3 -> give back \"abort\"\n        _ -> give back \"unknown order\"\n    }\n}\n\ntask main() {\n    say order_for(1)\n    say order_for(9)\n\n    pilot rank = \"ace\"\n    when rank {\n        \"rookie\" -> say \"simulator only\"\n        \"ace\" -> {\n            say \"cleared for sortie\"\n            say \"lead element\"\n        }\n        _ -> say \"report to the briefing room\"\n    }\n\n    -- No arm matches and there is no `_`: nothing runs.\n    when rank {\n        \"cadet\" -> say \"never printed\"\n    }\n\n    -- Arms are tried from the top, and the first match wins.\n    when rank {\n        _ -> say \"the catch-all came first, so it always wins\"\n        \"ace\" -> say \"never printed\"\n    }\n}\n",
+      "source": "-- `when` picks one arm by comparing a value with literals.\ntask order_for(code: int) -> word {\n    when code {\n        1 -> give back \"launch\"\n        2 -> give back \"hold\"\n        3 -> give back \"abort\"\n        _ -> give back \"unknown order\"\n    }\n}\n\ntask main() {\n    say order_for(1)\n    say order_for(9)\n\n    pilot rank = \"ace\"\n    when rank {\n        \"rookie\" -> say \"simulator only\"\n        \"ace\" -> {\n            say \"cleared for sortie\"\n            say \"lead element\"\n        }\n        _ -> say \"report to the briefing room\"\n    }\n\n    -- No arm matches and there is no `_`: nothing runs.\n    when rank {\n        \"cadet\" -> say \"never printed\"\n    }\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "launch\nunknown order\ncleared for sortie\nlead element\nthe catch-all came first, so it always wins",
+      "stdout": "launch\nunknown order\ncleared for sortie\nlead element",
       "errors": [],
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12454
+      "elapsed_ms": 24189
+    },
+    "book_while": {
+      "name": "book_while",
+      "file": "book_while.fk",
+      "source": "-- `while` runs as long as its condition is true: the opposite of `repeat until`.\ntask main() {\n    pilot fuel = 3\n    while fuel > 0 {\n        say \"fuel {fuel}\"\n        fuel -= 1\n    }\n\n    pilot laps = 0\n    repeat while laps < 2 {\n        laps += 1\n    }\n    say \"laps {laps}\"\n}\n",
+      "compiled": true,
+      "ran": true,
+      "stdout": "fuel 3\nfuel 2\nfuel 1\nlaps 2",
+      "errors": [],
+      "backend": "llvm",
+      "passed": true,
+      "exit_code": 0,
+      "strict_borrow": true,
+      "elapsed_ms": 26590
     },
     "book_words_intro": {
       "name": "book_words_intro",
       "file": "book_words_intro.fk",
-      "source": "-- word: a piece of text.\ntask main() {\n    pilot title = \"Muv\" + \"-\" + \"Luv\"      -- + joins two words\n    say title\n    say title.length()                     -- 7: one for each of these letters\n\n    pilot mut system = \"XM\"\n    system += \"3\"                          -- += appends\n    say system\n\n    say title == \"Muv-Luv\"                 -- words compare with == and !=\n\n    -- A name in braces is replaced by its value. It works for\n    -- word, int, num and bool pilots.\n    pilot sorties = 12\n    pilot ratio = 0.75\n    pilot cleared = true\n    say \"{title}: {sorties} sorties, ratio {ratio}, cleared {cleared}\"\n\n    -- Braces around anything that is not a name are printed as they are.\n    say \"{sorties + 1} is not worked out\"\n\n    -- A backslash introduces a character that is awkward to type.\n    say \"tab:[\\t] quote:[\\\"] backslash:[\\\\]\"\n}\n",
+      "source": "-- word: a piece of text.\ntask main() {\n    pilot title = \"Muv\" + \"-\" + \"Luv\"      -- + joins two words\n    say title\n    say title.length()                     -- 7: one for each of these letters\n\n    pilot mut system = \"XM\"\n    system += \"3\"                          -- += appends\n    say system\n\n    say title == \"Muv-Luv\"                 -- words compare with == and !=\n    say \"apple\" < \"banana\"                 -- and are ordered byte by byte\n\n    -- A name in braces is replaced by its value. It works for\n    -- word, int, num and bool pilots.\n    pilot sorties = 12\n    pilot ratio = 0.75\n    pilot cleared = true\n    say \"{title}: {sorties} sorties, ratio {ratio}, cleared {cleared}\"\n\n    -- A backslash before a brace prints the brace itself.\n    say \"\\{sorties\\} is printed as written\"\n\n    -- A backslash introduces a character that is awkward to type.\n    say \"tab:[\\t] quote:[\\\"] backslash:[\\\\]\"\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "Muv-Luv\n7\nXM3\ntrue\nMuv-Luv: 12 sorties, ratio 0.75, cleared true\n{sorties + 1} is not worked out\ntab:[\t] quote:[\"] backslash:[\\]",
+      "stdout": "Muv-Luv\n7\nXM3\ntrue\ntrue\nMuv-Luv: 12 sorties, ratio 0.75, cleared true\n{sorties} is printed as written\ntab:[\t] quote:[\"] backslash:[\\]",
       "errors": [],
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 12116
+      "elapsed_ms": 26401
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -633,7 +649,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6192
+      "elapsed_ms": 12764
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -646,7 +662,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6528
+      "elapsed_ms": 12141
     },
     "colour": {
       "name": "colour",
@@ -659,7 +675,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6547
+      "elapsed_ms": 12732
     },
     "control_if": {
       "name": "control_if",
@@ -672,7 +688,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6258
+      "elapsed_ms": 12690
     },
     "control_loops": {
       "name": "control_loops",
@@ -685,7 +701,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6242
+      "elapsed_ms": 14176
     },
     "control_when": {
       "name": "control_when",
@@ -698,7 +714,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6464
+      "elapsed_ms": 13843
     },
     "eventually": {
       "name": "eventually",
@@ -711,7 +727,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6331
+      "elapsed_ms": 13779
     },
     "extern": {
       "name": "extern",
@@ -724,7 +740,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6072
+      "elapsed_ms": 14883
     },
     "files": {
       "name": "files",
@@ -737,7 +753,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 5907
+      "elapsed_ms": 14850
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -750,7 +766,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6393
+      "elapsed_ms": 13984
     },
     "hello": {
       "name": "hello",
@@ -763,7 +779,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6404
+      "elapsed_ms": 12341
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -776,7 +792,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6579
+      "elapsed_ms": 12292
     },
     "inference": {
       "name": "inference",
@@ -789,12 +805,12 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6542
+      "elapsed_ms": 11725
     },
     "interpolation": {
       "name": "interpolation",
       "file": "interpolation.fk",
-      "source": "-- `{path}` inside a double-quoted word interpolates a binding.\n-- A path is an identifier plus zero or more `.field` hops, and must\n-- resolve to word, int, num or bool. Anything that is not a valid path\n-- stays literal text.\n-- (`Aviator`, not `Pilot`: V3 keywords are case-insensitive, so `Pilot`\n-- is the `pilot` keyword and cannot name a shape.)\nshape Aviator {\n    name: word\n    score: int\n}\n\nimpl Aviator {\n    task summary(self) -> word {\n        give back \"{self.name} scored {self.score}\"\n    }\n}\n\ntask main() -> void {\n    pilot callsign: word = \"Valkyrie\"\n    pilot sorties: int = 12\n    pilot rate: num = 0.75\n    pilot active: bool = true\n\n    say \"callsign={callsign} sorties={sorties}\"\n    say \"rate={rate} active={active}\"\n\n    pilot p: Aviator = Aviator { name: \"Meiya\", score: 98 }\n    say \"shape: {p.name} / {p.score}\"\n    say p.summary()\n\n    -- Not a path, so it is printed literally:\n    say \"literal {1 + 2} braces\"\n}\n",
+      "source": "-- `{path}` inside a double-quoted word interpolates a binding.\n-- A path is an identifier plus zero or more `.field` hops, and must\n-- resolve to word, int, num or bool. Anything else in braces is an\n-- error; write \\{ and \\} to print a brace.\n-- (`Aviator`, not `Pilot`: V3 keywords are case-insensitive, so `Pilot`\n-- is the `pilot` keyword and cannot name a shape.)\nshape Aviator {\n    name: word\n    score: int\n}\n\nimpl Aviator {\n    task summary(self) -> word {\n        give back \"{self.name} scored {self.score}\"\n    }\n}\n\ntask main() -> void {\n    pilot callsign: word = \"Valkyrie\"\n    pilot sorties: int = 12\n    pilot rate: num = 0.75\n    pilot active: bool = true\n\n    say \"callsign={callsign} sorties={sorties}\"\n    say \"rate={rate} active={active}\"\n\n    pilot p: Aviator = Aviator { name: \"Meiya\", score: 98 }\n    say \"shape: {p.name} / {p.score}\"\n    say p.summary()\n\n    -- Escaped braces are printed as they are:\n    say \"literal \\{1 + 2\\} braces\"\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "callsign=Valkyrie sorties=12\nrate=0.75 active=true\nshape: Meiya / 98\nMeiya scored 98\nliteral {1 + 2} braces",
@@ -802,7 +818,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6055
+      "elapsed_ms": 9626
     },
     "lists": {
       "name": "lists",
@@ -815,7 +831,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6481
+      "elapsed_ms": 9936
     },
     "module_pattern": {
       "name": "module_pattern",
@@ -828,7 +844,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6107
+      "elapsed_ms": 10087
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -841,7 +857,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6080
+      "elapsed_ms": 10793
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -854,7 +870,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6373
+      "elapsed_ms": 10689
     },
     "operators": {
       "name": "operators",
@@ -867,7 +883,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6618
+      "elapsed_ms": 10681
     },
     "pipe": {
       "name": "pipe",
@@ -880,7 +896,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6312
+      "elapsed_ms": 10150
     },
     "process_time": {
       "name": "process_time",
@@ -888,7 +904,7 @@
       "source": "-- Process and clock builtins.\n-- Note: `process::args()` is deliberately rejected by V3. Use the\n-- indexed pair `process::args_count()` / `process::arg(i)` instead.\ntask main() -> void {\n    pilot argc: int = process::args_count()\n    say word_from_int(argc)\n\n    pilot mut i: int = 0\n    repeat argc times {\n        say \"arg {i}: \" + process::arg(i)\n        i += 1\n    }\n\n    pilot started: int = time::now_ms()\n    pilot mut spin: int = 0\n    repeat 1000 times {\n        spin += 1\n    }\n    pilot elapsed: int = time::now_ms() - started\n    say word_from_bool(elapsed >= 0)\n    say word_from_bool(process::env(\"PATH\").length() > 0)\n}\n",
       "compiled": true,
       "ran": true,
-      "stdout": "3\narg 0: /build/process_time\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
+      "stdout": "3\narg 0: /build/process_time.exe\narg 1: alpha\narg 2: bravo\ntrue\ntrue",
       "errors": [],
       "backend": "llvm",
       "passed": true,
@@ -897,7 +913,7 @@
         "bravo"
       ],
       "exit_code": 0,
-      "elapsed_ms": 6270
+      "elapsed_ms": 10230
     },
     "recursion": {
       "name": "recursion",
@@ -910,7 +926,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6181
+      "elapsed_ms": 9969
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -923,7 +939,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6135
+      "elapsed_ms": 10116
     },
     "same_line": {
       "name": "same_line",
@@ -936,7 +952,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6226
+      "elapsed_ms": 10603
     },
     "shapes": {
       "name": "shapes",
@@ -949,7 +965,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6179
+      "elapsed_ms": 10518
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -962,7 +978,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6415
+      "elapsed_ms": 9113
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -975,7 +991,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6074
+      "elapsed_ms": 10121
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -988,7 +1004,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6197
+      "elapsed_ms": 10005
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -1001,7 +1017,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 5973
+      "elapsed_ms": 9715
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -1014,7 +1030,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6452
+      "elapsed_ms": 9690
     },
     "strings": {
       "name": "strings",
@@ -1027,7 +1043,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6909
+      "elapsed_ms": 10035
     },
     "tasks": {
       "name": "tasks",
@@ -1040,7 +1056,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6474
+      "elapsed_ms": 9464
     },
     "toplevel": {
       "name": "toplevel",
@@ -1053,7 +1069,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6643
+      "elapsed_ms": 9415
     },
     "training_arc": {
       "name": "training_arc",
@@ -1066,7 +1082,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6582
+      "elapsed_ms": 9345
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -1079,7 +1095,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6733
+      "elapsed_ms": 11209
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -1092,7 +1108,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6362
+      "elapsed_ms": 10741
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -1105,7 +1121,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6637
+      "elapsed_ms": 10592
     },
     "variables": {
       "name": "variables",
@@ -1118,7 +1134,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 6305
+      "elapsed_ms": 9704
     },
     "word_builder": {
       "name": "word_builder",
@@ -1131,7 +1147,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 3977
+      "elapsed_ms": 9209
     },
     "wordcount": {
       "name": "wordcount",
@@ -1144,7 +1160,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 3529
+      "elapsed_ms": 8643
     }
   },
   "diagnostics": {
@@ -1188,6 +1204,16 @@
       "errors": [],
       "passed": true
     },
+    "book_fixed_reassign": {
+      "name": "book_fixed_reassign",
+      "file": "book_fixed_reassign.fk",
+      "source": "task main() {\n    fixed pilot fuel = 50\n    fuel = 75\n    say fuel\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: fixed pilot cannot be modified (line 3)\n --> book_fixed_reassign.fk:3:1\n3 |     fuel = 75\n  | ^",
+      "errors": [],
+      "passed": true
+    },
     "book_for_each_word": {
       "name": "book_for_each_word",
       "file": "book_for_each_word.fk",
@@ -1195,16 +1221,6 @@
       "flags": [],
       "rejected": true,
       "message": "type error: for each requires a list with a known element type (line 2)\n --> book_for_each_word.fk:2:1\n2 |     for each letter in \"Takeru\" {\n  | ^",
-      "errors": [],
-      "passed": true
-    },
-    "book_give_back_trap": {
-      "name": "book_give_back_trap",
-      "file": "book_give_back_trap.fk",
-      "source": "task main() {\n    pilot give = 1\n    pilot mut back = 2\n    say give\n    back = 3\n    say back\n}\n",
-      "flags": [],
-      "rejected": true,
-      "message": "error: unexpected 'give back' \u2014 this token cannot start an expression\n --> book_give_back_trap.fk:4:9\n  |\n4 |     say give\n  |         ^\n\nerror: unexpected '=' \u2014 this token cannot start an expression\n --> book_give_back_trap.fk:5:10\n  |\n5 |     back = 3\n  |          ^",
       "errors": [],
       "passed": true
     },
@@ -1238,6 +1254,16 @@
       "errors": [],
       "passed": true
     },
+    "book_interpolation_expression": {
+      "name": "book_interpolation_expression",
+      "file": "book_interpolation_expression.fk",
+      "source": "task main() {\n    pilot sorties = 12\n    say \"{sorties + 1} sorties\"\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "error: unsupported interpolation expression\n --> book_interpolation_expression.fk:3:9\n  |\n3 |     say \"{sorties + 1} sorties\"\n  |         ^ use a binding or field path, or escape literal braces",
+      "errors": [],
+      "passed": true
+    },
     "book_keyword_name": {
       "name": "book_keyword_name",
       "file": "book_keyword_name.fk",
@@ -1264,7 +1290,7 @@
       "source": "task main() {\n    sya \"Hello, FREAK!\"\n}\n",
       "flags": [],
       "rejected": true,
-      "message": "type error: unknown binding 'sya' (line 2)\n --> book_misspelled_say.fk:2:1\n2 |     sya \"Hello, FREAK!\"\n  | ^",
+      "message": "type error: unknown binding 'sya' (line 2)\n --> book_misspelled_say.fk:2:1\n2 |     sya \"Hello, FREAK!\"\n  | ^\ntype error: bare value is not a statement; use it in say, give back, a binding or a call (line 2)\n --> book_misspelled_say.fk:2:1\n2 |     sya \"Hello, FREAK!\"\n  | ^\ntype error: bare value is not a statement; use it in say, give back, a binding or a call (line 2)\n --> book_misspelled_say.fk:2:1\n2 |     sya \"Hello, FREAK!\"\n  | ^",
       "errors": [],
       "passed": true
     },
@@ -1275,6 +1301,16 @@
       "flags": [],
       "rejected": true,
       "message": "type error: declaration is valid only at top level (line 2)\n --> book_nested_task.fk:2:1\n2 |     task helper() {\n  | ^\ntype error: unknown callable 'helper' (line 5)\n --> book_nested_task.fk:5:1\n5 |     helper()\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_no_entry": {
+      "name": "book_no_entry",
+      "file": "book_no_entry.fk",
+      "source": "-- The entry point is the task named `main`, in lowercase.\n-- This file has no such task and nothing else to run, so it does not build.\ntask Main() {\n    say \"never printed\"\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: program requires a usable task main() entry or executable script statements (line 1)\n --> book_no_entry.fk:1:1\n1 | -- The entry point is the task named `main`, in lowercase.\n  | ^",
       "errors": [],
       "passed": true
     },
@@ -1308,18 +1344,6 @@
       "errors": [],
       "passed": true
     },
-    "book_reassign_strict": {
-      "name": "book_reassign_strict",
-      "file": "book_reassign_strict.fk",
-      "source": "task main() {\n    pilot fuel = 50\n    fuel = 75\n    say fuel\n}\n",
-      "flags": [
-        "--strict-borrow"
-      ],
-      "rejected": true,
-      "message": "borrowck: This binding was sworn to silence. It cannot be reassigned. 'fuel' (line 3)\n --> book_reassign_strict.fk:3:1\n3 |     fuel = 75\n  | ^",
-      "errors": [],
-      "passed": true
-    },
     "book_remainder_num": {
       "name": "book_remainder_num",
       "file": "book_remainder_num.fk",
@@ -1350,16 +1374,6 @@
       "errors": [],
       "passed": true
     },
-    "book_semicolon": {
-      "name": "book_semicolon",
-      "file": "book_semicolon.fk",
-      "source": "task main() {\n    pilot fuel = 50;\n    say fuel\n}\n",
-      "flags": [],
-      "rejected": true,
-      "message": "error: unexpected ';' \u2014 this token cannot start an expression\n --> book_semicolon.fk:2:20\n  |\n2 |     pilot fuel = 50;\n  |                    ^",
-      "errors": [],
-      "passed": true
-    },
     "book_store_void": {
       "name": "book_store_void",
       "file": "book_store_void.fk",
@@ -1370,13 +1384,13 @@
       "errors": [],
       "passed": true
     },
-    "book_task_name_taken": {
-      "name": "book_task_name_taken",
-      "file": "book_task_name_taken.fk",
-      "source": "task string_reverse(text: word) -> word {\n    give back text\n}\n\ntask main() {\n    say string_reverse(\"abc\")\n}\n",
+    "book_toplevel_main": {
+      "name": "book_toplevel_main",
+      "file": "book_toplevel_main.fk",
+      "source": "-- With a `main`, the top level is for declarations.\npilot squadron = \"Valkyries\"\n\nsay \"this top-level statement is not allowed\"\n\ntask main() {\n    say \"main sees {squadron}\"\n}\n",
       "flags": [],
       "rejected": true,
-      "message": "type error: callable 'string_reverse' conflicts with another task or extern declaration\n --> book_task_name_taken.fk:1:1\n1 | task string_reverse(text: word) -> word {\n  | ^",
+      "message": "type error: executable statement at top level is unsupported; place it inside task main() (line 4)\n --> book_toplevel_main.fk:4:1\n4 | say \"this top-level statement is not allowed\"\n  | ^",
       "errors": [],
       "passed": true
     },
@@ -1396,7 +1410,7 @@
       "source": "task main() {\n    say \"Hello, FREAK!\n}\n",
       "flags": [],
       "rejected": true,
-      "message": "error: unterminated string literal\n --> book_unterminated_word.fk:2:9\n  |\n2 |     say \"Hello, FREAK!\n  |         ^ add a closing quote\n\nerror: unexpected end of file \u2014 missing '}'\n --> book_unterminated_word.fk:1:13\n  |\n1 | task main() {\n  |             ^ block opened here",
+      "message": "error: unterminated string literal\n --> book_unterminated_word.fk:2:9\n  |\n2 |     say \"Hello, FREAK!\n  |         ^ add a closing quote",
       "errors": [],
       "passed": true
     },
@@ -1417,6 +1431,16 @@
       "flags": [],
       "rejected": true,
       "message": "type error: when case must be a literal or '_' (line 5)\n --> book_when_needs_literal.fk:5:1\n5 |         abort_code -> say \"abort\"\n  | ^",
+      "errors": [],
+      "passed": true
+    },
+    "book_when_unreachable": {
+      "name": "book_when_unreachable",
+      "file": "book_when_unreachable.fk",
+      "source": "task main() {\n    pilot rank = \"ace\"\n    when rank {\n        _ -> say \"the catch-all comes first\"\n        \"ace\" -> say \"never reached\"\n    }\n}\n",
+      "flags": [],
+      "rejected": true,
+      "message": "type error: when arm is unreachable after '_' (line 5)\n --> book_when_unreachable.fk:5:1\n5 |         \"ace\" -> say \"never reached\"\n  | ^",
       "errors": [],
       "passed": true
     },

@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -178,7 +178,7 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <div class="codeblock"><pre class="code"><code>error: expected an identifier for parameter name, found &#x27;lend&#x27;</code></pre></div>
 <p>No <code>lend</code> / <code>lend mut</code> parameters, no <code>&#x27;a</code> lifetimes, no outlives bounds, no <code>Shared&lt;T&gt;</code> / <code>Weak&lt;T&gt;</code>, no <code>.clone()</code>, no <code>trust me</code>.</p>
 <p>Every parameter is by value, and shapes are handles into runtime storage — so a task that mutates a shape parameter&#x27;s field affects the caller. Return a fresh shape when you want isolation.</p>
-<p><code>--strict-borrow</code> enables a Phase-1 checker for immutability and single-owner moves; that is the whole of V3&#x27;s ownership story.</p>
+<p><code>--strict-borrow</code> enables a Phase-1 checker for single-owner moves, and <code>fixed</code> pilots are always immutable; that is the whole of V3&#x27;s ownership story.</p>
 <h2 id="concurrency">Concurrency<a class="anchor" href="#concurrency" aria-label="Link to this section">#</a></h2>
 <p>Nothing at all. No <code>xm3</code>, <code>sortie</code>, <code>debrief</code>, <code>formation</code>, <code>BriefingRoom</code>, <code>wingman</code>, <code>Comms</code>, <code>std::thread</code>, atomics or channels. None of those words are keywords. <code>||</code> lexes as one token and has no grammar rule.</p>
 <p>Shell out if you must:</p>
@@ -205,13 +205,13 @@ type error: unknown binding &#x27;alias&#x27;</code></pre></div>
 <h2 id="syntax-shorthands">Syntax shorthands<a class="anchor" href="#syntax-shorthands" aria-label="Link to this section">#</a></h2>
 <div class="tablewrap"><table><thead><tr><th>Bible form</th><th>V3</th></tr></thead><tbody><tr><td><code>task f(x) =&gt; expr</code></td><td>Use a braced body with <code>give back</code></td></tr><tr><td><code>done</code> closing a block</td><td>Use <code>}</code></td></tr><tr><td><code>**</code> exponent</td><td><code>math::pow(a, b)</code> or <code>std_pow(a, b)</code></td></tr><tr><td><code>-5</code> as a literal</td><td><code>0 - 5</code></td></tr><tr><td><code>42u</code>, <code>3.14f</code>, <code>42t</code>, <code>999b</code></td><td>No suffixes</td></tr><tr><td><code>[0; 100]</code> repeat-fill</td><td><code>List::filled(0, 100)</code></td></tr><tr><td><code>[T; N]</code> fixed arrays</td><td><code>List&lt;T&gt;</code>, or a legacy array handle</td></tr><tr><td><code>(a, b)</code> tuples</td><td>A shape</td></tr><tr><td>Named call arguments</td><td>Positional only</td></tr><tr><td>Stacked <code>@a @b</code> annotations</td><td>One per statement</td></tr><tr><td><code>@rival(meiya)</code> annotation arguments</td><td>Bare <code>@name</code> only</td></tr></tbody></table></div>
 <h2 id="build-modes-voices-output-paths">Build modes, voices, output paths<a class="anchor" href="#build-modes-voices-output-paths" aria-label="Link to this section">#</a></h2>
-<p><code>slice_of_life</code>, <code>mecha</code>, <code>shonen_jump</code>, <code>final_form</code> and <code>alternative</code> build modes do not exist; nor do <code>--voice=</code>, <code>--clearance=</code>, <code>--build-mode=</code> or <code>-o output_path</code>. The knobs are <code>--opt=0..3</code>, <code>--c</code> / <code>--llvm</code>, <code>--target=</code> and <code>--strict-borrow</code>.</p>
+<p><code>slice_of_life</code>, <code>mecha</code>, <code>shonen_jump</code>, <code>final_form</code> and <code>alternative</code> build modes do not exist; nor do <code>--voice=</code>, <code>--clearance=</code> or <code>--build-mode=</code>. The knobs are <code>--opt=0..3</code>, <code>--c</code> / <code>--llvm</code>, <code>--target=</code>, <code>-o</code> / <code>--output=</code> and <code>--strict-borrow</code>.</p>
 <h2 id="tooling">Tooling<a class="anchor" href="#tooling" aria-label="Link to this section">#</a></h2>
 <p>No language server, no incremental parsing, no tolerant AST, no autocomplete, no <code>test &quot;name&quot; { expect ... }</code> framework, no JIT. Parse errors abort the build. <code>freak test</code> is a shim around a Python regression runner in the source checkout.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

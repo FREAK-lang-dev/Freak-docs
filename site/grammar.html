@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -196,7 +196,7 @@ args        = [ expression { &quot;,&quot; expression } ]</code></pre></div>
 <h2 id="string-interpolation">String interpolation<a class="anchor" href="#string-interpolation" aria-label="Link to this section">#</a></h2>
 <p>Interpolation is resolved by the parser after lexing, over the literal&#x27;s text.</p>
 <div class="codeblock"><pre class="code"><code>interp-path = identifier { &quot;.&quot; identifier }</code></pre></div>
-<p>A <code>{...}</code> whose body matches <code>interp-path</code>, where every segment is a valid identifier and not a keyword, becomes an interpolated expression. Anything else — including <code>{1 + 2}</code> and <code>{f()}</code> — stays literal text, braces included. An unmatched <code>{</code> is literal.</p>
+<p>A <code>{...}</code> whose body matches <code>interp-path</code>, where every segment is a valid identifier and not a keyword, becomes an interpolated expression. A body that is an expression instead, such as <code>{1 + 2}</code> or <code>{f()}</code>, is an error, and so is a <code>{</code> with no closing <code>}</code>. <code>\{</code> and <code>\}</code> are literal braces.</p>
 <p>The resolved path must have type <code>word</code>, <code>int</code>, <code>num</code> or <code>bool</code>.</p>
 <h2 id="error-recovery">Error recovery<a class="anchor" href="#error-recovery" aria-label="Link to this section">#</a></h2>
 <p>The parser reports a diagnostic, skips one token, and continues. After 100 syntax errors it stops:</p>
@@ -208,8 +208,8 @@ args        = [ expression { &quot;,&quot; expression } ]</code></pre></div>
 <p>The whole compiler is one flattened translation unit with globally unique symbols; the file split is a maintenance convention, not a module system.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

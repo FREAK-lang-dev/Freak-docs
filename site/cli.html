@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -76,11 +76,11 @@
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak run game.fk --c --opt=3
 freak build game.fk --target=x86_64-linux-gnu
 freak build game.fk --strict-borrow</code></pre></div>
-<div class="callout v4"><div class="callout-title">Not in V3</div><p><code>-o output_path</code> does not exist. The output name is always the source basename plus <code>.exe</code> (Windows) or no extension elsewhere. <code>--voice=</code>, <code>--clearance=</code> and <code>--build-mode=</code> are also V4-only.</p></div>
+<div class="callout v4"><div class="callout-title">Not in V3</div><p><code>--voice=</code>, <code>--clearance=</code> and <code>--build-mode=</code> are V4-only. The output name can be chosen with <code>-o NAME</code> or <code>--output=NAME</code>; without it, it is the source basename plus <code>.exe</code> (Windows) or no extension elsewhere.</p></div>
 <h2 id="--strict-borrow"><code>--strict-borrow</code><a class="anchor" href="#--strict-borrow" aria-label="Link to this section">#</a></h2>
-<p>Without this flag V3 does no ownership checking at all. With it, a Phase-1 checker runs after type checking and enforces three rules:</p>
-<ul><li><strong>Immutable bindings.</strong> <code>pilot x = ...</code> cannot be reassigned; <code>pilot mut x = ...</code> can. Reassigning without <code>mut</code> reports <em>&quot;This binding was sworn to silence.&quot;</em></li><li><strong>Single-owner moves</strong> for <code>word</code>, arrays and user shapes. Use after move reports <em>&quot;Shirogane. You gave this away.&quot;</em></li><li><strong>Copy primitives.</strong> <code>int</code>, <code>num</code> and <code>bool</code> are copied on assignment; both bindings stay valid.</li></ul>
-<p>Nominal member validation — checking that a field or method you name actually exists on the shape — always runs, flag or not.</p>
+<p>Without this flag V3 does no ownership checking. With it, a Phase-1 checker runs after type checking and enforces two rules:</p>
+<ul><li><strong>Single-owner moves</strong> for <code>word</code>, arrays and user shapes. Use after move reports <em>&quot;Shirogane. You gave this away.&quot;</em></li><li><strong>Copy primitives.</strong> <code>int</code>, <code>num</code> and <code>bool</code> are copied on assignment; both bindings stay valid.</li></ul>
+<p>Mutability is not part of this flag. <code>fixed</code> and <code>grounded</code> pilots are always enforced, and plain pilots can always be reassigned. Nominal member validation — checking that a field or method you name actually exists on the shape — also always runs, flag or not.</p>
 <h2 id="backends-compared">Backends compared<a class="anchor" href="#backends-compared" aria-label="Link to this section">#</a></h2>
 <div class="tablewrap"><table><thead><tr><th></th><th>LLVM (<code>--llvm</code>)</th><th>C (<code>--c</code>)</th></tr></thead><tbody><tr><td>Scalars, control flow, words</td><td>yes</td><td>yes</td></tr><tr><td>Arrays and native calls</td><td>yes</td><td>yes</td></tr><tr><td><code>shape</code> construction, fields, methods</td><td>yes</td><td><strong>not a claimed executable path</strong></td></tr><tr><td>Dotted <code>{shape.field}</code> interpolation</td><td>yes</td><td>not claimed</td></tr><tr><td><code>std::ui</code> windows</td><td>Windows only, Win32/GDI</td><td>no</td></tr><tr><td><code>std::http</code></td><td>yes</td><td>not linked</td></tr><tr><td>Debug info</td><td>LineTablesOnly DWARF</td><td>via Clang</td></tr></tbody></table></div>
 <p>The rule of thumb: if your program declares a <code>shape</code>, build it with the default LLVM backend.</p>
@@ -110,8 +110,8 @@ hello.pdb       debug info, Windows</code></pre></div>
 <p><code>freak transpile</code> produces only the <code>.ll</code> or <code>.c</code>.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>

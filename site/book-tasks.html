@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -403,28 +403,47 @@ true</code></pre>
   </div>
 </figure>
 <p>On Linux and macOS you can see the code of the last command with <code>echo $?</code>. An exit code is a small number. On Linux and macOS only values from 0 to 255 survive the journey to the operating system, so use it for a status, not for a result.</p>
-<h2 id="the-top-level-is-for-declarations">The top level is for declarations<a class="anchor" href="#the-top-level-is-for-declarations" aria-label="Link to this section">#</a></h2>
-<p>Chapter 1 mentioned that a file with no <code>main</code> runs the statements at its top level. Once a file has a <code>main</code>, that stops. The program starts at <code>main</code>, and a statement written outside every task is not run at all:</p>
+<h2 id="scripts-and-the-top-level">Scripts and the top level<a class="anchor" href="#scripts-and-the-top-level" aria-label="Link to this section">#</a></h2>
+<p>A file does not have to have a <code>main</code>. Without one, it is a <em>script</em>: the statements at its top level run in order, from the first line to the last.</p>
 <figure class="example">
   <figcaption>
-    <span class="ex-name">examples/book_toplevel_main.fk</span>
+    <span class="ex-name">examples/book_script.fk</span>
     <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- A file with no `main` runs its top-level statements, in order.</span>
+<span class="c-kw">pilot</span> squadron <span class="c-op">=</span> <span class="c-str">&quot;Valkyries&quot;</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;booting&quot;</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;<span class="c-interp">{squadron}</span> ready&quot;</span></code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>booting
+Valkyries ready</code></pre>
+  </div>
+</figure>
+<p>That is convenient for a few lines of work. Once a file has a <code>main</code>, the program starts there instead, and a statement outside every task would never run. The compiler refuses one rather than skip it quietly:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_toplevel_main.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
   </figcaption>
   <pre class="code"><code><span class="c-com">-- With a `main`, the top level is for declarations.</span>
 <span class="c-kw">pilot</span> squadron <span class="c-op">=</span> <span class="c-str">&quot;Valkyries&quot;</span>
 
-<span class="c-kw">say</span> <span class="c-str">&quot;this top-level statement is never run&quot;</span>
+<span class="c-kw">say</span> <span class="c-str">&quot;this top-level statement is not allowed&quot;</span>
 
 <span class="c-kw">task</span> <span class="c-fn">main</span>() {
     <span class="c-kw">say</span> <span class="c-str">&quot;main sees <span class="c-interp">{squadron}</span>&quot;</span>
 }</code></pre>
   <div class="ex-out">
-    <div class="ex-out-head">Program output</div>
-    <pre class="stdout"><code>main sees Valkyries</code></pre>
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: executable statement at top level is unsupported; place it inside task main() (line 4)
+ --&gt; book_toplevel_main.fk:4:1
+4 | say &quot;this top-level statement is not allowed&quot;
+  | ^</code></pre>
   </div>
 </figure>
-<p>The top-level pilot still works, because a pilot is a declaration. The top-level <code>say</code> is a statement, and it was silently skipped.</p>
-<p>The rule to take from this: in a program with a <code>main</code>, put only declarations at the top level. That means tasks, pilots, and the shapes of Part II.</p>
+<p>The top-level pilot is fine, because a pilot is a declaration. The top-level <code>say</code> is a statement, and it is what the message points at.</p>
+<p>The rule to take from this: choose one shape per file. Either write a script with no <code>main</code>, or put only declarations at the top level: tasks, pilots, and the shapes of Part II.</p>
 <p>Tasks themselves can only be declared at the top level. A task inside a task is an error:</p>
 <figure class="example">
   <figcaption>
@@ -451,29 +470,9 @@ type error: unknown callable &#x27;helper&#x27; (line 5)
 </figure>
 <h2 id="one-namespace">One namespace<a class="anchor" href="#one-namespace" aria-label="Link to this section">#</a></h2>
 <p>All the tasks in a program share one set of names. Two tasks cannot have the same name, even with different parameters.</p>
-<p>That set includes more than your own file. Chapter 1 showed that the standard library is placed in front of your program before it is compiled. Its tasks are in the same set of names as yours, and you cannot declare a task with a name it already uses:</p>
-<figure class="example">
-  <figcaption>
-    <span class="ex-name">diagnostics/v3/book_task_name_taken.fk</span>
-    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
-  </figcaption>
-  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">string_reverse</span>(text<span class="c-op">:</span> <span class="c-type">word</span>) <span class="c-op">-&gt;</span> <span class="c-type">word</span> {
-    <span class="c-kw">give back</span> text
-}
-
-<span class="c-kw">task</span> <span class="c-fn">main</span>() {
-    <span class="c-kw">say</span> <span class="c-fn">string_reverse</span>(<span class="c-str">&quot;abc&quot;</span>)
-}</code></pre>
-  <div class="ex-out">
-    <div class="ex-out-head">Compiler diagnostic</div>
-    <pre class="stdout err"><code>type error: callable &#x27;string_reverse&#x27; conflicts with another task or extern declaration
- --&gt; book_task_name_taken.fk:1:1
-1 | task string_reverse(text: word) -&gt; word {
-  | ^</code></pre>
-  </div>
-</figure>
-<p><code>string_reverse</code> is a standard-library task. The message does not say where the other declaration is, which makes this confusing the first time. If a task name you have certainly used only once is reported as conflicting, the standard library has it. Choose a more specific name.</p>
-<p>The names of the operations built into the compiler, such as <code>ask</code>, are protected in the same way, with the message <code>conflicts with a compiler builtin</code>.</p>
+<p>The standard library is placed in front of your program before it is compiled, but its tasks do not take names away from you. If you declare a task with the same name as a standard-library task, such as <code>string_reverse</code>, your program calls yours.</p>
+<p>The names of the operations built into the compiler, such as <code>ask</code>, are different. They are protected, and declaring a task with one of them is refused with the message <code>conflicts with a compiler builtin</code>.</p>
+<p>A pilot also takes a name away from a task while it is visible. Inside a task that declares <code>pilot f = 3</code>, a call <code>f()</code> is refused with <code>local value shadows this name</code>. Give the pilot a different name.</p>
 <h2 id="the-pipe-operator">The pipe operator<a class="anchor" href="#the-pipe-operator" aria-label="Link to this section">#</a></h2>
 <p>Nested calls are read from the inside out, which is the opposite of the order in which they happen. The pipe operator, <code>|&gt;</code>, lets you write a chain of calls in the order they run.</p>
 <figure class="example">
@@ -694,13 +693,13 @@ type error: unknown callable &#x27;helper&#x27; (line 5)
 <p><a href="book-control-flow.html">Chapter 5</a> completes the core of the language: making decisions, and repeating work.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
-  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-and-calling">Declaring and calling</a></li><li><a href="#giving-a-value-back">Giving a value back</a></li><li><a href="#arguments-are-checked">Arguments are checked</a></li><li><a href="#a-task-gets-its-own-copy">A task gets its own copy</a></li><li><a href="#order-does-not-matter">Order does not matter</a></li><li><a href="#main-and-the-exit-code"><code>main</code> and the exit code</a></li><li><a href="#the-top-level-is-for-declarations">The top level is for declarations</a></li><li><a href="#one-namespace">One namespace</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#declaring-and-calling">Declaring and calling</a></li><li><a href="#giving-a-value-back">Giving a value back</a></li><li><a href="#arguments-are-checked">Arguments are checked</a></li><li><a href="#a-task-gets-its-own-copy">A task gets its own copy</a></li><li><a href="#order-does-not-matter">Order does not matter</a></li><li><a href="#main-and-the-exit-code"><code>main</code> and the exit code</a></li><li><a href="#scripts-and-the-top-level">Scripts and the top level</a></li><li><a href="#one-namespace">One namespace</a></li><li><a href="#the-pipe-operator">The pipe operator</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
 </div>
 <script src="assets/search-index.js"></script>
 <script src="assets/app.js"></script>

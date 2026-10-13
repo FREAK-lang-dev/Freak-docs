@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Control flow &middot; FREAK V3</title>
-<meta name="description" content="Choose between paths with if and when, and repeat work with four kinds of loop.">
+<meta name="description" content="Choose between paths with if and when, and repeat work with loops that count, loops that wait for a condition, and loops that visit a list.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.14.2 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -64,9 +64,9 @@
   <main id="main">
     <article class="prose">
 <h1 id="control-flow">Control flow<a class="anchor" href="#control-flow" aria-label="Link to this section">#</a></h1>
-<p class="lede">Choose between paths with <code>if</code> and <code>when</code>, and repeat work with four kinds of loop.</p>
+<p class="lede">Choose between paths with <code>if</code> and <code>when</code>, and repeat work with loops that count, loops that wait for a condition, and loops that visit a list.</p>
 <p>A program that only ran its statements from top to bottom could do very little. This chapter covers the statements that decide what runs next:</p>
-<ul><li><code>if</code>, <code>else if</code> and <code>else</code></li><li><code>when</code>, for choosing by value</li><li><code>repeat ... times</code>, for a known number of passes</li><li><code>repeat until</code>, for looping on a condition</li><li><code>training arc</code>, a condition loop that is guaranteed to end</li><li><code>for each</code>, for visiting the elements of a list</li><li><code>break</code> and <code>continue</code></li></ul>
+<ul><li><code>if</code>, <code>else if</code> and <code>else</code></li><li><code>when</code>, for choosing by value</li><li><code>repeat ... times</code>, for a known number of passes</li><li><code>repeat until</code>, for looping on a condition</li><li><code>training arc</code>, a condition loop that is guaranteed to end</li><li><code>for each</code>, for visiting the elements of a list</li><li>counting loops: ranges, <code>repeat ... times with</code>, and the C-style <code>for</code></li><li><code>while</code>, for looping as long as a condition holds</li><li><code>break</code> and <code>continue</code></li></ul>
 <h2 id="if"><code>if</code><a class="anchor" href="#if" aria-label="Link to this section">#</a></h2>
 <p><code>if</code> runs a block when a condition is true.</p>
 <figure class="example">
@@ -217,7 +217,7 @@ error: unexpected &#x27;else&#x27; — this token cannot start an expression
     } <span class="c-kw">else</span> {
         state <span class="c-op">=</span> <span class="c-str">&quot;bingo&quot;</span>
     }</code></pre></div>
-<p>Or put the decision in a task and give the answer back, as <code>status</code> does in the first listing. The second way is usually cleaner, because the pilot that receives the answer does not need to be <code>mut</code>.</p>
+<p>Or put the decision in a task and give the answer back, as <code>status</code> does in the first listing. The second way is usually cleaner, because the pilot that receives the answer is given its value once, and never needs a placeholder.</p>
 <h2 id="when"><code>when</code><a class="anchor" href="#when" aria-label="Link to this section">#</a></h2>
 <p>A chain of <code>else if</code> that compares one value against several possibilities is better written as a <code>when</code>.</p>
 <figure class="example">
@@ -253,27 +253,41 @@ error: unexpected &#x27;else&#x27; — this token cannot start an expression
     <span class="c-kw">when</span> rank {
         <span class="c-str">&quot;cadet&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
     }
-
-    <span class="c-com">-- Arms are tried from the top, and the first match wins.</span>
-    <span class="c-kw">when</span> rank {
-        _ <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;the catch-all came first, so it always wins&quot;</span>
-        <span class="c-str">&quot;ace&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;never printed&quot;</span>
-    }
 }</code></pre>
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>launch
 unknown order
 cleared for sortie
-lead element
-the catch-all came first, so it always wins</code></pre>
+lead element</code></pre>
   </div>
 </figure>
 <p><code>when</code> takes a value, called the subject, and a list of <em>arms</em>. Each arm is a literal value, an arrow, and one statement. The subject is compared with each arm&#x27;s value in turn, and the first arm that is equal has its statement run. The arm written <code>_</code> matches anything. It is the catch-all.</p>
 <p>The listing shows the rest of the rules.</p>
 <p>An arm holds one statement. To run several, put them in a block, as the <code>&quot;ace&quot;</code> arm does.</p>
 <p>If no arm matches and there is no <code>_</code>, nothing happens, and the program carries on after the <code>when</code>. The compiler does not insist that you cover every case, so a missing arm fails silently. Unless you are certain the listed values are the only ones possible, end with <code>_</code>.</p>
-<p>Arms are tried in order. The last <code>when</code> in the listing puts <code>_</code> first, and so its second arm can never run. The compiler does not warn about this. Keep the catch-all at the bottom.</p>
+<p>Arms are tried in order, so an arm after <code>_</code> could never run, and neither could a second arm with a value already listed. The compiler refuses both:</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">diagnostics/v3/book_when_unreachable.fk</span>
+    <span class="ex-badges"><span class="badge bad">does not compile</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> rank <span class="c-op">=</span> <span class="c-str">&quot;ace&quot;</span>
+    <span class="c-kw">when</span> rank {
+        _ <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;the catch-all comes first&quot;</span>
+        <span class="c-str">&quot;ace&quot;</span> <span class="c-op">-&gt;</span> <span class="c-kw">say</span> <span class="c-str">&quot;never reached&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Compiler diagnostic</div>
+    <pre class="stdout err"><code>type error: when arm is unreachable after &#x27;_&#x27; (line 5)
+ --&gt; book_when_unreachable.fk:5:1
+5 |         &quot;ace&quot; -&gt; say &quot;never reached&quot;
+  | ^</code></pre>
+  </div>
+</figure>
+<p>Keep the catch-all at the bottom.</p>
 <p>The subject can be an int, a word, a bool or a num.</p>
 <h3 id="arms-are-literals">Arms are literals<a class="anchor" href="#arms-are-literals" aria-label="Link to this section">#</a></h3>
 <p>An arm&#x27;s value has to be written out as a literal. It cannot be a pilot or a calculation:</p>
@@ -365,7 +379,7 @@ pass (passes is now 22)</code></pre>
   </div>
 </figure>
 <p>The count is any int: a literal, a pilot, a calculation. It is worked out once, before the first pass. The third loop in the listing changes <code>passes</code> inside its own body, and still makes exactly the two passes it started with.</p>
-<p>There is no loop counter. If the body needs to know which pass it is on, keep a <code>pilot mut</code> beside the loop and increase it yourself, as the second loop does. This is the standard way to count in V3.</p>
+<p>The loop has no counter of its own. If the body needs to know which pass it is on, keep a pilot beside the loop and increase it yourself, as the second loop does, or let the loop count for you with <code>repeat N times with i</code>, shown later in this chapter.</p>
 <p>A count of zero, or a negative count, means the body does not run at all.</p>
 <p>The count must be an int. A num is refused even if its value is whole:</p>
 <figure class="example">
@@ -430,7 +444,7 @@ launch
   </div>
 </figure>
 <p>Two things about <code>repeat until</code> are easy to get backwards.</p>
-<p><strong>The loop runs while the condition is false.</strong> <code>until</code> gives the condition for <em>stopping</em>. <code>repeat until countdown == 0</code> keeps going as long as <code>countdown</code> is not zero. If you are used to <code>while</code> loops, this is the opposite sense.</p>
+<p><strong>The loop runs while the condition is false.</strong> <code>until</code> gives the condition for <em>stopping</em>. <code>repeat until countdown == 0</code> keeps going as long as <code>countdown</code> is not zero. If you are used to <code>while</code> loops, this is the opposite sense. FREAK has a <code>while</code> as well, described below, so you can pick whichever reads better.</p>
 <p><strong>The condition is tested before each pass, including the first.</strong> If it is already true, the body never runs. The second loop in the listing shows this: <code>laps</code> is still zero afterwards.</p>
 <p>For the loop to end, something in the body has to move the condition toward true. In the third loop, <code>value</code> is halved on every pass, so sooner or later it reaches 1.</p>
 <h3 id="a-loop-with-no-end">A loop with no end<a class="anchor" href="#a-loop-with-no-end" aria-label="Link to this section">#</a></h3>
@@ -593,7 +607,7 @@ Sumika, report in
 </figure>
 <p>After <code>for each</code> comes a name, then <code>in</code>, then the list. On each pass the name holds the next element. It exists only inside the body, like any pilot declared in a block.</p>
 <p><code>for each</code> gives you the element and not its position. When you need both, count alongside the loop, as the second loop in the listing does.</p>
-<p>The thing after <code>in</code> has to be a list. A word is not a list of its letters:</p>
+<p>The thing after <code>in</code> has to be a list or a range. A word is not a list of its letters:</p>
 <figure class="example">
   <figcaption>
     <span class="ex-name">diagnostics/v3/book_for_each_word.fk</span>
@@ -612,6 +626,82 @@ Sumika, report in
   | ^</code></pre>
   </div>
 </figure>
+<h2 id="counting-loops">Counting loops<a class="anchor" href="#counting-loops" aria-label="Link to this section">#</a></h2>
+<p>When you want the numbers themselves, loop over a range, or use a loop that counts.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_for_ranges.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- Counting loops. A range a..b stops before b; a..=b includes b.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">for each</span> i <span class="c-kw">in</span> <span class="c-num">1..4</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;range <span class="c-interp">{i}</span>&quot;</span>
+    }
+    <span class="c-kw">for each</span> i <span class="c-kw">in</span> <span class="c-num">1..</span><span class="c-op">=</span><span class="c-num">3</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;inclusive <span class="c-interp">{i}</span>&quot;</span>
+    }
+    <span class="c-kw">for each</span> i <span class="c-kw">in</span> <span class="c-num">0..10</span> step <span class="c-num">4</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;step <span class="c-interp">{i}</span>&quot;</span>
+    }
+    <span class="c-kw">repeat</span> <span class="c-num">2</span> <span class="c-kw">times</span> with pass {
+        <span class="c-kw">say</span> <span class="c-str">&quot;pass <span class="c-interp">{pass}</span>&quot;</span>
+    }
+    <span class="c-kw">for</span> (<span class="c-kw">pilot</span> i <span class="c-op">=</span> <span class="c-num">3</span>; i <span class="c-op">&gt;</span> <span class="c-num">0</span>; i <span class="c-op">-=</span> <span class="c-num">1</span>) {
+        <span class="c-kw">say</span> <span class="c-str">&quot;countdown <span class="c-interp">{i}</span>&quot;</span>
+    }
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>range 1
+range 2
+range 3
+inclusive 1
+inclusive 2
+inclusive 3
+step 0
+step 4
+step 8
+pass 0
+pass 1
+countdown 3
+countdown 2
+countdown 1</code></pre>
+  </div>
+</figure>
+<p>There are three forms, and they mean the same as they would in most languages. Use whichever reads best for the loop at hand.</p>
+<ul><li><code>for each i in 1..4</code> gives <code>i</code> the values 1, 2 and 3. The end of a range written <code>..</code> is not included. Written <code>..=</code>, as in <code>1..=3</code>, it is.</li><li><code>step</code> sets the distance between values: <code>0..10 step 4</code> gives 0, 4 and 8.</li><li><code>repeat 2 times with pass</code> is a <code>repeat ... times</code> loop that names its counter. The counter starts at 0.</li><li><code>for (pilot i = 3; i &gt; 0; i -= 1)</code> is the form from C and its relatives: a pilot to start with, a condition tested before each pass, and a statement run after each pass.</li></ul>
+<p>In every form the counter is a pilot that exists only inside the loop.</p>
+<h2 id="while"><code>while</code><a class="anchor" href="#while" aria-label="Link to this section">#</a></h2>
+<p><code>while</code> is <code>repeat until</code> turned the other way round: it runs as long as its condition is <em>true</em>. <code>repeat while</code> is another spelling of the same loop.</p>
+<figure class="example">
+  <figcaption>
+    <span class="ex-name">examples/book_while.fk</span>
+    <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
+  </figcaption>
+  <pre class="code"><code><span class="c-com">-- `while` runs as long as its condition is true: the opposite of `repeat until`.</span>
+<span class="c-kw">task</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">pilot</span> fuel <span class="c-op">=</span> <span class="c-num">3</span>
+    while fuel <span class="c-op">&gt;</span> <span class="c-num">0</span> {
+        <span class="c-kw">say</span> <span class="c-str">&quot;fuel <span class="c-interp">{fuel}</span>&quot;</span>
+        fuel <span class="c-op">-=</span> <span class="c-num">1</span>
+    }
+
+    <span class="c-kw">pilot</span> laps <span class="c-op">=</span> <span class="c-num">0</span>
+    <span class="c-kw">repeat</span> while laps <span class="c-op">&lt;</span> <span class="c-num">2</span> {
+        laps <span class="c-op">+=</span> <span class="c-num">1</span>
+    }
+    <span class="c-kw">say</span> <span class="c-str">&quot;laps <span class="c-interp">{laps}</span>&quot;</span>
+}</code></pre>
+  <div class="ex-out">
+    <div class="ex-out-head">Program output</div>
+    <pre class="stdout"><code>fuel 3
+fuel 2
+fuel 1
+laps 2</code></pre>
+  </div>
+</figure>
+<p>Like <code>repeat until</code>, <code>while</code> tests its condition before each pass, so a condition that is false at the start means the body never runs. <code>while</code> is a reserved word, so it cannot be used as a name.</p>
 <h2 id="break-and-continue"><code>break</code> and <code>continue</code><a class="anchor" href="#break-and-continue" aria-label="Link to this section">#</a></h2>
 <p>Two statements change the course of any loop from inside its body.</p>
 <figure class="example">
@@ -658,7 +748,7 @@ stopped at 9
   </div>
 </figure>
 <p><code>break</code> ends the loop. Execution carries on with the first statement after it.</p>
-<p><code>continue</code> ends the current pass. In a <code>repeat ... times</code> loop the next pass begins; in a <code>repeat until</code> or a <code>training arc</code> the condition is tested again; in a <code>for each</code> the loop moves to the next element.</p>
+<p><code>continue</code> ends the current pass. In a <code>repeat ... times</code> loop the next pass begins; in a <code>repeat until</code>, a <code>while</code> or a <code>training arc</code> the condition is tested again; in a <code>for each</code> the loop moves to the next element or value.</p>
 <p>When loops are nested, <code>break</code> and <code>continue</code> act on the innermost loop that contains them. The second half of the listing prints a triangle: the inner loop is cut short by <code>break</code> when <code>column</code> passes <code>row</code>, and the outer loop carries on to the next row. There is no way to break out of two loops at once. If you need to, put the loops in a task and use <code>give back</code>, which leaves the whole task from any depth.</p>
 <p>Be careful with <code>continue</code> in a loop that keeps its own counter. If the counter is increased at the bottom of the body, <code>continue</code> skips the increase. In the listing, <code>n += 1</code> is the first statement of the body for exactly this reason.</p>
 <h2 id="putting-it-together">Putting it together<a class="anchor" href="#putting-it-together" aria-label="Link to this section">#</a></h2>
@@ -923,21 +1013,21 @@ FizzBuzz</code></pre>
 <p>The name in that message, Yuuko, is one of the voices the specification gives to the compiler&#x27;s diagnostics. Part VII covers them.</p>
 <h2 id="planned">Planned<a class="anchor" href="#planned" aria-label="Link to this section">#</a></h2>
 <div class="callout planned"><div class="callout-title">Planned</div><p>In the specification, <code>when</code> is much more than a comparison with literals. Its arms are <em>patterns</em> that can take a value apart: match one variant of a type with several forms and name the fields inside it, in one step. The compiler is also to check that the arms cover every possibility. That depends on variants, which V3 does not have. Part VII covers both.</p></div>
-<div class="callout planned"><div class="callout-title">Planned</div><p>The specification lets <code>for each</code> deliver the position along with the element, written <code>for each (i, item) in list.enumerate()</code>. Until a compiler has it, count with a <code>pilot mut</code>.</p></div>
+<div class="callout planned"><div class="callout-title">Planned</div><p>The specification lets <code>for each</code> deliver the position along with the element, written <code>for each (i, item) in list.enumerate()</code>. Until a compiler has it, count with a pilot beside the loop.</p></div>
 <h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
 <p><code>if</code> chooses on a condition, which must be a bool. <code>else if</code> and <code>else</code> extend it, and the first true branch wins. <code>when</code> chooses by comparing one value with literal arms; put <code>_</code> last to catch everything else. Both are statements, not values.</p>
-<p>There are four loops. <code>repeat N times</code> runs a fixed number of passes, counted once at the start. <code>repeat until</code> runs while its condition is false, testing before each pass. <code>training arc</code> is the same with a compulsory limit on the number of passes, so it always ends. <code>for each</code> visits each element of a list.</p>
+<p><code>repeat N times</code> runs a fixed number of passes, counted once at the start, and can name its counter with <code>with</code>. <code>repeat until</code> runs while its condition is false and <code>while</code> runs while it is true; both test before each pass. <code>training arc</code> is <code>repeat until</code> with a compulsory limit on the number of passes, so it always ends. <code>for each</code> visits each element of a list or each value of a range, and the C-style <code>for</code> counts with a start, a condition and a step.</p>
 <p><code>break</code> leaves the innermost loop and <code>continue</code> skips to its next pass.</p>
 <p>That completes the core of the language. With pilots, tasks and control flow you can write any computation. What you cannot do yet is hold more than one value at a time, or describe data of your own. Part II begins with the type you have used most and understood least: the word.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.14.2 (Maverick)</strong>.
-      83/83 examples match their reviewed expected output. Illustrative snippets
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
     </footer>
   </main>
-  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#if"><code>if</code></a></li><li><a href="#when"><code>when</code></a></li><li><a href="#repeat-times"><code>repeat ... times</code></a></li><li><a href="#repeat-until"><code>repeat until</code></a></li><li><a href="#training-arc"><code>training arc</code></a></li><li><a href="#for-each"><code>for each</code></a></li><li><a href="#break-and-continue"><code>break</code> and <code>continue</code></a></li><li><a href="#putting-it-together">Putting it together</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
+  <aside class="toc"><div class="toc-title">On this page</div><ul><li><a href="#if"><code>if</code></a></li><li><a href="#when"><code>when</code></a></li><li><a href="#repeat-times"><code>repeat ... times</code></a></li><li><a href="#repeat-until"><code>repeat until</code></a></li><li><a href="#training-arc"><code>training arc</code></a></li><li><a href="#for-each"><code>for each</code></a></li><li><a href="#counting-loops">Counting loops</a></li><li><a href="#while"><code>while</code></a></li><li><a href="#break-and-continue"><code>break</code> and <code>continue</code></a></li><li><a href="#putting-it-together">Putting it together</a></li><li><a href="#in-v4">In V4</a></li><li><a href="#planned">Planned</a></li><li><a href="#summary">Summary</a></li></ul></aside>
 </div>
 <script src="assets/search-index.js"></script>
 <script src="assets/app.js"></script>
