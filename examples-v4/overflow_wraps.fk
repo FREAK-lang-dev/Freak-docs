@@ -1,4 +1,4 @@
--- Past the largest int the value wraps around, as it does in V3.
+-- Past the largest int the value wraps around at this commit. V3 stops the program.
 task main() -> int {
     pilot largest: int = 9223372036854775807
     pilot next = largest + 1

@@ -689,7 +689,7 @@ type error: unknown callable &#x27;helper&#x27; (line 5)
 <h2 id="summary">Summary<a class="anchor" href="#summary" aria-label="Link to this section">#</a></h2>
 <p>A task is declared with <code>task</code>, a name, typed parameters, and a body. A call passes arguments by position, and the compiler checks their number and types.</p>
 <p>A task that gives a value back declares its type after <code>-&gt;</code> and uses <code>give back</code>, which ends the task immediately. Every path through such a task must reach a <code>give back</code>; there is no implicit return. A task without an arrow is <code>void</code>.</p>
-<p>Numbers, words and bools are copied into a task. Tasks may be declared in any order and may call themselves. <code>main</code> is where the program starts, and an int it gives back is the exit code. In a program with a <code>main</code>, top-level statements are not run. All tasks, including the standard library&#x27;s, share one set of names.</p>
+<p>Numbers, words and bools are copied into a task. Tasks may be declared in any order and may call themselves. <code>main</code> is where the program starts, and an int it gives back is the exit code. A top-level statement in a file that has a <code>main</code> is a compile error. All your tasks share one set of names. A task of yours may reuse the name of a standard-library task, but not the name of an operation built into the compiler.</p>
 <p><a href="book-control-flow.html">Chapter 5</a> completes the core of the language: making decisions, and repeating work.</p>
     </article>
     <footer class="pagefoot">

@@ -74,7 +74,7 @@
   </figcaption>
   <pre class="code"><code><span class="c-com">-- Bindings are declared with `pilot`.</span>
 <span class="c-com">-- `fixed pilot` marks an immutable binding.</span>
-<span class="c-com">-- `pilot mut` opts a binding into reassignment.</span>
+<span class="c-com">-- A plain `pilot` can be reassigned; `mut` is optional and tells the reader so.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> answer<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">42</span>
     <span class="c-kw">pilot</span> ratio<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">3.5</span>

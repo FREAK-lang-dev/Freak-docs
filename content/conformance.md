@@ -222,9 +222,10 @@ lifetime tokens `'a`, numeric suffixes (`42u`, `3.14f`, `42t`, `999b`), and
 
 The bible's §8.3 requires V4 keywords to be matched **case-sensitively** so
 that `Pilot` and `Some` stay usable as identifiers. **V3 does the opposite** —
-it lowercases before comparing, so `Pilot`, `Result` and `Max` are keywords and
-cannot be names. This is the single largest practical divergence for someone
-writing V3 code.
+it reserves a keyword in every letter case, so `Pilot`, `Result` and `Max`
+cannot be names. A capitalised single-word keyword does not work as the
+keyword either: only the lowercase spelling does. This is the single largest
+practical divergence for someone writing V3 code.
 
 ## Sections 9–17
 
@@ -234,7 +235,7 @@ writing V3 code.
 | §10 Type checker | :partial: | Basic inference, arity and type checks, nominal member validation. None of the listed advanced rules |
 | §11 Code generation | :partial: | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
 | §12 Build modes | :v4: | Absent — only `--opt=0..3` and backend choice |
-| §13 Compiler CLI | :partial: | Most commands present; `-o`, `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
+| §13 Compiler CLI | :partial: | Most commands present; `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
 | §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines |
 | §15 Cheatsheet | :partial: | Describes the full language; roughly a fifth applies to V3 |
 | §16 FFI | :v4: | Only bare `extern task f(...) -> T`. No blocks, conventions, `link=`, layout attributes, raw pointers or `trust me` |
@@ -270,7 +271,7 @@ Counting the bible's own feature inventory against compile evidence:
 > verification harness when you pull.
 
 V3 is a small, sharp, genuinely self-hosting language: scalars, words, shapes,
-methods, three loops, two branch forms, flat arrays and a C FFI. The bible
+methods, loops, two branch forms, flat arrays and a C FFI. The bible
 describes where FREAK is going. This site describes where it is.
 
 For what to write instead of the missing features, see

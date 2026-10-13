@@ -314,9 +314,10 @@ reach a `give back`; there is no implicit return. A task without an arrow is
 
 Numbers, words and bools are copied into a task. Tasks may be declared in any
 order and may call themselves. `main` is where the program starts, and an int
-it gives back is the exit code. In a program with a `main`, top-level
-statements are not run. All tasks, including the standard library's, share one
-set of names.
+it gives back is the exit code. A top-level statement in a file that has a `main`
+is a compile error. All your tasks share one set of names. A task of yours may
+reuse the name of a standard-library task, but not the name of an operation
+built into the compiler.
 
 [Chapter 5](book-control-flow.html) completes the core of the language: making
 decisions, and repeating work.

@@ -49,6 +49,7 @@ freak <command> [file.fk] [options]
 | `--opt=N` | Optimisation level, `0`–`3`. Default `2` |
 | `--target=TRIPLE` | Cross-compile target triple |
 | `--strict-borrow` | Enable the opt-in Phase-1 ownership checker |
+| `-o NAME`, `--output=NAME` | Name of the output binary. Default: the source basename |
 
 Flags may appear in any order after the file:
 

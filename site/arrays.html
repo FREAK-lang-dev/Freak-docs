@@ -98,7 +98,7 @@
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
     <span class="c-kw">say</span> names[<span class="c-num">1</span>]
 
-    <span class="c-com">-- Indexed assignment requires `pilot mut`.</span>
+    <span class="c-com">-- Indexed assignment works on any list that is not `fixed`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> scores<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">10</span>, <span class="c-num">20</span>, <span class="c-num">30</span>]
     scores[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">99</span>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(scores[<span class="c-num">0</span>])
@@ -122,7 +122,7 @@
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">count_all</span>(names))
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">first_three</span>()[<span class="c-num">2</span>])
 
-    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.</span>
+    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> queue<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
     queue.<span class="c-fn">push</span>(<span class="c-num">10</span>)
     queue.<span class="c-fn">push</span>(<span class="c-num">20</span>)

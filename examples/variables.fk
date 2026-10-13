@@ -1,6 +1,6 @@
 -- Bindings are declared with `pilot`.
 -- `fixed pilot` marks an immutable binding.
--- `pilot mut` opts a binding into reassignment.
+-- A plain `pilot` can be reassigned; `mut` is optional and tells the reader so.
 task main() -> void {
     pilot answer: int = 42
     pilot ratio: num = 3.5

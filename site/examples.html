@@ -65,7 +65,7 @@
     <article class="prose">
 <h1 id="verified-examples">Verified examples<a class="anchor" href="#verified-examples" aria-label="Link to this section">#</a></h1>
 <p class="lede">Every program on this site, compiled and executed by a real V3 binary.</p>
-<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.0 (Maverick) on 2026-10-13T16:00:18Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.0 (Maverick) on 2026-10-13T16:17:53Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <p>Each card below shows the exact source file under <code>examples/</code>, a badge for whether it compiled and ran, and the program&#x27;s captured output. Reproduce the whole set with:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python tools/refresh.py --jobs 6</code></pre></div>
 <p>The harness copies each example into a clean temporary directory, runs <code>freak build</code> with the default LLVM backend, executes the resulting binary, and checks stdout against reviewed expectations. It normalizes CRLF and omits at most one final newline; extra blank lines and standalone carriage returns remain significant. A failure is recorded with its diagnostics and blocks publication.</p>
@@ -92,7 +92,7 @@
   </figcaption>
   <pre class="code"><code><span class="c-com">-- Bindings are declared with `pilot`.</span>
 <span class="c-com">-- `fixed pilot` marks an immutable binding.</span>
-<span class="c-com">-- `pilot mut` opts a binding into reassignment.</span>
+<span class="c-com">-- A plain `pilot` can be reassigned; `mut` is optional and tells the reader so.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-kw">pilot</span> answer<span class="c-op">:</span> <span class="c-type">int</span> <span class="c-op">=</span> <span class="c-num">42</span>
     <span class="c-kw">pilot</span> ratio<span class="c-op">:</span> <span class="c-type">num</span> <span class="c-op">=</span> <span class="c-num">3.5</span>
@@ -372,7 +372,7 @@ in the air</code></pre>
     <span class="ex-name">examples/control_loops.fk</span>
     <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- V3 has three loop forms: a counted loop, a condition loop,</span>
+  <pre class="code"><code><span class="c-com">-- Three of V3&#x27;s loop forms: a counted loop, a condition loop,</span>
 <span class="c-com">-- and the bounded `training arc`.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-com">-- repeat N times</span>
@@ -888,7 +888,7 @@ Takemikazuchi thrust=880</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(names.<span class="c-fn">length</span>())
     <span class="c-kw">say</span> names[<span class="c-num">1</span>]
 
-    <span class="c-com">-- Indexed assignment requires `pilot mut`.</span>
+    <span class="c-com">-- Indexed assignment works on any list that is not `fixed`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> scores<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> [<span class="c-num">10</span>, <span class="c-num">20</span>, <span class="c-num">30</span>]
     scores[<span class="c-num">0</span>] <span class="c-op">=</span> <span class="c-num">99</span>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(scores[<span class="c-num">0</span>])
@@ -912,7 +912,7 @@ Takemikazuchi thrust=880</code></pre>
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">count_all</span>(names))
     <span class="c-kw">say</span> <span class="c-fn">word_from_int</span>(<span class="c-fn">first_three</span>()[<span class="c-num">2</span>])
 
-    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.</span>
+    <span class="c-com">-- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.</span>
     <span class="c-kw">pilot</span> <span class="c-kw">mut</span> queue<span class="c-op">:</span> <span class="c-type">List</span><span class="c-op">&lt;</span><span class="c-type">int</span><span class="c-op">&gt;</span> <span class="c-op">=</span> <span class="c-type">List</span><span class="c-op">::</span><span class="c-fn">new</span>()
     queue.<span class="c-fn">push</span>(<span class="c-num">10</span>)
     queue.<span class="c-fn">push</span>(<span class="c-num">20</span>)

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Control flow &middot; FREAK V3</title>
-<meta name="description" content="Two branch forms, three loop forms, and a bounded loop you will not find in other languages.">
+<meta name="description" content="Two branch forms, six loop forms, and a bounded loop you will not find in other languages.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff64c8'/><stop offset='1' stop-color='%233cb4ff'/></linearGradient></defs><rect width='32' height='32' rx='7' fill='url(%23g)'/><path d='M11 8h11v4h-7v4h6v4h-6v8h-4z' fill='%23fff'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -64,7 +64,7 @@
   <main id="main">
     <article class="prose">
 <h1 id="control-flow">Control flow<a class="anchor" href="#control-flow" aria-label="Link to this section">#</a></h1>
-<p class="lede">Two branch forms, three loop forms, and a bounded loop you will not find in other languages.</p>
+<p class="lede">Two branch forms, six loop forms, and a bounded loop you will not find in other languages.</p>
 <h2 id="if-else-if-else">if / else if / else<a class="anchor" href="#if-else-if-else" aria-label="Link to this section">#</a></h2>
 <p>Conditions take no parentheses. Braces are mandatory even for one statement.</p>
 <figure class="example">
@@ -152,13 +152,13 @@ in the air</code></pre>
 }</code></pre></div>
 <div class="callout v4"><div class="callout-title">Not in V3</div><p>Destructuring arms — <code>BETA::Soldier { position } -&gt; engage_at(position)</code> — need variants, which V3 does not have. So does <code>check</code> over <code>maybe</code> / <code>result</code>, and <code>check route</code>. See <a href="not-in-v3.html">Not in V3</a>.</p></div>
 <h2 id="loops">Loops<a class="anchor" href="#loops" aria-label="Link to this section">#</a></h2>
-<p>V3 has exactly three loop forms.</p>
+<p>The listing shows the counted loop, the condition loop and the bounded <code>training arc</code>. <code>for each</code>, the C-style <code>for</code> and <code>while</code> have their own sections below.</p>
 <figure class="example">
   <figcaption>
     <span class="ex-name">examples/control_loops.fk</span>
     <span class="ex-badges"><span class="badge ok">compiles</span><span class="badge ok">runs</span></span>
   </figcaption>
-  <pre class="code"><code><span class="c-com">-- V3 has three loop forms: a counted loop, a condition loop,</span>
+  <pre class="code"><code><span class="c-com">-- Three of V3&#x27;s loop forms: a counted loop, a condition loop,</span>
 <span class="c-com">-- and the bounded `training arc`.</span>
 <span class="c-kw">task</span> <span class="c-fn">main</span>() <span class="c-op">-&gt;</span> <span class="c-type">void</span> {
     <span class="c-com">-- repeat N times</span>
@@ -296,7 +296,7 @@ while (!(CONDITION) &amp;&amp; sessions &lt; N) {
 </figure>
 <div class="callout v4"><div class="callout-title">Not in V3</div><p>The <code>with growth</code> variant — which makes the compiler verify that the body actually mutates the condition&#x27;s subject — is V4. Plain <code>training arc</code> is fully supported.</p></div>
 <h2 id="break-and-continue">break and continue<a class="anchor" href="#break-and-continue" aria-label="Link to this section">#</a></h2>
-<p>Both work in all three loop forms.</p>
+<p>Both work in every loop form.</p>
 <p class="snippet-note"><small>Illustrative snippet; not independently verified. Use the badged executable examples for tested programs.</small></p>
 <div class="codeblock"><span class="code-lang">FREAK</span><pre class="code"><code><span class="c-kw">repeat</span> <span class="c-num">10</span> <span class="c-kw">times</span> {
     <span class="c-kw">if</span> should_skip { <span class="c-kw">continue</span> }

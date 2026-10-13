@@ -10,9 +10,9 @@
     "archive_sha256": "a54c51988ae43834898f4d5c0cff6ab416f747dfed50e9e23fa20f55c2e013d8",
     "compiler_sha256": "2978298af6a191899d2333d8219da30884192a8bf976cde80620832d312109a2"
   },
-  "input_sha256": "42179a8ac20ad882e0cfc7086070c78c5a58a4cca7802beeb8d8a524808ec4ae",
+  "input_sha256": "c3d99b3547b826b9706c7df47cc3d8ce129bb702ed35805a58743792423373e8",
   "compiler": "freak 0.15.0 (Maverick)",
-  "generated_utc": "2026-10-13T16:00:18Z",
+  "generated_utc": "2026-10-13T16:17:53Z",
   "total": 84,
   "compiled": 84,
   "passed": 84,
@@ -28,7 +28,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9240
+      "elapsed_ms": 14127
     },
     "annotations": {
       "name": "annotations",
@@ -41,7 +41,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9162
+      "elapsed_ms": 14049
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -54,7 +54,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9396
+      "elapsed_ms": 14141
     },
     "array_literal": {
       "name": "array_literal",
@@ -67,7 +67,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9494
+      "elapsed_ms": 13035
     },
     "arrays": {
       "name": "arrays",
@@ -80,7 +80,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9372
+      "elapsed_ms": 12973
     },
     "book_bool": {
       "name": "book_bool",
@@ -94,7 +94,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18877
+      "elapsed_ms": 22181
     },
     "book_break_continue": {
       "name": "book_break_continue",
@@ -108,7 +108,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21525
+      "elapsed_ms": 18149
     },
     "book_by_value": {
       "name": "book_by_value",
@@ -122,7 +122,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21645
+      "elapsed_ms": 20163
     },
     "book_collatz": {
       "name": "book_collatz",
@@ -136,7 +136,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21652
+      "elapsed_ms": 19213
     },
     "book_comments": {
       "name": "book_comments",
@@ -150,7 +150,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20679
+      "elapsed_ms": 19181
     },
     "book_constants": {
       "name": "book_constants",
@@ -164,7 +164,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21795
+      "elapsed_ms": 19041
     },
     "book_contextual_words": {
       "name": "book_contextual_words",
@@ -178,7 +178,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 24253
+      "elapsed_ms": 18575
     },
     "book_conversions": {
       "name": "book_conversions",
@@ -192,7 +192,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21763
+      "elapsed_ms": 19101
     },
     "book_exit_code": {
       "name": "book_exit_code",
@@ -207,7 +207,7 @@
       "exit_code": 3,
       "expected_exit_code": 3,
       "strict_borrow": true,
-      "elapsed_ms": 21923
+      "elapsed_ms": 20827
     },
     "book_fizzbuzz": {
       "name": "book_fizzbuzz",
@@ -221,7 +221,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 23262
+      "elapsed_ms": 20966
     },
     "book_for_each": {
       "name": "book_for_each",
@@ -235,7 +235,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 23170
+      "elapsed_ms": 20981
     },
     "book_for_ranges": {
       "name": "book_for_ranges",
@@ -249,7 +249,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 22734
+      "elapsed_ms": 21283
     },
     "book_give_back": {
       "name": "book_give_back",
@@ -263,7 +263,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20562
+      "elapsed_ms": 19195
     },
     "book_guess": {
       "name": "book_guess",
@@ -281,7 +281,7 @@
       ],
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17357
+      "elapsed_ms": 18405
     },
     "book_guess_compare": {
       "name": "book_guess_compare",
@@ -296,7 +296,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17007
+      "elapsed_ms": 18049
     },
     "book_guess_input": {
       "name": "book_guess_input",
@@ -311,7 +311,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19161
+      "elapsed_ms": 17722
     },
     "book_guess_parse": {
       "name": "book_guess_parse",
@@ -326,7 +326,7 @@
       "stdin": "fifty\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19758
+      "elapsed_ms": 18378
     },
     "book_guess_secret": {
       "name": "book_guess_secret",
@@ -340,7 +340,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19274
+      "elapsed_ms": 17843
     },
     "book_hello": {
       "name": "book_hello",
@@ -354,7 +354,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 17378
+      "elapsed_ms": 17335
     },
     "book_if": {
       "name": "book_if",
@@ -368,7 +368,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16987
+      "elapsed_ms": 17146
     },
     "book_int": {
       "name": "book_int",
@@ -384,7 +384,7 @@
       "expected_exit_code": 1,
       "stderr": "FREAK: integer overflow in addition",
       "strict_borrow": true,
-      "elapsed_ms": 16846
+      "elapsed_ms": 16567
     },
     "book_keyword_case": {
       "name": "book_keyword_case",
@@ -398,7 +398,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16597
+      "elapsed_ms": 16726
     },
     "book_loop_forever": {
       "name": "book_loop_forever",
@@ -412,7 +412,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16828
+      "elapsed_ms": 16595
     },
     "book_num": {
       "name": "book_num",
@@ -426,7 +426,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 16785
+      "elapsed_ms": 16487
     },
     "book_order": {
       "name": "book_order",
@@ -440,7 +440,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18356
+      "elapsed_ms": 15970
     },
     "book_pilots": {
       "name": "book_pilots",
@@ -454,7 +454,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18663
+      "elapsed_ms": 15847
     },
     "book_pipe": {
       "name": "book_pipe",
@@ -468,7 +468,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18349
+      "elapsed_ms": 14371
     },
     "book_repeat_times": {
       "name": "book_repeat_times",
@@ -482,7 +482,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18469
+      "elapsed_ms": 15330
     },
     "book_repeat_until": {
       "name": "book_repeat_until",
@@ -496,7 +496,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18159
+      "elapsed_ms": 15741
     },
     "book_scope": {
       "name": "book_scope",
@@ -510,7 +510,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18129
+      "elapsed_ms": 15117
     },
     "book_script": {
       "name": "book_script",
@@ -524,7 +524,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 18161
+      "elapsed_ms": 14410
     },
     "book_shared_pilot": {
       "name": "book_shared_pilot",
@@ -538,7 +538,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20741
+      "elapsed_ms": 14791
     },
     "book_statements": {
       "name": "book_statements",
@@ -552,7 +552,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20737
+      "elapsed_ms": 15362
     },
     "book_tasks": {
       "name": "book_tasks",
@@ -566,7 +566,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 24395
+      "elapsed_ms": 15303
     },
     "book_training_arc": {
       "name": "book_training_arc",
@@ -580,7 +580,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 24264
+      "elapsed_ms": 15504
     },
     "book_two_word_case": {
       "name": "book_two_word_case",
@@ -594,7 +594,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 24584
+      "elapsed_ms": 15650
     },
     "book_when": {
       "name": "book_when",
@@ -608,7 +608,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 24189
+      "elapsed_ms": 15576
     },
     "book_while": {
       "name": "book_while",
@@ -622,7 +622,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 26590
+      "elapsed_ms": 15114
     },
     "book_words_intro": {
       "name": "book_words_intro",
@@ -636,7 +636,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 26401
+      "elapsed_ms": 15915
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -649,7 +649,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12764
+      "elapsed_ms": 8194
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -662,7 +662,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12141
+      "elapsed_ms": 7950
     },
     "colour": {
       "name": "colour",
@@ -675,7 +675,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12732
+      "elapsed_ms": 7964
     },
     "control_if": {
       "name": "control_if",
@@ -688,12 +688,12 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12690
+      "elapsed_ms": 7721
     },
     "control_loops": {
       "name": "control_loops",
       "file": "control_loops.fk",
-      "source": "-- V3 has three loop forms: a counted loop, a condition loop,\n-- and the bounded `training arc`.\ntask main() -> void {\n    -- repeat N times\n    pilot mut total: int = 0\n    repeat 5 times {\n        total += 2\n    }\n    say word_from_int(total)\n\n    -- repeat until CONDITION  (tested before each pass)\n    pilot mut countdown: int = 3\n    repeat until countdown == 0 {\n        say word_from_int(countdown)\n        countdown -= 1\n    }\n\n    -- break and continue work in every loop form\n    pilot mut seen: int = 0\n    repeat 10 times {\n        seen += 1\n        if seen == 3 { continue }\n        if seen == 6 { break }\n    }\n    say word_from_int(seen)\n}\n",
+      "source": "-- Three of V3's loop forms: a counted loop, a condition loop,\n-- and the bounded `training arc`.\ntask main() -> void {\n    -- repeat N times\n    pilot mut total: int = 0\n    repeat 5 times {\n        total += 2\n    }\n    say word_from_int(total)\n\n    -- repeat until CONDITION  (tested before each pass)\n    pilot mut countdown: int = 3\n    repeat until countdown == 0 {\n        say word_from_int(countdown)\n        countdown -= 1\n    }\n\n    -- break and continue work in every loop form\n    pilot mut seen: int = 0\n    repeat 10 times {\n        seen += 1\n        if seen == 3 { continue }\n        if seen == 6 { break }\n    }\n    say word_from_int(seen)\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "10\n3\n2\n1\n6",
@@ -701,7 +701,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14176
+      "elapsed_ms": 8009
     },
     "control_when": {
       "name": "control_when",
@@ -714,7 +714,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 13843
+      "elapsed_ms": 8266
     },
     "eventually": {
       "name": "eventually",
@@ -727,7 +727,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 13779
+      "elapsed_ms": 8133
     },
     "extern": {
       "name": "extern",
@@ -740,7 +740,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14883
+      "elapsed_ms": 8560
     },
     "files": {
       "name": "files",
@@ -753,7 +753,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 14850
+      "elapsed_ms": 8587
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -766,7 +766,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 13984
+      "elapsed_ms": 8451
     },
     "hello": {
       "name": "hello",
@@ -779,7 +779,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12341
+      "elapsed_ms": 8884
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -792,7 +792,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12292
+      "elapsed_ms": 9123
     },
     "inference": {
       "name": "inference",
@@ -805,7 +805,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11725
+      "elapsed_ms": 8537
     },
     "interpolation": {
       "name": "interpolation",
@@ -818,12 +818,12 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9626
+      "elapsed_ms": 8721
     },
     "lists": {
       "name": "lists",
       "file": "lists.fk",
-      "source": "-- `List<T>` is V3's typed sequence. The element type must be a scalar\n-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not\n-- allowed: there is no `List<List<int>>`.\nshape Contact {\n    tag: word\n}\n\n-- A List may be a parameter and a return type. It may NOT be a shape\n-- field: that reports \"V3 owned shape fields do not yet support List\n-- values\".\ntask count_all(items: List<word>) -> int {\n    give back items.length()\n}\n\ntask first_three() -> List<int> {\n    give back [1, 2, 3]\n}\n\ntask main() -> void {\n    -- An array literal infers List<T> from its elements.\n    pilot names: List<word> = [\"Takeru\", \"Meiya\", \"Sumika\"]\n    say word_from_int(names.length())\n    say names[1]\n\n    -- Indexed assignment requires `pilot mut`.\n    pilot mut scores: List<int> = [10, 20, 30]\n    scores[0] = 99\n    say word_from_int(scores[0])\n\n    -- Every scalar element type works.\n    pilot ratios: List<num> = [1.5, 2.5]\n    say format_num(ratios[1])\n\n    pilot flags: List<bool> = [true, false]\n    say word_from_bool(flags[0])\n\n    -- Shapes too, and field access chains off the element.\n    pilot contacts: List<Contact> = [Contact { tag: \"BETA-1\" }]\n    say contacts[0].tag\n\n    -- List::filled(value, count) builds a pre-populated list.\n    pilot zeros: List<int> = List::filled(0, 4)\n    say word_from_int(zeros.length())\n\n    -- Passed to a task, and returned from one.\n    say word_from_int(count_all(names))\n    say word_from_int(first_three()[2])\n\n    -- Lists grow as of v0.14.2. Mutating methods need `pilot mut`.\n    pilot mut queue: List<int> = List::new()\n    queue.push(10)\n    queue.push(20)\n    queue.push(30)\n    say word_from_int(queue.length())\n    say word_from_int(queue.pop())      -- 30, removed and returned\n    say word_from_int(queue.length())\n    say word_from_int(queue.capacity()) -- starts at 8, doubles as needed\n    queue.reserve(64)\n    say word_from_int(queue.capacity())\n    queue.clear()\n    say word_from_int(queue.length())\n\n    -- Iterate with an index; there is no `for each`.\n    pilot mut i: int = 0\n    repeat names.length() times {\n        say names[i]\n        i += 1\n    }\n}\n",
+      "source": "-- `List<T>` is V3's typed sequence. The element type must be a scalar\n-- (`int`, `num`, `word`, `bool`) or the name of a shape. Nesting is not\n-- allowed: there is no `List<List<int>>`.\nshape Contact {\n    tag: word\n}\n\n-- A List may be a parameter and a return type. It may NOT be a shape\n-- field: that reports \"V3 owned shape fields do not yet support List\n-- values\".\ntask count_all(items: List<word>) -> int {\n    give back items.length()\n}\n\ntask first_three() -> List<int> {\n    give back [1, 2, 3]\n}\n\ntask main() -> void {\n    -- An array literal infers List<T> from its elements.\n    pilot names: List<word> = [\"Takeru\", \"Meiya\", \"Sumika\"]\n    say word_from_int(names.length())\n    say names[1]\n\n    -- Indexed assignment works on any list that is not `fixed`.\n    pilot mut scores: List<int> = [10, 20, 30]\n    scores[0] = 99\n    say word_from_int(scores[0])\n\n    -- Every scalar element type works.\n    pilot ratios: List<num> = [1.5, 2.5]\n    say format_num(ratios[1])\n\n    pilot flags: List<bool> = [true, false]\n    say word_from_bool(flags[0])\n\n    -- Shapes too, and field access chains off the element.\n    pilot contacts: List<Contact> = [Contact { tag: \"BETA-1\" }]\n    say contacts[0].tag\n\n    -- List::filled(value, count) builds a pre-populated list.\n    pilot zeros: List<int> = List::filled(0, 4)\n    say word_from_int(zeros.length())\n\n    -- Passed to a task, and returned from one.\n    say word_from_int(count_all(names))\n    say word_from_int(first_three()[2])\n\n    -- Lists grow as of v0.14.2. Mutating methods work on any list that is not `fixed`.\n    pilot mut queue: List<int> = List::new()\n    queue.push(10)\n    queue.push(20)\n    queue.push(30)\n    say word_from_int(queue.length())\n    say word_from_int(queue.pop())      -- 30, removed and returned\n    say word_from_int(queue.length())\n    say word_from_int(queue.capacity()) -- starts at 8, doubles as needed\n    queue.reserve(64)\n    say word_from_int(queue.capacity())\n    queue.clear()\n    say word_from_int(queue.length())\n\n    -- Iterate with an index; there is no `for each`.\n    pilot mut i: int = 0\n    repeat names.length() times {\n        say names[i]\n        i += 1\n    }\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "3\nMeiya\n99\n2.5\ntrue\nBETA-1\n4\n3\n3\n3\n30\n2\n8\n64\n0\nTakeru\nMeiya\nSumika",
@@ -831,7 +831,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9936
+      "elapsed_ms": 9067
     },
     "module_pattern": {
       "name": "module_pattern",
@@ -844,7 +844,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10087
+      "elapsed_ms": 8993
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -857,7 +857,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10793
+      "elapsed_ms": 8721
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -870,7 +870,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10689
+      "elapsed_ms": 8710
     },
     "operators": {
       "name": "operators",
@@ -883,7 +883,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10681
+      "elapsed_ms": 8596
     },
     "pipe": {
       "name": "pipe",
@@ -896,7 +896,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10150
+      "elapsed_ms": 7951
     },
     "process_time": {
       "name": "process_time",
@@ -913,7 +913,7 @@
         "bravo"
       ],
       "exit_code": 0,
-      "elapsed_ms": 10230
+      "elapsed_ms": 8207
     },
     "recursion": {
       "name": "recursion",
@@ -926,7 +926,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9969
+      "elapsed_ms": 7301
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -939,7 +939,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10116
+      "elapsed_ms": 8608
     },
     "same_line": {
       "name": "same_line",
@@ -952,7 +952,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10603
+      "elapsed_ms": 8992
     },
     "shapes": {
       "name": "shapes",
@@ -965,7 +965,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10518
+      "elapsed_ms": 8856
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -978,7 +978,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9113
+      "elapsed_ms": 8627
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -991,7 +991,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10121
+      "elapsed_ms": 9955
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -1004,7 +1004,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10005
+      "elapsed_ms": 10199
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -1017,7 +1017,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9715
+      "elapsed_ms": 10591
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -1030,7 +1030,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9690
+      "elapsed_ms": 10641
     },
     "strings": {
       "name": "strings",
@@ -1043,7 +1043,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10035
+      "elapsed_ms": 10950
     },
     "tasks": {
       "name": "tasks",
@@ -1056,7 +1056,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9464
+      "elapsed_ms": 10166
     },
     "toplevel": {
       "name": "toplevel",
@@ -1069,7 +1069,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9415
+      "elapsed_ms": 7920
     },
     "training_arc": {
       "name": "training_arc",
@@ -1082,7 +1082,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9345
+      "elapsed_ms": 9107
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -1095,7 +1095,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11209
+      "elapsed_ms": 9985
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -1108,7 +1108,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10741
+      "elapsed_ms": 8870
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -1121,12 +1121,12 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10592
+      "elapsed_ms": 9170
     },
     "variables": {
       "name": "variables",
       "file": "variables.fk",
-      "source": "-- Bindings are declared with `pilot`.\n-- `fixed pilot` marks an immutable binding.\n-- `pilot mut` opts a binding into reassignment.\ntask main() -> void {\n    pilot answer: int = 42\n    pilot ratio: num = 3.5\n    pilot callsign: word = \"Shirogane\"\n    pilot ready: bool = true\n\n    fixed pilot MAX_SORTIES: int = 12\n\n    pilot mut score: int = 0\n    score = score + 10\n    score += 5\n\n    say word_from_int(answer)\n    say format_num(ratio)\n    say callsign\n    say word_from_bool(ready)\n    say word_from_int(MAX_SORTIES)\n    say word_from_int(score)\n}\n",
+      "source": "-- Bindings are declared with `pilot`.\n-- `fixed pilot` marks an immutable binding.\n-- A plain `pilot` can be reassigned; `mut` is optional and tells the reader so.\ntask main() -> void {\n    pilot answer: int = 42\n    pilot ratio: num = 3.5\n    pilot callsign: word = \"Shirogane\"\n    pilot ready: bool = true\n\n    fixed pilot MAX_SORTIES: int = 12\n\n    pilot mut score: int = 0\n    score = score + 10\n    score += 5\n\n    say word_from_int(answer)\n    say format_num(ratio)\n    say callsign\n    say word_from_bool(ready)\n    say word_from_int(MAX_SORTIES)\n    say word_from_int(score)\n}\n",
       "compiled": true,
       "ran": true,
       "stdout": "42\n3.5\nShirogane\ntrue\n12\n15",
@@ -1134,7 +1134,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9704
+      "elapsed_ms": 9092
     },
     "word_builder": {
       "name": "word_builder",
@@ -1147,7 +1147,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9209
+      "elapsed_ms": 8889
     },
     "wordcount": {
       "name": "wordcount",
@@ -1160,7 +1160,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 8643
+      "elapsed_ms": 7871
     }
   },
   "diagnostics": {
