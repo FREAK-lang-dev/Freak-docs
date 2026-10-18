@@ -107,17 +107,15 @@ program. It concatenates a fixed list ahead of your source:
 | `std/math3d.fk` | The source text contains `use std::math3d` |
 | `std/zip.fk` | The source text contains `use std::zip` |
 | `std/ui/window.fk` | The source text contains `use std::ui` |
-| `packages/cockpit/src/*.fk` | The source text contains `use cockpit` |
+| `std/test.fk` | The source text contains `use std::test` |
+| `std/json_document.fk` | The source text contains `use std::json_document` |
+| `std/http_server.fk` | The source text contains `use std::http_server` |
 
-Those four `use` forms are **textual triggers**, not imports — the build greps
+Those six `use` forms are **textual triggers**, not imports — the build greps
 your source for the string and links a hard-coded path. Everything else already
-in that list is in scope whether you write `use` or not.
-
-> [!note]
-> The `cockpit` trigger resolves `packages/cockpit/src`, a **repository-relative
-> path**. It only works when you build from inside a Freak-lang checkout, not
-> from an installed toolchain — and it is the only package-shaped thing the
-> build can link at all.
+in that list is in scope whether you write `use` or not. Packages are not part
+of this list: they come in through `[dependencies]` and `use name::{item}`, as
+described above.
 
 ## Commands
 
