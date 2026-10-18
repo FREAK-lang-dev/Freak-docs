@@ -200,7 +200,8 @@ The four anime operators also diverge in form, not just in enforcement:
 | `std::process` | Partial — adds `pid()` and `set_env()`; `args()` deliberately rejected in favour of `args_count()` / `arg(i)` |
 | `std::thread` | **Absent** |
 | `std::bytes` | Present as the builtin `ByteBuffer` type, with `status()` instead of `result<T,E>` |
-| `std::anime`, `std::narrative`, `std::test` | **Absent** |
+| `std::anime`, `std::narrative` | **Absent** |
+| `std::test` | Partial — `test_assert*` helpers behind `use std::test`; no `test` blocks |
 | `std::mem`, `std::ffi` | **Absent** |
 | `std::json`, `std::version`, `std::string`, `std::convert`, `std::algorithm` | **Present** as FREAK source — not in the bible's shape, but real and working |
 
@@ -236,7 +237,7 @@ practical divergence for someone writing V3 code.
 | §11 Code generation | :partial: | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
 | §12 Build modes | :v4: | Absent — only `--O0..--O3`, LTO and backend choice |
 | §13 Compiler CLI | :partial: | Most commands present; `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
-| §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines |
+| §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines. The opt-in `--diagnostic-cast` adds a stock character comment after a diagnostic; it is not the bible's voice system |
 | §15 Cheatsheet | :partial: | Describes the full language; roughly a fifth applies to V3 |
 | §16 FFI | :v4: | Only bare `extern task f(...) -> T`. No blocks, conventions, `link=`, layout attributes, raw pointers or `trust me` |
 | §17 Compiler internals / IDE | :v4: | Absent. Parse errors abort; no tolerant AST, no panic infrastructure, no LSP |

@@ -182,7 +182,8 @@ Caret ranges on `0.x` versions follow Cargo and npm since 0.15.1: `^0.1.0`
 means `>=0.1.0, <0.2.0`, and `^0.0.3` means exactly `0.0.3`. A constraint
 nothing satisfies is refused with *"no published version of NAME satisfies
 CONSTRAINT"*. If you want newer minor versions of a `0.x` package, write
-`>=0.1.0` instead.
+`>=0.1.0` instead, knowing that it also accepts `1.0.0` and every later major
+version.
 
 ## hangar.toml
 

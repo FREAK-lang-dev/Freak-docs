@@ -332,7 +332,7 @@ The bible's Section 7 lists many more. None of these are in V3:
 
 `std::iter` (`.map`, `.filter`, `.fold`, …), `Map<K,V>`, `Set<T>` and
 `Lineup<T>` from `std::collections`, `std::io` beyond `say` / `ask`,
-`std::random`, `std::thread`, `std::anime`, `std::narrative`, `std::test`,
+`std::random`, `std::thread`, `std::anime`, `std::narrative`,
 `std::mem` (`Shared`, `Weak`, `size_of`, `alloc`), `std::ffi`, `std::os`,
 `std::panic`, `std::regex`, `std::crypto`.
 
@@ -344,3 +344,4 @@ Partially covered, in a V3-specific shape rather than the bible's:
 | `std::bytes` `ByteBuffer` | The builtin `ByteBuffer` type |
 | `std::word` `WordBuilder` | `word_builder::*` over an `int` handle |
 | `std::net` | `tcp::socket_*`, including listen and accept |
+| `std::test` | `use std::test` links `test_fail`, `test_assert`, `test_assert_int` and `test_assert_word`; no `test` blocks or vibes ratings |
