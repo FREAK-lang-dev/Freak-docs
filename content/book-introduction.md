@@ -49,7 +49,7 @@ implements a small core. V4 understands much more of it than it can run yet.
 
 > [!note]
 > The released V3 compiler prints the name Maverick too: `freak --version`
-> answers `freak 0.15.0 (Maverick)`. That overlap is historical. In this book
+> answers `freak 0.15.1 (Maverick)`. That overlap is historical. In this book
 > "V3" always means the compiler you install, and "V4" always means the new one
 > under development.
 

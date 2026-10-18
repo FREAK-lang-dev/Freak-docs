@@ -36,13 +36,13 @@ directory in place of `/home/you`:
 > Detected platform: linux-x64
 > Clang is available
 > Fetching latest release...
-> Release: v0.15.0
+> Release: v0.15.1
 > Downloading freak-linux-x64.tar.gz...
 > Verified SHA-256 for freak-linux-x64.tar.gz
 > Extracting distribution...
 > Added /home/you/.freak/bin to PATH in /home/you/.bashrc
 >
-> FREAK v0.15.0 installed successfully!
+> FREAK v0.15.1 installed successfully!
 >   Compiler: /home/you/.freak/bin/freak
 >   Hangar:   /home/you/.freak/bin/hangar
 >   Runtime:  /home/you/.freak/runtime/
@@ -110,7 +110,7 @@ freak --version
 ```
 
 ```text
-freak 0.15.0 (Maverick)
+freak 0.15.1 (Maverick)
 ```
 
 If your shell answers `command not found`, the `PATH` change has not taken

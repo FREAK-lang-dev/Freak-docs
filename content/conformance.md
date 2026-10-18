@@ -165,7 +165,7 @@ The four anime operators also diverge in form, not just in enforcement:
 | `launch` / `launch(package)` | :partial: | **Rejected** |
 | Module-private visibility | :partial: | `[exports]` limits what a dependent project can import; nothing is private inside a project |
 | `hangar.toml` | :partial: | Works with `[project]`, `[modules]`, `[exports]`, `[tests]` and `[dependencies]` — not the bible's `[unit]`/`[build]`/`[profile.*]` |
-| `hangar init/add/remove/install/update` | :partial: | Present, plus `outdated`, `version`, `audit`, `login`, `publish`. `add` with a registry constraint is refused in 0.15.0 |
+| `hangar init/add/remove/install/update` | :partial: | Present, plus `outdated`, `version`, `audit`, `auth`, `publish`. `add` resolves registry constraints against the Ordnance registry |
 | `hangar search` | :v4: | Absent |
 | **Consuming a package** | :partial: | Works for a dependency declared in `[dependencies]`; verified with a path dependency |
 
@@ -177,7 +177,8 @@ The four anime operators also diverge in form, not just in enforcement:
 > A single file built outside a project still shares one flat global namespace
 > with every standard-library file linked into the build. There, a `use std::…`
 > line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
-> `std/ui/window.fk` or the cockpit package. See
+> `std/ui/window.fk`, `std/test.fk`, `std/json_document.fk` or
+> `std/http_server.fk`. See
 > [Hangar & packages](hangar.html).
 
 ## Section 7 — Standard library
@@ -199,7 +200,8 @@ The four anime operators also diverge in form, not just in enforcement:
 | `std::process` | Partial — adds `pid()` and `set_env()`; `args()` deliberately rejected in favour of `args_count()` / `arg(i)` |
 | `std::thread` | **Absent** |
 | `std::bytes` | Present as the builtin `ByteBuffer` type, with `status()` instead of `result<T,E>` |
-| `std::anime`, `std::narrative`, `std::test` | **Absent** |
+| `std::anime`, `std::narrative` | **Absent** |
+| `std::test` | Partial — `test_assert*` helpers behind `use std::test`; no `test` blocks |
 | `std::mem`, `std::ffi` | **Absent** |
 | `std::json`, `std::version`, `std::string`, `std::convert`, `std::algorithm` | **Present** as FREAK source — not in the bible's shape, but real and working |
 
@@ -233,9 +235,9 @@ practical divergence for someone writing V3 code.
 | §9 Parser AST nodes | :partial: | Core nodes only. No `ErrorNode` / `IncompleteNode`, no node ids, no incremental parsing |
 | §10 Type checker | :partial: | Basic inference, arity and type checks, nominal member validation. None of the listed advanced rules |
 | §11 Code generation | :partial: | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
-| §12 Build modes | :v4: | Absent — only `--opt=0..3` and backend choice |
+| §12 Build modes | :v4: | Absent — only `--O0..--O3`, LTO and backend choice |
 | §13 Compiler CLI | :partial: | Most commands present; `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
-| §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines |
+| §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines. The opt-in `--diagnostic-cast` adds a stock character comment after a diagnostic; it is not the bible's voice system |
 | §15 Cheatsheet | :partial: | Describes the full language; roughly a fifth applies to V3 |
 | §16 FFI | :v4: | Only bare `extern task f(...) -> T`. No blocks, conventions, `link=`, layout attributes, raw pointers or `trust me` |
 | §17 Compiler internals / IDE | :v4: | Absent. Parse errors abort; no tolerant AST, no panic infrastructure, no LSP |

@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.1 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -65,7 +65,7 @@
     <article class="prose">
 <h1 id="verified-examples">Verified examples<a class="anchor" href="#verified-examples" aria-label="Link to this section">#</a></h1>
 <p class="lede">Every program on this site, compiled and executed by a real V3 binary.</p>
-<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.0 (Maverick) on 2026-10-13T16:49:47Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
+<div class="summary-card"><div class="sc-num">84/84</div><div class="sc-body"><strong>executable examples compile and pass</strong><span>Verified with freak 0.15.1 (Maverick) on 2026-10-18T21:50:54Z. Every code block on this site marked <em>compiles</em> was built, executed, and checked against its reviewed expected output.</span></div></div>
 <p>Each card below shows the exact source file under <code>examples/</code>, a badge for whether it compiled and ran, and the program&#x27;s captured output. Reproduce the whole set with:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>python tools/refresh.py --jobs 6</code></pre></div>
 <p>The harness copies each example into a clean temporary directory, runs <code>freak build</code> with the default LLVM backend, executes the resulting binary, and checks stdout against reviewed expectations. It normalizes CRLF and omits at most one final newline; extra blank lines and standalone carriage returns remain significant. A failure is recorded with its diagnostics and blocks publication.</p>
@@ -1563,7 +1563,7 @@ hi
   <div class="ex-out">
     <div class="ex-out-head">Program output</div>
     <pre class="stdout"><code>3
-arg 0: /build/process_time.exe
+arg 0: /build/process_time
 arg 1: alpha
 arg 2: bravo
 true
@@ -2151,7 +2151,7 @@ NEGOTIATE</code></pre>
 </figure>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.1 (Maverick)</strong>.
       84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>

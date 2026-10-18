@@ -17,7 +17,7 @@
     <input type="search" id="q" placeholder="Search the docs&hellip;  (press /)" autocomplete="off" spellcheck="false" aria-label="Search documentation">
     <div id="results" class="results" hidden></div>
   </div>
-  <span class="compiler-tag">freak 0.15.0 (Maverick)</span>
+  <span class="compiler-tag">freak 0.15.1 (Maverick)</span>
 </header>
 <div class="layout">
   <aside class="sidebar"><nav class="sidebar-nav">
@@ -77,13 +77,13 @@
 <div class="codeblock"><pre class="code"><code>&gt; Detected platform: linux-x64
 &gt; Clang is available
 &gt; Fetching latest release...
-&gt; Release: v0.15.0
+&gt; Release: v0.15.1
 &gt; Downloading freak-linux-x64.tar.gz...
 &gt; Verified SHA-256 for freak-linux-x64.tar.gz
 &gt; Extracting distribution...
 &gt; Added /home/you/.freak/bin to PATH in /home/you/.bashrc
 &gt;
-&gt; FREAK v0.15.0 installed successfully!
+&gt; FREAK v0.15.1 installed successfully!
 &gt;   Compiler: /home/you/.freak/bin/freak
 &gt;   Hangar:   /home/you/.freak/bin/hangar
 &gt;   Runtime:  /home/you/.freak/runtime/
@@ -106,7 +106,7 @@
 <h2 id="checking-the-installation">Checking the installation<a class="anchor" href="#checking-the-installation" aria-label="Link to this section">#</a></h2>
 <p>Ask the compiler for its version:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak --version</code></pre></div>
-<div class="codeblock"><pre class="code"><code>freak 0.15.0 (Maverick)</code></pre></div>
+<div class="codeblock"><pre class="code"><code>freak 0.15.1 (Maverick)</code></pre></div>
 <p>If your shell answers <code>command not found</code>, the <code>PATH</code> change has not taken effect yet. Open a new terminal and try again. If it still fails, the installer found no startup file to change, and you need to add the <code>export</code> line by hand.</p>
 <p>A version number only proves the <code>freak</code> program starts. To check that the whole toolchain works, run the doctor:</p>
 <div class="codeblock"><span class="code-lang">shell</span><pre class="code"><code>freak doctor</code></pre></div>
@@ -444,7 +444,7 @@ Hello, Ada!</code></pre></div>
 <p><a href="book-guessing-game.html">Chapter 2</a> puts these pieces to work in a real program: a number-guessing game that reads what you type.</p>
     </article>
     <footer class="pagefoot">
-      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.0 (Maverick)</strong>.
+      <p>Badged executable examples were compiled and run with the released <strong>freak 0.15.1 (Maverick)</strong>.
       84/84 examples match their reviewed expected output. Illustrative snippets
       are labelled separately. Regenerate with <code>python tools/refresh.py</code>.</p>
       <p>V4 boxes were checked against the development snapshot <strong>7c9a1f3c27</strong> (2026-10-04); 46/46 V4 examples match their reviewed expectation. Regenerate with <code>python tools/verify_v4.py --checkout &lt;Freak-lang&gt;</code>.</p>
