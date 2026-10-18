@@ -165,7 +165,7 @@ The four anime operators also diverge in form, not just in enforcement:
 | `launch` / `launch(package)` | :partial: | **Rejected** |
 | Module-private visibility | :partial: | `[exports]` limits what a dependent project can import; nothing is private inside a project |
 | `hangar.toml` | :partial: | Works with `[project]`, `[modules]`, `[exports]`, `[tests]` and `[dependencies]` — not the bible's `[unit]`/`[build]`/`[profile.*]` |
-| `hangar init/add/remove/install/update` | :partial: | Present, plus `outdated`, `version`, `audit`, `login`, `publish`. `add` with a registry constraint is refused in 0.15.0 |
+| `hangar init/add/remove/install/update` | :partial: | Present, plus `outdated`, `version`, `audit`, `auth`, `publish`. `add` resolves registry constraints against the Ordnance registry |
 | `hangar search` | :v4: | Absent |
 | **Consuming a package** | :partial: | Works for a dependency declared in `[dependencies]`; verified with a path dependency |
 
@@ -233,7 +233,7 @@ practical divergence for someone writing V3 code.
 | §9 Parser AST nodes | :partial: | Core nodes only. No `ErrorNode` / `IncompleteNode`, no node ids, no incremental parsing |
 | §10 Type checker | :partial: | Basic inference, arity and type checks, nominal member validation. None of the listed advanced rules |
 | §11 Code generation | :partial: | LLVM and C backends work. No mood, variant, `dyn`, `Shared<T>` or classified codegen. LLVM emits LineTablesOnly DWARF |
-| §12 Build modes | :v4: | Absent — only `--opt=0..3` and backend choice |
+| §12 Build modes | :v4: | Absent — only `--O0..--O3`, LTO and backend choice |
 | §13 Compiler CLI | :partial: | Most commands present; `--voice=`, `--clearance=`, `--build-mode=`, and in-language `test` blocks absent |
 | §14 Error voices | :v4: | Absent — generic diagnostics, plus two signature borrow-checker lines |
 | §15 Cheatsheet | :partial: | Describes the full language; roughly a fifth applies to V3 |

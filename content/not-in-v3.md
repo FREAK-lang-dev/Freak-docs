@@ -303,7 +303,7 @@ Stick to `int`, `num`, `bool` and `void` across the boundary — `word` is an
 
 `slice_of_life`, `mecha`, `shonen_jump`, `final_form` and `alternative` build
 modes do not exist; nor do `--voice=`, `--clearance=` or `--build-mode=`. The
-knobs are `--opt=0..3`, `--c` / `--llvm`, `--target=`, `-o` / `--output=` and
+knobs are `--O0..--O3` (or `--opt=0..3`), `--flto` / `--tlto`, `--c` / `--llvm`, `--target=`, `-o` / `--output=` and
 `--strict-borrow`.
 
 ## Tooling

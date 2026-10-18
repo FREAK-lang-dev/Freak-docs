@@ -89,10 +89,11 @@ An import is checked, not skipped:
 > Only a path dependency was run for this page. The 0.15.0 release notes say
 > build, run and test also consume Git dependencies pinned in `hangar.lock`.
 
-> [!warn]
-> `freak hangar init` still writes the older, smaller manifest, without `kind`
-> or `entry`. `freak build` refuses a project like that: *"project.kind must be
-> 'app' or 'lib'"*. Create projects with `freak init`, or add the two keys.
+> [!note]
+> `hangar init` writes `kind = "app"` and `entry = "src/main.fk"` since 0.15.1.
+> A project made by an older `hangar init`, without those keys, still installs,
+> but `freak build` refuses it: *"project.kind must be 'app' or 'lib'"*. Add the
+> two keys to fix it.
 
 ## What does get linked
 
@@ -125,7 +126,8 @@ These are the `hangar` subcommands.
 | Command | Effect |
 |---|---|
 | `hangar init [name]` | Scaffold `hangar.toml`, `src/main.fk`, `hangar_modules/` |
-| `hangar add <name> [constraint]` | Refused in 0.15.0: *"Registry package sources are unavailable; specify an explicit Git source"* |
+| `hangar add <name> [constraint]` | Add a registry dependency (latest version if no constraint) |
+| `hangar add <name> --path <dir>` | Add a local path dependency |
 | `hangar add <name> <repo> [version]` | Add a dependency from a git repo |
 | `hangar remove <name>` | Remove it |
 | `hangar install` | Download all dependencies into `hangar_modules/` |
@@ -135,27 +137,47 @@ These are the `hangar` subcommands.
 | `hangar version` | Print the project version |
 | `hangar version patch\|minor\|major` | Bump it in the manifest |
 | `hangar audit` / `hangar audit --fix` | Verify or repair package integrity |
-| `hangar login` | Authenticate with the registry |
+| `hangar auth login` / `auth status` / `auth logout` | Sign in, see who you are, sign out (`hangar login` / `hangar logout` are shortcuts) |
 | `hangar publish [--dry-run]` | Publish to the registry |
 
 `hangar search` from the specification does not exist in this build.
 
 ### Signing in
 
-In 0.15.0, `hangar login` stores a registry token in
-`~/.hangar/credentials` — a string an administrator mints and you paste in.
-`hangar publish` sends it as a bearer token.
+`hangar auth login` runs a device flow: it prints a short one-time code, opens
+the registry in your browser, and waits while you approve it there. What it
+saves is a session tied to your account, stored in your user config directory
+with owner-only permissions. `hangar auth status` says who you are signed in
+as (*"Not signed in to https://hangar.freaklang.dev/api/v1. Run: hangar auth
+login"* when you aren't), and `hangar auth logout` revokes the session.
+
+Publishing is tied to an account: the first publish of a name claims it, and
+nobody else can ship that name afterwards. `hangar publish --dry-run` shows
+what would be uploaded. The registry defaults to
+`https://hangar.freaklang.dev/api/v1`; set `HANGAR_REGISTRY` to use another.
 
 > [!note]
-> This is being replaced. On `main`, tokens are gone: `hangar auth login` runs
-> a device flow instead — it prints a short one-time code, opens the registry
-> in your browser, and waits while you approve it there. What lands in
-> `~/.hangar/credentials` is then a session tied to your account, which you can
-> revoke yourself with `hangar auth logout`. `hangar auth status` says who you
-> are signed in as, and `hangar login` still works as an alias. Publishing is
-> tied to an account too: the first publish of a name claims it, and nobody
-> else can ship that name afterwards. Not in 0.15.0 — this page follows the
-> shipping compiler, and will change when a release carries it.
+> Tokens saved by 0.15.0's `hangar login` don't record which registry they
+> belong to, so Hangar only sends them to the default registry. Sign in again
+> to use another one.
+
+### Registry dependencies
+
+```toml
+[dependencies]
+cockpit = "^0.1.0"
+```
+
+`hangar install` resolves this against the registry, pins it in `hangar.lock`
+by archive SHA-256, and caches the archive so later builds work offline. A
+package with dashes in its name is imported with underscores:
+`cockpit-extras` becomes `use cockpit_extras::{...}`.
+
+Caret ranges on `0.x` versions follow Cargo and npm since 0.15.1: `^0.1.0`
+means `>=0.1.0, <0.2.0`, and `^0.0.3` means exactly `0.0.3`. A constraint
+nothing satisfies is refused with *"no published version of NAME satisfies
+CONSTRAINT"*. If you want newer minor versions of a `0.x` package, write
+`>=0.1.0` instead.
 
 ## hangar.toml
 
@@ -163,6 +185,8 @@ In 0.15.0, `hangar login` stores a registry token in
 writes a smaller one, in dotted-key form:
 
 ```toml
+project.entry = "src/main.fk"
+project.kind = "app"
 project.name = "demo"
 project.version = "0.1.0"
 ```

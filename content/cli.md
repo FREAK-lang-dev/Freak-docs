@@ -46,7 +46,9 @@ freak <command> [file.fk] [options]
 |---|---|
 | `--llvm` | LLVM IR backend. **Default.** Full language surface |
 | `--c` | Portable C backend. No claimed executable shape storage |
-| `--opt=N` | Optimisation level, `0`–`3`. Default `2` |
+| `--O0` … `--O3` | Optimisation level. Default `--O2`. The older `--opt=N` still works |
+| `--flto`, `--tlto` | Full or thin LTO. The older `--lto[=thin\|full\|off]` still works |
+| `--diagnostic-cast=MODE` | `off` (default), `minimal` or `normal`. Adds a character's comment after each diagnostic; the diagnostic and exit status are unchanged |
 | `--target=TRIPLE` | Cross-compile target triple |
 | `--strict-borrow` | Enable the opt-in Phase-1 ownership checker |
 | `-o NAME`, `--output=NAME` | Name of the output binary. Default: the source basename |
@@ -54,10 +56,17 @@ freak <command> [file.fk] [options]
 Flags may appear in any order after the file:
 
 ```sh
-freak run game.fk --c --opt=3
+freak run game.fk --c --O3
+freak build game.fk --O3 --flto
 freak build game.fk --target=x86_64-linux-gnu
 freak build game.fk --strict-borrow
 ```
+
+> [!note]
+> `-O` and LTO flags apply to `build` and `run` only. Both commands keep
+> verified runtime objects in a per-user cache and reuse them on later builds,
+> so only the first build on a machine pays for compiling the runtime. Your own
+> code is still compiled fresh every time.
 
 > [!v4]
 > `--voice=`, `--clearance=` and `--build-mode=` are V4-only. The output name
@@ -102,7 +111,8 @@ standalone binary.
 | Subcommand | Status |
 |---|---|
 | `hangar init [name]` | works |
-| `hangar add <name> [constraint]` | refused in 0.15.0: *"Registry package sources are unavailable; specify an explicit Git source"* |
+| `hangar add <name> [constraint]` | works: resolves against the registry and pins the version in `hangar.lock` |
+| `hangar add <name> --path <dir>` | works |
 | `hangar add <name> <repo> [version]` | works |
 | `hangar remove <name>` | works |
 | `hangar install` | works |
@@ -111,12 +121,15 @@ standalone binary.
 | `hangar outdated` | works |
 | `hangar version [patch\|minor\|major]` | works |
 | `hangar audit [--fix]` | works |
-| `hangar login`, `hangar publish [--dry-run]` | works |
+| `hangar auth login`, `auth status`, `auth logout` | works (`hangar login` / `hangar logout` are shortcuts) |
+| `hangar publish [--dry-run]` | works |
 | `hangar search <query>` | not in this build |
 
 What `hangar init` writes:
 
 ```toml
+project.entry = "src/main.fk"
+project.kind = "app"
 project.name = "demo"
 project.version = "0.1.0"
 ```
@@ -129,7 +142,7 @@ comparison and `^`-constraint logic you can call directly — see
 > As of 0.15, `freak build`, `freak run` and `freak test` read `hangar.toml`. A
 > project's modules and its declared dependencies are compiled in, and
 > `use name::{item}` imports an exported task. A project needs `kind` and, for
-> an app, `entry`, which `freak init` writes and `hangar init` does not. See
+> an app, `entry`, which both `freak init` and `hangar init` write. See
 > [Hangar & packages](hangar.html).
 
 ## Environment

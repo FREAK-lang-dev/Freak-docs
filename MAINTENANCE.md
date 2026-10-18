@@ -94,7 +94,7 @@ never approve reviews. Scheduled runs start when this workflow is merged
 to the default branch. They do not auto-merge or deploy.
 
 ```sh
-python tools/refresh.py --release v0.15.0 --jobs 6
+python tools/refresh.py --release v0.15.1 --jobs 6
 python tools/verify_v4.py --checkout ../Freak-lang   # checked out at v4-snapshot.txt
 python -m unittest discover -s tests -v
 # After committing regenerated files, check the exact static publication:
