@@ -135,7 +135,7 @@ These are the `hangar` subcommands.
 | `hangar version` | Print the project version |
 | `hangar version patch\|minor\|major` | Bump it in the manifest |
 | `hangar audit` / `hangar audit --fix` | Verify or repair package integrity |
-| `hangar auth login` / `auth status` / `auth logout` | Sign in, see who you are, sign out (`hangar login` / `hangar logout` are shortcuts) |
+| `hangar auth login` / `hangar auth status` / `hangar auth logout` | Sign in, see who you are, sign out (`hangar login` / `hangar logout` are shortcuts) |
 | `hangar publish [--dry-run]` | Publish to the registry |
 
 `hangar search` from the specification does not exist in this build.

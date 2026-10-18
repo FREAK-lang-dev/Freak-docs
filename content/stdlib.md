@@ -29,7 +29,9 @@ exist is an error: `unsupported standard module`.
 | `std/math3d.fk` | Only if the source text contains `use std::math3d` |
 | `std/zip.fk` | Only if the source text contains `use std::zip` |
 | `std/ui/window.fk` | Only if the source text contains `use std::ui` |
-| `packages/cockpit/src/*.fk` | Only if the source text contains `use cockpit` |
+| `std/test.fk` | Only if the source text contains `use std::test` |
+| `std/json_document.fk` | Only if the source text contains `use std::json_document` |
+| `std/http_server.fk` | Only if the source text contains `use std::http_server` |
 
 So `use std::ui` is not an import — it is a build flag written in import
 syntax. Everything else is already in scope without it.

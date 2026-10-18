@@ -121,7 +121,7 @@ standalone binary.
 | `hangar outdated` | works |
 | `hangar version [patch\|minor\|major]` | works |
 | `hangar audit [--fix]` | works |
-| `hangar auth login`, `auth status`, `auth logout` | works (`hangar login` / `hangar logout` are shortcuts) |
+| `hangar auth login`, `hangar auth status`, `hangar auth logout` | works (`hangar login` / `hangar logout` are shortcuts) |
 | `hangar publish [--dry-run]` | works |
 | `hangar search <query>` | not in this build |
 

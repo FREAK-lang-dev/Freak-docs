@@ -246,8 +246,9 @@ Consequences worth planning around:
   `std/` task replaces it for your program without a warning, so prefix your
   tasks. The compiler's builtins, such as `ask`, are protected: redefining one
   is an error.
-- `use std::math3d`, `use std::zip`, `use std::ui` and `use cockpit` still
-  matter as **build triggers** — the text switches on linking that module.
+- `use std::math3d`, `use std::zip`, `use std::ui`, `use std::test`,
+  `use std::json_document` and `use std::http_server` still matter as
+  **build triggers** — the text switches on linking that module.
 - A `use` of anything else must name a module or a dependency declared in
   `hangar.toml`, or the build stops with `undeclared direct dependency`. See
   [Hangar & packages](hangar.html).
@@ -304,7 +305,9 @@ Stick to `int`, `num`, `bool` and `void` across the boundary — `word` is an
 `slice_of_life`, `mecha`, `shonen_jump`, `final_form` and `alternative` build
 modes do not exist; nor do `--voice=`, `--clearance=` or `--build-mode=`. The
 knobs are `--O0..--O3` (or `--opt=0..3`), `--flto` / `--tlto`, `--c` / `--llvm`, `--target=`, `-o` / `--output=` and
-`--strict-borrow`.
+`--strict-borrow`. For a voice in your diagnostics, `--diagnostic-cast=minimal`
+or `--diagnostic-cast=normal` adds a character's comment after each one
+(`off` is the default).
 
 ## Tooling
 

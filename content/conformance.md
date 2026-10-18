@@ -177,7 +177,8 @@ The four anime operators also diverge in form, not just in enforcement:
 > A single file built outside a project still shares one flat global namespace
 > with every standard-library file linked into the build. There, a `use std::…`
 > line only signals the build to link `std/math3d.fk`, `std/zip.fk`,
-> `std/ui/window.fk` or the cockpit package. See
+> `std/ui/window.fk`, `std/test.fk`, `std/json_document.fk` or
+> `std/http_server.fk`. See
 > [Hangar & packages](hangar.html).
 
 ## Section 7 — Standard library
