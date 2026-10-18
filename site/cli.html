@@ -77,7 +77,7 @@
 freak build game.fk --O3 --flto
 freak build game.fk --target=x86_64-linux-gnu
 freak build game.fk --strict-borrow</code></pre></div>
-<div class="callout note"><div class="callout-title">Note</div><p><code>-O</code> and LTO flags apply to <code>build</code> and <code>run</code> only. Both commands keep verified runtime objects in a per-user cache and reuse them on later builds, so only the first build on a machine pays for compiling the runtime. Your own code is still compiled fresh every time.</p></div>
+<div class="callout note"><div class="callout-title">Note</div><p><code>-O</code> and LTO flags apply to <code>build</code> and <code>run</code> only. Both commands keep verified runtime objects in a per-user cache and reuse them on later builds. An entry is reused only when the compiler, runtime sources, target, optimisation level and LTO setting all match; otherwise the runtime is compiled again. Your own code is still compiled fresh every time.</p></div>
 <div class="callout v4"><div class="callout-title">Not in V3</div><p><code>--voice=</code>, <code>--clearance=</code> and <code>--build-mode=</code> are V4-only. The output name can be chosen with <code>-o NAME</code> or <code>--output=NAME</code>; without it, it is the source basename plus <code>.exe</code> (Windows) or no extension elsewhere.</p></div>
 <h2 id="--strict-borrow"><code>--strict-borrow</code><a class="anchor" href="#--strict-borrow" aria-label="Link to this section">#</a></h2>
 <p>Without this flag V3 does no ownership checking. With it, a Phase-1 checker runs after type checking and enforces two rules:</p>

@@ -64,9 +64,10 @@ freak build game.fk --strict-borrow
 
 > [!note]
 > `-O` and LTO flags apply to `build` and `run` only. Both commands keep
-> verified runtime objects in a per-user cache and reuse them on later builds,
-> so only the first build on a machine pays for compiling the runtime. Your own
-> code is still compiled fresh every time.
+> verified runtime objects in a per-user cache and reuse them on later builds.
+> An entry is reused only when the compiler, runtime sources, target,
+> optimisation level and LTO setting all match; otherwise the runtime is
+> compiled again. Your own code is still compiled fresh every time.
 
 > [!v4]
 > `--voice=`, `--clearance=` and `--build-mode=` are V4-only. The output name

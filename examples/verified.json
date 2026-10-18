@@ -10,9 +10,9 @@
     "archive_sha256": "9ddcbaa6d7ebd4f7bc7202d0244f94295053f99a51a9feb77dc3d4f5de83ff5d",
     "compiler_sha256": "cc3e24db4d4e4805f7715fe0e94f5ca21214aabaa0001dcbdc23d3ffe68fb522"
   },
-  "input_sha256": "20e9c3dda52f5fa4d9c3b2a0754c1ea402448ca0b8def913e159fd7eadce81c0",
+  "input_sha256": "f06e6f8251a3fd5c2b759c949c914f5318cbe126c68733b33193f2002f37833e",
   "compiler": "freak 0.15.1 (Maverick)",
-  "generated_utc": "2026-10-18T21:47:31Z",
+  "generated_utc": "2026-10-18T21:50:54Z",
   "total": 84,
   "compiled": 84,
   "passed": 84,
@@ -28,7 +28,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11200
+      "elapsed_ms": 26169
     },
     "annotations": {
       "name": "annotations",
@@ -41,7 +41,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11556
+      "elapsed_ms": 11172
     },
     "ansi_codes": {
       "name": "ansi_codes",
@@ -54,7 +54,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11536
+      "elapsed_ms": 11244
     },
     "array_literal": {
       "name": "array_literal",
@@ -67,7 +67,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11048
+      "elapsed_ms": 26393
     },
     "arrays": {
       "name": "arrays",
@@ -80,7 +80,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10405
+      "elapsed_ms": 10661
     },
     "book_bool": {
       "name": "book_bool",
@@ -94,7 +94,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 25549
+      "elapsed_ms": 21994
     },
     "book_break_continue": {
       "name": "book_break_continue",
@@ -108,7 +108,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 22269
+      "elapsed_ms": 21719
     },
     "book_by_value": {
       "name": "book_by_value",
@@ -122,7 +122,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 37299
+      "elapsed_ms": 22198
     },
     "book_collatz": {
       "name": "book_collatz",
@@ -136,7 +136,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21219
+      "elapsed_ms": 20424
     },
     "book_comments": {
       "name": "book_comments",
@@ -150,7 +150,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21037
+      "elapsed_ms": 36859
     },
     "book_constants": {
       "name": "book_constants",
@@ -164,7 +164,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21424
+      "elapsed_ms": 20722
     },
     "book_contextual_words": {
       "name": "book_contextual_words",
@@ -178,7 +178,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21759
+      "elapsed_ms": 20584
     },
     "book_conversions": {
       "name": "book_conversions",
@@ -192,7 +192,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21555
+      "elapsed_ms": 20864
     },
     "book_exit_code": {
       "name": "book_exit_code",
@@ -207,7 +207,7 @@
       "exit_code": 3,
       "expected_exit_code": 3,
       "strict_borrow": true,
-      "elapsed_ms": 20877
+      "elapsed_ms": 20613
     },
     "book_fizzbuzz": {
       "name": "book_fizzbuzz",
@@ -221,7 +221,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20828
+      "elapsed_ms": 20433
     },
     "book_for_each": {
       "name": "book_for_each",
@@ -235,7 +235,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21007
+      "elapsed_ms": 20311
     },
     "book_for_ranges": {
       "name": "book_for_ranges",
@@ -249,7 +249,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21352
+      "elapsed_ms": 20790
     },
     "book_give_back": {
       "name": "book_give_back",
@@ -263,7 +263,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21144
+      "elapsed_ms": 20102
     },
     "book_guess": {
       "name": "book_guess",
@@ -281,7 +281,7 @@
       ],
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21686
+      "elapsed_ms": 21035
     },
     "book_guess_compare": {
       "name": "book_guess_compare",
@@ -296,7 +296,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21464
+      "elapsed_ms": 20904
     },
     "book_guess_input": {
       "name": "book_guess_input",
@@ -311,7 +311,7 @@
       "stdin": "50\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21644
+      "elapsed_ms": 21436
     },
     "book_guess_parse": {
       "name": "book_guess_parse",
@@ -326,7 +326,7 @@
       "stdin": "fifty\n",
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21982
+      "elapsed_ms": 21532
     },
     "book_guess_secret": {
       "name": "book_guess_secret",
@@ -340,7 +340,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20678
+      "elapsed_ms": 20783
     },
     "book_hello": {
       "name": "book_hello",
@@ -354,7 +354,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19820
+      "elapsed_ms": 20949
     },
     "book_if": {
       "name": "book_if",
@@ -368,7 +368,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20420
+      "elapsed_ms": 20439
     },
     "book_int": {
       "name": "book_int",
@@ -384,7 +384,7 @@
       "expected_exit_code": 1,
       "stderr": "FREAK: integer overflow in addition",
       "strict_borrow": true,
-      "elapsed_ms": 20546
+      "elapsed_ms": 21022
     },
     "book_keyword_case": {
       "name": "book_keyword_case",
@@ -398,7 +398,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19901
+      "elapsed_ms": 20145
     },
     "book_loop_forever": {
       "name": "book_loop_forever",
@@ -412,7 +412,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20774
+      "elapsed_ms": 21187
     },
     "book_num": {
       "name": "book_num",
@@ -426,7 +426,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19898
+      "elapsed_ms": 20950
     },
     "book_order": {
       "name": "book_order",
@@ -440,7 +440,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21227
+      "elapsed_ms": 20181
     },
     "book_pilots": {
       "name": "book_pilots",
@@ -454,7 +454,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20712
+      "elapsed_ms": 20690
     },
     "book_pipe": {
       "name": "book_pipe",
@@ -468,7 +468,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19875
+      "elapsed_ms": 21031
     },
     "book_repeat_times": {
       "name": "book_repeat_times",
@@ -482,7 +482,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 19608
+      "elapsed_ms": 20687
     },
     "book_repeat_until": {
       "name": "book_repeat_until",
@@ -496,7 +496,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20419
+      "elapsed_ms": 35802
     },
     "book_scope": {
       "name": "book_scope",
@@ -510,7 +510,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20266
+      "elapsed_ms": 21173
     },
     "book_script": {
       "name": "book_script",
@@ -524,7 +524,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20475
+      "elapsed_ms": 20354
     },
     "book_shared_pilot": {
       "name": "book_shared_pilot",
@@ -538,7 +538,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20648
+      "elapsed_ms": 20523
     },
     "book_statements": {
       "name": "book_statements",
@@ -552,7 +552,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21251
+      "elapsed_ms": 21379
     },
     "book_tasks": {
       "name": "book_tasks",
@@ -566,7 +566,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21358
+      "elapsed_ms": 21019
     },
     "book_training_arc": {
       "name": "book_training_arc",
@@ -580,7 +580,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21206
+      "elapsed_ms": 20931
     },
     "book_two_word_case": {
       "name": "book_two_word_case",
@@ -594,7 +594,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21202
+      "elapsed_ms": 21258
     },
     "book_when": {
       "name": "book_when",
@@ -608,7 +608,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21007
+      "elapsed_ms": 21131
     },
     "book_while": {
       "name": "book_while",
@@ -622,7 +622,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 20612
+      "elapsed_ms": 21272
     },
     "book_words_intro": {
       "name": "book_words_intro",
@@ -636,7 +636,7 @@
       "passed": true,
       "exit_code": 0,
       "strict_borrow": true,
-      "elapsed_ms": 21142
+      "elapsed_ms": 37358
     },
     "bounded_search": {
       "name": "bounded_search",
@@ -649,7 +649,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10821
+      "elapsed_ms": 10874
     },
     "bytebuffer": {
       "name": "bytebuffer",
@@ -662,7 +662,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10643
+      "elapsed_ms": 10923
     },
     "colour": {
       "name": "colour",
@@ -675,7 +675,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10124
+      "elapsed_ms": 10584
     },
     "control_if": {
       "name": "control_if",
@@ -688,7 +688,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9963
+      "elapsed_ms": 10413
     },
     "control_loops": {
       "name": "control_loops",
@@ -701,7 +701,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10503
+      "elapsed_ms": 11432
     },
     "control_when": {
       "name": "control_when",
@@ -714,7 +714,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10598
+      "elapsed_ms": 10911
     },
     "eventually": {
       "name": "eventually",
@@ -727,7 +727,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10427
+      "elapsed_ms": 10593
     },
     "extern": {
       "name": "extern",
@@ -740,7 +740,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10574
+      "elapsed_ms": 10509
     },
     "files": {
       "name": "files",
@@ -753,7 +753,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10272
+      "elapsed_ms": 10114
     },
     "fizzbuzz": {
       "name": "fizzbuzz",
@@ -766,7 +766,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10384
+      "elapsed_ms": 13069
     },
     "hello": {
       "name": "hello",
@@ -779,7 +779,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11002
+      "elapsed_ms": 10063
     },
     "impl_methods": {
       "name": "impl_methods",
@@ -792,7 +792,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10394
+      "elapsed_ms": 10512
     },
     "inference": {
       "name": "inference",
@@ -805,7 +805,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11913
+      "elapsed_ms": 27282
     },
     "interpolation": {
       "name": "interpolation",
@@ -818,7 +818,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11247
+      "elapsed_ms": 10648
     },
     "lists": {
       "name": "lists",
@@ -831,7 +831,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11101
+      "elapsed_ms": 10582
     },
     "module_pattern": {
       "name": "module_pattern",
@@ -844,7 +844,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11561
+      "elapsed_ms": 10439
     },
     "nested_shapes": {
       "name": "nested_shapes",
@@ -857,7 +857,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11394
+      "elapsed_ms": 10705
     },
     "operator_overload": {
       "name": "operator_overload",
@@ -870,7 +870,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 12032
+      "elapsed_ms": 10926
     },
     "operators": {
       "name": "operators",
@@ -883,7 +883,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11082
+      "elapsed_ms": 10750
     },
     "pipe": {
       "name": "pipe",
@@ -896,7 +896,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11453
+      "elapsed_ms": 11136
     },
     "process_time": {
       "name": "process_time",
@@ -913,7 +913,7 @@
         "bravo"
       ],
       "exit_code": 0,
-      "elapsed_ms": 10989
+      "elapsed_ms": 10914
     },
     "recursion": {
       "name": "recursion",
@@ -926,7 +926,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10841
+      "elapsed_ms": 10863
     },
     "reserved_words": {
       "name": "reserved_words",
@@ -939,7 +939,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10927
+      "elapsed_ms": 10083
     },
     "same_line": {
       "name": "same_line",
@@ -952,7 +952,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10483
+      "elapsed_ms": 10581
     },
     "shapes": {
       "name": "shapes",
@@ -965,7 +965,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 11022
+      "elapsed_ms": 10492
     },
     "stdlib_convert": {
       "name": "stdlib_convert",
@@ -978,7 +978,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10473
+      "elapsed_ms": 10587
     },
     "stdlib_json": {
       "name": "stdlib_json",
@@ -991,7 +991,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10346
+      "elapsed_ms": 10508
     },
     "stdlib_math": {
       "name": "stdlib_math",
@@ -1004,7 +1004,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10328
+      "elapsed_ms": 10354
     },
     "stdlib_string": {
       "name": "stdlib_string",
@@ -1017,7 +1017,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10556
+      "elapsed_ms": 10666
     },
     "stdlib_version": {
       "name": "stdlib_version",
@@ -1030,7 +1030,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10350
+      "elapsed_ms": 10223
     },
     "strings": {
       "name": "strings",
@@ -1043,7 +1043,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10493
+      "elapsed_ms": 9925
     },
     "tasks": {
       "name": "tasks",
@@ -1056,7 +1056,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9998
+      "elapsed_ms": 10118
     },
     "toplevel": {
       "name": "toplevel",
@@ -1069,7 +1069,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 10022
+      "elapsed_ms": 10422
     },
     "training_arc": {
       "name": "training_arc",
@@ -1082,7 +1082,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9844
+      "elapsed_ms": 9819
     },
     "tut_cli": {
       "name": "tut_cli",
@@ -1095,7 +1095,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9944
+      "elapsed_ms": 9666
     },
     "tut_greet": {
       "name": "tut_greet",
@@ -1108,7 +1108,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 9501
+      "elapsed_ms": 9311
     },
     "tut_roster": {
       "name": "tut_roster",
@@ -1121,7 +1121,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7654
+      "elapsed_ms": 8979
     },
     "variables": {
       "name": "variables",
@@ -1134,7 +1134,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7542
+      "elapsed_ms": 9099
     },
     "word_builder": {
       "name": "word_builder",
@@ -1147,7 +1147,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7572
+      "elapsed_ms": 7985
     },
     "wordcount": {
       "name": "wordcount",
@@ -1160,7 +1160,7 @@
       "backend": "llvm",
       "passed": true,
       "exit_code": 0,
-      "elapsed_ms": 7380
+      "elapsed_ms": 7756
     }
   },
   "diagnostics": {
