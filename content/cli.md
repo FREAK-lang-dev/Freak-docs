@@ -125,6 +125,13 @@ standalone binary.
 | `hangar publish [--dry-run]` | works |
 | `hangar search <query>` | not in this build |
 
+> [!warn]
+> On Windows, `hangar add <name> <git-url>` fails in 0.15.1 while cleaning up
+> its temporary clone (*"could not safely remove complete owned temporary
+> directory"*), because Git's read-only object files can't be deleted. Clone
+> the repository yourself and use `hangar add <name> --path <clone>` until the
+> fix ships.
+
 What `hangar init` writes:
 
 ```toml

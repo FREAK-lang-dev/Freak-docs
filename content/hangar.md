@@ -142,6 +142,13 @@ These are the `hangar` subcommands.
 
 `hangar search` from the specification does not exist in this build.
 
+> [!warn]
+> On Windows, `hangar add <name> <git-url>` fails in 0.15.1 while cleaning up
+> its temporary clone (*"could not safely remove complete owned temporary
+> directory"*), because Git's read-only object files can't be deleted. Clone
+> the repository yourself and use `hangar add <name> --path <clone>` until the
+> fix ships.
+
 ### Signing in
 
 `hangar auth login` runs a device flow: it prints a short one-time code, opens
